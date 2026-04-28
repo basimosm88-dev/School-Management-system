@@ -138,7 +138,7 @@ const MessagesPage = ({ role }) => {
                       }`}>
                         <p className="leading-relaxed">{msg.message_text}</p>
                         <p className={`text-[10px] mt-2 font-medium ${isMe ? 'text-white/70' : 'text-slate-400'}`}>
-                          {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                         </p>
                       </div>
                     </div>
