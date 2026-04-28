@@ -71,13 +71,13 @@ const AdminDashboard = () => {
 
               {/* Bars */}
               <div className="h-full flex items-end justify-between gap-4 px-6 relative z-10">
-                {attendance.map((day, i) => (
+                {attendance.filter(day => day.date).map((day, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center gap-3 group relative h-full justify-end">
                     <div className="w-12 flex items-end justify-center gap-1.5 h-[85%] border-b border-transparent">
                       <div className="bg-gradient-to-t from-emerald-400 to-emerald-500 w-full transition-all duration-700 ease-out shadow-sm rounded-t-md" style={{ height: `${day.present}%` }}></div>
                       <div className="bg-gradient-to-t from-rose-400 to-rose-500 w-full transition-all duration-700 ease-out shadow-sm rounded-t-md opacity-90" style={{ height: `${day.absent === 0 ? 1 : day.absent}%` }}></div>
                     </div>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">{day.date.split('-').slice(1).join('/')}</span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">{day.date?.split('-').slice(1).join('/') || ''}</span>
                     
                     {/* Advanced Tooltip */}
                     <div className="absolute -top-14 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-black text-white text-xs py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-200 whitespace-nowrap z-20 shadow-xl border border-slate-800 pointer-events-none">
@@ -130,13 +130,13 @@ const AdminDashboard = () => {
           <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6">Upcoming Events</h2>
             <div className="space-y-4">
-              {events.slice().sort((a,b) => new Date(a.date) - new Date(b.date)).slice(0, 3).map((event) => (
+              {(events || []).slice().sort((a,b) => new Date(a.date || 0) - new Date(b.date || 0)).slice(0, 3).map((event) => (
                 <div key={event.id} className="p-3 border border-slate-100 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-800/30">
                   <div className="flex justify-between items-start mb-1">
                     <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">{event.title}</h4>
                     <span className="text-[9px] bg-blue-100 dark:bg-blue-900/30 text-primary px-1.5 py-0.5 rounded font-bold uppercase">{event.audience}</span>
                   </div>
-                  <p className="text-[10px] text-primary font-bold mt-1 uppercase">{new Date(event.date).toLocaleDateString()} @ {event.start_time}</p>
+                  <p className="text-primary text-[10px] font-bold mt-1 uppercase">{event.date ? new Date(event.date).toLocaleDateString() : 'No Date'} @ {event.start_time || 'N/A'}</p>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2">{event.description}</p>
                 </div>
               ))}
@@ -214,11 +214,11 @@ const AdminDashboard = () => {
           <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6">Announcements</h2>
             <div className="space-y-4">
-              {announcements.slice().reverse().slice(0, 3).map((ann) => (
+              {(announcements || []).slice().reverse().slice(0, 3).map((ann) => (
                 <div key={ann.id} className={`relative pl-4 border-l-2 ${ann.priority === 'urgent' ? 'border-rose-500' : ann.priority === 'important' ? 'border-amber-500' : 'border-primary/30'}`}>
                   <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{ann.title}</h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{ann.content || ann.message}</p>
-                  <p className="text-[9px] text-slate-400 mt-2 uppercase tracking-tighter">{ann.date}</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{ann.content || ann.message || ''}</p>
+                  <p className="text-[9px] text-slate-400 mt-2 uppercase tracking-tighter">{ann.date || ''}</p>
                 </div>
               ))}
             </div>
