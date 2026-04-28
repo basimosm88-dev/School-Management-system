@@ -75,7 +75,7 @@ const StudentDashboard = () => {
                       </div>
                       <div>
                         <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-sm">{grade.subject} - {grade.type}</h4>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Released on {new Date(grade.releaseDate).toLocaleDateString()}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Released on {grade.releaseDate ? new Date(grade.releaseDate).toLocaleDateString() : 'N/A'}</p>
                       </div>
                     </div>
                   </div>
@@ -90,23 +90,23 @@ const StudentDashboard = () => {
           <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6">School Notices</h2>
             <div className="space-y-4">
-              {announcements.filter(a => a.audience === 'all' || a.audience === 'students' || a.audience === `class_${currentUser.classId}`).slice(0, 3).map(ann => (
+              {(announcements || []).filter(a => a.audience === 'all' || a.audience === 'students' || a.audience === `class_${currentUser.classId}`).slice(0, 3).map(ann => (
                 <div key={ann.id} className={`p-3 border-l-4 rounded-r-xl ${ann.priority === 'urgent' ? 'bg-rose-50/50 dark:bg-rose-900/10 border-rose-500' : 'bg-slate-50/50 dark:bg-slate-800/50 border-primary/20'}`}>
                   <h4 className={`text-xs font-bold ${ann.priority === 'urgent' ? 'text-rose-700 dark:text-rose-400' : 'text-slate-800 dark:text-slate-200'}`}>{ann.title}</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{ann.content || ann.message}</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{ann.content || ann.message || ''}</p>
                 </div>
               ))}
               
               <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-6">Upcoming Events</h3>
-              {events.filter(e => e.audience === 'all' || e.audience === 'students' || e.audience === `class_${currentUser.classId}`).slice(0, 2).map(event => (
+              {(events || []).filter(e => e.audience === 'all' || e.audience === 'students' || e.audience === `class_${currentUser.classId}`).slice(0, 2).map(event => (
                 <div key={event.id} className="flex gap-4 p-3 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl">
                   <div className="flex flex-col items-center justify-center w-12 h-12 bg-white dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700">
-                    <span className="text-[10px] font-bold text-primary uppercase">{new Date(event.date).toLocaleString('default', { month: 'short' })}</span>
-                    <span className="text-lg font-bold text-slate-900 dark:text-slate-100">{new Date(event.date).getDate()}</span>
+                    <span className="text-[10px] font-bold text-primary uppercase">{event.date ? new Date(event.date).toLocaleString('default', { month: 'short' }) : 'N/A'}</span>
+                    <span className="text-lg font-bold text-slate-900 dark:text-slate-100">{event.date ? new Date(event.date).getDate() : '-'}</span>
                   </div>
                   <div className="flex-1">
                     <h4 className="text-sm font-bold text-slate-900 dark:text-white">{event.title}</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{event.location}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{event.location || 'N/A'}</p>
                   </div>
                 </div>
               ))}
