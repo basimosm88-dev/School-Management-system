@@ -80,10 +80,10 @@ const EventsPage = ({ role }) => {
                 <div className="flex gap-6">
                   <div className="flex flex-col items-center justify-center w-20 h-20 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group-hover:bg-primary group-hover:border-primary transition-all">
                     <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 group-hover:text-white/70 uppercase">
-                      {new Date(event.date).toLocaleString('default', { month: 'short' })}
+                      {event.date ? new Date(event.date).toLocaleString('default', { month: 'short' }) : 'N/A'}
                     </span>
                     <span className="text-2xl font-black text-slate-900 dark:text-white group-hover:text-white">
-                      {new Date(event.date).getDate()}
+                      {event.date ? new Date(event.date).getDate() : '-'}
                     </span>
                   </div>
                   <div className="flex-1">
@@ -107,7 +107,7 @@ const EventsPage = ({ role }) => {
                            event.audience === 'teachers' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
                            'bg-emerald-50 text-emerald-600 border border-emerald-100'
                          }`}>
-                           {event.audience.replace('_', ' ')}
+                           {(event.audience || 'all').replace('_', ' ')}
                          </span>
                          {role === 'admin' && (
                            <button onClick={() => deleteEvent(event.id)} className="p-2 text-slate-400 hover:text-rose-500 transition-colors">
@@ -142,7 +142,7 @@ const EventsPage = ({ role }) => {
             <div className="grid grid-cols-7 gap-1">
               {Array.from({length: 31}).map((_, i) => {
                 const day = i + 1;
-                const hasEvent = events.some(e => new Date(e.date).getDate() === day);
+                const hasEvent = (events || []).some(e => e.date && new Date(e.date).getDate() === day);
                 return (
                   <div key={i} className={`aspect-square flex items-center justify-center rounded-xl text-xs font-medium cursor-pointer transition-all
                     ${day === new Date().getDate() ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}

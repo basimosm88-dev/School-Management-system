@@ -99,7 +99,7 @@ const AnnouncementsPage = ({ role }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700`}>
-                    To: {ann.audience.replace('_', ' ')}
+                    To: {(ann.audience || 'all').replace('_', ' ')}
                   </span>
                   {role === 'admin' && (
                     <button onClick={() => deleteAnnouncement(ann.id)} className="p-2 text-slate-400 hover:text-rose-500 transition-colors">
