@@ -200,7 +200,20 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-slate-200 dark:bg-slate-800 rounded-full hover:bg-slate-300 dark:hover:bg-slate-700 transition-all;
+    @apply rounded-full transition-all;
+    background-color: theme('colors.slate.200');
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: theme('colors.slate.800');
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: theme('colors.slate.300');
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: theme('colors.slate.700');
   }
 
   /* Typography Utilities */
