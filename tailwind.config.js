@@ -68,24 +68,25 @@ export default {
         gutter: "20px"
       },
       fontFamily: {
-        "headline-sm": ["Inter", "sans-serif"],
-        "label-bold": ["Inter", "sans-serif"],
-        "stat-value": ["Inter", "sans-serif"],
-        "body-sm": ["Inter", "sans-serif"],
-        "body-md": ["Inter", "sans-serif"],
-        "display-bold": ["Inter", "sans-serif"],
-        headline: ["Inter", "sans-serif"],
-        display: ["Inter", "sans-serif"],
-        body: ["Inter", "sans-serif"],
-        label: ["Inter", "sans-serif"]
+        sans: ["Mona Sans", "system-ui", "sans-serif"],
+        display: ["Mona Sans", "system-ui", "sans-serif"],
+        body: ["Mona Sans", "system-ui", "sans-serif"]
       },
       fontSize: {
-        "headline-sm": ["18px", { lineHeight: "24px", fontWeight: "600" }],
-        "label-bold": ["13px", { lineHeight: "18px", fontWeight: "600" }],
-        "stat-value": ["20px", { lineHeight: "28px", fontWeight: "600" }],
-        "body-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }],
-        "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
-        "display-bold": ["24px", { lineHeight: "32px", fontWeight: "600" }]
+        // Base System & Body
+        xs: ["12px", { lineHeight: "1.4", letterSpacing: "0.01em" }],
+        sm: ["13px", { lineHeight: "1.5", letterSpacing: "0.01em" }],
+        base: ["14px", { lineHeight: "1.5", letterSpacing: "0.01em" }],
+        
+        // Headings mapping to standard tailwind classes
+        lg: ["16px", { lineHeight: "1.35", letterSpacing: "-0.01em" }],  // Maps to H4
+        xl: ["18px", { lineHeight: "1.3", letterSpacing: "-0.01em" }],   // Maps to H3
+        "2xl": ["20px", { lineHeight: "1.25", letterSpacing: "-0.01em" }], // Maps to H2
+        "3xl": ["24px", { lineHeight: "1.2", letterSpacing: "-0.01em" }],  // Maps to H1
+
+        // KPI Specific
+        "kpi-sm": ["18px", { lineHeight: "1.3", fontWeight: "600", letterSpacing: "-0.01em" }],
+        "kpi-lg": ["24px", { lineHeight: "1.2", fontWeight: "700", letterSpacing: "-0.01em" }],
       }
     },
   },

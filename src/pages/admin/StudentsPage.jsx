@@ -4,266 +4,373 @@ import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
 
 const StudentsPage = () => {
-  const { students, classes, addStudent, updateStudent, deleteStudent, addNotification } = useData();
-  const { schoolName } = useSettings();
+ const { students, classes, addStudent, updateStudent, deleteStudent, addNotification } = useData();
+ const { schoolName, t } = useSettings();
 
-  // Search & Filter State
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({
-    classId: '',
-    gender: '',
-    status: '',
-    special: '' // noFather, noMother, disabled, refugee
-  });
+ // Search & Filter State
+ const [searchTerm, setSearchTerm] = useState('');
+ const [filters, setFilters] = useState({
+ classId: '',
+ gender: '',
+ status: '',
+ special: '' // noFather, noMother, disabled, refugee
+ });
 
-  // Modal States
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [editingStudent, setEditingStudent] = useState(null);
+ // Modal States
+ const [isFormOpen, setIsFormOpen] = useState(false);
+ const [isProfileOpen, setIsProfileOpen] = useState(false);
+ const [selectedStudent, setSelectedStudent] = useState(null);
+ const [editingStudent, setEditingStudent] = useState(null);
 
-  // Filter Logic
-  const filteredStudents = useMemo(() => {
-    return students.filter(student => {
-      const className = classes.find(c => c.id === student.classId)?.name || '';
-      const matchesSearch =
-        (student.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (student.phone || '').includes(searchTerm) ||
-        className.toLowerCase().includes(searchTerm.toLowerCase());
+ // Navigation State
+ const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
+ const [selectedClassId, setSelectedClassId] = useState(null);
+ const [isLoading, setIsLoading] = useState(false);
+ const { currentUser } = useData();
+ const userRole = currentUser?.role || 'admin';
 
-      const matchesClass = !filters.classId || student.classId === parseInt(filters.classId);
-      const matchesGender = !filters.gender || student.gender === filters.gender;
-      const matchesStatus = !filters.status || student.status === filters.status;
+ // Filter Logic
+ const filteredStudents = useMemo(() => {
+ return students.filter(student => {
+ // Primary filter by selected class
+ if (selectedClassId && student.classId !== parseInt(selectedClassId)) return false;
 
-      let matchesSpecial = true;
-      if (filters.special === 'noFather') matchesSpecial = student.parentStatus === 'No Father';
-      else if (filters.special === 'noMother') matchesSpecial = student.parentStatus === 'No Mother';
-      else if (filters.special === 'disabled') matchesSpecial = student.specialConditions?.disability;
-      else if (filters.special === 'refugee') matchesSpecial = student.specialConditions?.refugee;
+ const className = classes.find(c => c.id === student.classId)?.name || '';
+ const matchesSearch =
+ (student.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+ (student.phone || '').includes(searchTerm) ||
+ className.toLowerCase().includes(searchTerm.toLowerCase());
 
-      return matchesSearch && matchesClass && matchesGender && matchesStatus && matchesSpecial;
-    });
-  }, [students, searchTerm, filters, classes]);
+ const matchesClass = !filters.classId || student.classId === parseInt(filters.classId);
+ const matchesGender = !filters.gender || student.gender === filters.gender;
+ const matchesStatus = !filters.status || student.status === filters.status;
 
-  // Handlers
-  const handleAdd = () => {
-    setEditingStudent(null);
-    setIsFormOpen(true);
-  };
+ let matchesSpecial = true;
+ if (filters.special === 'noFather') matchesSpecial = student.parentStatus === 'No Father';
+ else if (filters.special === 'noMother') matchesSpecial = student.parentStatus === 'No Mother';
+ else if (filters.special === 'disabled') matchesSpecial = student.specialConditions?.disability;
+ else if (filters.special === 'refugee') matchesSpecial = student.specialConditions?.refugee;
 
-  const handleEdit = (student, e) => {
-    e.stopPropagation();
-    setEditingStudent(student);
-    setIsFormOpen(true);
-  };
+ return matchesSearch && matchesClass && matchesGender && matchesStatus && matchesSpecial;
+ });
+ }, [students, searchTerm, filters, classes, selectedClassId]);
 
-  const handleDelete = (id, e) => {
-    e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this student?')) {
-      deleteStudent(id);
-      addNotification('Student deleted successfully', 'success');
-    }
-  };
+ const availableClasses = useMemo(() => {
+ if (userRole === 'admin') return classes;
+ if (userRole === 'teacher') {
+ const assignedIds = currentUser?.assignedClasses || [];
+ return classes.filter(c => assignedIds.includes(c.id));
+ }
+ return classes;
+ }, [classes, userRole, currentUser]);
 
-  const handleViewProfile = (student) => {
-    setSelectedStudent(student);
-    setIsProfileOpen(true);
-  };
+ // Handlers
+ const handleAdd = () => {
+ setEditingStudent(null);
+ setIsFormOpen(true);
+ };
 
-  const handleSave = (studentData) => {
-    if (editingStudent) {
-      updateStudent(editingStudent.id, studentData);
-      addNotification('Student updated successfully', 'success');
-    } else {
-      addStudent(studentData);
-      addNotification('Student added successfully', 'success');
-    }
-    setIsFormOpen(false);
-  };
+ const handleEdit = (student, e) => {
+ e.stopPropagation();
+ setEditingStudent(student);
+ setIsFormOpen(true);
+ };
 
-  return (
-    <PageLayout role="admin" title="Students">
-      <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        {/* 1. TOP CONTROL BAR */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm flex flex-wrap items-center justify-between gap-4 transition-colors">
-          <div className="flex items-center gap-4 flex-1 min-w-[300px]">
-            <div className="relative flex-1">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-              <input
-                type="text"
-                placeholder="Search by name, phone, or class..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
-              />
-            </div>
+ const handleDelete = (id, e) => {
+ e.stopPropagation();
+ if (window.confirm('Are you sure you want to delete this student?')) {
+ deleteStudent(id);
+ addNotification('Student deleted successfully', 'success');
+ }
+ };
 
-            <div className="flex gap-2">
-              <select
-                value={filters.classId}
-                onChange={(e) => setFilters({ ...filters, classId: e.target.value })}
-                className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer"
-              >
-                <option value="">All Classes</option>
-                {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-              <select
-                value={filters.gender}
-                onChange={(e) => setFilters({ ...filters, gender: e.target.value })}
-                className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer"
-              >
-                <option value="">Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-              <select
-                value={filters.special}
-                onChange={(e) => setFilters({ ...filters, special: e.target.value })}
-                className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer"
-              >
-                <option value="">Special Cases</option>
-                <option value="noFather">No Father</option>
-                <option value="noMother">No Mother</option>
-                <option value="disabled">Disabled</option>
-                <option value="refugee">Refugee</option>
-              </select>
-            </div>
-          </div>
+ const handleViewProfile = (student) => {
+ setSelectedStudent(student);
+ setIsProfileOpen(true);
+ };
 
-          <button
-            onClick={handleAdd}
-            className="bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm flex items-center gap-2"
-          >
-            <span className="material-symbols-outlined text-[20px]">person_add</span>
-            Add Student
-          </button>
-        </div>
+ const handleSave = (studentData) => {
+ if (editingStudent) {
+ updateStudent(editingStudent.id, studentData);
+ addNotification('Student updated successfully', 'success');
+ } else {
+ addStudent(studentData);
+ addNotification('Student added successfully', 'success');
+ }
+ setIsFormOpen(false);
+ };
 
-        {/* 2. STUDENTS TABLE */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden transition-colors">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-100 dark:border-slate-800">
-                <tr>
-                  <th className="px-6 py-4">Full Name</th>
-                  <th className="px-6 py-4">Student'S ID</th>
-                  <th className="px-6 py-4">Phone Number</th>
-                  <th className="px-6 py-4">Class</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {filteredStudents.map(student => (
-                  <tr
-                    key={student.id}
-                    className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-slate-800 dark:text-slate-200">{student.name}</span>
-                        <span className="text-[11px] text-slate-400 uppercase font-bold tracking-tight">{student.gender}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-[13px] text-slate-500 dark:text-slate-400">{student.id}</span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigator.clipboard.writeText(student.id.toString());
-                            addNotification('ID copied to clipboard', 'info');
-                          }}
-                          className="p-1 text-slate-400 hover:text-primary hover:bg-primary/5 rounded transition-all opacity-0 group-hover:opacity-100"
-                          title="Copy ID"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">content_copy</span>
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{student.phone || 'N/A'}</td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
-                      {classes.find(c => c.id === student.classId)?.name || 'Unassigned'}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${student.status === 'Inactive'
-                          ? 'bg-slate-100 text-slate-500 dark:bg-slate-800'
-                          : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'
-                        }`}>
-                        {student.status || 'Active'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right" onClick={e => e.stopPropagation()}>
-                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => handleViewProfile(student)}
-                          className="p-1.5 text-slate-400 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
-                          title="View Profile"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">visibility</span>
-                        </button>
-                        <button
-                          onClick={(e) => handleEdit(student, e)}
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
-                          title="Edit"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
-                        </button>
-                        <button
-                          onClick={(e) => handleDelete(student.id, e)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all"
-                          title="Delete"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {filteredStudents.length === 0 && (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-12 text-center text-slate-400">
-                      <span className="material-symbols-outlined text-4xl mb-2 opacity-30">person_off</span>
-                      <p>No students found matching your search.</p>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+ const handleSelectClass = (classId) => {
+ setIsLoading(true);
+ setTimeout(() => {
+ setSelectedClassId(classId);
+ setViewMode('table');
+ setIsLoading(false);
+ }, 400);
+ };
 
-      {/* 3. STUDENT PROFILE VIEW */}
-      {isProfileOpen && selectedStudent && (
-        <StudentProfile
-          student={selectedStudent}
-          onClose={() => setIsProfileOpen(false)}
-          classes={classes}
-          schoolName={schoolName}
-        />
-      )}
+ const goBack = () => {
+ setSelectedClassId(null);
+ setViewMode('grid');
+ };
 
-      {/* 4. ADD/EDIT STUDENT FORM */}
-      {isFormOpen && (
-        <StudentForm
-          student={editingStudent}
-          onClose={() => setIsFormOpen(false)}
-          onSave={handleSave}
-          classes={classes}
-        />
-      )}
+ if (isLoading) {
+ return (
+ <PageLayout role={userRole} title={t('students')}>
+ <div className="flex flex-col items-center justify-center min-h-[400px]">
+ <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+ <p className="mt-4 text-slate-500 font-bold animate-pulse">Loading class data...</p>
+ </div>
+ </PageLayout>
+ );
+ }
 
-      {/* 5. HIDDEN PRINTABLE COMPONENT */}
-      {selectedStudent && (
-        <PrintableStudentProfile
-          student={selectedStudent}
-          classes={classes}
-          schoolName={schoolName}
-        />
-      )}
-    </PageLayout>
-  );
+ return (
+ <PageLayout role={userRole} title={t('students')}>
+ <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+ 
+ {/* 1. GRID VIEW — CLASS CARDS */}
+ {viewMode === 'grid' && (
+ <>
+ <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+ <h2 className="text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">{t('students')}</h2>
+ <p className="text-sm font-medium text-slate-500 mt-1">{t('studentsSubtitle')}</p>
+ </div>
+
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+ {availableClasses.map(c => {
+ const classStudents = students.filter(s => s.classId === c.id);
+ return (
+ <div 
+ key={c.id} 
+ onClick={() => handleSelectClass(c.id)}
+ className="group bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 transition-all cursor-pointer relative overflow-hidden"
+ >
+ <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -mr-10 -mt-10 group-hover:scale-110 transition-transform"></div>
+ <div className="relative z-10">
+ <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+ <span className="material-symbols-outlined text-2xl font-bold">school</span>
+ </div>
+ <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">{c.name}</h3>
+ <p className="text-xs font-bold text-slate-500 mb-6">{classStudents.length} Students registered</p>
+ 
+ <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+ <span className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+ View Students
+ <span className="material-symbols-outlined text-lg">arrow_forward</span>
+ </span>
+ </div>
+ </div>
+ </div>
+ );
+ })}
+ </div>
+
+ {availableClasses.length === 0 && (
+ <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+ <span className="material-symbols-outlined text-6xl text-slate-200 mb-4">class</span>
+ <p className="text-slate-500 font-bold">No classes available.</p>
+ </div>
+ )}
+ </>
+ )}
+
+ {/* 2. TABLE VIEW — STUDENTS LIST */}
+ {viewMode === 'table' && (
+ <>
+ {/* Breadcrumbs & Navigation */}
+ <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+ <div className="flex items-center gap-2 overflow-hidden">
+ <button 
+ onClick={goBack}
+ className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-500 transition-colors"
+ >
+ <span className="material-symbols-outlined">arrow_back</span>
+ </button>
+ <div className="flex items-center text-sm font-bold truncate">
+ <span className="text-slate-400 cursor-pointer hover:text-primary" onClick={goBack}>{t('students')}</span>
+ <span className="material-symbols-outlined text-slate-300 text-xl mx-1">chevron_right</span>
+ <span className="text-slate-900 dark:text-white truncate">
+ {classes.find(c => c.id === parseInt(selectedClassId))?.name}
+ </span>
+ </div>
+ </div>
+ </div>
+
+ {/* TOP CONTROL BAR */}
+ <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm flex flex-wrap items-center justify-between gap-4 transition-colors">
+ <div className="flex items-center gap-4 flex-1 min-w-[300px]">
+ <div className="relative flex-1">
+ <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+ <input
+ type="text"
+ placeholder="Search students in this class..."
+ value={searchTerm}
+ onChange={(e) => setSearchTerm(e.target.value)}
+ className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200 font-bold"
+ />
+ </div>
+
+ <div className="flex gap-2">
+ <select
+ value={filters.gender}
+ onChange={(e) => setFilters({ ...filters, gender: e.target.value })}
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer font-bold"
+ >
+ <option value="">Gender</option>
+ <option value="Male">Male</option>
+ <option value="Female">Female</option>
+ </select>
+ <select
+ value={filters.special}
+ onChange={(e) => setFilters({ ...filters, special: e.target.value })}
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer font-bold"
+ >
+ <option value="">Special Cases</option>
+ <option value="noFather">No Father</option>
+ <option value="noMother">No Mother</option>
+ <option value="disabled">Disabled</option>
+ <option value="refugee">Refugee</option>
+ </select>
+ </div>
+ </div>
+
+ <button
+ onClick={handleAdd}
+ className="bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all shadow-md shadow-primary/20 flex items-center gap-2 text-button"
+ >
+ <span className="material-symbols-outlined text-2xl">person_add</span>
+ Add Student
+ </button>
+ </div>
+
+ {/* STUDENTS TABLE */}
+ <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden transition-colors table-container">
+ <div className="overflow-x-auto">
+ <table className="w-full text-left">
+ <thead>
+ <tr>
+ <th>Full Name</th>
+ <th>Student ID</th>
+ <th>Phone Number</th>
+ <th>Class</th>
+ <th>Status</th>
+ <th className="text-right">Actions</th>
+ </tr>
+ </thead>
+ <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+ {filteredStudents.map(student => (
+ <tr
+ key={student.id}
+ className="table-row-hover group"
+ >
+ <td className="px-6 py-4">
+ <div className="flex flex-col">
+ <span className="font-semibold text-slate-800 dark:text-slate-200">{student.name}</span>
+ <span className="text-xs text-slate-400 font-bold tracking-tight">{student.gender}</span>
+ </div>
+ </td>
+ <td className="px-6 py-4">
+ <div className="flex items-center gap-2">
+ <span className="font-mono text-sm text-slate-500 dark:text-slate-400">{student.id}</span>
+ <button
+ onClick={(e) => {
+ e.stopPropagation();
+ navigator.clipboard.writeText(student.id.toString());
+ addNotification('ID copied to clipboard', 'info');
+ }}
+ className="p-1 text-slate-400 hover:text-primary hover:bg-primary/5 rounded transition-all opacity-0 group-hover:opacity-100"
+ title="Copy ID"
+ >
+ <span className="material-symbols-outlined text-lg">content_copy</span>
+ </button>
+ </div>
+ </td>
+ <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{student.phone || 'N/A'}</td>
+ <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
+ {classes.find(c => c.id === student.classId)?.name || 'Unassigned'}
+ </td>
+ <td className="px-6 py-4">
+ <span className={`px-2 py-1 rounded text-xs font-bold ${student.status === 'Inactive'
+ ? 'bg-slate-100 text-slate-500 dark:bg-slate-800'
+ : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'
+ }`}>
+ {student.status || 'Active'}
+ </span>
+ </td>
+ <td className="px-6 py-4 text-right" onClick={e => e.stopPropagation()}>
+ <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+ <button
+ onClick={() => handleViewProfile(student)}
+ className="p-1.5 text-slate-400 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
+ title="View Profile"
+ >
+ <span className="material-symbols-outlined text-xl">visibility</span>
+ </button>
+ <button
+ onClick={(e) => handleEdit(student, e)}
+ className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
+ title="Edit"
+ >
+ <span className="material-symbols-outlined text-xl">edit</span>
+ </button>
+ <button
+ onClick={(e) => handleDelete(student.id, e)}
+ className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all"
+ title="Delete"
+ >
+ <span className="material-symbols-outlined text-xl">delete</span>
+ </button>
+ </div>
+ </td>
+ </tr>
+ ))}
+ {filteredStudents.length === 0 && (
+ <tr>
+ <td colSpan="6" className="px-6 py-20 text-center text-slate-400">
+ <span className="material-symbols-outlined text-5xl mb-3 opacity-20">person_off</span>
+ <p className="font-bold">No students found in this class.</p>
+ </td>
+ </tr>
+ )}
+ </tbody>
+ </table>
+ </div>
+ </div>
+ </>
+ )}
+ </div>
+
+ {/* 3. STUDENT PROFILE VIEW */}
+ {isProfileOpen && selectedStudent && (
+ <StudentProfile
+ student={selectedStudent}
+ onClose={() => setIsProfileOpen(false)}
+ classes={classes}
+ schoolName={schoolName}
+ />
+ )}
+
+ {/* 4. ADD/EDIT STUDENT FORM */}
+ {isFormOpen && (
+ <StudentForm
+ student={editingStudent}
+ onClose={() => setIsFormOpen(false)}
+ onSave={handleSave}
+ classes={classes}
+ />
+ )}
+
+ {/* 5. HIDDEN PRINTABLE COMPONENT */}
+ {selectedStudent && (
+ <PrintableStudentProfile
+ student={selectedStudent}
+ classes={classes}
+ schoolName={schoolName}
+ />
+ )}
+ </PageLayout>
+ );
 };
 
 /**
@@ -271,230 +378,232 @@ const StudentsPage = () => {
  * Structured into 8 Sections as requested.
  */
 const StudentForm = ({ student, onClose, onSave, classes }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    gender: 'Male',
-    birthDate: '',
-    birthPlace: '',
-    phone: '',
-    motherName: '',
-    parentStatus: 'Both',
-    address: { country: 'Somalia', state: '', city: '', neighborhood: '', fullAddress: '' },
-    specialConditions: { disability: false, refugee: false },
-    responsiblePerson: { name: '', phone1: '', phone2: '' },
-    classId: '',
-    registrationDate: new Date().toISOString().split('T')[0],
-    registrationType: 'Exam',
-    previousSchool: '',
-    status: 'Active',
-    notes: '',
-    ...student,
-    address: { country: 'Somalia', state: '', city: '', neighborhood: '', fullAddress: '', ...(student?.address || {}) },
-    specialConditions: { disability: false, refugee: false, ...(student?.specialConditions || {}) },
-    responsiblePerson: { name: '', phone1: '', phone2: '', ...(student?.responsiblePerson || {}) }
-  });
+ const [formData, setFormData] = useState({
+ name: '',
+ gender: 'Male',
+ birthDate: '',
+ birthPlace: '',
+ phone: '',
+ motherName: '',
+ parentStatus: 'Both',
+ address: { country: 'Somalia', state: '', city: '', neighborhood: '', fullAddress: '' },
+ specialConditions: { disability: false, refugee: false },
+ responsiblePerson: { name: '', phone1: '', phone2: '' },
+ classId: '',
+ registrationDate: new Date().toISOString().split('T')[0],
+ registrationType: 'Exam',
+ previousSchool: '',
+ status: 'Active',
+ notes: '',
+ ...student,
+ address: { country: 'Somalia', state: '', city: '', neighborhood: '', fullAddress: '', ...(student?.address || {}) },
+ specialConditions: { disability: false, refugee: false, other: '', ...(student?.specialConditions || {}) },
+ responsiblePerson: { name: '', phone1: '', phone2: '', ...(student?.responsiblePerson || {}) }
+ });
 
-  const handleChange = (path, value) => {
-    if (path.includes('.')) {
-      const parts = path.split('.');
-      if (parts.length === 2) {
-        setFormData(prev => ({
-          ...prev,
-          [parts[0]]: { ...prev[parts[0]], [parts[1]]: value }
-        }));
-      }
-    } else {
-      setFormData(prev => ({ ...prev, [path]: value }));
-    }
-  };
+ const handleChange = (path, value) => {
+ if (path.includes('.')) {
+ const parts = path.split('.');
+ if (parts.length === 2) {
+ setFormData(prev => ({
+ ...prev,
+ [parts[0]]: { ...prev[parts[0]], [parts[1]]: value }
+ }));
+ }
+ } else {
+ setFormData(prev => ({ ...prev, [path]: value }));
+ }
+ };
 
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-300">
-      <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-4xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto animate-in zoom-in-95 duration-300">
-        <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10 rounded-t-2xl">
-          <h3 className="font-bold text-slate-900 dark:text-slate-100 text-xl flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary">person_add</span>
-            {student ? 'Edit Student Details' : 'Register New Student'}
-          </h3>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all">
-            <span className="material-symbols-outlined">close</span>
-          </button>
-        </div>
+ return (
+ <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-4 bg-slate-900/80 dark:bg-black/80 backdrop-blur-md overflow-y-auto animate-in fade-in duration-300">
+ <form 
+ onSubmit={(e) => { e.preventDefault(); onSave(formData); }}
+ className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto animate-in zoom-in-95 duration-300 flex flex-col max-h-[95vh]"
+ >
+ <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10 rounded-t-3xl shrink-0">
+ <h3 className="font-bold text-slate-900 dark:text-slate-100 text-xl flex items-center gap-2">
+ <span className="material-symbols-outlined text-primary">person_add</span>
+ {student ? 'Edit Student Details' : 'Register New Student'}
+ </h3>
+ <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all">
+ <span className="material-symbols-outlined">close</span>
+ </button>
+ </div>
 
-        <div className="p-8 max-h-[75vh] overflow-y-auto space-y-12">
-          {/* SECTION 1 — Basic Information */}
-          <section>
-            <FormSectionHeader icon="person" title="Section 1: Basic Information" />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="col-span-full lg:col-span-1">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Full Name (4 Names)</label>
-                <input type="text" value={formData.name || ''} onChange={e => handleChange('name', e.target.value)} className="form-input-custom" placeholder="First Second Third Surname" />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Gender</label>
-                <div className="flex gap-4 mt-2">
-                  {['Male', 'Female'].map(g => (
-                    <label key={g} className="flex items-center gap-2 cursor-pointer group">
-                      <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={e => handleChange('gender', e.target.value)} className="w-4 h-4 text-primary focus:ring-primary/20" />
-                      <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{g}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Birth Date</label>
-                <input type="date" value={formData.birthDate || ''} onChange={e => handleChange('birthDate', e.target.value)} className="form-input-custom" />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Birth Place</label>
-                <input type="text" value={formData.birthPlace || ''} onChange={e => handleChange('birthPlace', e.target.value)} className="form-input-custom" placeholder="City, Country" />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Phone Number</label>
-                <input type="text" value={formData.phone || ''} onChange={e => handleChange('phone', e.target.value)} className="form-input-custom" placeholder="+123..." />
-              </div>
-            </div>
-          </section>
+ <div className="p-4 md:p-8 max-h-[75vh] overflow-y-auto space-y-8 md:space-y-12">
+ {/* SECTION 1 — Basic Information */}
+ <section>
+ <FormSectionHeader icon="person" title="Section 1: Basic Information" />
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ <div className="col-span-full lg:col-span-1">
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Full Name (4 Names)</label>
+ <input type="text" value={formData.name || ''} onChange={e => handleChange('name', e.target.value)} className="form-input-custom" placeholder="First Second Third Surname" />
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Gender</label>
+ <div className="flex gap-4 mt-2">
+ {['Male', 'Female'].map(g => (
+ <label key={g} className="flex items-center gap-2 cursor-pointer group">
+ <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={e => handleChange('gender', e.target.value)} className="w-4 h-4 text-primary focus:ring-primary/20" />
+ <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{g}</span>
+ </label>
+ ))}
+ </div>
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Birth Date</label>
+ <input type="date" value={formData.birthDate || ''} onChange={e => handleChange('birthDate', e.target.value)} className="form-input-custom" />
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Birth Place</label>
+ <input type="text" value={formData.birthPlace || ''} onChange={e => handleChange('birthPlace', e.target.value)} className="form-input-custom" placeholder="City, Country" />
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Phone Number</label>
+ <input type="text" value={formData.phone || ''} onChange={e => handleChange('phone', e.target.value)} className="form-input-custom" placeholder="+123..." />
+ </div>
+ </div>
+ </section>
 
-          {/* SECTION 2 — Family Information */}
-          <section>
-            <FormSectionHeader icon="family_restroom" title="Section 2: Family Information" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Mother Full Name</label>
-                <input type="text" value={formData.motherName || ''} onChange={e => handleChange('motherName', e.target.value)} className="form-input-custom" />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Parent Status</label>
-                <select value={formData.parentStatus} onChange={e => handleChange('parentStatus', e.target.value)} className="form-input-custom cursor-pointer">
-                  <option value="Both">Both Parents Alive</option>
-                  <option value="No Father">No Father (Orphan)</option>
-                  <option value="No Mother">No Mother (Orphan)</option>
-                </select>
-              </div>
-            </div>
-          </section>
+ {/* SECTION 2 — Family Information */}
+ <section>
+ <FormSectionHeader icon="family_restroom" title="Section 2: Family Information" />
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Mother Full Name</label>
+ <input type="text" value={formData.motherName || ''} onChange={e => handleChange('motherName', e.target.value)} className="form-input-custom" />
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Parent Status</label>
+ <select value={formData.parentStatus} onChange={e => handleChange('parentStatus', e.target.value)} className="form-input-custom cursor-pointer">
+ <option value="Both">Both Parents Alive</option>
+ <option value="No Father">No Father (Orphan)</option>
+ <option value="No Mother">No Mother (Orphan)</option>
+ </select>
+ </div>
+ </div>
+ </section>
 
-          {/* SECTION 3 — Address */}
-          <section>
-            <FormSectionHeader icon="location_on" title="Section 3: Address" />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Country</label>
-                <input type="text" value={formData.address?.country || ''} onChange={e => handleChange('address.country', e.target.value)} className="form-input-custom" />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">State</label>
-                <input type="text" value={formData.address?.state || ''} onChange={e => handleChange('address.state', e.target.value)} className="form-input-custom" />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">City / Village</label>
-                <input type="text" value={formData.address?.city || ''} onChange={e => handleChange('address.city', e.target.value)} className="form-input-custom" />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Neighborhood</label>
-                <input type="text" value={formData.address?.neighborhood || ''} onChange={e => handleChange('address.neighborhood', e.target.value)} className="form-input-custom" />
-              </div>
-              <div className="col-span-full">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Full Address Details</label>
-                <textarea rows="2" value={formData.address?.fullAddress || ''} onChange={e => handleChange('address.fullAddress', e.target.value)} className="form-input-custom" placeholder="Street, Building, Floor..."></textarea>
-              </div>
-            </div>
-          </section>
+ {/* SECTION 3 — Address */}
+ <section>
+ <FormSectionHeader icon="location_on" title="Section 3: Address" />
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Country</label>
+ <input type="text" value={formData.address?.country || ''} onChange={e => handleChange('address.country', e.target.value)} className="form-input-custom" />
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">State</label>
+ <input type="text" value={formData.address?.state || ''} onChange={e => handleChange('address.state', e.target.value)} className="form-input-custom" />
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">City / Village</label>
+ <input type="text" value={formData.address?.city || ''} onChange={e => handleChange('address.city', e.target.value)} className="form-input-custom" />
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Neighborhood</label>
+ <input type="text" value={formData.address?.neighborhood || ''} onChange={e => handleChange('address.neighborhood', e.target.value)} className="form-input-custom" />
+ </div>
+ <div className="col-span-full">
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Full Address Details</label>
+ <textarea rows="2" value={formData.address?.fullAddress || ''} onChange={e => handleChange('address.fullAddress', e.target.value)} className="form-input-custom" placeholder="Street, Building, Floor..."></textarea>
+ </div>
+ </div>
+ </section>
 
-          {/* SECTION 4 — Academic Info */}
-          <section>
-            <FormSectionHeader icon="school" title="Section 4: Academic Info" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Class</label>
-                <select value={formData.classId || ''} onChange={e => handleChange('classId', e.target.value ? parseInt(e.target.value) : '')} className="form-input-custom cursor-pointer">
-                  <option value="">Select Class</option>
-                  {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Registration Date</label>
-                <input type="date" value={formData.registrationDate || ''} onChange={e => handleChange('registrationDate', e.target.value)} className="form-input-custom" />
-              </div>
-            </div>
-          </section>
+ {/* SECTION 4 — Academic Info */}
+ <section>
+ <FormSectionHeader icon="school" title="Section 4: Academic Info" />
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Class</label>
+ <select value={formData.classId || ''} onChange={e => handleChange('classId', e.target.value ? parseInt(e.target.value) : '')} className="form-input-custom cursor-pointer">
+ <option value="">Select Class</option>
+ {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+ </select>
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Registration Date</label>
+ <input type="date" value={formData.registrationDate || ''} onChange={e => handleChange('registrationDate', e.target.value)} className="form-input-custom" />
+ </div>
+ </div>
+ </section>
 
-          {/* SECTION 5 — Special Conditions */}
-          <section>
-            <FormSectionHeader icon="emergency_home" title="Section 5: Special Conditions" />
-            <div className="flex flex-wrap gap-4">
-              <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all flex-1 min-w-[200px]">
-                <input type="checkbox" checked={formData.specialConditions.disability} onChange={e => handleChange('specialConditions.disability', e.target.checked)} className="w-5 h-5 text-primary rounded border-slate-300" />
-                <div>
-                  <span className="block text-sm font-bold text-slate-700 dark:text-slate-200">Disability</span>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Physical or learning</span>
-                </div>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all flex-1 min-w-[200px]">
-                <input type="checkbox" checked={formData.specialConditions.refugee} onChange={e => handleChange('specialConditions.refugee', e.target.checked)} className="w-5 h-5 text-primary rounded border-slate-300" />
-                <div>
-                  <span className="block text-sm font-bold text-slate-700 dark:text-slate-200">Refugee</span>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">International or internal</span>
-                </div>
-              </label>
-            </div>
-          </section>
+ {/* SECTION 5 — Special Conditions */}
+ <section>
+ <FormSectionHeader icon="emergency_home" title="Section 5: Special Conditions" />
+ <div className="flex flex-wrap gap-4">
+ <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all flex-1 min-w-[200px]">
+ <input type="checkbox" checked={formData.specialConditions.disability} onChange={e => handleChange('specialConditions.disability', e.target.checked)} className="w-5 h-5 text-primary rounded border-slate-300" />
+ <div>
+ <span className="block text-sm font-bold text-slate-700 dark:text-slate-200">Disability</span>
+ <span className="text-xs text-slate-400 font-bold ">Physical or learning</span>
+ </div>
+ </label>
+ <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all flex-1 min-w-[200px]">
+ <input type="checkbox" checked={formData.specialConditions.refugee} onChange={e => handleChange('specialConditions.refugee', e.target.checked)} className="w-5 h-5 text-primary rounded border-slate-300" />
+ <div>
+ <span className="block text-sm font-bold text-slate-700 dark:text-slate-200">Refugee</span>
+ <span className="text-xs text-slate-400 font-bold ">International or internal</span>
+ </div>
+ </label>
+ </div>
+ </section>
 
-          {/* SECTION 6 — Responsible Person */}
-          <section>
-            <FormSectionHeader icon="contact_phone" title="Section 6: Responsible Person" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Full Name</label>
-                <input type="text" value={formData.responsiblePerson.name} onChange={e => handleChange('responsiblePerson.name', e.target.value)} className="form-input-custom" />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Phone Number 1 (Required)</label>
-                <input type="text" value={formData.responsiblePerson.phone1} onChange={e => handleChange('responsiblePerson.phone1', e.target.value)} className="form-input-custom" />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Phone Number 2 (Optional)</label>
-                <input type="text" value={formData.responsiblePerson.phone2} onChange={e => handleChange('responsiblePerson.phone2', e.target.value)} className="form-input-custom" />
-              </div>
-            </div>
-          </section>
+ {/* SECTION 6 — Responsible Person */}
+ <section>
+ <FormSectionHeader icon="contact_phone" title="Section 6: Responsible Person" />
+ <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Full Name</label>
+ <input type="text" value={formData.responsiblePerson.name} onChange={e => handleChange('responsiblePerson.name', e.target.value)} className="form-input-custom" />
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Phone Number 1 (Required)</label>
+ <input type="text" value={formData.responsiblePerson.phone1} onChange={e => handleChange('responsiblePerson.phone1', e.target.value)} className="form-input-custom" />
+ </div>
+ <div>
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Phone Number 2 (Optional)</label>
+ <input type="text" value={formData.responsiblePerson.phone2} onChange={e => handleChange('responsiblePerson.phone2', e.target.value)} className="form-input-custom" />
+ </div>
+ </div>
+ </section>
 
-          {/* SECTION 7 — Registration Type */}
-          <section>
-            <FormSectionHeader icon="app_registration" title="Section 7: Registration Type" />
-            <div className="space-y-6">
-              <div className="flex gap-8">
-                {['By Exam', 'Transfer from another school'].map(t => (
-                  <label key={t} className="flex items-center gap-3 cursor-pointer group">
-                    <input type="radio" name="regType" value={t} checked={formData.registrationType === t} onChange={e => handleChange('registrationType', e.target.value)} className="w-5 h-5 text-primary focus:ring-primary/20" />
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{t}</span>
-                  </label>
-                ))}
-              </div>
-              {formData.registrationType === 'Transfer from another school' && (
-                <div className="animate-in slide-in-from-top-2 duration-300 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block">Previous School Name</label>
-                  <input type="text" value={formData.previousSchool || ''} onChange={e => handleChange('previousSchool', e.target.value)} className="form-input-custom md:w-1/2" placeholder="Enter full name of previous school" />
-                </div>
-              )}
-            </div>
-          </section>
+ {/* SECTION 7 — Registration Type */}
+ <section>
+ <FormSectionHeader icon="app_registration" title="Section 7: Registration Type" />
+ <div className="space-y-6">
+ <div className="flex gap-8">
+ {['By Exam', 'Transfer from another school'].map(t => (
+ <label key={t} className="flex items-center gap-3 cursor-pointer group">
+ <input type="radio" name="regType" value={t} checked={formData.registrationType === t} onChange={e => handleChange('registrationType', e.target.value)} className="w-5 h-5 text-primary focus:ring-primary/20" />
+ <span className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{t}</span>
+ </label>
+ ))}
+ </div>
+ {formData.registrationType === 'Transfer from another school' && (
+ <div className="animate-in slide-in-from-top-2 duration-300 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800">
+ <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Previous School Name</label>
+ <input type="text" value={formData.previousSchool || ''} onChange={e => handleChange('previousSchool', e.target.value)} className="form-input-custom md:w-1/2" placeholder="Enter full name of previous school" />
+ </div>
+ )}
+ </div>
+ </section>
 
-          {/* SECTION 8 — Additional Details */}
-          <section>
-            <FormSectionHeader icon="notes" title="Section 8: Additional Details" />
-            <textarea rows="4" value={formData.notes || ''} onChange={e => handleChange('notes', e.target.value)} className="form-input-custom" placeholder="Any additional notes about the student's behavior, health, or academic history..."></textarea>
-          </section>
-        </div>
-
-        <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex justify-end gap-3 rounded-b-2xl sticky bottom-0">
-          <button onClick={onClose} className="px-6 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all">Cancel</button>
-          <button onClick={() => onSave(formData)} className="px-8 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save Student Record</button>
-        </div>
-      </div>
-    </div>
-  );
+ {/* SECTION 8 — Additional Details */}
+ <section>
+ <FormSectionHeader icon="notes" title="Section 8: Additional Details" />
+ <textarea rows="4" value={formData.notes || ''} onChange={e => handleChange('notes', e.target.value)} className="form-input-custom" placeholder="Any additional notes about the student's behavior, health, or academic history..."></textarea>
+ </section>
+ </div>
+ <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl shrink-0">
+ <button type="button" onClick={onClose} className="px-6 py-2.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all">Cancel</button>
+ <button type="submit" className="px-8 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save student record</button>
+ </div>
+ </form>
+ </div>
+ );
 };
 
 /**
@@ -502,214 +611,214 @@ const StudentForm = ({ student, onClose, onSave, classes }) => {
  * Structured with Sections A-H as requested.
  */
 const StudentProfile = ({ student, onClose, classes, schoolName }) => {
-  const handlePrint = () => {
-    window.print();
-  };
+ const handlePrint = () => {
+ window.print();
+ };
 
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md overflow-y-auto animate-in fade-in duration-300">
-      <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-5xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto overflow-hidden animate-in zoom-in-95 duration-400">
-        <div className="flex justify-between items-center p-8 border-b border-slate-100 dark:border-slate-800 bg-primary text-white relative">
-          <div className="flex items-center gap-6 relative z-10">
-            <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-4xl font-bold shadow-inner">
-              {student.name ? student.name[0] : 'S'}
-            </div>
-            <div>
-              <h3 className="font-bold text-3xl mb-1">{student.name}</h3>
-              <div className="flex flex-wrap gap-3 mt-2">
-                <span className="flex items-center gap-1 text-white/80 text-xs font-bold uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
-                  <span className="material-symbols-outlined text-[14px]">id_card</span>
-                  ID: {student.id}
-                </span>
-                <span className="flex items-center gap-1 text-white/80 text-xs font-bold uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
-                  <span className="material-symbols-outlined text-[14px]">school</span>
-                  {classes.find(c => c.id === student.classId)?.name}
-                </span>
-                <span className="flex items-center gap-1 text-white/80 text-xs font-bold uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
-                  <span className="material-symbols-outlined text-[14px]">phone</span>
-                  {student.phone}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-2 relative z-10">
-            <button
-              onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all font-semibold text-sm"
-            >
-              <span className="material-symbols-outlined text-[20px]">print</span>
-              Print Profile
-            </button>
-            <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all">
-              <span className="material-symbols-outlined text-white">close</span>
-            </button>
-          </div>
-          {/* Subtle background decoration */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
-        </div>
+ return (
+ <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md overflow-y-auto animate-in fade-in duration-300">
+ <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-5xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto overflow-hidden animate-in zoom-in-95 duration-400">
+ <div className="flex justify-between items-center p-8 border-b border-slate-100 dark:border-slate-800 bg-primary text-white relative">
+ <div className="flex items-center gap-6 relative z-10">
+ <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-4xl font-bold shadow-inner">
+ {student.name ? student.name[0] : 'S'}
+ </div>
+ <div>
+ <h3 className="font-bold text-3xl mb-1">{student.name}</h3>
+ <div className="flex flex-wrap gap-3 mt-2">
+ <span className="flex items-center gap-1 text-white/80 text-xs font-bold bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+ <span className="material-symbols-outlined text-base">id_card</span>
+ ID: {student.id}
+ </span>
+ <span className="flex items-center gap-1 text-white/80 text-xs font-bold bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+ <span className="material-symbols-outlined text-base">school</span>
+ {classes.find(c => c.id === student.classId)?.name}
+ </span>
+ <span className="flex items-center gap-1 text-white/80 text-xs font-bold bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+ <span className="material-symbols-outlined text-base">phone</span>
+ {student.phone}
+ </span>
+ </div>
+ </div>
+ </div>
+ <div className="flex gap-2 relative z-10">
+ <button
+ onClick={handlePrint}
+ className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all font-semibold text-sm"
+ >
+ <span className="material-symbols-outlined text-2xl">print</span>
+ Print Profile
+ </button>
+ <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all">
+ <span className="material-symbols-outlined text-white">close</span>
+ </button>
+ </div>
+ {/* Subtle background decoration */}
+ <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+ </div>
 
-        <div className="p-8 max-h-[75vh] overflow-y-auto bg-slate-50/30 dark:bg-slate-950/20">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Detailed Info (Sections A, B, C, D, E, G) */}
-            <div className="lg:col-span-2 space-y-8">
+ <div className="p-8 max-h-[75vh] overflow-y-auto bg-slate-50/30 dark:bg-slate-950/20">
+ <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+ {/* Left Column - Detailed Info (Sections A, B, C, D, E, G) */}
+ <div className="lg:col-span-2 space-y-8">
 
-              {/* A. Personal Information */}
-              <ProfileSection title="Personal Information" icon="person">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-                  <InfoItem label="Full Name" value={student.name} />
-                  <InfoItem label="Mother Name" value={student.motherName} />
-                  <InfoItem label="Birth Date" value={student.birthDate} />
-                  <InfoItem label="Birth Place" value={student.birthPlace} />
-                  <InfoItem label="Gender" value={student.gender} />
-                  <InfoItem label="Phone" value={student.phone} />
-                </div>
-              </ProfileSection>
+ {/* A. Personal Information */}
+ <ProfileSection title="Personal Information" icon="person">
+ <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+ <InfoItem label="Full Name" value={student.name} />
+ <InfoItem label="Mother Name" value={student.motherName} />
+ <InfoItem label="Birth Date" value={student.birthDate} />
+ <InfoItem label="Birth Place" value={student.birthPlace} />
+ <InfoItem label="Gender" value={student.gender} />
+ <InfoItem label="Phone" value={student.phone} />
+ </div>
+ </ProfileSection>
 
-              {/* B. Address */}
-              <ProfileSection title="Residential Address" icon="location_on">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                  <InfoItem label="Country" value={student.address?.country} />
-                  <InfoItem label="State" value={student.address?.state} />
-                  <InfoItem label="City / Village" value={student.address?.city} />
-                  <InfoItem label="Neighborhood" value={student.address?.neighborhood} />
-                  <div className="col-span-full pt-4 border-t border-slate-100 dark:border-slate-800/50">
-                    <InfoItem label="Full Address Details" value={student.address?.fullAddress} />
-                  </div>
-                </div>
-              </ProfileSection>
+ {/* B. Address */}
+ <ProfileSection title="Residential Address" icon="location_on">
+ <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+ <InfoItem label="Country" value={student.address?.country} />
+ <InfoItem label="State" value={student.address?.state} />
+ <InfoItem label="City / Village" value={student.address?.city} />
+ <InfoItem label="Neighborhood" value={student.address?.neighborhood} />
+ <div className="col-span-full pt-4 border-t border-slate-100 dark:border-slate-800/50">
+ <InfoItem label="Full Address Details" value={student.address?.fullAddress} />
+ </div>
+ </div>
+ </ProfileSection>
 
-              {/* C & D. Academic & Family Status */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <ProfileSection title="Academic Info" icon="history_edu">
-                  <InfoItem label="Registration Date" value={student.registrationDate} />
-                  <div className="mt-4">
-                    <InfoItem label="Registration Type" value={student.registrationType} />
-                    {student.previousSchool && <p className="mt-1 text-xs text-slate-500 italic">From: {student.previousSchool}</p>}
-                  </div>
-                </ProfileSection>
-                <ProfileSection title="Family Status" icon="family_restroom">
-                  <InfoItem label="Parent Status" value={student.parentStatus} />
-                  <div className="mt-4">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Household Status</p>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-                      Standard
-                    </span>
-                  </div>
-                </ProfileSection>
-              </div>
+ {/* C & D. Academic & Family Status */}
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+ <ProfileSection title="Academic Info" icon="history_edu">
+ <InfoItem label="Registration Date" value={student.registrationDate} />
+ <div className="mt-4">
+ <InfoItem label="Registration Type" value={student.registrationType} />
+ {student.previousSchool && <p className="mt-1 text-xs text-slate-500 italic">From: {student.previousSchool}</p>}
+ </div>
+ </ProfileSection>
+ <ProfileSection title="Family Status" icon="family_restroom">
+ <InfoItem label="Parent Status" value={student.parentStatus} />
+ <div className="mt-4">
+ <p className="text-xs font-bold text-slate-400 mb-2">Household Status</p>
+ <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+ Standard
+ </span>
+ </div>
+ </ProfileSection>
+ </div>
 
-              {/* E. Special Conditions */}
-              <ProfileSection title="Special Conditions" icon="emergency_home">
-                <div className="flex flex-wrap gap-4">
-                  {student.specialConditions?.disability ? (
-                    <ProfileBadge label="Disability" color="rose" icon="accessible" />
-                  ) : (
-                    <ProfileBadge label="No Disability" color="slate" icon="check_circle" />
-                  )}
-                  {student.specialConditions?.refugee ? (
-                    <ProfileBadge label="Refugee Status" color="amber" icon="public" />
-                  ) : (
-                    <ProfileBadge label="Non-Refugee" color="slate" icon="check_circle" />
-                  )}
-                </div>
-              </ProfileSection>
+ {/* E. Special Conditions */}
+ <ProfileSection title="Special Conditions" icon="emergency_home">
+ <div className="flex flex-wrap gap-4">
+ {student.specialConditions?.disability ? (
+ <ProfileBadge label="Disability" color="rose" icon="accessible" />
+ ) : (
+ <ProfileBadge label="No Disability" color="slate" icon="check_circle" />
+ )}
+ {student.specialConditions?.refugee ? (
+ <ProfileBadge label="Refugee Status" color="amber" icon="public" />
+ ) : (
+ <ProfileBadge label="Non-Refugee" color="slate" icon="check_circle" />
+ )}
+ </div>
+ </ProfileSection>
 
-              {/* G. Grades */}
-              <ProfileSection title="Academic Performance" icon="grade">
-                <div className="overflow-hidden rounded-xl border border-slate-100 dark:border-slate-800">
-                  <table className="w-full text-sm">
-                    <thead className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-bold uppercase text-slate-400">
-                      <tr>
-                        <th className="px-4 py-2 text-left">Subject</th>
-                        <th className="px-4 py-2 text-center">Score</th>
-                        <th className="px-4 py-2 text-right">Grade</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                      <tr>
-                        <td className="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Mathematics</td>
-                        <td className="px-4 py-3 text-center">92</td>
-                        <td className="px-4 py-3 text-right text-emerald-500 font-bold">A</td>
-                      </tr>
-                      <tr>
-                        <td className="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Physics</td>
-                        <td className="px-4 py-3 text-center">88</td>
-                        <td className="px-4 py-3 text-right text-emerald-500 font-bold">A-</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </ProfileSection>
-            </div>
+ {/* G. Grades */}
+ <ProfileSection title="Academic Performance" icon="grade">
+ <div className="overflow-hidden rounded-xl border border-slate-100 dark:border-slate-800">
+ <table className="w-full text-sm">
+ <thead className="bg-slate-50 dark:bg-slate-800/50 text-xs font-bold text-slate-400">
+ <tr>
+ <th className="px-4 py-2 text-left">Subject</th>
+ <th className="px-4 py-2 text-center">Score</th>
+ <th className="px-4 py-2 text-right">Grade</th>
+ </tr>
+ </thead>
+ <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+ <tr>
+ <td className="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Mathematics</td>
+ <td className="px-4 py-3 text-center">92</td>
+ <td className="px-4 py-3 text-right text-emerald-500 font-bold">A</td>
+ </tr>
+ <tr>
+ <td className="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Physics</td>
+ <td className="px-4 py-3 text-center">88</td>
+ <td className="px-4 py-3 text-right text-emerald-500 font-bold">A-</td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ </ProfileSection>
+ </div>
 
-            {/* Right Column - Responsible & Attendance (Sections F, H) */}
-            <div className="space-y-8">
-              {/* F. Responsible Person */}
-              <ProfileSection title="Responsible Person" icon="contact_phone">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-slate-400">person</span>
-                    </div>
-                    <InfoItem label="Full Name" value={student.responsiblePerson?.name} />
-                  </div>
-                  <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-primary text-[18px]">phone</span>
-                      <InfoItem label="Phone 1" value={student.responsiblePerson?.phone1} />
-                    </div>
-                    {student.responsiblePerson?.phone2 && (
-                      <div className="flex items-center gap-3">
-                        <span className="material-symbols-outlined text-slate-400 text-[18px]">phone_iphone</span>
-                        <InfoItem label="Phone 2" value={student.responsiblePerson.phone2} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </ProfileSection>
+ {/* Right Column - Responsible & Attendance (Sections F, H) */}
+ <div className="space-y-8">
+ {/* F. Responsible Person */}
+ <ProfileSection title="Responsible Person" icon="contact_phone">
+ <div className="space-y-6">
+ <div className="flex items-center gap-3">
+ <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+ <span className="material-symbols-outlined text-slate-400">person</span>
+ </div>
+ <InfoItem label="Full Name" value={student.responsiblePerson?.name} />
+ </div>
+ <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+ <div className="flex items-center gap-3">
+ <span className="material-symbols-outlined text-primary text-xl">phone</span>
+ <InfoItem label="Phone 1" value={student.responsiblePerson?.phone1} />
+ </div>
+ {student.responsiblePerson?.phone2 && (
+ <div className="flex items-center gap-3">
+ <span className="material-symbols-outlined text-slate-400 text-xl">phone_iphone</span>
+ <InfoItem label="Phone 2" value={student.responsiblePerson.phone2} />
+ </div>
+ )}
+ </div>
+ </div>
+ </ProfileSection>
 
-              {/* H. Attendance */}
-              <ProfileSection title="Attendance Stats" icon="analytics">
-                <div className="flex flex-col items-center gap-6">
-                  <div className="relative w-32 h-32">
-                    <svg viewBox="0 0 36 36" className="w-full h-full rotate-[-90deg]">
-                      <circle cx="18" cy="18" r="16" fill="transparent" stroke="#f1f5f9" strokeWidth="4" className="dark:stroke-slate-800" />
-                      <circle cx="18" cy="18" r="16" fill="transparent" stroke="#10b981" strokeWidth="4"
-                        strokeDasharray="94 100"
-                        strokeLinecap="round"
-                        className="transition-all duration-1000"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">94%</span>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase">Presence</span>
-                    </div>
-                  </div>
-                  <div className="w-full grid grid-cols-2 gap-3">
-                    <div className="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl text-center border border-emerald-100 dark:border-emerald-800/50">
-                      <span className="block text-lg font-bold text-emerald-600 dark:text-emerald-400">182</span>
-                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Present</span>
-                    </div>
-                    <div className="bg-rose-50 dark:bg-rose-900/20 p-3 rounded-xl text-center border border-rose-100 dark:border-rose-800/50">
-                      <span className="block text-lg font-bold text-rose-600 dark:text-rose-400">12</span>
-                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Absent</span>
-                    </div>
-                  </div>
-                </div>
-              </ProfileSection>
+ {/* H. Attendance */}
+ <ProfileSection title="Attendance Stats" icon="analytics">
+ <div className="flex flex-col items-center gap-6">
+ <div className="relative w-32 h-32">
+ <svg viewBox="0 0 36 36" className="w-full h-full rotate-[-90deg]">
+ <circle cx="18" cy="18" r="16" fill="transparent" stroke="#f1f5f9" strokeWidth="4" className="dark:stroke-slate-800" />
+ <circle cx="18" cy="18" r="16" fill="transparent" stroke="#10b981" strokeWidth="4"
+ strokeDasharray="94 100"
+ strokeLinecap="round"
+ className="transition-all duration-1000"
+ />
+ </svg>
+ <div className="absolute inset-0 flex flex-col items-center justify-center">
+ <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">94%</span>
+ <span className="text-xs text-slate-400 font-bold ">Presence</span>
+ </div>
+ </div>
+ <div className="w-full grid grid-cols-2 gap-3">
+ <div className="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl text-center border border-emerald-100 dark:border-emerald-800/50">
+ <span className="block text-lg font-bold text-emerald-600 dark:text-emerald-400">182</span>
+ <span className="text-xs font-bold text-slate-500 ">Present</span>
+ </div>
+ <div className="bg-rose-50 dark:bg-rose-900/20 p-3 rounded-xl text-center border border-rose-100 dark:border-rose-800/50">
+ <span className="block text-lg font-bold text-rose-600 dark:text-rose-400">12</span>
+ <span className="text-xs font-bold text-slate-500 ">Absent</span>
+ </div>
+ </div>
+ </div>
+ </ProfileSection>
 
-              {/* Additional Notes */}
-              <ProfileSection title="Administrative Notes" icon="notes">
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed italic bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800/50">
-                  {student.notes || "No additional notes recorded for this student record."}
-                </p>
-              </ProfileSection>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+ {/* Additional Notes */}
+ <ProfileSection title="Administrative Notes" icon="notes">
+ <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed italic bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800/50">
+ {student.notes || "No additional notes recorded for this student record."}
+ </p>
+ </ProfileSection>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ );
 };
 
 /**
@@ -717,161 +826,161 @@ const StudentProfile = ({ student, onClose, classes, schoolName }) => {
  * Only visible during window.print() via CSS .print-only
  */
 const PrintableStudentProfile = ({ student, classes, schoolName }) => {
-  return (
-    <div className="print-only font-sans text-slate-900 bg-white">
-      {/* PDF HEADER */}
-      <div className="print-header flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center text-white">
-            <span className="material-symbols-outlined text-4xl">school</span>
-          </div>
-          <div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">{schoolName}</h1>
-            <p className="text-[10px] uppercase font-bold text-slate-500 tracking-[0.2em]">Official Student Document</p>
-          </div>
-        </div>
-        <div className="text-right text-[11px] leading-relaxed text-slate-600">
-          <p className="font-bold text-slate-900">{schoolName} Administration</p>
-          <p>Main Campus, District 5</p>
-          <p>Phone: +1 (234) 567-8900</p>
-          <p>Email: admin@eliteacademy.edu</p>
-          <p className="mt-1 font-mono text-[9px] text-slate-400 uppercase tracking-widest">Document ID: SMS-STD-{student.id}-{new Date().getFullYear()}</p>
-        </div>
-      </div>
+ return (
+ <div className="print-only font-sans text-slate-900 bg-white">
+ {/* PDF HEADER */}
+ <div className="print-header flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
+ <div className="flex items-center gap-4">
+ <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center text-white">
+ <span className="material-symbols-outlined text-4xl">school</span>
+ </div>
+ <div>
+ <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">{schoolName}</h1>
+ <p className="text-xs font-bold text-slate-500 ">Official Student Document</p>
+ </div>
+ </div>
+ <div className="text-right text-xs leading-relaxed text-slate-600">
+ <p className="font-bold text-slate-900">{schoolName} Administration</p>
+ <p>Main Campus, District 5</p>
+ <p>Phone: +1 (234) 567-8900</p>
+ <p>Email: admin@eliteacademy.edu</p>
+ <p className="mt-1 font-mono text-xs text-slate-400 ">Document ID: SMS-STD-{student.id}-{new Date().getFullYear()}</p>
+ </div>
+ </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold border-l-4 border-primary pl-4">STUDENT PROFILE RECORD</h2>
-        <div className="text-right">
-          <p className="text-[10px] font-bold text-slate-400 uppercase">Issue Date</p>
-          <p className="text-xs font-bold">{new Date().toLocaleDateString()}</p>
-        </div>
-      </div>
+ <div className="flex justify-between items-center mb-6">
+ <h2 className="text-xl font-bold border-l-4 border-primary pl-4">Student Profile Record</h2>
+ <div className="text-right">
+ <p className="text-xs font-bold text-slate-400 ">Issue Date</p>
+ <p className="text-xs font-bold">{new Date().toLocaleDateString()}</p>
+ </div>
+ </div>
 
-      {/* PDF BODY */}
-      <div className="space-y-6">
-        {/* Personal & Academic */}
-        <div className="grid grid-cols-2 gap-8">
-          <div className="print-section">
-            <h3 className="print-section-title">Personal Information</h3>
-            <div className="print-grid">
-              <PrintItem label="Full Name" value={student.name} />
-              <PrintItem label="Gender" value={student.gender} />
-              <PrintItem label="Birth Date" value={student.birthDate} />
-              <PrintItem label="Birth Place" value={student.birthPlace} />
-              <PrintItem label="Phone" value={student.phone} />
-              <PrintItem label="Mother Name" value={student.motherName} />
-            </div>
-          </div>
-          <div className="print-section">
-            <h3 className="print-section-title">Academic Details</h3>
-            <div className="print-grid">
-              <PrintItem label="Assigned Class" value={classes.find(c => c.id === student.classId)?.name} />
-              <PrintItem label="Student ID" value={`#${student.id}`} />
-              <PrintItem label="Registration Date" value={student.registrationDate} />
-              <PrintItem label="Registration Type" value={student.registrationType} />
-            </div>
-          </div>
-        </div>
+ {/* PDF BODY */}
+ <div className="space-y-6">
+ {/* Personal & Academic */}
+ <div className="grid grid-cols-2 gap-8">
+ <div className="print-section">
+ <h3 className="print-section-title">Personal Information</h3>
+ <div className="print-grid">
+ <PrintItem label="Full Name" value={student.name} />
+ <PrintItem label="Gender" value={student.gender} />
+ <PrintItem label="Birth Date" value={student.birthDate} />
+ <PrintItem label="Birth Place" value={student.birthPlace} />
+ <PrintItem label="Phone" value={student.phone} />
+ <PrintItem label="Mother Name" value={student.motherName} />
+ </div>
+ </div>
+ <div className="print-section">
+ <h3 className="print-section-title">Academic Details</h3>
+ <div className="print-grid">
+ <PrintItem label="Assigned Class" value={classes.find(c => c.id === student.classId)?.name} />
+ <PrintItem label="Student ID" value={`#${student.id}`} />
+ <PrintItem label="Registration Date" value={student.registrationDate} />
+ <PrintItem label="Registration Type" value={student.registrationType} />
+ </div>
+ </div>
+ </div>
 
-        {/* Address */}
-        <div className="print-section">
-          <h3 className="print-section-title">Residential Address</h3>
-          <div className="print-grid grid-cols-4">
-            <PrintItem label="Country" value={student.address?.country} />
-            <PrintItem label="State" value={student.address?.state} />
-            <PrintItem label="City" value={student.address?.city} />
-            <PrintItem label="Neighborhood" value={student.address?.neighborhood} />
-            <div className="col-span-full mt-2">
-              <PrintItem label="Full Address Details" value={student.address?.fullAddress} />
-            </div>
-          </div>
-        </div>
+ {/* Address */}
+ <div className="print-section">
+ <h3 className="print-section-title">Residential Address</h3>
+ <div className="print-grid grid-cols-4">
+ <PrintItem label="Country" value={student.address?.country} />
+ <PrintItem label="State" value={student.address?.state} />
+ <PrintItem label="City" value={student.address?.city} />
+ <PrintItem label="Neighborhood" value={student.address?.neighborhood} />
+ <div className="col-span-full mt-2">
+ <PrintItem label="Full Address Details" value={student.address?.fullAddress} />
+ </div>
+ </div>
+ </div>
 
-        {/* Family & Special */}
-        <div className="grid grid-cols-2 gap-8">
-          <div className="print-section">
-            <h3 className="print-section-title">Family & Health Status</h3>
-            <div className="print-grid">
-              <PrintItem label="Parent Status" value={student.parentStatus} />
-              <PrintItem label="Disability" value={student.specialConditions?.disability ? 'Yes' : 'None'} />
-              <PrintItem label="Refugee Status" value={student.specialConditions?.refugee ? 'Yes' : 'No'} />
-            </div>
-          </div>
-          <div className="print-section">
-            <h3 className="print-section-title">Responsible Person</h3>
-            <div className="print-grid">
-              <PrintItem label="Contact Name" value={student.responsiblePerson?.name} />
-              <PrintItem label="Primary Phone" value={student.responsiblePerson?.phone1} />
-              <PrintItem label="Secondary Phone" value={student.responsiblePerson?.phone2 || 'N/A'} />
-            </div>
-          </div>
-        </div>
-      </div>
+ {/* Family & Special */}
+ <div className="grid grid-cols-2 gap-8">
+ <div className="print-section">
+ <h3 className="print-section-title">Family & Health Status</h3>
+ <div className="print-grid">
+ <PrintItem label="Parent Status" value={student.parentStatus} />
+ <PrintItem label="Disability" value={student.specialConditions?.disability ? 'Yes' : 'None'} />
+ <PrintItem label="Refugee Status" value={student.specialConditions?.refugee ? 'Yes' : 'No'} />
+ </div>
+ </div>
+ <div className="print-section">
+ <h3 className="print-section-title">Responsible Person</h3>
+ <div className="print-grid">
+ <PrintItem label="Contact Name" value={student.responsiblePerson?.name} />
+ <PrintItem label="Primary Phone" value={student.responsiblePerson?.phone1} />
+ <PrintItem label="Secondary Phone" value={student.responsiblePerson?.phone2 || 'N/A'} />
+ </div>
+ </div>
+ </div>
+ </div>
 
-      {/* PDF FOOTER (Signatures) */}
-      <div className="print-footer mt-8 pt-6">
-        <div className="signature-area">
-          <div className="signature-line">
-            Manager Signature
-            <p className="text-[8px] font-normal text-slate-400 mt-1">Official Stamp Required</p>
-          </div>
-        </div>
-        <div className="signature-area">
-          <div className="signature-line">
-            Responsible Person Signature
-            <p className="text-[8px] font-normal text-slate-400 mt-1">Date: ____ / ____ / 2026</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+ {/* PDF FOOTER (Signatures) */}
+ <div className="print-footer mt-8 pt-6">
+ <div className="signature-area">
+ <div className="signature-line">
+ Manager Signature
+ <p className="text-xs font-normal text-slate-400 mt-1">Official Stamp Required</p>
+ </div>
+ </div>
+ <div className="signature-area">
+ <div className="signature-line">
+ Responsible Person Signature
+ <p className="text-xs font-normal text-slate-400 mt-1">Date: ____ / ____ / 2026</p>
+ </div>
+ </div>
+ </div>
+ </div>
+ );
 };
 
 const PrintItem = ({ label, value }) => (
-  <div>
-    <p className="print-label">{label}</p>
-    <p className="print-value">{value || 'N/A'}</p>
-  </div>
+ <div>
+ <p className="print-label">{label}</p>
+ <p className="print-value">{value || 'N/A'}</p>
+ </div>
 );
 
 // Internal Helper Components
 const FormSectionHeader = ({ icon, title }) => (
-  <div className="flex items-center gap-3 mb-6">
-    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-primary shadow-sm">
-      <span className="material-symbols-outlined text-[22px]">{icon}</span>
-    </div>
-    <h4 className="text-primary font-bold text-sm uppercase tracking-wider">{title}</h4>
-  </div>
+ <div className="flex items-center gap-3 mb-6">
+ <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-primary shadow-sm">
+ <span className="material-symbols-outlined text-3xl">{icon}</span>
+ </div>
+ <h4 className="text-primary font-bold text-sm ">{title}</h4>
+ </div>
 );
 
 const ProfileSection = ({ title, icon, children }) => (
-  <div className="bg-white dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors group">
-    <h4 className="text-slate-900 dark:text-slate-100 font-bold mb-6 flex items-center gap-3">
-      <span className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-        <span className="material-symbols-outlined text-[18px]">{icon}</span>
-      </span>
-      {title}
-    </h4>
-    {children}
-  </div>
+ <div className="bg-white dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors group">
+ <h4 className="text-slate-900 dark:text-slate-100 font-bold mb-6 flex items-center gap-3">
+ <span className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+ <span className="material-symbols-outlined text-xl">{icon}</span>
+ </span>
+ {title}
+ </h4>
+ {children}
+ </div>
 );
 
 const InfoItem = ({ label, value }) => (
-  <div>
-    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">{label}</p>
-    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{value || 'Not Specified'}</p>
-  </div>
+ <div>
+ <p className="text-xs font-bold text-slate-400 mb-1.5">{label}</p>
+ <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{value || 'Not Specified'}</p>
+ </div>
 );
 
 const ProfileBadge = ({ label, color, icon }) => (
-  <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-tight 
-    ${color === 'rose' ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-800' :
-      color === 'amber' ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800' :
-        'bg-slate-50 dark:bg-slate-800 text-slate-500 border-slate-100 dark:border-slate-800'} 
-    border shadow-sm`}>
-    <span className="material-symbols-outlined text-[16px]">{icon}</span>
-    {label}
-  </span>
+ <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold tracking-tight 
+ ${color === 'rose' ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-800' :
+ color === 'amber' ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800' :
+ 'bg-slate-50 dark:bg-slate-800 text-slate-500 border-slate-100 dark:border-slate-800'} 
+ border shadow-sm`}>
+ <span className="material-symbols-outlined text-lg">{icon}</span>
+ {label}
+ </span>
 );
 
 export default StudentsPage;
