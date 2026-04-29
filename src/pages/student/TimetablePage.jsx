@@ -27,7 +27,7 @@ const StudentTimetablePage = () => {
  const renderGridBlock = (title, hoursRange) => (
  <div className="mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
  <div className="flex items-center gap-4 mb-4">
- <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 ">{title}</h3>
+ <h3 className="text-body-sm text-slate-800 dark:text-slate-200">{title}</h3>
  <div className="h-[1px] flex-1 bg-slate-100 dark:bg-slate-800"></div>
  </div>
  
@@ -36,7 +36,7 @@ const StudentTimetablePage = () => {
  <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
  <div className="p-4"></div>
  {days.map(day => (
- <div key={day} className="p-4 text-center font-bold text-slate-600 dark:text-slate-300 border-l border-slate-100 dark:border-slate-800 text-xs ">
+ <div key={day} className="p-4 text-center text-slate-600 dark:text-slate-300 border-l border-slate-100 dark:border-slate-800 text-body-sm">
  {day}
  </div>
  ))}
@@ -49,7 +49,7 @@ const StudentTimetablePage = () => {
  
  return (
  <div key={hour} className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 min-h-[130px]">
- <div className="p-4 text-xs font-semibold text-slate-400 text-center pt-8">
+ <div className="p-4 text-body-sm text-slate-400 text-center pt-8">
  {timeLabel}
  </div>
  
@@ -88,20 +88,20 @@ const StudentTimetablePage = () => {
  
  return (
  <div key={slot.id} className={`w-full rounded-xl p-4 relative group transition-all border shadow-sm ${colorClass}`}>
- <div className="text-xs font-semibold opacity-40 mb-2 flex justify-between">
+ <div className="text-body-sm opacity-40 mb-2 flex justify-between">
  <span>{formatSlotTime(slot.startTime)} - {formatSlotTime(slot.endTime)}</span>
  </div>
  
  {slot.isBreak ? (
- <p className="text-xs font-semibold tracking-tighter opacity-70 mt-2">Break Session</p>
+ <p className="text-body-sm opacity-70 mt-2">Break Session</p>
  ) : (
  <div>
- <div className="font-semibold text-xs leading-relaxed tracking-tight mb-2">
+ <div className="text-body-sm leading-relaxed mb-2">
  {slot.subjectName}
  </div>
  <div className="flex items-center gap-1.5 opacity-60">
- <span className="material-symbols-outlined text-xs">person</span>
- <span className="text-xs font-semibold tracking-tighter truncate">
+ <span className="material-symbols-outlined text-body-sm">person</span>
+ <span className="text-body-sm truncate">
  {teachers.find(t => t.id === slot.teacherId)?.name}
  </span>
  </div>
@@ -129,17 +129,17 @@ const StudentTimetablePage = () => {
  <div className="bg-primary/5 p-8 rounded-xl border border-primary/10 flex flex-col md:flex-row justify-between items-center gap-6">
  <div className="flex items-center gap-6">
  <div className="w-16 h-16 bg-white dark:bg-slate-900 rounded-xl flex items-center justify-center text-primary shadow-xl shadow-primary/5 rotate-3 border border-primary/10">
- <span className="material-symbols-outlined text-3xl">menu_book</span>
+ <span className="material-symbols-outlined text-stat-value">menu_book</span>
  </div>
  <div>
- <p className="text-xs font-semibold text-slate-400 mb-1 block">Assigned Schedule</p>
- <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-2xl">{studentClass?.name || 'Unassigned'}</h3>
+ <p className="text-body-sm text-slate-400 mb-1 block">Assigned Schedule</p>
+ <h3 className="text-slate-900 dark:text-slate-100 text-stat-value">{studentClass?.name || 'Unassigned'}</h3>
  </div>
  </div>
  <div className="flex gap-4">
  <div className="px-8 py-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 text-center shadow-sm">
- <p className="text-xs font-semibold text-slate-400 mb-1">Weekly Periods</p>
- <p className="text-2xl font-semibold text-primary">{classSchedule.length}</p>
+ <p className="text-body-sm text-slate-400 mb-1">Weekly Periods</p>
+ <p className="text-stat-value text-primary">{classSchedule.length}</p>
  </div>
  </div>
  </div>
@@ -150,24 +150,24 @@ const StudentTimetablePage = () => {
  <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl flex gap-2 w-full max-w-md">
  <button
  onClick={() => setActivePeriod('morning')}
- className={`flex-1 py-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 ${
+ className={`flex-1 py-3 rounded-lg text-body-sm  transition-all flex items-center justify-center gap-2 ${
  activePeriod === 'morning' 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
  : 'text-slate-400'
  }`}
  >
- <span className="material-symbols-outlined text-xl">wb_sunny</span>
+ <span className="material-symbols-outlined text-headline-sm">wb_sunny</span>
  Morning Period
  </button>
  <button
  onClick={() => setActivePeriod('afternoon')}
- className={`flex-1 py-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 ${
+ className={`flex-1 py-3 rounded-lg text-body-sm  transition-all flex items-center justify-center gap-2 ${
  activePeriod === 'afternoon' 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
  : 'text-slate-400'
  }`}
  >
- <span className="material-symbols-outlined text-xl">dark_mode</span>
+ <span className="material-symbols-outlined text-headline-sm">dark_mode</span>
  Afternoon Period
  </button>
  </div>
@@ -177,9 +177,9 @@ const StudentTimetablePage = () => {
  {/* WEEKLY GRID */}
  {!studentClass ? (
  <div className="p-12 bg-rose-50 dark:bg-rose-900/10 rounded-xl border border-rose-100 dark:border-rose-900/20 text-center">
- <span className="material-symbols-outlined text-rose-500 text-6xl mb-6">error_outline</span>
- <h3 className="text-xl font-semibold text-rose-900 dark:text-rose-100 mb-2 ">Unassigned Record</h3>
- <p className="text-xs text-rose-600/70 font-bold ">Contact administration to update your class records</p>
+ <span className="material-symbols-outlined text-rose-500 text-display-bold mb-6">error_outline</span>
+ <h3 className="text-headline-sm text-rose-900 dark:text-rose-100 mb-2">Unassigned Record</h3>
+ <p className="text-body-sm text-rose-600/70">Contact administration to update your class records</p>
  </div>
  ) : (
  <div className="animate-in fade-in zoom-in-95 duration-500">

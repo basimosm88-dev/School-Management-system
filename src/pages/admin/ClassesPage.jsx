@@ -90,8 +90,8 @@ const ClassesPage = () => {
  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
  {/* Page Header */}
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-xl font-semibold text-slate-900 dark:text-white tracking-tight">{t('classes')}</h2>
- <p className="text-xs font-bold text-slate-500 mt-1">{t('classesSubtitle')}</p>
+ <h2 className="text-headline-sm text-slate-900 dark:text-white">{t('classes')}</h2>
+ <p className="text-body-sm text-slate-500 mt-1">{t('classesSubtitle')}</p>
  </div>
 
  {/* 1. TOP CONTROL BAR */}
@@ -104,7 +104,7 @@ const ClassesPage = () => {
  placeholder="Search by grade or section..."
  value={searchTerm}
  onChange={(e) => setSearchTerm(e.target.value)}
- className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
+ className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
  />
  </div>
 
@@ -112,7 +112,7 @@ const ClassesPage = () => {
  <select
  value={filters.level}
  onChange={(e) => setFilters({ ...filters, level: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer"
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer"
  >
  <option value="">Level</option>
  <option value="Primary">Primary</option>
@@ -122,7 +122,7 @@ const ClassesPage = () => {
  <select
  value={filters.status}
  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer"
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer"
  >
  <option value="">Status</option>
  <option value="Active">Active</option>
@@ -134,9 +134,9 @@ const ClassesPage = () => {
 
  <button
  onClick={handleAdd}
- className="bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm flex items-center gap-2"
+ className="bg-primary text-white px-5 py-2.5 rounded-lg text-body-sm hover:bg-primary/90 transition-all shadow-sm flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-2xl">add_box</span>
+ <span className="material-symbols-outlined text-stat-value">add_box</span>
  Add Class Section
  </button>
  </div>
@@ -144,8 +144,8 @@ const ClassesPage = () => {
  {/* 2. CLASSES TABLE */}
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden transition-colors">
  <div className="overflow-x-auto">
- <table className="w-full text-left text-sm">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-100 dark:border-slate-800">
+ <table className="w-full text-left text-body-sm">
+ <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
  <tr>
  <th className="px-6 py-4">Class Name</th>
  <th className="px-6 py-4">Level</th>
@@ -168,11 +168,11 @@ const ClassesPage = () => {
  >
  <td className="px-6 py-4">
  <div className="flex flex-col">
- <span className="font-bold text-slate-800 dark:text-slate-200">{cls.name}</span>
- <span className="text-xs text-slate-400 font-bold ">{cls.academicYear}</span>
+ <span className="text-slate-800 dark:text-slate-200">{cls.name}</span>
+ <span className="text-body-sm text-slate-400">{cls.academicYear}</span>
  </div>
  </td>
- <td className="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium">
+ <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
  {cls.level}
  </td>
  <td className="px-6 py-4">
@@ -185,7 +185,7 @@ const ClassesPage = () => {
  style={{ width: `${Math.min(100, (classStudentsCount / cls.capacity) * 100)}%` }}
  ></div>
  </div>
- <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+ <span className="text-body-sm text-slate-700 dark:text-slate-300">
  {classStudentsCount}
  </span>
  </div>
@@ -195,16 +195,16 @@ const ClassesPage = () => {
  </td>
  <td className="px-6 py-4">
  <div className="flex items-center gap-2">
- <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500">
+ <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-body-sm text-slate-500">
  {supervisor?.name?.[0] || '?'}
  </div>
- <span className="text-slate-700 dark:text-slate-300 font-medium">
+ <span className="text-slate-700 dark:text-slate-300">
  {supervisor?.name || 'Unassigned'}
  </span>
  </div>
  </td>
  <td className="px-6 py-4">
- <span className={`px-2 py-1 rounded text-xs font-bold ${
+ <span className={`px-2 py-1 rounded text-body-sm  ${
  cls.status === 'Active' 
  ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30'
  : cls.status === 'Completed'
@@ -221,21 +221,21 @@ const ClassesPage = () => {
  className="p-1.5 text-slate-400 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
  title="View Class"
  >
- <span className="material-symbols-outlined text-xl">visibility</span>
+ <span className="material-symbols-outlined text-headline-sm">visibility</span>
  </button>
  <button
  onClick={(e) => handleEdit(cls, e)}
  className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
  title="Edit"
  >
- <span className="material-symbols-outlined text-xl">edit</span>
+ <span className="material-symbols-outlined text-headline-sm">edit</span>
  </button>
  <button
  onClick={(e) => handleDelete(cls.id, e)}
  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all"
  title="Delete"
  >
- <span className="material-symbols-outlined text-xl">delete</span>
+ <span className="material-symbols-outlined text-headline-sm">delete</span>
  </button>
  </div>
  </td>
@@ -301,7 +301,7 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto animate-in zoom-in-95 duration-300 flex flex-col"
  >
  <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-3xl">
- <h3 className="font-bold text-slate-900 dark:text-slate-100 text-xl flex items-center gap-2">
+ <h3 className="text-slate-900 dark:text-slate-100 text-headline-sm flex items-center gap-2">
  <span className="material-symbols-outlined text-primary">add_box</span>
  {cls ? 'Edit Class Section' : 'Create New Class Section'}
  </h3>
@@ -313,10 +313,10 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  <div className="p-4 md:p-8 space-y-8 max-h-[70vh] overflow-y-auto">
  {/* Section 1: Basic Info */}
  <div>
- <h4 className="text-xs font-semibold text-slate-400 mb-4">Basic Information</h4>
+ <h4 className="text-body-sm text-slate-400 mb-4">Basic Information</h4>
  <div className="grid grid-cols-2 gap-6">
  <div>
- <label className="text-xs font-bold text-slate-500 mb-1.5 block">Grade Name</label>
+ <label className="text-body-sm text-slate-500 mb-1.5 block">Grade Name</label>
  <input 
  type="text" 
  placeholder="e.g. Grade 10" 
@@ -327,7 +327,7 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  />
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 mb-1.5 block">Section</label>
+ <label className="text-body-sm text-slate-500 mb-1.5 block">Section</label>
  <input 
  type="text" 
  placeholder="e.g. A" 
@@ -338,7 +338,7 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  />
  </div>
  <div className="col-span-full">
- <label className="text-xs font-bold text-slate-500 mb-1.5 block">Education Level</label>
+ <label className="text-body-sm text-slate-500 mb-1.5 block">Education Level</label>
  <select 
  className="form-input-custom"
  value={formData.level}
@@ -355,8 +355,8 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  {/* Section 2: Capacity & Academic */}
  <div className="grid grid-cols-2 gap-8 pt-4 border-t border-slate-50 dark:border-slate-800">
  <div>
- <h4 className="text-xs font-semibold text-slate-400 mb-4">Capacity</h4>
- <label className="text-xs font-bold text-slate-500 mb-1.5 block">Maximum Students</label>
+ <h4 className="text-body-sm text-slate-400 mb-4">Capacity</h4>
+ <label className="text-body-sm text-slate-500 mb-1.5 block">Maximum Students</label>
  <input 
  type="number" 
  className="form-input-custom" 
@@ -365,8 +365,8 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  />
  </div>
  <div>
- <h4 className="text-xs font-semibold text-slate-400 mb-4">Academic Year</h4>
- <label className="text-xs font-bold text-slate-500 mb-1.5 block">Year</label>
+ <h4 className="text-body-sm text-slate-400 mb-4">Academic Year</h4>
+ <label className="text-body-sm text-slate-500 mb-1.5 block">Year</label>
  <input 
  type="text" 
  className="form-input-custom" 
@@ -378,10 +378,10 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
 
  {/* Section 3: Supervision */}
  <div className="pt-4 border-t border-slate-50 dark:border-slate-800">
- <h4 className="text-xs font-semibold text-slate-400 mb-4">Supervision</h4>
+ <h4 className="text-body-sm text-slate-400 mb-4">Supervision</h4>
  <div className="grid grid-cols-2 gap-6">
  <div>
- <label className="text-xs font-bold text-slate-500 mb-1.5 block">Class Supervisor</label>
+ <label className="text-body-sm text-slate-500 mb-1.5 block">Class Supervisor</label>
  <select 
  className="form-input-custom"
  value={formData.teacherId}
@@ -392,7 +392,7 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  </select>
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 mb-1.5 block">Assistant Teacher (Optional)</label>
+ <label className="text-body-sm text-slate-500 mb-1.5 block">Assistant Teacher (Optional)</label>
  <input 
  type="text" 
  className="form-input-custom" 
@@ -407,7 +407,7 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  <div className="pt-4 border-t border-slate-50 dark:border-slate-800">
  <div className="grid grid-cols-2 gap-6 mb-6">
  <div>
- <label className="text-xs font-bold text-slate-500 mb-1.5 block">Status</label>
+ <label className="text-body-sm text-slate-500 mb-1.5 block">Status</label>
  <div className="flex gap-4">
  {['Active', 'Completed', 'Archived'].map(s => (
  <label key={s} className="flex items-center gap-2 cursor-pointer">
@@ -419,14 +419,14 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  onChange={e => handleChange('status', e.target.value)}
  className="text-primary focus:ring-primary"
  />
- <span className="text-xs font-medium text-slate-600 dark:text-slate-400">{s}</span>
+ <span className="text-body-sm text-slate-600 dark:text-slate-400">{s}</span>
  </label>
  ))}
  </div>
  </div>
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 mb-1.5 block">Notes</label>
+ <label className="text-body-sm text-slate-500 mb-1.5 block">Notes</label>
  <textarea 
  className="form-input-custom min-h-[100px]" 
  value={formData.notes || ''}
@@ -437,8 +437,8 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  </div>
 
  <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl">
- <button type="button" onClick={onClose} className="px-6 py-2.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 transition-all">Cancel</button>
- <button type="submit" className="px-8 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save class details</button>
+ <button type="button" onClick={onClose} className="px-6 py-2.5 text-body-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 transition-all">Cancel</button>
+ <button type="submit" className="px-8 py-2.5 bg-primary text-white text-body-sm rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save class details</button>
  </div>
  </form>
  </div>
@@ -473,20 +473,20 @@ const ClassProfile = ({
  <div className="flex justify-between items-start">
  <div className="flex gap-6 items-center">
  <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20">
- <span className="material-symbols-outlined text-3xl">class</span>
+ <span className="material-symbols-outlined text-stat-value">class</span>
  </div>
  <div>
- <h3 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">{cls.name}</h3>
+ <h3 className="text-stat-value text-slate-900 dark:text-slate-100">{cls.name}</h3>
  <div className="flex gap-4 mt-2">
- <span className="flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-slate-400 ">
- <span className="material-symbols-outlined text-lg">school</span>
+ <span className="flex items-center gap-1.5 text-body-sm text-slate-500 dark:text-slate-400">
+ <span className="material-symbols-outlined text-headline-sm">school</span>
  {cls.level} Level
  </span>
- <span className="flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-slate-400 ">
- <span className="material-symbols-outlined text-lg">calendar_today</span>
+ <span className="flex items-center gap-1.5 text-body-sm text-slate-500 dark:text-slate-400">
+ <span className="material-symbols-outlined text-headline-sm">calendar_today</span>
  {cls.academicYear}
  </span>
- <span className={`px-2 py-0.5 rounded text-xs font-semibold tracking-tighter ${
+ <span className={`px-2 py-0.5 rounded text-body-sm   ${
  cls.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'
  }`}>
  {cls.status}
@@ -505,7 +505,7 @@ const ClassProfile = ({
  <button
  key={tab}
  onClick={() => setActiveTab(tab.toLowerCase())}
- className={`pb-4 text-sm font-bold transition-all relative ${
+ className={`pb-4 text-body-sm  transition-all relative ${
  activeTab === tab.toLowerCase() 
  ? 'text-primary' 
  : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
@@ -548,30 +548,30 @@ const ClassProfile = ({
 
  <div className="grid grid-cols-1 gap-8">
  <div className="bg-slate-50/50 dark:bg-slate-950/20 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
- <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-6">Class Supervision</h4>
+ <h4 className="text-body-sm text-slate-800 dark:text-slate-200 mb-6">Class Supervision</h4>
  <div className="flex flex-col sm:flex-row gap-6">
  <div className="flex-1 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
- <p className="text-xs font-semibold text-primary mb-2">Lead Supervisor</p>
+ <p className="text-body-sm text-primary mb-2">Lead Supervisor</p>
  <div className="flex items-center gap-3">
- <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary font-bold">
+ <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary">
  {supervisor?.name?.[0] || 'T'}
  </div>
  <div>
- <p className="font-bold text-slate-900 dark:text-slate-100">{supervisor?.name || 'Unassigned'}</p>
- <p className="text-xs text-slate-500">{supervisor?.specialty || 'General'}</p>
+ <p className="text-slate-900 dark:text-slate-100">{supervisor?.name || 'Unassigned'}</p>
+ <p className="text-body-sm text-slate-500">{supervisor?.specialty || 'General'}</p>
  </div>
  </div>
  </div>
  <div className="flex-1 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
- <p className="text-xs font-semibold text-slate-400 mb-2">Assistant Teacher</p>
- <p className="font-bold text-slate-700 dark:text-slate-300">{cls.assistantTeacher || 'No Assistant'}</p>
+ <p className="text-body-sm text-slate-400 mb-2">Assistant Teacher</p>
+ <p className="text-slate-700 dark:text-slate-300">{cls.assistantTeacher || 'No Assistant'}</p>
  </div>
  </div>
  </div>
 
  <div className="bg-slate-50/50 dark:bg-slate-950/20 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
- <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-4">Description / Notes</h4>
- <p className="text-sm text-slate-600 dark:text-slate-400 italic leading-relaxed">
+ <h4 className="text-body-sm text-slate-800 dark:text-slate-200 mb-4">Description / Notes</h4>
+ <p className="text-body-sm text-slate-600 dark:text-slate-400 italic leading-relaxed">
  {cls.notes || "No detailed notes provided for this class section."}
  </p>
  </div>
@@ -583,19 +583,19 @@ const ClassProfile = ({
  {activeTab === 'students' && (
  <div className="space-y-6">
  <div className="flex justify-between items-center">
- <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 ">Enrolled Students ({classStudents.length})</h4>
+ <h4 className="text-body-sm text-slate-800 dark:text-slate-200">Enrolled Students ({classStudents.length})</h4>
  <button 
  onClick={() => setIsAddingStudent(!isAddingStudent)}
- className="bg-primary text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-700 transition-all flex items-center gap-2"
+ className="bg-primary text-white px-4 py-2 rounded-xl text-body-sm hover:bg-blue-700 transition-all flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-xl">person_add</span>
+ <span className="material-symbols-outlined text-headline-sm">person_add</span>
  Add Student
  </button>
  </div>
 
  {isAddingStudent && (
  <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2">
- <p className="text-xs font-semibold text-slate-400 mb-4">Select Unassigned Student</p>
+ <p className="text-body-sm text-slate-400 mb-4">Select Unassigned Student</p>
  <div className="flex gap-4">
  <select 
  id="student-select"
@@ -617,7 +617,7 @@ const ClassProfile = ({
  setIsAddingStudent(false);
  }
  }}
- className="px-6 bg-primary text-white text-xs font-semibold rounded-xl"
+ className="px-6 bg-primary text-white text-body-sm rounded-xl"
  >
  Assign
  </button>
@@ -629,12 +629,12 @@ const ClassProfile = ({
  {classStudents.map(student => (
  <div key={student.id} className="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 flex justify-between items-center group">
  <div className="flex items-center gap-3">
- <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-500">
+ <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-body-sm text-slate-500">
  {student.name[0]}
  </div>
  <div>
- <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{student.name}</p>
- <p className="text-xs text-slate-400 font-bold tracking-tighter">ID: {student.id}</p>
+ <p className="text-body-sm text-slate-900 dark:text-slate-100">{student.name}</p>
+ <p className="text-body-sm text-slate-400">ID: {student.id}</p>
  </div>
  </div>
  <button 
@@ -646,14 +646,14 @@ const ClassProfile = ({
  }}
  className="p-2 text-rose-400 hover:bg-rose-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
  >
- <span className="material-symbols-outlined text-xl">person_remove</span>
+ <span className="material-symbols-outlined text-headline-sm">person_remove</span>
  </button>
  </div>
  ))}
  {classStudents.length === 0 && (
  <div className="col-span-full py-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl">
- <span className="material-symbols-outlined text-4xl text-slate-200 mb-2">group_off</span>
- <p className="text-slate-400 font-medium">No students enrolled in this section.</p>
+ <span className="material-symbols-outlined text-display-bold text-slate-200 mb-2">group_off</span>
+ <p className="text-slate-400">No students enrolled in this section.</p>
  </div>
  )}
  </div>
@@ -663,12 +663,12 @@ const ClassProfile = ({
  {activeTab === 'subjects & teachers' && (
  <div className="space-y-6">
  <div className="flex justify-between items-center">
- <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 ">Academic Mapping</h4>
+ <h4 className="text-body-sm text-slate-800 dark:text-slate-200">Academic Mapping</h4>
  <button 
  onClick={() => setIsAddingSubject(!isAddingSubject)}
- className="bg-primary text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-700 transition-all flex items-center gap-2"
+ className="bg-primary text-white px-4 py-2 rounded-xl text-body-sm hover:bg-blue-700 transition-all flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-xl">assignment_add</span>
+ <span className="material-symbols-outlined text-headline-sm">assignment_add</span>
  Assign Subject
  </button>
  </div>
@@ -677,7 +677,7 @@ const ClassProfile = ({
  <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2">
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  <div>
- <label className="text-xs font-semibold text-slate-400 mb-2 block">Select Subject</label>
+ <label className="text-body-sm text-slate-400 mb-2 block">Select Subject</label>
  <select id="sub-select" className="form-input-custom w-full">
  <option value="">Choose subject...</option>
  {subjects
@@ -690,7 +690,7 @@ const ClassProfile = ({
  </select>
  </div>
  <div>
- <label className="text-xs font-semibold text-slate-400 mb-2 block">Assign Teacher</label>
+ <label className="text-body-sm text-slate-400 mb-2 block">Assign Teacher</label>
  <select id="teach-select" className="form-input-custom w-full">
  <option value="">Choose teacher...</option>
  {teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
@@ -698,7 +698,7 @@ const ClassProfile = ({
  </div>
  </div>
  <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
- <button onClick={() => setIsAddingSubject(false)} className="px-4 py-2 text-xs font-bold text-slate-400">Cancel</button>
+ <button onClick={() => setIsAddingSubject(false)} className="px-4 py-2 text-body-sm text-slate-400">Cancel</button>
  <button 
  onClick={() => {
  const subName = document.getElementById('sub-select').value;
@@ -709,7 +709,7 @@ const ClassProfile = ({
  setIsAddingSubject(false);
  }
  }}
- className="px-8 py-2 bg-primary text-white text-xs font-semibold rounded-xl"
+ className="px-8 py-2 bg-primary text-white text-body-sm rounded-xl"
  >
  Confirm Assignment
  </button>
@@ -727,24 +727,24 @@ const ClassProfile = ({
  <span className="material-symbols-outlined text-slate-400">auto_stories</span>
  </div>
  <div>
- <h5 className="font-bold text-slate-900 dark:text-slate-100">{sub.name}</h5>
+ <h5 className="text-slate-900 dark:text-slate-100">{sub.name}</h5>
  <div className="flex items-center gap-2 mt-1">
  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
- <span className="text-xs font-medium text-slate-500">{teacher?.name || 'Unknown Teacher'}</span>
+ <span className="text-body-sm text-slate-500">{teacher?.name || 'Unknown Teacher'}</span>
  </div>
  </div>
  </div>
  <div className="text-right">
- <p className="text-xs font-semibold text-slate-400 ">Teacher ID</p>
- <p className="text-xs font-bold text-slate-700 dark:text-slate-300"># {sub.teacherId}</p>
+ <p className="text-body-sm text-slate-400">Teacher ID</p>
+ <p className="text-body-sm text-slate-700 dark:text-slate-300"># {sub.teacherId}</p>
  </div>
  </div>
  );
  })}
  {(cls.subjects || []).length === 0 && (
  <div className="col-span-full py-16 text-center bg-slate-50/50 dark:bg-slate-950/20 rounded-3xl border-2 border-dashed border-slate-100 dark:border-slate-800">
- <span className="material-symbols-outlined text-4xl text-slate-200 mb-2">menu_book</span>
- <p className="text-slate-400 font-medium">No subjects assigned to this section yet.</p>
+ <span className="material-symbols-outlined text-display-bold text-slate-200 mb-2">menu_book</span>
+ <p className="text-slate-400">No subjects assigned to this section yet.</p>
  </div>
  )}
  </div>
@@ -758,11 +758,11 @@ const ClassProfile = ({
  <div className="flex gap-4">
  <div className="flex items-center gap-2">
  <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
- <span className="text-xs font-bold text-slate-600 dark:text-slate-400 ">System Sync: OK</span>
+ <span className="text-body-sm text-slate-600 dark:text-slate-400">System Sync: OK</span>
  </div>
  <div className="flex items-center gap-2">
  <span className="w-3 h-3 rounded-full bg-blue-400"></span>
- <span className="text-xs font-bold text-slate-600 dark:text-slate-400 ">Academic Year: {cls.academicYear}</span>
+ <span className="text-body-sm text-slate-600 dark:text-slate-400">Academic Year: {cls.academicYear}</span>
  </div>
  </div>
  {/* Export Class Report button removed by user request */}

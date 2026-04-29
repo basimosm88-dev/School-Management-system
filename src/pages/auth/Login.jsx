@@ -81,11 +81,11 @@ const Login = () => {
  {schoolSettings.logo ? (
  <img src={schoolSettings.logo} alt="Logo" className="w-full h-full object-cover" />
  ) : (
- <span className="material-symbols-outlined text-white text-3xl animate-pulse">school</span>
+ <span className="material-symbols-outlined text-white text-stat-value animate-pulse">school</span>
  )}
  </div>
- <h1 className="text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">{schoolSettings.name || 'EduCore Pro'}</h1>
- <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">{roleConfigs[selectedRole].welcome}</p>
+ <h1 className="text-stat-value text-slate-900 dark:text-white">{schoolSettings.name || 'EduCore Pro'}</h1>
+ <p className="text-body-sm text-slate-500 dark:text-slate-400 mt-1">{roleConfigs[selectedRole].welcome}</p>
  </div>
 
  {/* Role Selection */}
@@ -100,26 +100,26 @@ const Login = () => {
  : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400'
  }`}
  >
- <span className="material-symbols-outlined text-2xl mb-1">{config.icon}</span>
- <span className="text-xs font-semibold tracking-tighter">{config.label}</span>
+ <span className="material-symbols-outlined text-stat-value mb-1">{config.icon}</span>
+ <span className="text-body-sm">{config.label}</span>
  </button>
  ))}
  </div>
 
  {error && (
- <div className="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-sm rounded-xl border border-rose-100 dark:border-rose-800 flex items-center gap-3 animate-shake">
- <span className="material-symbols-outlined text-xl">error</span>
+ <div className="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-body-sm rounded-xl border border-rose-100 dark:border-rose-800 flex items-center gap-3 animate-shake">
+ <span className="material-symbols-outlined text-headline-sm">error</span>
  {error}
  </div>
  )}
 
  <form onSubmit={handleLogin} className="space-y-5">
  <div>
- <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
+ <label className="block text-body-sm text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
  {selectedRole === 'student' ? 'Student ID' : 'Email Address'}
  </label>
  <div className="relative">
- <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-2xl">
+ <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-stat-value">
  {selectedRole === 'student' ? 'id_card' : 'mail'}
  </span>
  <input
@@ -133,9 +133,9 @@ const Login = () => {
  </div>
  </div>
  <div>
- <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Password</label>
+ <label className="block text-body-sm text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Password</label>
  <div className="relative">
- <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-2xl">lock</span>
+ <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-stat-value">lock</span>
  <input
  type="password"
  required
@@ -150,23 +150,23 @@ const Login = () => {
  <button
  type="submit"
  disabled={loading}
- className="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 mt-2"
+ className="w-full bg-primary text-white py-3.5 rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 mt-2"
  >
  {loading ? 'Authenticating...' : `Sign In as ${roleConfigs[selectedRole].label}`}
- {!loading && <span className="material-symbols-outlined text-2xl">login</span>}
+ {!loading && <span className="material-symbols-outlined text-stat-value">login</span>}
  </button>
  </form>
  
  <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
  <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl">
- <h4 className="text-xs font-bold text-slate-400 mb-2">Demo Credentials</h4>
- <div className="space-y-1 text-xs text-slate-600 dark:text-slate-400">
- {selectedRole === 'admin' && <p><span className="font-bold text-slate-900 dark:text-slate-200">Admin:</span> admin / admin123</p>}
- {selectedRole === 'teacher' && <p><span className="font-bold text-slate-900 dark:text-slate-200">Teacher:</span> (Add via Admin Panel)</p>}
+ <h4 className="text-body-sm text-slate-400 mb-2">Demo Credentials</h4>
+ <div className="space-y-1 text-body-sm text-slate-600 dark:text-slate-400">
+ {selectedRole === 'admin' && <p><span className="text-slate-900 dark:text-slate-200">Admin:</span> admin / admin123</p>}
+ {selectedRole === 'teacher' && <p><span className="text-slate-900 dark:text-slate-200">Teacher:</span> (Add via Admin Panel)</p>}
  {selectedRole === 'student' && (
  <>
- <p><span className="font-bold text-slate-900 dark:text-slate-200">Student 1:</span> 1 / password: 1</p>
- <p><span className="font-bold text-slate-900 dark:text-slate-200">Student 2:</span> 2 / password: 2</p>
+ <p><span className="text-slate-900 dark:text-slate-200">Student 1:</span> 1 / password: 1</p>
+ <p><span className="text-slate-900 dark:text-slate-200">Student 2:</span> 2 / password: 2</p>
  </>
  )}
  </div>

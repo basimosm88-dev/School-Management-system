@@ -61,15 +61,15 @@ const EventsPage = ({ role }) => {
  <PageLayout role={role} title={t('events')}>
  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
  <div>
- <h2 className="text-xl font-semibold text-slate-900 dark:text-white tracking-tight">{t('events')}</h2>
- <p className="text-xs font-bold text-slate-500 mt-1">{t('eventsSubtitle')}</p>
+ <h2 className="text-headline-sm text-slate-900 dark:text-white">{t('events')}</h2>
+ <p className="text-body-sm text-slate-500 mt-1">{t('eventsSubtitle')}</p>
  </div>
  {(role === 'admin' || (role === 'teacher' && permissions.teachers.createEvents)) && (
  <button 
  onClick={() => setModalOpen(true)}
- className="bg-primary text-white px-6 py-3 rounded-xl font-bold text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2"
+ className="bg-primary text-white px-6 py-3 rounded-xl text-body-sm shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-2xl">add</span>
+ <span className="material-symbols-outlined text-stat-value">add</span>
  Create Event
  </button>
  )}
@@ -87,30 +87,30 @@ const EventsPage = ({ role }) => {
  <div key={event.id} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
  <div className="flex gap-6">
  <div className="flex flex-col items-center justify-center w-20 h-20 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group-hover:bg-primary group-hover:border-primary transition-all">
- <span className="text-xs font-bold text-slate-400 dark:text-slate-500 group-hover:text-white/70 ">
+ <span className="text-body-sm text-slate-400 dark:text-slate-500 group-hover:text-white/70">
  {event.date ? new Date(event.date).toLocaleString('default', { month: 'short' }) : 'N/A'}
  </span>
- <span className="text-2xl font-semibold text-slate-900 dark:text-white group-hover:text-white">
+ <span className="text-stat-value text-slate-900 dark:text-white group-hover:text-white">
  {event.date ? new Date(event.date).getDate() : '-'}
  </span>
  </div>
  <div className="flex-1">
  <div className="flex justify-between items-start">
  <div>
- <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">{event.title}</h3>
- <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+ <h3 className="text-headline-sm text-slate-900 dark:text-white mb-1">{event.title}</h3>
+ <div className="flex items-center gap-4 text-body-sm text-slate-500 dark:text-slate-400">
  <span className="flex items-center gap-1">
- <span className="material-symbols-outlined text-lg">schedule</span>
+ <span className="material-symbols-outlined text-headline-sm">schedule</span>
  {event.start_time} - {event.end_time}
  </span>
  <span className="flex items-center gap-1">
- <span className="material-symbols-outlined text-lg">location_on</span>
+ <span className="material-symbols-outlined text-headline-sm">location_on</span>
  {event.location}
  </span>
  </div>
  </div>
  <div className="flex items-center gap-2">
- <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+ <span className={`px-3 py-1 rounded-full text-body-sm  ${
  event.audience === 'all' ? 'bg-blue-50 text-primary border border-blue-100' :
  event.audience === 'teachers' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
  'bg-emerald-50 text-emerald-600 border border-emerald-100'
@@ -119,12 +119,12 @@ const EventsPage = ({ role }) => {
  </span>
  {role === 'admin' && (
  <button onClick={() => deleteEvent(event.id)} className="p-2 text-slate-400 hover:text-rose-500 transition-colors">
- <span className="material-symbols-outlined text-xl">delete</span>
+ <span className="material-symbols-outlined text-headline-sm">delete</span>
  </button>
  )}
  </div>
  </div>
- <p className="mt-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+ <p className="mt-4 text-body-sm text-slate-600 dark:text-slate-300 leading-relaxed">
  {event.description}
  </p>
  </div>
@@ -138,16 +138,16 @@ const EventsPage = ({ role }) => {
  <div className="col-span-1 md:col-span-12 lg:col-span-4">
  <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm sticky top-24">
  <div className="flex justify-between items-center mb-6">
- <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+ <h3 className="text-body-sm text-slate-900 dark:text-white flex items-center gap-2">
  <span className="material-symbols-outlined text-primary">calendar_month</span>
  Monthly Overview
  </h3>
- <span className="text-xs bg-blue-50 dark:bg-blue-900/30 text-primary px-2 py-1 rounded font-bold ">{monthName} {currentYear}</span>
+ <span className="text-body-sm bg-blue-50 dark:bg-blue-900/30 text-primary px-2 py-1 rounded">{monthName} {currentYear}</span>
  </div>
  
  <div className="grid grid-cols-7 gap-1 text-center mb-4">
  {['S','M','T','W','T','F','S'].map(d => (
- <span key={d} className="text-xs font-bold text-slate-400 dark:text-slate-500">{d}</span>
+ <span key={d} className="text-body-sm text-slate-400 dark:text-slate-500">{d}</span>
  ))}
  </div>
  <div className="grid grid-cols-7 gap-1">
@@ -161,7 +161,7 @@ const EventsPage = ({ role }) => {
  const isToday = day === today.getDate();
  
  return (
- <div key={i} className={`aspect-square flex items-center justify-center rounded-xl text-xs font-medium cursor-pointer transition-all
+ <div key={i} className={`aspect-square flex items-center justify-center rounded-xl text-body-sm  cursor-pointer transition-all
  ${isToday ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}
  ${hasEvent && !isToday ? 'ring-2 ring-primary/20 ring-offset-1 dark:ring-offset-slate-900' : ''}
  `}>
@@ -172,12 +172,12 @@ const EventsPage = ({ role }) => {
  </div>
 
  <div className="mt-8 space-y-4">
- <h4 className="text-xs font-bold text-slate-400 ">Legend</h4>
- <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-400">
+ <h4 className="text-body-sm text-slate-400">Legend</h4>
+ <div className="flex items-center gap-3 text-body-sm text-slate-600 dark:text-slate-400">
  <span className="w-2 h-2 rounded-full bg-primary"></span>
  <span>General Event</span>
  </div>
- <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-400">
+ <div className="flex items-center gap-3 text-body-sm text-slate-600 dark:text-slate-400">
  <span className="w-2 h-2 rounded-full bg-amber-400"></span>
  <span>Teacher Meeting</span>
  </div>

@@ -9,12 +9,12 @@ const Modal = ({ isOpen, onClose, title, children, onSave, saveText = 'Save Chan
  
  {/* Header */}
  <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 shrink-0">
- <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-xl tracking-tight">{title}</h3>
+ <h3 className="text-slate-900 dark:text-slate-100 text-headline-sm">{title}</h3>
  <button 
  onClick={onClose} 
  className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
  >
- <span className="material-symbols-outlined text-3xl">close</span>
+ <span className="material-symbols-outlined text-stat-value">close</span>
  </button>
  </div>
 
@@ -27,13 +27,13 @@ const Modal = ({ isOpen, onClose, title, children, onSave, saveText = 'Save Chan
  <div className="flex justify-end gap-3 p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 shrink-0">
  <button 
  onClick={onClose} 
- className="px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all"
+ className="px-6 py-2.5 text-body-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all"
  >
  Cancel
  </button>
  <button 
  onClick={onSave} 
- className="px-8 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-blue-700 rounded-xl shadow-lg shadow-primary/20 transition-all transform active:scale-95"
+ className="px-8 py-2.5 text-body-sm text-white bg-primary hover:bg-blue-700 rounded-xl shadow-lg shadow-primary/20 transition-all transform active:scale-95"
  >
  {saveText}
  </button>

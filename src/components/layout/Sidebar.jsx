@@ -85,7 +85,7 @@ const Sidebar = ({ role = 'admin' }) => {
  )}
 
  <aside 
- className={`fixed left-0 lg:left-4 top-0 lg:top-4 bottom-0 lg:bottom-4 ${sidebarOpen ? 'w-[280px] translate-x-0' : 'w-[88px] -translate-x-full lg:translate-x-0'} bg-white dark:bg-slate-900 flex flex-col py-6 px-4 gap-y-1 z-[60] text-sm font-medium lg:rounded-2xl shadow-xl lg:shadow-sm border-r lg:border border-slate-200/80 dark:border-slate-700/50 overflow-hidden transition-all duration-300 ${!sidebarOpen ? 'sidebar-collapsed' : ''}`} 
+ className={`fixed left-0 lg:left-4 top-0 lg:top-4 bottom-0 lg:bottom-4 ${sidebarOpen ? 'w-[280px] translate-x-0' : 'w-[88px] -translate-x-full lg:translate-x-0'} bg-white dark:bg-slate-900 flex flex-col py-6 px-4 gap-y-1 z-[60] text-body-sm  lg:rounded-2xl shadow-xl lg:shadow-sm border-r lg:border border-slate-200/80 dark:border-slate-700/50 overflow-hidden transition-all duration-300 ${!sidebarOpen ? 'sidebar-collapsed' : ''}`} 
  id="sidebar"
  >
  {/* Sidebar Header */}
@@ -99,8 +99,8 @@ const Sidebar = ({ role = 'admin' }) => {
  )}
  </div>
  <div className={`sidebar-logo-text overflow-hidden ${!sidebarOpen ? 'hidden' : 'block'}`}>
- <h1 className="font-bold text-slate-900 dark:text-slate-100 whitespace-nowrap tracking-tight">{schoolSettings.name}</h1>
- <p className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap font-semibold uppercase tracking-widest">School management</p>
+ <h1 className="text-slate-900 dark:text-slate-100 whitespace-nowrap">{schoolSettings.name}</h1>
+ <p className="text-body-sm text-slate-400 dark:text-slate-500 whitespace-nowrap uppercase">School management</p>
  </div>
  </div>
 
@@ -111,7 +111,7 @@ const Sidebar = ({ role = 'admin' }) => {
  id="sidebar-toggle"
  title={sidebarOpen ? "Collapse" : "Expand"}
  >
- <span className={`material-symbols-outlined text-lg transition-all duration-300 ${!sidebarOpen ? 'rotate-180' : ''}`}>
+ <span className={`material-symbols-outlined text-headline-sm transition-all duration-300 ${!sidebarOpen ? 'rotate-180' : ''}`}>
  chevron_left
  </span>
  </button>
@@ -121,7 +121,7 @@ const Sidebar = ({ role = 'admin' }) => {
  onClick={toggleSidebar}
  className="flex lg:hidden items-center justify-center w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-400 hover:text-primary transition-all"
  >
- <span className="material-symbols-outlined text-2xl">close</span>
+ <span className="material-symbols-outlined text-stat-value">close</span>
  </button>
  </div>
 
@@ -149,7 +149,7 @@ const Sidebar = ({ role = 'admin' }) => {
  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-primary/10' : 'border border-slate-100 dark:border-slate-700 group-hover:border-slate-200 dark:group-hover:border-slate-600'}`}>
  <span className={`material-symbols-outlined ${isActive ? 'text-primary' : ''}`}>{item.icon}</span>
  </div>
- <span className={`sidebar-text ${isActive ? 'font-semibold' : 'font-medium group-hover:text-slate-900 dark:group-hover:text-slate-200'}`}>{t(item.name)}</span>
+ <span className={`sidebar-text ${isActive ? '' : ' group-hover:text-slate-900 dark:group-hover:text-slate-200'}`}>{t(item.name)}</span>
  </>
  )}
  </NavLink>
@@ -168,7 +168,7 @@ const Sidebar = ({ role = 'admin' }) => {
  <div className="w-9 h-9 border border-slate-100 dark:border-slate-700 rounded-lg flex items-center justify-center shrink-0 group-hover:border-slate-200 dark:group-hover:border-slate-600">
  <span className="material-symbols-outlined">settings</span>
  </div>
- <span className="sidebar-text font-medium group-hover:text-slate-900 dark:group-hover:text-slate-200">{t('settings')}</span>
+ <span className="sidebar-text group-hover:text-slate-900 dark:group-hover:text-slate-200">{t('settings')}</span>
  </NavLink>
  <button
  onClick={handleLogoutClick}
@@ -177,7 +177,7 @@ const Sidebar = ({ role = 'admin' }) => {
  <div className="w-9 h-9 flex items-center justify-center shrink-0">
  <span className="material-symbols-outlined">logout</span>
  </div>
- <span className="sidebar-text font-medium">{t('logout')}</span>
+ <span className="sidebar-text">{t('logout')}</span>
  </button>
  </div>
 
@@ -188,21 +188,21 @@ const Sidebar = ({ role = 'admin' }) => {
  <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-2xl w-full max-w-sm animate-in zoom-in-95 duration-300">
  <div className="flex flex-col items-center text-center">
  <div className="w-20 h-20 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
- <span className="material-symbols-outlined text-3xl">logout</span>
+ <span className="material-symbols-outlined text-stat-value">logout</span>
  </div>
- <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-2 tracking-tight">Sign out</h3>
- <p className="text-sm font-bold text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">Are you sure you want to logout? You will need to login again to access your account.</p>
+ <h3 className="text-stat-value text-slate-900 dark:text-slate-100 mb-2">Sign out</h3>
+ <p className="text-body-sm text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">Are you sure you want to logout? You will need to login again to access your account.</p>
 
  <div className="flex gap-3 w-full">
  <button
  onClick={() => setShowLogoutModal(false)}
- className="flex-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+ className="flex-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
  >
  {t('cancel')}
  </button>
  <button
  onClick={confirmLogout}
- className="flex-1 px-4 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold transition-colors shadow-sm shadow-rose-600/20"
+ className="flex-1 px-4 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white transition-colors shadow-sm shadow-rose-600/20"
  >
  {t('confirm')}
  </button>

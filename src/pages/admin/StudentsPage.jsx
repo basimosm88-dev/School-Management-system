@@ -119,7 +119,7 @@ const StudentsPage = () => {
  <PageLayout role={userRole} title={t('students')}>
  <div className="flex flex-col items-center justify-center min-h-[400px]">
  <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
- <p className="mt-4 text-slate-500 font-bold animate-pulse">Loading class data...</p>
+ <p className="mt-4 text-slate-500 animate-pulse">Loading class data...</p>
  </div>
  </PageLayout>
  );
@@ -133,8 +133,8 @@ const StudentsPage = () => {
  {viewMode === 'grid' && (
  <>
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">{t('students')}</h2>
- <p className="text-sm font-medium text-slate-500 mt-1">{t('studentsSubtitle')}</p>
+ <h2 className="text-stat-value text-slate-900 dark:text-white">{t('students')}</h2>
+ <p className="text-body-sm text-slate-500 mt-1">{t('studentsSubtitle')}</p>
  </div>
 
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -149,15 +149,15 @@ const StudentsPage = () => {
  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -mr-10 -mt-10 group-hover:scale-110 transition-transform"></div>
  <div className="relative z-10">
  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
- <span className="material-symbols-outlined text-2xl font-bold">school</span>
+ <span className="material-symbols-outlined text-stat-value">school</span>
  </div>
- <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">{c.name}</h3>
- <p className="text-xs font-bold text-slate-500 mb-6">{classStudents.length} Students registered</p>
+ <h3 className="text-headline-sm text-slate-900 dark:text-white mb-1">{c.name}</h3>
+ <p className="text-body-sm text-slate-500 mb-6">{classStudents.length} Students registered</p>
  
  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
- <span className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+ <span className="text-body-sm text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
  View Students
- <span className="material-symbols-outlined text-lg">arrow_forward</span>
+ <span className="material-symbols-outlined text-headline-sm">arrow_forward</span>
  </span>
  </div>
  </div>
@@ -168,8 +168,8 @@ const StudentsPage = () => {
 
  {availableClasses.length === 0 && (
  <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800">
- <span className="material-symbols-outlined text-6xl text-slate-200 mb-4">class</span>
- <p className="text-slate-500 font-bold">No classes available.</p>
+ <span className="material-symbols-outlined text-display-bold text-slate-200 mb-4">class</span>
+ <p className="text-slate-500">No classes available.</p>
  </div>
  )}
  </>
@@ -187,9 +187,9 @@ const StudentsPage = () => {
  >
  <span className="material-symbols-outlined">arrow_back</span>
  </button>
- <div className="flex items-center text-sm font-bold truncate">
+ <div className="flex items-center text-body-sm truncate">
  <span className="text-slate-400 cursor-pointer hover:text-primary" onClick={goBack}>{t('students')}</span>
- <span className="material-symbols-outlined text-slate-300 text-xl mx-1">chevron_right</span>
+ <span className="material-symbols-outlined text-slate-300 text-headline-sm mx-1">chevron_right</span>
  <span className="text-slate-900 dark:text-white truncate">
  {classes.find(c => c.id === parseInt(selectedClassId))?.name}
  </span>
@@ -207,7 +207,7 @@ const StudentsPage = () => {
  placeholder="Search students in this class..."
  value={searchTerm}
  onChange={(e) => setSearchTerm(e.target.value)}
- className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200 font-bold"
+ className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
  />
  </div>
 
@@ -215,7 +215,7 @@ const StudentsPage = () => {
  <select
  value={filters.gender}
  onChange={(e) => setFilters({ ...filters, gender: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer font-bold"
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer"
  >
  <option value="">Gender</option>
  <option value="Male">Male</option>
@@ -224,7 +224,7 @@ const StudentsPage = () => {
  <select
  value={filters.special}
  onChange={(e) => setFilters({ ...filters, special: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer font-bold"
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400 cursor-pointer"
  >
  <option value="">Special Cases</option>
  <option value="noFather">No Father</option>
@@ -237,9 +237,9 @@ const StudentsPage = () => {
 
  <button
  onClick={handleAdd}
- className="bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all shadow-md shadow-primary/20 flex items-center gap-2 text-button"
+ className="bg-primary text-white px-6 py-2.5 rounded-xl text-body-sm hover:bg-primary/90 transition-all shadow-md shadow-primary/20 flex items-center gap-2 text-button"
  >
- <span className="material-symbols-outlined text-2xl">person_add</span>
+ <span className="material-symbols-outlined text-stat-value">person_add</span>
  Add Student
  </button>
  </div>
@@ -266,13 +266,13 @@ const StudentsPage = () => {
  >
  <td className="px-6 py-4">
  <div className="flex flex-col">
- <span className="font-semibold text-slate-800 dark:text-slate-200">{student.name}</span>
- <span className="text-xs text-slate-400 font-bold tracking-tight">{student.gender}</span>
+ <span className="text-slate-800 dark:text-slate-200">{student.name}</span>
+ <span className="text-body-sm text-slate-400">{student.gender}</span>
  </div>
  </td>
  <td className="px-6 py-4">
  <div className="flex items-center gap-2">
- <span className="font-mono text-sm text-slate-500 dark:text-slate-400">{student.id}</span>
+ <span className="font-mono text-body-sm text-slate-500 dark:text-slate-400">{student.id}</span>
  <button
  onClick={(e) => {
  e.stopPropagation();
@@ -282,16 +282,16 @@ const StudentsPage = () => {
  className="p-1 text-slate-400 hover:text-primary hover:bg-primary/5 rounded transition-all opacity-0 group-hover:opacity-100"
  title="Copy ID"
  >
- <span className="material-symbols-outlined text-lg">content_copy</span>
+ <span className="material-symbols-outlined text-headline-sm">content_copy</span>
  </button>
  </div>
  </td>
- <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{student.phone || 'N/A'}</td>
+ <td className="px-6 py-4 text-slate-900 dark:text-slate-100">{student.phone || 'N/A'}</td>
  <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
  {classes.find(c => c.id === student.classId)?.name || 'Unassigned'}
  </td>
  <td className="px-6 py-4">
- <span className={`px-2 py-1 rounded text-xs font-bold ${student.status === 'Inactive'
+ <span className={`px-2 py-1 rounded text-body-sm  ${student.status === 'Inactive'
  ? 'bg-slate-100 text-slate-500 dark:bg-slate-800'
  : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'
  }`}>
@@ -305,21 +305,21 @@ const StudentsPage = () => {
  className="p-1.5 text-slate-400 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
  title="View Profile"
  >
- <span className="material-symbols-outlined text-xl">visibility</span>
+ <span className="material-symbols-outlined text-headline-sm">visibility</span>
  </button>
  <button
  onClick={(e) => handleEdit(student, e)}
  className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
  title="Edit"
  >
- <span className="material-symbols-outlined text-xl">edit</span>
+ <span className="material-symbols-outlined text-headline-sm">edit</span>
  </button>
  <button
  onClick={(e) => handleDelete(student.id, e)}
  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all"
  title="Delete"
  >
- <span className="material-symbols-outlined text-xl">delete</span>
+ <span className="material-symbols-outlined text-headline-sm">delete</span>
  </button>
  </div>
  </td>
@@ -328,8 +328,8 @@ const StudentsPage = () => {
  {filteredStudents.length === 0 && (
  <tr>
  <td colSpan="6" className="px-6 py-20 text-center text-slate-400">
- <span className="material-symbols-outlined text-5xl mb-3 opacity-20">person_off</span>
- <p className="font-bold">No students found in this class.</p>
+ <span className="material-symbols-outlined text-display-bold mb-3 opacity-20">person_off</span>
+ <p className="">No students found in this class.</p>
  </td>
  </tr>
  )}
@@ -422,7 +422,7 @@ const StudentForm = ({ student, onClose, onSave, classes }) => {
  className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto animate-in zoom-in-95 duration-300 flex flex-col max-h-[95vh]"
  >
  <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10 rounded-t-3xl shrink-0">
- <h3 className="font-bold text-slate-900 dark:text-slate-100 text-xl flex items-center gap-2">
+ <h3 className="text-slate-900 dark:text-slate-100 text-headline-sm flex items-center gap-2">
  <span className="material-symbols-outlined text-primary">person_add</span>
  {student ? 'Edit Student Details' : 'Register New Student'}
  </h3>
@@ -437,30 +437,30 @@ const StudentForm = ({ student, onClose, onSave, classes }) => {
  <FormSectionHeader icon="person" title="Section 1: Basic Information" />
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
  <div className="col-span-full lg:col-span-1">
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Full Name (4 Names)</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Full Name (4 Names)</label>
  <input type="text" value={formData.name || ''} onChange={e => handleChange('name', e.target.value)} className="form-input-custom" placeholder="First Second Third Surname" />
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Gender</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Gender</label>
  <div className="flex gap-4 mt-2">
  {['Male', 'Female'].map(g => (
  <label key={g} className="flex items-center gap-2 cursor-pointer group">
  <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={e => handleChange('gender', e.target.value)} className="w-4 h-4 text-primary focus:ring-primary/20" />
- <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{g}</span>
+ <span className="text-body-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{g}</span>
  </label>
  ))}
  </div>
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Birth Date</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Birth Date</label>
  <input type="date" value={formData.birthDate || ''} onChange={e => handleChange('birthDate', e.target.value)} className="form-input-custom" />
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Birth Place</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Birth Place</label>
  <input type="text" value={formData.birthPlace || ''} onChange={e => handleChange('birthPlace', e.target.value)} className="form-input-custom" placeholder="City, Country" />
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Phone Number</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Phone Number</label>
  <input type="text" value={formData.phone || ''} onChange={e => handleChange('phone', e.target.value)} className="form-input-custom" placeholder="+123..." />
  </div>
  </div>
@@ -471,11 +471,11 @@ const StudentForm = ({ student, onClose, onSave, classes }) => {
  <FormSectionHeader icon="family_restroom" title="Section 2: Family Information" />
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Mother Full Name</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Mother Full Name</label>
  <input type="text" value={formData.motherName || ''} onChange={e => handleChange('motherName', e.target.value)} className="form-input-custom" />
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Parent Status</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Parent Status</label>
  <select value={formData.parentStatus} onChange={e => handleChange('parentStatus', e.target.value)} className="form-input-custom cursor-pointer">
  <option value="Both">Both Parents Alive</option>
  <option value="No Father">No Father (Orphan)</option>
@@ -490,23 +490,23 @@ const StudentForm = ({ student, onClose, onSave, classes }) => {
  <FormSectionHeader icon="location_on" title="Section 3: Address" />
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Country</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Country</label>
  <input type="text" value={formData.address?.country || ''} onChange={e => handleChange('address.country', e.target.value)} className="form-input-custom" />
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">State</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">State</label>
  <input type="text" value={formData.address?.state || ''} onChange={e => handleChange('address.state', e.target.value)} className="form-input-custom" />
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">City / Village</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">City / Village</label>
  <input type="text" value={formData.address?.city || ''} onChange={e => handleChange('address.city', e.target.value)} className="form-input-custom" />
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Neighborhood</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Neighborhood</label>
  <input type="text" value={formData.address?.neighborhood || ''} onChange={e => handleChange('address.neighborhood', e.target.value)} className="form-input-custom" />
  </div>
  <div className="col-span-full">
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Full Address Details</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Full Address Details</label>
  <textarea rows="2" value={formData.address?.fullAddress || ''} onChange={e => handleChange('address.fullAddress', e.target.value)} className="form-input-custom" placeholder="Street, Building, Floor..."></textarea>
  </div>
  </div>
@@ -517,14 +517,14 @@ const StudentForm = ({ student, onClose, onSave, classes }) => {
  <FormSectionHeader icon="school" title="Section 4: Academic Info" />
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Class</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Class</label>
  <select value={formData.classId || ''} onChange={e => handleChange('classId', e.target.value ? parseInt(e.target.value) : '')} className="form-input-custom cursor-pointer">
  <option value="">Select Class</option>
  {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
  </select>
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Registration Date</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Registration Date</label>
  <input type="date" value={formData.registrationDate || ''} onChange={e => handleChange('registrationDate', e.target.value)} className="form-input-custom" />
  </div>
  </div>
@@ -537,15 +537,15 @@ const StudentForm = ({ student, onClose, onSave, classes }) => {
  <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all flex-1 min-w-[200px]">
  <input type="checkbox" checked={formData.specialConditions.disability} onChange={e => handleChange('specialConditions.disability', e.target.checked)} className="w-5 h-5 text-primary rounded border-slate-300" />
  <div>
- <span className="block text-sm font-bold text-slate-700 dark:text-slate-200">Disability</span>
- <span className="text-xs text-slate-400 font-bold ">Physical or learning</span>
+ <span className="block text-body-sm text-slate-700 dark:text-slate-200">Disability</span>
+ <span className="text-body-sm text-slate-400">Physical or learning</span>
  </div>
  </label>
  <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all flex-1 min-w-[200px]">
  <input type="checkbox" checked={formData.specialConditions.refugee} onChange={e => handleChange('specialConditions.refugee', e.target.checked)} className="w-5 h-5 text-primary rounded border-slate-300" />
  <div>
- <span className="block text-sm font-bold text-slate-700 dark:text-slate-200">Refugee</span>
- <span className="text-xs text-slate-400 font-bold ">International or internal</span>
+ <span className="block text-body-sm text-slate-700 dark:text-slate-200">Refugee</span>
+ <span className="text-body-sm text-slate-400">International or internal</span>
  </div>
  </label>
  </div>
@@ -556,15 +556,15 @@ const StudentForm = ({ student, onClose, onSave, classes }) => {
  <FormSectionHeader icon="contact_phone" title="Section 6: Responsible Person" />
  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Full Name</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Full Name</label>
  <input type="text" value={formData.responsiblePerson.name} onChange={e => handleChange('responsiblePerson.name', e.target.value)} className="form-input-custom" />
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Phone Number 1 (Required)</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Phone Number 1 (Required)</label>
  <input type="text" value={formData.responsiblePerson.phone1} onChange={e => handleChange('responsiblePerson.phone1', e.target.value)} className="form-input-custom" />
  </div>
  <div>
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Phone Number 2 (Optional)</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Phone Number 2 (Optional)</label>
  <input type="text" value={formData.responsiblePerson.phone2} onChange={e => handleChange('responsiblePerson.phone2', e.target.value)} className="form-input-custom" />
  </div>
  </div>
@@ -578,13 +578,13 @@ const StudentForm = ({ student, onClose, onSave, classes }) => {
  {['By Exam', 'Transfer from another school'].map(t => (
  <label key={t} className="flex items-center gap-3 cursor-pointer group">
  <input type="radio" name="regType" value={t} checked={formData.registrationType === t} onChange={e => handleChange('registrationType', e.target.value)} className="w-5 h-5 text-primary focus:ring-primary/20" />
- <span className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{t}</span>
+ <span className="text-body-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{t}</span>
  </label>
  ))}
  </div>
  {formData.registrationType === 'Transfer from another school' && (
  <div className="animate-in slide-in-from-top-2 duration-300 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800">
- <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Previous School Name</label>
+ <label className="text-body-sm text-slate-500 dark:text-slate-400 mb-1.5 block">Previous School Name</label>
  <input type="text" value={formData.previousSchool || ''} onChange={e => handleChange('previousSchool', e.target.value)} className="form-input-custom md:w-1/2" placeholder="Enter full name of previous school" />
  </div>
  )}
@@ -598,8 +598,8 @@ const StudentForm = ({ student, onClose, onSave, classes }) => {
  </section>
  </div>
  <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl shrink-0">
- <button type="button" onClick={onClose} className="px-6 py-2.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all">Cancel</button>
- <button type="submit" className="px-8 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save student record</button>
+ <button type="button" onClick={onClose} className="px-6 py-2.5 text-body-sm text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all">Cancel</button>
+ <button type="submit" className="px-8 py-2.5 bg-primary text-white text-body-sm rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save student record</button>
  </div>
  </form>
  </div>
@@ -620,22 +620,22 @@ const StudentProfile = ({ student, onClose, classes, schoolName }) => {
  <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-5xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto overflow-hidden animate-in zoom-in-95 duration-400">
  <div className="flex justify-between items-center p-8 border-b border-slate-100 dark:border-slate-800 bg-primary text-white relative">
  <div className="flex items-center gap-6 relative z-10">
- <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-4xl font-bold shadow-inner">
+ <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-display-bold shadow-inner">
  {student.name ? student.name[0] : 'S'}
  </div>
  <div>
- <h3 className="font-bold text-3xl mb-1">{student.name}</h3>
+ <h3 className="text-stat-value mb-1">{student.name}</h3>
  <div className="flex flex-wrap gap-3 mt-2">
- <span className="flex items-center gap-1 text-white/80 text-xs font-bold bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
- <span className="material-symbols-outlined text-base">id_card</span>
+ <span className="flex items-center gap-1 text-white/80 text-body-sm bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+ <span className="material-symbols-outlined text-body-md">id_card</span>
  ID: {student.id}
  </span>
- <span className="flex items-center gap-1 text-white/80 text-xs font-bold bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
- <span className="material-symbols-outlined text-base">school</span>
+ <span className="flex items-center gap-1 text-white/80 text-body-sm bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+ <span className="material-symbols-outlined text-body-md">school</span>
  {classes.find(c => c.id === student.classId)?.name}
  </span>
- <span className="flex items-center gap-1 text-white/80 text-xs font-bold bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
- <span className="material-symbols-outlined text-base">phone</span>
+ <span className="flex items-center gap-1 text-white/80 text-body-sm bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+ <span className="material-symbols-outlined text-body-md">phone</span>
  {student.phone}
  </span>
  </div>
@@ -644,9 +644,9 @@ const StudentProfile = ({ student, onClose, classes, schoolName }) => {
  <div className="flex gap-2 relative z-10">
  <button
  onClick={handlePrint}
- className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all font-semibold text-sm"
+ className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all text-body-sm"
  >
- <span className="material-symbols-outlined text-2xl">print</span>
+ <span className="material-symbols-outlined text-stat-value">print</span>
  Print Profile
  </button>
  <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all">
@@ -693,14 +693,14 @@ const StudentProfile = ({ student, onClose, classes, schoolName }) => {
  <InfoItem label="Registration Date" value={student.registrationDate} />
  <div className="mt-4">
  <InfoItem label="Registration Type" value={student.registrationType} />
- {student.previousSchool && <p className="mt-1 text-xs text-slate-500 italic">From: {student.previousSchool}</p>}
+ {student.previousSchool && <p className="mt-1 text-body-sm text-slate-500 italic">From: {student.previousSchool}</p>}
  </div>
  </ProfileSection>
  <ProfileSection title="Family Status" icon="family_restroom">
  <InfoItem label="Parent Status" value={student.parentStatus} />
  <div className="mt-4">
- <p className="text-xs font-bold text-slate-400 mb-2">Household Status</p>
- <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+ <p className="text-body-sm text-slate-400 mb-2">Household Status</p>
+ <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-body-sm bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
  Standard
  </span>
  </div>
@@ -726,8 +726,8 @@ const StudentProfile = ({ student, onClose, classes, schoolName }) => {
  {/* G. Grades */}
  <ProfileSection title="Academic Performance" icon="grade">
  <div className="overflow-hidden rounded-xl border border-slate-100 dark:border-slate-800">
- <table className="w-full text-sm">
- <thead className="bg-slate-50 dark:bg-slate-800/50 text-xs font-bold text-slate-400">
+ <table className="w-full text-body-sm">
+ <thead className="bg-slate-50 dark:bg-slate-800/50 text-body-sm text-slate-400">
  <tr>
  <th className="px-4 py-2 text-left">Subject</th>
  <th className="px-4 py-2 text-center">Score</th>
@@ -736,14 +736,14 @@ const StudentProfile = ({ student, onClose, classes, schoolName }) => {
  </thead>
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
  <tr>
- <td className="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Mathematics</td>
+ <td className="px-4 py-3 text-slate-700 dark:text-slate-300">Mathematics</td>
  <td className="px-4 py-3 text-center">92</td>
- <td className="px-4 py-3 text-right text-emerald-500 font-bold">A</td>
+ <td className="px-4 py-3 text-right text-emerald-500">A</td>
  </tr>
  <tr>
- <td className="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Physics</td>
+ <td className="px-4 py-3 text-slate-700 dark:text-slate-300">Physics</td>
  <td className="px-4 py-3 text-center">88</td>
- <td className="px-4 py-3 text-right text-emerald-500 font-bold">A-</td>
+ <td className="px-4 py-3 text-right text-emerald-500">A-</td>
  </tr>
  </tbody>
  </table>
@@ -764,12 +764,12 @@ const StudentProfile = ({ student, onClose, classes, schoolName }) => {
  </div>
  <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
  <div className="flex items-center gap-3">
- <span className="material-symbols-outlined text-primary text-xl">phone</span>
+ <span className="material-symbols-outlined text-primary text-headline-sm">phone</span>
  <InfoItem label="Phone 1" value={student.responsiblePerson?.phone1} />
  </div>
  {student.responsiblePerson?.phone2 && (
  <div className="flex items-center gap-3">
- <span className="material-symbols-outlined text-slate-400 text-xl">phone_iphone</span>
+ <span className="material-symbols-outlined text-slate-400 text-headline-sm">phone_iphone</span>
  <InfoItem label="Phone 2" value={student.responsiblePerson.phone2} />
  </div>
  )}
@@ -790,18 +790,18 @@ const StudentProfile = ({ student, onClose, classes, schoolName }) => {
  />
  </svg>
  <div className="absolute inset-0 flex flex-col items-center justify-center">
- <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">94%</span>
- <span className="text-xs text-slate-400 font-bold ">Presence</span>
+ <span className="text-stat-value text-slate-900 dark:text-slate-100">94%</span>
+ <span className="text-body-sm text-slate-400">Presence</span>
  </div>
  </div>
  <div className="w-full grid grid-cols-2 gap-3">
  <div className="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl text-center border border-emerald-100 dark:border-emerald-800/50">
- <span className="block text-lg font-bold text-emerald-600 dark:text-emerald-400">182</span>
- <span className="text-xs font-bold text-slate-500 ">Present</span>
+ <span className="block text-headline-sm text-emerald-600 dark:text-emerald-400">182</span>
+ <span className="text-body-sm text-slate-500">Present</span>
  </div>
  <div className="bg-rose-50 dark:bg-rose-900/20 p-3 rounded-xl text-center border border-rose-100 dark:border-rose-800/50">
- <span className="block text-lg font-bold text-rose-600 dark:text-rose-400">12</span>
- <span className="text-xs font-bold text-slate-500 ">Absent</span>
+ <span className="block text-headline-sm text-rose-600 dark:text-rose-400">12</span>
+ <span className="text-body-sm text-slate-500">Absent</span>
  </div>
  </div>
  </div>
@@ -809,7 +809,7 @@ const StudentProfile = ({ student, onClose, classes, schoolName }) => {
 
  {/* Additional Notes */}
  <ProfileSection title="Administrative Notes" icon="notes">
- <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed italic bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800/50">
+ <p className="text-body-sm text-slate-600 dark:text-slate-400 leading-relaxed italic bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800/50">
  {student.notes || "No additional notes recorded for this student record."}
  </p>
  </ProfileSection>
@@ -832,27 +832,27 @@ const PrintableStudentProfile = ({ student, classes, schoolName }) => {
  <div className="print-header flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
  <div className="flex items-center gap-4">
  <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center text-white">
- <span className="material-symbols-outlined text-4xl">school</span>
+ <span className="material-symbols-outlined text-display-bold">school</span>
  </div>
  <div>
- <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">{schoolName}</h1>
- <p className="text-xs font-bold text-slate-500 ">Official Student Document</p>
+ <h1 className="text-stat-value text-slate-900">{schoolName}</h1>
+ <p className="text-body-sm text-slate-500">Official Student Document</p>
  </div>
  </div>
- <div className="text-right text-xs leading-relaxed text-slate-600">
- <p className="font-bold text-slate-900">{schoolName} Administration</p>
+ <div className="text-right text-body-sm leading-relaxed text-slate-600">
+ <p className="text-slate-900">{schoolName} Administration</p>
  <p>Main Campus, District 5</p>
  <p>Phone: +1 (234) 567-8900</p>
  <p>Email: admin@eliteacademy.edu</p>
- <p className="mt-1 font-mono text-xs text-slate-400 ">Document ID: SMS-STD-{student.id}-{new Date().getFullYear()}</p>
+ <p className="mt-1 font-mono text-body-sm text-slate-400">Document ID: SMS-STD-{student.id}-{new Date().getFullYear()}</p>
  </div>
  </div>
 
  <div className="flex justify-between items-center mb-6">
- <h2 className="text-xl font-bold border-l-4 border-primary pl-4">Student Profile Record</h2>
+ <h2 className="text-headline-sm border-l-4 border-primary pl-4">Student Profile Record</h2>
  <div className="text-right">
- <p className="text-xs font-bold text-slate-400 ">Issue Date</p>
- <p className="text-xs font-bold">{new Date().toLocaleDateString()}</p>
+ <p className="text-body-sm text-slate-400">Issue Date</p>
+ <p className="text-body-sm">{new Date().toLocaleDateString()}</p>
  </div>
  </div>
 
@@ -922,13 +922,13 @@ const PrintableStudentProfile = ({ student, classes, schoolName }) => {
  <div className="signature-area">
  <div className="signature-line">
  Manager Signature
- <p className="text-xs font-normal text-slate-400 mt-1">Official Stamp Required</p>
+ <p className="text-body-sm font-normal text-slate-400 mt-1">Official Stamp Required</p>
  </div>
  </div>
  <div className="signature-area">
  <div className="signature-line">
  Responsible Person Signature
- <p className="text-xs font-normal text-slate-400 mt-1">Date: ____ / ____ / 2026</p>
+ <p className="text-body-sm font-normal text-slate-400 mt-1">Date: ____ / ____ / 2026</p>
  </div>
  </div>
  </div>
@@ -947,17 +947,17 @@ const PrintItem = ({ label, value }) => (
 const FormSectionHeader = ({ icon, title }) => (
  <div className="flex items-center gap-3 mb-6">
  <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-primary shadow-sm">
- <span className="material-symbols-outlined text-3xl">{icon}</span>
+ <span className="material-symbols-outlined text-stat-value">{icon}</span>
  </div>
- <h4 className="text-primary font-bold text-sm ">{title}</h4>
+ <h4 className="text-primary text-body-sm">{title}</h4>
  </div>
 );
 
 const ProfileSection = ({ title, icon, children }) => (
  <div className="bg-white dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors group">
- <h4 className="text-slate-900 dark:text-slate-100 font-bold mb-6 flex items-center gap-3">
+ <h4 className="text-slate-900 dark:text-slate-100 mb-6 flex items-center gap-3">
  <span className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
- <span className="material-symbols-outlined text-xl">{icon}</span>
+ <span className="material-symbols-outlined text-headline-sm">{icon}</span>
  </span>
  {title}
  </h4>
@@ -967,18 +967,18 @@ const ProfileSection = ({ title, icon, children }) => (
 
 const InfoItem = ({ label, value }) => (
  <div>
- <p className="text-xs font-bold text-slate-400 mb-1.5">{label}</p>
- <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{value || 'Not Specified'}</p>
+ <p className="text-body-sm text-slate-400 mb-1.5">{label}</p>
+ <p className="text-body-sm text-slate-800 dark:text-slate-200">{value || 'Not Specified'}</p>
  </div>
 );
 
 const ProfileBadge = ({ label, color, icon }) => (
- <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold tracking-tight 
+ <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-body-sm   
  ${color === 'rose' ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-800' :
  color === 'amber' ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800' :
  'bg-slate-50 dark:bg-slate-800 text-slate-500 border-slate-100 dark:border-slate-800'} 
  border shadow-sm`}>
- <span className="material-symbols-outlined text-lg">{icon}</span>
+ <span className="material-symbols-outlined text-headline-sm">{icon}</span>
  {label}
  </span>
 );

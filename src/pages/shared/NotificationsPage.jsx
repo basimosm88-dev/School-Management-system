@@ -40,14 +40,14 @@ const NotificationsPage = ({ role }) => {
  <PageLayout role={role} title="Notifications Center">
  <div className="flex justify-between items-center mb-8">
  <div>
- <h2 className="text-xl font-bold text-slate-900 dark:text-white">Activity Notifications</h2>
- <p className="text-slate-500 dark:text-slate-400 text-sm">Stay updated with important school activities and personal alerts.</p>
+ <h2 className="text-headline-sm text-slate-900 dark:text-white">Activity Notifications</h2>
+ <p className="text-slate-500 dark:text-slate-400 text-body-sm">Stay updated with important school activities and personal alerts.</p>
  </div>
  <button 
  onClick={() => markAllNotificationsRead(currentUser?.id)}
- className="text-primary text-sm font-bold hover:underline flex items-center gap-2"
+ className="text-primary text-body-sm hover:underline flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-xl">done_all</span>
+ <span className="material-symbols-outlined text-headline-sm">done_all</span>
  Mark all as read
  </button>
  </div>
@@ -57,7 +57,7 @@ const NotificationsPage = ({ role }) => {
  <button 
  key={f}
  onClick={() => setFilter(f)}
- className={`px-4 py-1.5 rounded-full text-xs font-bold capitalize transition-all whitespace-nowrap border ${
+ className={`px-4 py-1.5 rounded-full text-body-sm  capitalize transition-all whitespace-nowrap border ${
  filter === f 
  ? 'bg-primary text-white border-primary shadow-md shadow-primary/20' 
  : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-100 dark:border-slate-800 hover:border-primary/30'
@@ -71,7 +71,7 @@ const NotificationsPage = ({ role }) => {
  <div className="space-y-3">
  {filteredNotifications.length === 0 ? (
  <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 text-center border border-slate-100 dark:border-slate-800">
- <span className="material-symbols-outlined text-5xl text-slate-200 mb-4">notifications_off</span>
+ <span className="material-symbols-outlined text-display-bold text-slate-200 mb-4">notifications_off</span>
  <p className="text-slate-500 italic">No notifications found in this category.</p>
  </div>
  ) : (
@@ -86,22 +86,22 @@ const NotificationsPage = ({ role }) => {
  } hover:border-primary/30 group`}
  >
  <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${getTypeStyles(n.type)}`}>
- <span className="material-symbols-outlined text-3xl">{getIcon(n.type)}</span>
+ <span className="material-symbols-outlined text-stat-value">{getIcon(n.type)}</span>
  </div>
  <div className="flex-1 min-w-0">
  <div className="flex justify-between items-start mb-1">
- <h3 className={`text-sm font-bold ${n.read ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white'}`}>
+ <h3 className={`text-body-sm  ${n.read ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white'}`}>
  {n.title}
  </h3>
- <span className="text-xs text-slate-400 font-medium">{new Date(n.timestamp).toLocaleString()}</span>
+ <span className="text-body-sm text-slate-400">{new Date(n.timestamp).toLocaleString()}</span>
  </div>
- <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+ <p className="text-body-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
  {n.message}
  </p>
  {n.actionLink && (
- <button className="mt-3 text-xs font-semibold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+ <button className="mt-3 text-body-sm text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
  View Details
- <span className="material-symbols-outlined text-base">arrow_forward</span>
+ <span className="material-symbols-outlined text-body-md">arrow_forward</span>
  </button>
  )}
  </div>

@@ -7,8 +7,8 @@
   body {
     @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
     font-family: 'Mona Sans', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: 14px;
+    line-height: 1.5;
     font-weight: 400;
     letter-spacing: 0.01em;
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
@@ -18,19 +18,12 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Mona Sans', sans-serif !important;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
-    font-weight: 600;
     color: inherit;
+    letter-spacing: -0.01em;
   }
-
-  h1 { font-size: 24px !important; }
-  h2 { font-size: 20px !important; }
-  h3 { font-size: 18px !important; }
 
   button, input, select, textarea {
     font-family: 'Mona Sans', sans-serif !important;
-    letter-spacing: 0.01em;
   }
 
   button {
@@ -217,24 +210,24 @@
   }
 
   .text-label {
-    @apply text-slate-500 dark:text-slate-400 font-medium;
+    @apply text-body-sm text-slate-500 dark:text-slate-400;
     text-transform: none; /* Sentence case by default */
   }
 
   .text-button {
-    @apply font-semibold tracking-wide;
+    @apply text-body-md;
     text-transform: capitalize;
   }
 
   /* Table Enhancements */
   .table-container th {
-    @apply px-6 py-4 text-[13px] font-bold text-slate-400 uppercase tracking-wider;
+    @apply px-6 py-4 text-label-bold text-slate-400 uppercase;
     border-bottom-width: 1px;
     @apply border-slate-100 dark:border-slate-800;
   }
 
   .table-container td {
-    @apply px-6 py-5 text-sm;
+    @apply px-6 py-5 text-body-sm;
   }
 
   .table-row-hover {

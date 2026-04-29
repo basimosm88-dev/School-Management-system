@@ -14,7 +14,7 @@ const ReportCardPrint = () => {
  const isManagementView = currentUser?.role === 'admin' || currentUser?.role === 'teacher';
  const studentClass = classes.find(c => c.id === data.student?.classId);
 
- if (!data.student) return <div className="p-10 text-center font-semibold text-rose-500">Student record not found</div>;
+ if (!data.student) return <div className="p-10 text-center text-rose-500">Student record not found</div>;
 
  const academicYear = `2026 - 2027`; 
 
@@ -38,15 +38,15 @@ const ReportCardPrint = () => {
  <span className="material-symbols-outlined">description</span>
  </div>
  <div>
- <h1 className="text-white font-semibold text-sm uppercase">Student Profile Record</h1>
- <p className="text-slate-400 text-xs font-bold tracking-tighter">Official Student Record - ID: {studentId}</p>
+ <h1 className="text-white text-body-sm uppercase">Student Profile Record</h1>
+ <p className="text-slate-400 text-body-sm">Official Student Record - ID: {studentId}</p>
  </div>
  </div>
  <button 
  onClick={() => window.print()}
- className="px-8 py-3 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-blue-700 transition-all flex items-center gap-3 shadow-xl shadow-primary/20"
+ className="px-8 py-3 bg-primary text-white text-body-sm rounded-xl hover:bg-blue-700 transition-all flex items-center gap-3 shadow-xl shadow-primary/20"
  >
- <span className="material-symbols-outlined text-xl">print</span>
+ <span className="material-symbols-outlined text-headline-sm">print</span>
  Print Official Report
  </button>
  </div>
@@ -62,19 +62,19 @@ const ReportCardPrint = () => {
  {schoolSettings.logo ? (
  <img src={schoolSettings.logo} alt="Logo" className="w-full h-full object-cover" />
  ) : (
- <span className="material-symbols-outlined text-5xl text-slate-900">school</span>
+ <span className="material-symbols-outlined text-display-bold text-slate-900">school</span>
  )}
  </div>
  )}
  <div>
- <h2 className="text-3xl font-semibold tracking-tighter text-slate-900">{schoolSettings.name}</h2>
- <p className="text-xs font-semibold text-slate-500 mt-1 uppercase">{schoolSettings.address}</p>
+ <h2 className="text-stat-value text-slate-900">{schoolSettings.name}</h2>
+ <p className="text-body-sm text-slate-500 mt-1 uppercase">{schoolSettings.address}</p>
  </div>
  </div>
  <div className="text-right">
- <h3 className="font-semibold text-lg uppercase">Student Profile Record</h3>
- <p className="text-xs font-bold text-slate-500 mt-1">Ref: {new Date().getFullYear()}/EX-{studentId}</p>
- <p className="text-xs font-bold text-slate-500">Date: {new Date().toLocaleDateString()}</p>
+ <h3 className="text-headline-sm uppercase">Student Profile Record</h3>
+ <p className="text-body-sm text-slate-500 mt-1">Ref: {new Date().getFullYear()}/EX-{studentId}</p>
+ <p className="text-body-sm text-slate-500">Date: {new Date().toLocaleDateString()}</p>
  </div>
  </div>
 
@@ -82,22 +82,22 @@ const ReportCardPrint = () => {
  <div className="grid grid-cols-2 gap-10 mb-12">
  <div className="space-y-4">
  <div className="flex border-b border-slate-200 pb-2">
- <span className="w-32 text-xs font-semibold text-slate-400 uppercase">Student Name</span>
- <span className="flex-1 font-semibold text-sm">{data.student.name}</span>
+ <span className="w-32 text-body-sm text-slate-400 uppercase">Student Name</span>
+ <span className="flex-1 text-body-sm">{data.student.name}</span>
  </div>
  <div className="flex border-b border-slate-200 pb-2">
- <span className="w-32 text-xs font-semibold text-slate-400 uppercase">Class Record</span>
- <span className="flex-1 font-semibold text-sm">{studentClass?.name || 'N/A'}</span>
+ <span className="w-32 text-body-sm text-slate-400 uppercase">Class Record</span>
+ <span className="flex-1 text-body-sm">{studentClass?.name || 'N/A'}</span>
  </div>
  </div>
  <div className="space-y-4">
  <div className="flex border-b border-slate-200 pb-2">
- <span className="w-32 text-xs font-semibold text-slate-400 uppercase">Academic Year</span>
- <span className="flex-1 font-semibold text-sm">2026 - 2027</span>
+ <span className="w-32 text-body-sm text-slate-400 uppercase">Academic Year</span>
+ <span className="flex-1 text-body-sm">2026 - 2027</span>
  </div>
  <div className="flex border-b border-slate-200 pb-2">
- <span className="w-32 text-xs font-semibold text-slate-400 uppercase">Report Type</span>
- <span className="flex-1 font-semibold text-sm">Full Annual Report</span>
+ <span className="w-32 text-body-sm text-slate-400 uppercase">Report Type</span>
+ <span className="flex-1 text-body-sm">Full Annual Report</span>
  </div>
  </div>
  </div>
@@ -106,23 +106,23 @@ const ReportCardPrint = () => {
  <table className="w-full border-collapse mb-12">
  <thead>
  <tr className="bg-slate-900 text-white">
- <th className="border border-slate-900 px-4 py-4 text-xs font-semibold text-left uppercase">Subject</th>
- <th className="border border-slate-900 px-2 py-4 text-xs font-semibold text-center w-20">Before Mid ({academicSettings.examWeights.beforeMidterm}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-xs font-semibold text-center w-20">Midterm ({academicSettings.examWeights.midterm}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-xs font-semibold text-center w-20">After Mid ({academicSettings.examWeights.afterMidterm}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-xs font-semibold text-center w-20">Final ({academicSettings.examWeights.final}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-xs font-semibold text-center bg-slate-800 w-24">Weighted Avg.</th>
+ <th className="border border-slate-900 px-4 py-4 text-body-sm text-left uppercase">Subject</th>
+ <th className="border border-slate-900 px-2 py-4 text-body-sm text-center w-20">Before Mid ({academicSettings.examWeights.beforeMidterm}%)</th>
+ <th className="border border-slate-900 px-2 py-4 text-body-sm text-center w-20">Midterm ({academicSettings.examWeights.midterm}%)</th>
+ <th className="border border-slate-900 px-2 py-4 text-body-sm text-center w-20">After Mid ({academicSettings.examWeights.afterMidterm}%)</th>
+ <th className="border border-slate-900 px-2 py-4 text-body-sm text-center w-20">Final ({academicSettings.examWeights.final}%)</th>
+ <th className="border border-slate-900 px-2 py-4 text-body-sm text-center bg-slate-800 w-24">Weighted Avg.</th>
  </tr>
  </thead>
  <tbody>
  {Object.keys(data.results).map(subject => (
  <tr key={subject} className="border-b border-slate-200">
- <td className="border border-slate-300 px-4 py-4 font-semibold text-xs uppercase">{subject}</td>
- <td className="border border-slate-300 px-2 py-4 text-center font-bold text-xs">{data.results[subject]["Before Midterm"]}</td>
- <td className="border border-slate-300 px-2 py-4 text-center font-bold text-xs">{data.results[subject]["Midterm"]}</td>
- <td className="border border-slate-300 px-2 py-4 text-center font-bold text-xs">{data.results[subject]["After Midterm"]}</td>
- <td className="border border-slate-300 px-2 py-4 text-center font-bold text-xs">{data.results[subject]["Final"]}</td>
- <td className="border border-slate-900 px-2 py-4 text-center font-semibold text-sm bg-slate-50">{data.results[subject].average}%</td>
+ <td className="border border-slate-300 px-4 py-4 text-body-sm uppercase">{subject}</td>
+ <td className="border border-slate-300 px-2 py-4 text-center text-body-sm">{data.results[subject]["Before Midterm"]}</td>
+ <td className="border border-slate-300 px-2 py-4 text-center text-body-sm">{data.results[subject]["Midterm"]}</td>
+ <td className="border border-slate-300 px-2 py-4 text-center text-body-sm">{data.results[subject]["After Midterm"]}</td>
+ <td className="border border-slate-300 px-2 py-4 text-center text-body-sm">{data.results[subject]["Final"]}</td>
+ <td className="border border-slate-900 px-2 py-4 text-center text-body-sm bg-slate-50">{data.results[subject].average}%</td>
  </tr>
  ))}
  </tbody>
@@ -131,18 +131,18 @@ const ReportCardPrint = () => {
  {/* SUMMARY SECTION */}
  <div className="grid grid-cols-3 gap-8 mb-20">
  <div className="p-6 bg-slate-50 border border-slate-200 rounded-xl text-center">
- <p className="text-xs font-semibold text-slate-400 mb-2 uppercase">Total Average</p>
- <p className="text-3xl font-semibold text-slate-900">
+ <p className="text-body-sm text-slate-400 mb-2 uppercase">Total Average</p>
+ <p className="text-stat-value text-slate-900">
  {(Object.values(data.results).reduce((acc, curr) => acc + parseFloat(curr.average), 0) / Object.keys(data.results).length || 0).toFixed(1)}%
  </p>
  </div>
  <div className="p-6 bg-slate-50 border border-slate-200 rounded-xl text-center">
- <p className="text-xs font-semibold text-slate-400 mb-2 uppercase">Class Ranking</p>
- <p className="text-3xl font-semibold text-primary">#{data.rank}</p>
+ <p className="text-body-sm text-slate-400 mb-2 uppercase">Class Ranking</p>
+ <p className="text-stat-value text-primary">#{data.rank}</p>
  </div>
  <div className="p-6 bg-slate-900 rounded-xl text-center shadow-xl">
- <p className="text-xs font-semibold text-slate-400 mb-2 uppercase">Annual Decision</p>
- <p className="text-xl font-semibold text-white uppercase">{data.promotion}</p>
+ <p className="text-body-sm text-slate-400 mb-2 uppercase">Annual Decision</p>
+ <p className="text-headline-sm text-white uppercase">{data.promotion}</p>
  </div>
  </div>
 
@@ -151,32 +151,32 @@ const ReportCardPrint = () => {
  <div className={`grid ${schoolSettings.managerSignature ? 'grid-cols-3' : 'grid-cols-2'} gap-10 pt-20 relative z-10`}>
  <div className="text-center">
  <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-xs font-semibold uppercase text-slate-900">{pdfSettings.principalTitle}</p>
- {pdfSettings.showSignatureLabels && <p className="text-xs font-bold text-slate-400 mt-1">Official School Seal</p>}
+ <p className="text-body-sm uppercase text-slate-900">{pdfSettings.principalTitle}</p>
+ {pdfSettings.showSignatureLabels && <p className="text-body-sm text-slate-400 mt-1">Official School Seal</p>}
  </div>
  {schoolSettings.managerSignature && (
  <div className="text-center">
  <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-xs font-semibold uppercase text-slate-900">{schoolSettings.managerSignature}</p>
- {pdfSettings.showSignatureLabels && <p className="text-xs font-bold text-slate-400 mt-1">Management Signature</p>}
+ <p className="text-body-sm uppercase text-slate-900">{schoolSettings.managerSignature}</p>
+ {pdfSettings.showSignatureLabels && <p className="text-body-sm text-slate-400 mt-1">Management Signature</p>}
  </div>
  )}
  <div className="text-center">
  <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-xs font-semibold uppercase text-slate-900">{pdfSettings.academicManagerTitle}</p>
- {pdfSettings.showSignatureLabels && <p className="text-xs font-bold text-slate-400 mt-1">Exams & Records</p>}
+ <p className="text-body-sm uppercase text-slate-900">{pdfSettings.academicManagerTitle}</p>
+ {pdfSettings.showSignatureLabels && <p className="text-body-sm text-slate-400 mt-1">Exams & Records</p>}
  </div>
  </div>
  )}
 
  {/* WATERMARK */}
  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none -rotate-45 whitespace-nowrap">
- <h1 className="text-9xl font-semibold">{schoolSettings.name} Official Document</h1>
+ <h1 className="text-display-bold">{schoolSettings.name} Official Document</h1>
  </div>
  
  {/* FOOTER TEXT */}
  <div className="absolute bottom-4 left-0 right-0 text-center">
- <p className="text-xs font-bold text-slate-300 ">{pdfSettings.footerText}</p>
+ <p className="text-body-sm text-slate-300">{pdfSettings.footerText}</p>
  </div>
  </div>
  </div>

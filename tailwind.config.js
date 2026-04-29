@@ -73,20 +73,12 @@ export default {
         body: ["Mona Sans", "system-ui", "sans-serif"]
       },
       fontSize: {
-        // Base System & Body
-        xs: ["12px", { lineHeight: "1.4", letterSpacing: "0.01em" }],
-        sm: ["13px", { lineHeight: "1.5", letterSpacing: "0.01em" }],
-        base: ["14px", { lineHeight: "1.5", letterSpacing: "0.01em" }],
-        
-        // Headings mapping to standard tailwind classes
-        lg: ["16px", { lineHeight: "1.35", letterSpacing: "-0.01em" }],  // Maps to H4
-        xl: ["18px", { lineHeight: "1.3", letterSpacing: "-0.01em" }],   // Maps to H3
-        "2xl": ["20px", { lineHeight: "1.25", letterSpacing: "-0.01em" }], // Maps to H2
-        "3xl": ["24px", { lineHeight: "1.2", letterSpacing: "-0.01em" }],  // Maps to H1
-
-        // KPI Specific
-        "kpi-sm": ["18px", { lineHeight: "1.3", fontWeight: "600", letterSpacing: "-0.01em" }],
-        "kpi-lg": ["24px", { lineHeight: "1.2", fontWeight: "700", letterSpacing: "-0.01em" }],
+        "display-bold": ["26px", { lineHeight: "34px", letterSpacing: "-0.01em", fontWeight: "700" }],
+        "headline-sm": ["18px", { lineHeight: "26px", letterSpacing: "-0.01em", fontWeight: "600" }],
+        "stat-value": ["24px", { lineHeight: "30px", letterSpacing: "-0.01em", fontWeight: "700" }],
+        "body-md": ["14px", { lineHeight: "22px", letterSpacing: "0.01em", fontWeight: "400" }],
+        "body-sm": ["13px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "400" }],
+        "label-bold": ["13px", { lineHeight: "18px", letterSpacing: "0.02em", fontWeight: "500" }],
       }
     },
   },

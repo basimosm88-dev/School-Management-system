@@ -143,12 +143,12 @@ const GenericModulePage = ({ role, title, primaryActionText }) => {
  >
  {items && items.length > 0 ? items.map((item) => (
  <tr key={item.id || item.date} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
- <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">#{item.id || 'N/A'}</td>
+ <td className="px-4 py-3 text-slate-900 dark:text-slate-100">#{item.id || 'N/A'}</td>
  <td className="px-4 py-3 text-slate-800 dark:text-slate-300">
  {item.name || item.subject || item.date}
  </td>
  <td className="px-4 py-3">
- <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${
+ <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-body-sm  border ${
  item.status === 'PUBLISHED' || item.grade?.startsWith('A') 
  ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200' 
  : 'bg-blue-50 dark:bg-blue-900/30 text-primary border-blue-200'
@@ -160,10 +160,10 @@ const GenericModulePage = ({ role, title, primaryActionText }) => {
  {role === 'admin' && config && config.deleteMethod && (
  <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
  <button className="p-1.5 text-slate-400 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg">
- <span className="material-symbols-outlined text-xl">edit</span>
+ <span className="material-symbols-outlined text-headline-sm">edit</span>
  </button>
  <button onClick={() => handleDelete(item.id)} className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg">
- <span className="material-symbols-outlined text-xl">delete</span>
+ <span className="material-symbols-outlined text-headline-sm">delete</span>
  </button>
  </div>
  )}

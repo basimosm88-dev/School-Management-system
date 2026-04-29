@@ -20,7 +20,7 @@ const ClassFullResultsPrint = () => {
  }, []);
 
  if (!currentClass || classStudents.length === 0) {
- return <div className="p-10 text-center font-serif text-rose-500 font-semibold">No data found for this class.</div>;
+ return <div className="p-10 text-center font-serif text-rose-500">No data found for this class.</div>;
  }
 
  // Get all unique subjects for this class
@@ -46,9 +46,9 @@ const ClassFullResultsPrint = () => {
  <div className="no-print fixed bottom-8 right-8 flex gap-4 z-50">
  <button 
  onClick={() => window.print()}
- className="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl font-semibold text-xs hover:-translate-y-1 transition-transform flex items-center gap-2"
+ className="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl text-body-sm hover:-translate-y-1 transition-transform flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-xl">print</span>
+ <span className="material-symbols-outlined text-headline-sm">print</span>
  Print Full Class Results
  </button>
  </div>
@@ -57,7 +57,7 @@ const ClassFullResultsPrint = () => {
  
  {/* WATERMARK */}
  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none -rotate-12 whitespace-nowrap z-0">
- <h1 className="text-9xl font-semibold">{schoolSettings.name} Official</h1>
+ <h1 className="text-display-bold">{schoolSettings.name} Official</h1>
  </div>
 
  {/* HEADER */}
@@ -68,51 +68,51 @@ const ClassFullResultsPrint = () => {
  {schoolSettings.logo ? (
  <img src={schoolSettings.logo} alt="Logo" className="w-full h-full object-cover" />
  ) : (
- <span className="material-symbols-outlined text-5xl text-slate-900">school</span>
+ <span className="material-symbols-outlined text-display-bold text-slate-900">school</span>
  )}
  </div>
  )}
  <div>
- <h2 className="text-3xl font-semibold tracking-tighter text-slate-900">{schoolSettings.name}</h2>
- <p className="text-xs font-semibold text-slate-500 mt-1">{schoolSettings.address}</p>
+ <h2 className="text-stat-value text-slate-900">{schoolSettings.name}</h2>
+ <p className="text-body-sm text-slate-500 mt-1">{schoolSettings.address}</p>
  </div>
  </div>
  <div className="text-right">
- <h3 className="font-semibold text-lg">Class Results Summary</h3>
- <p className="text-xs font-bold text-slate-500 mt-1">Class: {currentClass.name}</p>
- <p className="text-xs font-bold text-slate-500">Academic Year: 2026/2027</p>
+ <h3 className="text-headline-sm">Class Results Summary</h3>
+ <p className="text-body-sm text-slate-500 mt-1">Class: {currentClass.name}</p>
+ <p className="text-body-sm text-slate-500">Academic Year: 2026/2027</p>
  </div>
  </div>
 
  <div className="mb-10 text-center relative z-10">
- <h1 className="text-4xl font-semibold text-slate-900 border-y-2 border-slate-900 py-4 uppercase">
+ <h1 className="text-display-bold text-slate-900 border-y-2 border-slate-900 py-4 uppercase">
  Master Results Sheet — {currentClass.name}
  </h1>
  </div>
 
  {/* MASTER TABLE */}
  <div className="relative z-10 overflow-x-auto mb-12">
- <table className="w-full border-collapse border-2 border-slate-900 text-xs">
+ <table className="w-full border-collapse border-2 border-slate-900 text-body-sm">
  <thead>
  <tr className="bg-slate-900 text-white">
- <th rowSpan="2" className="border border-slate-700 px-3 py-4 font-semibold text-left sticky left-0 bg-slate-900 z-20 w-40">Student Name</th>
+ <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-left sticky left-0 bg-slate-900 z-20 w-40">Student Name</th>
  {uniqueSubjects.map(sub => (
- <th key={sub} colSpan="5" className="border border-slate-700 px-2 py-2 font-semibold text-center border-b-0">
+ <th key={sub} colSpan="5" className="border border-slate-700 px-2 py-2 text-center border-b-0">
  {sub}
  </th>
  ))}
- <th rowSpan="2" className="border border-slate-700 px-3 py-4 font-semibold text-center bg-slate-800 w-16">Total</th>
- <th rowSpan="2" className="border border-slate-700 px-3 py-4 font-semibold text-center bg-slate-800 w-16">Avg %</th>
- <th rowSpan="2" className="border border-slate-700 px-3 py-4 font-semibold text-center bg-slate-800 w-12">Rank</th>
+ <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-16">Total</th>
+ <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-16">Avg %</th>
+ <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-12">Rank</th>
  </tr>
- <tr className="bg-slate-800 text-white text-xs">
+ <tr className="bg-slate-800 text-white text-body-sm">
  {uniqueSubjects.map(sub => (
  <React.Fragment key={`${sub}-sub`}>
- <th className="border border-slate-700 p-1 font-bold text-center">B-Mid</th>
- <th className="border border-slate-700 p-1 font-bold text-center">Mid</th>
- <th className="border border-slate-700 p-1 font-bold text-center">A-Mid</th>
- <th className="border border-slate-700 p-1 font-bold text-center">Final</th>
- <th className="border border-slate-700 p-1 font-semibold text-center bg-slate-700">W.Avg</th>
+ <th className="border border-slate-700 p-1 text-center">B-Mid</th>
+ <th className="border border-slate-700 p-1 text-center">Mid</th>
+ <th className="border border-slate-700 p-1 text-center">A-Mid</th>
+ <th className="border border-slate-700 p-1 text-center">Final</th>
+ <th className="border border-slate-700 p-1 text-center bg-slate-700">W.Avg</th>
  </React.Fragment>
  ))}
  </tr>
@@ -128,28 +128,28 @@ const ClassFullResultsPrint = () => {
  
  return (
  <tr key={student.id} className={sIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
- <td className="border border-slate-300 px-3 py-3 font-semibold text-xs sticky left-0 bg-inherit z-10">
+ <td className="border border-slate-300 px-3 py-3 text-body-sm sticky left-0 bg-inherit z-10">
  {student.name}
  </td>
  {uniqueSubjects.map(sub => {
  const res = report.results[sub] || { "Before Midterm": "-", "Midterm": "-", "After Midterm": "-", "Final": "-", average: "-" };
  return (
  <React.Fragment key={`${student.id}-${sub}`}>
- <td className="border border-slate-300 p-1 text-center font-medium">{res["Before Midterm"]}</td>
- <td className="border border-slate-300 p-1 text-center font-medium">{res["Midterm"]}</td>
- <td className="border border-slate-300 p-1 text-center font-medium">{res["After Midterm"]}</td>
- <td className="border border-slate-300 p-1 text-center font-medium">{res["Final"]}</td>
- <td className="border border-slate-300 p-1 text-center font-semibold bg-slate-100/50">{res.average}%</td>
+ <td className="border border-slate-300 p-1 text-center">{res["Before Midterm"]}</td>
+ <td className="border border-slate-300 p-1 text-center">{res["Midterm"]}</td>
+ <td className="border border-slate-300 p-1 text-center">{res["After Midterm"]}</td>
+ <td className="border border-slate-300 p-1 text-center">{res["Final"]}</td>
+ <td className="border border-slate-300 p-1 text-center bg-slate-100/50">{res.average}%</td>
  </React.Fragment>
  );
  })}
- <td className="border border-slate-900 px-2 py-3 text-center font-semibold bg-slate-100">
+ <td className="border border-slate-900 px-2 py-3 text-center bg-slate-100">
  {studentRank?.totalScore.toFixed(1)}
  </td>
- <td className="border border-slate-900 px-2 py-3 text-center font-semibold bg-slate-200">
+ <td className="border border-slate-900 px-2 py-3 text-center bg-slate-200">
  {studentRank?.averageScore.toFixed(1)}%
  </td>
- <td className="border border-slate-900 px-2 py-3 text-center font-semibold bg-slate-900 text-white">
+ <td className="border border-slate-900 px-2 py-3 text-center bg-slate-900 text-white">
  #{studentRank?.rank}
  </td>
  </tr>
@@ -163,25 +163,25 @@ const ClassFullResultsPrint = () => {
  <div className={`grid ${schoolSettings.managerSignature ? 'grid-cols-3' : 'grid-cols-2'} gap-10 pt-10 relative z-10`}>
  <div className="text-center">
  <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-xs font-semibold text-slate-900 uppercase">{pdfSettings.principalTitle}</p>
- {pdfSettings.showSignatureLabels && <p className="text-xs font-bold text-slate-400 mt-1">Official School Seal</p>}
+ <p className="text-body-sm text-slate-900 uppercase">{pdfSettings.principalTitle}</p>
+ {pdfSettings.showSignatureLabels && <p className="text-body-sm text-slate-400 mt-1">Official School Seal</p>}
  </div>
  {schoolSettings.managerSignature && (
  <div className="text-center">
  <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-xs font-semibold text-slate-900 uppercase">{schoolSettings.managerSignature}</p>
- {pdfSettings.showSignatureLabels && <p className="text-xs font-bold text-slate-400 mt-1">Management Signature</p>}
+ <p className="text-body-sm text-slate-900 uppercase">{schoolSettings.managerSignature}</p>
+ {pdfSettings.showSignatureLabels && <p className="text-body-sm text-slate-400 mt-1">Management Signature</p>}
  </div>
  )}
  <div className="text-center">
  <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-xs font-semibold text-slate-900 uppercase">{pdfSettings.academicManagerTitle}</p>
- {pdfSettings.showSignatureLabels && <p className="text-xs font-bold text-slate-400 mt-1">Exams & Records Department</p>}
+ <p className="text-body-sm text-slate-900 uppercase">{pdfSettings.academicManagerTitle}</p>
+ {pdfSettings.showSignatureLabels && <p className="text-body-sm text-slate-400 mt-1">Exams & Records Department</p>}
  </div>
  </div>
 
  <div className="absolute bottom-4 left-0 right-0 text-center">
- <p className="text-xs font-bold text-slate-300 ">{pdfSettings.footerText}</p>
+ <p className="text-body-sm text-slate-300">{pdfSettings.footerText}</p>
  </div>
  </div>
  </div>

@@ -101,8 +101,8 @@ const AdminExamsPage = () => {
  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
  {/* Page Header */}
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-xl font-semibold text-slate-900 dark:text-white tracking-tight">{t('exams')}</h2>
- <p className="text-xs font-bold text-slate-500 mt-1">{t('examsSubtitle')}</p>
+ <h2 className="text-headline-sm text-slate-900 dark:text-white">{t('exams')}</h2>
+ <p className="text-body-sm text-slate-500 mt-1">{t('examsSubtitle')}</p>
  </div>
 
  {/* TABS */}
@@ -111,7 +111,7 @@ const AdminExamsPage = () => {
  <button
  key={tab}
  onClick={() => setActiveTab(tab.toLowerCase())}
- className={`px-8 py-3 rounded-lg text-sm font-semibold tracking-tight transition-all ${
+ className={`px-8 py-3 rounded-lg text-body-sm   transition-all ${
  activeTab === tab.toLowerCase() 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
@@ -126,17 +126,17 @@ const AdminExamsPage = () => {
  {activeTab === 'review' && (
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors min-h-[400px]">
  <div className="p-8 border-b border-slate-100 dark:border-slate-800">
- <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 tracking-tight">Pending Approvals</h3>
+ <h3 className="text-headline-sm text-slate-800 dark:text-slate-200">Pending Approvals</h3>
  </div>
  {pendingSubmissions.length === 0 ? (
  <div className="flex flex-col items-center justify-center h-[400px] text-slate-400">
- <span className="material-symbols-outlined text-5xl mb-4 opacity-20">fact_check</span>
- <p className="font-bold text-xs">No pending exam submissions</p>
+ <span className="material-symbols-outlined text-display-bold mb-4 opacity-20">fact_check</span>
+ <p className="text-body-sm">No pending exam submissions</p>
  </div>
  ) : (
  <div className="overflow-x-auto">
- <table className="w-full text-left text-sm">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 font-semibold text-xs border-b border-slate-100 dark:border-slate-800">
+ <table className="w-full text-left text-body-sm">
+ <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 text-body-sm border-b border-slate-100 dark:border-slate-800">
  <tr>
  <th className="px-8 py-5">Class & Subject</th>
  <th className="px-8 py-5">Exam Type</th>
@@ -148,27 +148,27 @@ const AdminExamsPage = () => {
  {pendingSubmissions.map((sub, i) => (
  <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
  <td className="px-8 py-5">
- <div className="font-semibold text-slate-800 dark:text-slate-200">{sub.className}</div>
- <div className="text-xs text-primary font-bold ">{sub.subjectName}</div>
+ <div className="text-slate-800 dark:text-slate-200">{sub.className}</div>
+ <div className="text-body-sm text-primary">{sub.subjectName}</div>
  </td>
- <td className="px-8 py-5 text-xs font-semibold text-slate-500">{sub.examType}</td>
- <td className="px-8 py-5 text-xs font-semibold text-slate-500">{sub.teacherName}</td>
+ <td className="px-8 py-5 text-body-sm text-slate-500">{sub.examType}</td>
+ <td className="px-8 py-5 text-body-sm text-slate-500">{sub.teacherName}</td>
  <td className="px-8 py-5">
  <div className="flex justify-end gap-2">
  <button 
  onClick={() => setViewingSubmission(sub)}
- className="px-4 py-2 bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-200 transition-all flex items-center gap-1"
+ className="px-4 py-2 bg-slate-100 text-slate-600 text-body-sm rounded-lg border border-slate-200 hover:bg-slate-200 transition-all flex items-center gap-1"
  >
- <span className="material-symbols-outlined text-base">visibility</span>
+ <span className="material-symbols-outlined text-body-md">visibility</span>
  View
  </button>
  <button 
  onClick={() => handleReject(sub)}
- className="px-4 py-2 bg-rose-50 text-rose-600 text-xs font-semibold rounded-lg border border-rose-100 hover:bg-rose-100 transition-all"
+ className="px-4 py-2 bg-rose-50 text-rose-600 text-body-sm rounded-lg border border-rose-100 hover:bg-rose-100 transition-all"
  >Reject</button>
  <button 
  onClick={() => handleApprove(sub)}
- className="px-4 py-2 bg-emerald-50 text-emerald-600 text-xs font-semibold rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-all"
+ className="px-4 py-2 bg-emerald-50 text-emerald-600 text-body-sm rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-all"
  >Approve</button>
  </div>
  </td>
@@ -187,19 +187,19 @@ const AdminExamsPage = () => {
  <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
  <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
  <div>
- <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 ">{viewingSubmission.className} - {viewingSubmission.subjectName}</h3>
- <p className="text-xs text-primary font-bold mt-1">{viewingSubmission.examType}</p>
+ <h3 className="text-body-sm text-slate-800 dark:text-slate-200">{viewingSubmission.className} - {viewingSubmission.subjectName}</h3>
+ <p className="text-body-sm text-primary mt-1">{viewingSubmission.examType}</p>
  </div>
  <button 
  onClick={() => setViewingSubmission(null)}
  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors"
  >
- <span className="material-symbols-outlined text-2xl">close</span>
+ <span className="material-symbols-outlined text-stat-value">close</span>
  </button>
  </div>
  <div className="p-6 max-h-[60vh] overflow-y-auto">
- <table className="w-full text-left text-sm">
- <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-400 font-semibold text-xs ">
+ <table className="w-full text-left text-body-sm">
+ <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-400 text-body-sm">
  <tr>
  <th className="px-6 py-4 rounded-l-xl">Student</th>
  <th className="px-6 py-4">Grade</th>
@@ -215,13 +215,13 @@ const AdminExamsPage = () => {
  const studentName = students.find(s => s.id === record.studentId)?.name || 'Unknown';
  return (
  <tr key={record.id}>
- <td className="px-6 py-4 font-bold text-slate-700 dark:text-slate-300">{studentName}</td>
+ <td className="px-6 py-4 text-slate-700 dark:text-slate-300">{studentName}</td>
  <td className="px-6 py-4">
- <span className={`px-2 py-1 rounded font-semibold text-xs ${record.grade >= (promotionSettings.passingGrade || 50) ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+ <span className={`px-2 py-1 rounded  text-body-sm ${record.grade >= (promotionSettings.passingGrade || 50) ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
  {record.grade}%
  </span>
  </td>
- <td className="px-6 py-4 text-xs font-bold text-slate-400 italic">{record.remarks || '-'}</td>
+ <td className="px-6 py-4 text-body-sm text-slate-400 italic">{record.remarks || '-'}</td>
  </tr>
  );
  })}
@@ -231,15 +231,15 @@ const AdminExamsPage = () => {
  <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl shrink-0">
  <button 
  onClick={() => setViewingSubmission(null)}
- className="px-6 py-2.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition-all"
+ className="px-6 py-2.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-body-sm rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition-all"
  >
  Close
  </button>
  <button 
  onClick={() => { handleApprove(viewingSubmission); setViewingSubmission(null); }}
- className="px-6 py-2.5 bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center gap-2"
+ className="px-6 py-2.5 bg-emerald-500 text-white text-body-sm rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-lg">check_circle</span>
+ <span className="material-symbols-outlined text-headline-sm">check_circle</span>
  Approve Submission
  </button>
  </div>
@@ -253,26 +253,26 @@ const AdminExamsPage = () => {
  <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm h-fit">
  <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
  <div>
- <h3 className="text-xs font-semibold text-slate-800 dark:text-slate-200 ">Approved for Release</h3>
- <p className="text-xs font-bold text-slate-400 mt-1 ">Midterm and Final exams only. Other terms are released by teachers.</p>
+ <h3 className="text-body-sm text-slate-800 dark:text-slate-200">Approved for Release</h3>
+ <p className="text-body-sm text-slate-400 mt-1">Midterm and Final exams only. Other terms are released by teachers.</p>
  </div>
  </div>
  {releasableExams.length === 0 ? (
  <div className="flex flex-col items-center justify-center h-[300px] text-slate-400">
- <p className="font-bold text-xs">No approved exams pending release</p>
+ <p className="text-body-sm">No approved exams pending release</p>
  </div>
  ) : (
  <div className="overflow-x-auto">
- <table className="w-full text-left text-sm">
+ <table className="w-full text-left text-body-sm">
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
  {releasableExams.map((exam, i) => (
  <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
  <td className="px-8 py-5">
- <div className="font-semibold text-slate-800 dark:text-slate-200">{exam.className}</div>
- <div className="text-xs text-slate-400 font-bold ">{exam.examType} Results</div>
+ <div className="text-slate-800 dark:text-slate-200">{exam.className}</div>
+ <div className="text-body-sm text-slate-400">{exam.examType} Results</div>
  <div className="flex flex-wrap gap-1 mt-2">
  {exam.subjects.map(s => (
- <span key={s} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-xs font-semibold text-slate-500">{s}</span>
+ <span key={s} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-body-sm text-slate-500">{s}</span>
  ))}
  </div>
  </td>
@@ -280,7 +280,7 @@ const AdminExamsPage = () => {
  <div className="flex justify-end gap-2">
  <button 
  onClick={() => handleRelease(exam)}
- className="px-6 py-2.5 bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-primary/10 hover:bg-blue-700 transition-all"
+ className="px-6 py-2.5 bg-primary text-white text-body-sm rounded-xl shadow-lg shadow-primary/10 hover:bg-blue-700 transition-all"
  >Publish Now</button>
  </div>
  </td>
@@ -295,10 +295,10 @@ const AdminExamsPage = () => {
  <div className="space-y-6">
  {['Midterm', 'Final'].map(type => (
  <div key={type} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm p-8">
- <h3 className="text-xs font-semibold text-slate-800 dark:text-slate-200 mb-6">Schedule {type}</h3>
+ <h3 className="text-body-sm text-slate-800 dark:text-slate-200 mb-6">Schedule {type}</h3>
  <div className="space-y-6">
  <div>
- <label className="text-xs font-semibold text-slate-400 mb-2 block">Release Date</label>
+ <label className="text-body-sm text-slate-400 mb-2 block">Release Date</label>
  <input 
  type="date" 
  value={examReleaseSettings[type].date}
@@ -310,7 +310,7 @@ const AdminExamsPage = () => {
  />
  </div>
  <div>
- <label className="text-xs font-semibold text-slate-400 mb-2 block">Release Time</label>
+ <label className="text-body-sm text-slate-400 mb-2 block">Release Time</label>
  <input 
  type="time" 
  value={examReleaseSettings[type].time}
@@ -324,13 +324,13 @@ const AdminExamsPage = () => {
  
  {examReleaseSettings[type].isApproved ? (
  <div className="p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-900/20">
- <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 leading-relaxed">
+ <p className="text-body-sm text-emerald-600 dark:text-emerald-400 leading-relaxed">
  ✓ Schedule approved. Exam will release automatically on {examReleaseSettings[type].date} at {examReleaseSettings[type].time}.
  </p>
  </div>
  ) : (
  <div className="p-4 bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-100 dark:border-amber-900/20">
- <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 leading-relaxed">
+ <p className="text-body-sm text-amber-600 dark:text-amber-400 leading-relaxed">
  Set date/time above and click approve to schedule automated release.
  </p>
  </div>
@@ -339,7 +339,7 @@ const AdminExamsPage = () => {
  <button 
  onClick={() => handleScheduleRelease(type)}
  disabled={examReleaseSettings[type].isApproved || !examReleaseSettings[type].date || !examReleaseSettings[type].time}
- className="w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-xl hover:opacity-90 transition-all disabled:opacity-30"
+ className="w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-body-sm rounded-xl hover:opacity-90 transition-all disabled:opacity-30"
  >
  {examReleaseSettings[type].isApproved ? 'Schedule Approved' : 'Approve Schedule'}
  </button>
@@ -350,7 +350,7 @@ const AdminExamsPage = () => {
  ...prev,
  [type]: { ...prev[type], isApproved: false }
  }))}
- className="w-full py-2 text-rose-500 text-xs font-semibold hover:underline"
+ className="w-full py-2 text-rose-500 text-body-sm hover:underline"
  >
  Cancel or Edit Schedule
  </button>
@@ -367,10 +367,10 @@ const AdminExamsPage = () => {
  {/* SETTINGS TAB */}
  {activeTab === 'settings' && (
  <div className="max-w-2xl bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm p-10 transition-colors">
- <h3 className="text-xs font-semibold text-slate-800 dark:text-slate-200 mb-8">Promotion Rules</h3>
+ <h3 className="text-body-sm text-slate-800 dark:text-slate-200 mb-8">Promotion Rules</h3>
  <div className="space-y-8">
  <div>
- <label className="text-xs font-semibold text-slate-400 mb-3 block">Minimum Passing Grade (%)</label>
+ <label className="text-body-sm text-slate-400 mb-3 block">Minimum Passing Grade (%)</label>
  <div className="flex items-center gap-4">
  <input 
  type="range" 
@@ -380,24 +380,24 @@ const AdminExamsPage = () => {
  onChange={e => setPromotionSettings({...promotionSettings, passingGrade: parseInt(e.target.value)})}
  className="flex-1 accent-primary"
  />
- <span className="w-16 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary font-semibold text-lg">
+ <span className="w-16 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-headline-sm">
  {promotionSettings.passingGrade}%
  </span>
  </div>
  </div>
  <div>
- <label className="text-xs font-semibold text-slate-400 mb-3 block">Subjects Required to Pass</label>
+ <label className="text-body-sm text-slate-400 mb-3 block">Subjects Required to Pass</label>
  <input 
  type="number" 
  value={promotionSettings.minSubjects}
  onChange={e => setPromotionSettings({...promotionSettings, minSubjects: parseInt(e.target.value)})}
  className="form-input-custom w-32"
  />
- <p className="text-xs text-slate-400 font-bold mt-2">Maximum subjects a student can fail before total failure.</p>
+ <p className="text-body-sm text-slate-400 mt-2">Maximum subjects a student can fail before total failure.</p>
  </div>
  <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
  <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800">
- <h4 className="text-xs font-semibold text-slate-800 dark:text-slate-200 mb-4">Weightage Breakdown</h4>
+ <h4 className="text-body-sm text-slate-800 dark:text-slate-200 mb-4">Weightage Breakdown</h4>
  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
  {[
  { label: 'Before Mid', val: '10%' },
@@ -406,8 +406,8 @@ const AdminExamsPage = () => {
  { label: 'Final', val: '50%' }
  ].map(w => (
  <div key={w.label} className="text-center p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm">
- <p className="text-xs font-semibold text-slate-400 mb-1">{w.label}</p>
- <p className="text-sm font-semibold text-primary">{w.val}</p>
+ <p className="text-body-sm text-slate-400 mb-1">{w.label}</p>
+ <p className="text-body-sm text-primary">{w.val}</p>
  </div>
  ))}
  </div>

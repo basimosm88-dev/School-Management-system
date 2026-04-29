@@ -125,7 +125,7 @@ const ResultsPage = ({ role }) => {
  <PageLayout role={userRole} title={t('results')}>
  <div className="flex flex-col items-center justify-center min-h-[400px]">
  <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
- <p className="mt-4 text-slate-500 font-bold animate-pulse">Loading Results...</p>
+ <p className="mt-4 text-slate-500 animate-pulse">Loading Results...</p>
  </div>
  </PageLayout>
  );
@@ -137,8 +137,8 @@ const ResultsPage = ({ role }) => {
  <PageLayout role={userRole} title={t('results')}>
  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">{t('results')}</h2>
- <p className="text-xs font-bold text-slate-500 mt-1">Select a class to view academic performance and rankings.</p>
+ <h2 className="text-stat-value text-slate-900 dark:text-white">{t('results')}</h2>
+ <p className="text-body-sm text-slate-500 mt-1">Select a class to view academic performance and rankings.</p>
  </div>
 
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -157,19 +157,19 @@ const ResultsPage = ({ role }) => {
  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -mr-10 -mt-10 group-hover:scale-110 transition-transform"></div>
  <div className="relative z-10">
  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
- <span className="material-symbols-outlined text-2xl font-bold">school</span>
+ <span className="material-symbols-outlined text-stat-value">school</span>
  </div>
- <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">{c.name}</h3>
- <p className="text-xs font-bold text-slate-500 mb-6">{c.studentsCount || 0} Students registered</p>
+ <h3 className="text-headline-sm text-slate-900 dark:text-white mb-1">{c.name}</h3>
+ <p className="text-body-sm text-slate-500 mb-6">{c.studentsCount || 0} Students registered</p>
  
  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
  <div>
- <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Avg Score</p>
- <p className="text-sm font-semibold text-primary">{avg}%</p>
+ <p className="text-body-sm text-slate-400 uppercase">Avg Score</p>
+ <p className="text-body-sm text-primary">{avg}%</p>
  </div>
- <span className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+ <span className="text-body-sm text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
  View Results
- <span className="material-symbols-outlined text-lg">arrow_forward</span>
+ <span className="material-symbols-outlined text-headline-sm">arrow_forward</span>
  </span>
  </div>
  </div>
@@ -203,29 +203,29 @@ const ResultsPage = ({ role }) => {
  >
  <span className="material-symbols-outlined">arrow_back</span>
  </button>
- <div className="flex items-center text-sm font-bold truncate">
+ <div className="flex items-center text-body-sm truncate">
  <span className="text-slate-400 cursor-pointer hover:text-primary" onClick={goBack}>Results</span>
- <span className="material-symbols-outlined text-slate-300 text-xl mx-1">chevron_right</span>
+ <span className="material-symbols-outlined text-slate-300 text-headline-sm mx-1">chevron_right</span>
  <span className="text-slate-900 dark:text-white truncate">{currentClass?.name}</span>
  </div>
  </div>
  
  <div className="flex items-center gap-3">
  <div className="relative">
- <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-xl">search</span>
+ <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-headline-sm">search</span>
  <input 
  type="text"
  placeholder="Search students..."
  value={searchTerm}
  onChange={(e) => setSearchTerm(e.target.value)}
- className="pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all w-48"
+ className="pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all w-48"
  />
  </div>
  <button 
  onClick={handlePrintClass}
- className="px-4 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl text-xs font-semibold uppercase tracking-wider flex items-center gap-2 hover:bg-slate-800 dark:hover:bg-slate-700 transition-all"
+ className="px-4 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl text-body-sm uppercase flex items-center gap-2 hover:bg-slate-800 dark:hover:bg-slate-700 transition-all"
  >
- <span className="material-symbols-outlined text-xl">print</span>
+ <span className="material-symbols-outlined text-headline-sm">print</span>
  Print Class Results
  </button>
  </div>
@@ -234,8 +234,8 @@ const ResultsPage = ({ role }) => {
  {/* Class Summary Header */}
  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
  <div className="bg-gradient-to-br from-primary to-indigo-700 p-6 rounded-2xl text-white shadow-lg shadow-primary/20">
- <h1 className="text-2xl font-semibold mb-1">{currentClass?.name}</h1>
- <p className="text-white/70 text-xs font-bold uppercase tracking-widest">Academic Overview</p>
+ <h1 className="text-stat-value mb-1">{currentClass?.name}</h1>
+ <p className="text-white/70 text-body-sm uppercase">Academic Overview</p>
  </div>
  <StatCard title="Total Students" value={studentResults.length} icon="groups" iconColorClass="bg-blue-50 text-primary" />
  <StatCard title="Class Average" value={`${classKpis.avg}%`} icon="analytics" iconColorClass="bg-emerald-50 text-emerald-600" />
@@ -266,7 +266,7 @@ const ResultsPage = ({ role }) => {
  studentResults.map((res, i) => (
  <tr key={res.id} className="table-row-hover group">
  <td className="px-6 py-4">
- <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-semibold ${
+ <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-body-sm  ${
  res.rank === 1 ? 'bg-amber-100 text-amber-700' : 
  res.rank === 2 ? 'bg-slate-100 text-slate-700' :
  res.rank === 3 ? 'bg-orange-100 text-orange-700' : 'text-slate-400'
@@ -275,17 +275,17 @@ const ResultsPage = ({ role }) => {
  </span>
  </td>
  <td className="px-6 py-4">
- <p className="font-bold text-sm text-slate-800 dark:text-slate-200">{res.name}</p>
- <p className="text-xs text-slate-400 font-medium uppercase tracking-tighter">ID: {res.id}</p>
+ <p className="text-body-sm text-slate-800 dark:text-slate-200">{res.name}</p>
+ <p className="text-body-sm text-slate-400 uppercase">ID: {res.id}</p>
  </td>
- <td className="px-6 py-4 text-center font-bold text-sm text-slate-700 dark:text-slate-300">
+ <td className="px-6 py-4 text-center text-body-sm text-slate-700 dark:text-slate-300">
  {res.displayTotal}
  </td>
  <td className="px-6 py-4 text-center">
- <span className="font-semibold text-sm text-primary">{res.displayAverage}%</span>
+ <span className="text-body-sm text-primary">{res.displayAverage}%</span>
  </td>
  <td className="px-6 py-4 text-center">
- <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
+ <span className={`px-3 py-1 rounded-full text-body-sm  uppercase  ${
  res.status === 'Pass' 
  ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' 
  : 'bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
@@ -333,19 +333,19 @@ const ResultsPage = ({ role }) => {
  >
  <span className="material-symbols-outlined">arrow_back</span>
  </button>
- <div className="flex items-center text-sm font-bold">
+ <div className="flex items-center text-body-sm">
  <span className="text-slate-400 cursor-pointer hover:text-primary" onClick={() => setViewMode('grid')}>Results</span>
- <span className="material-symbols-outlined text-slate-300 text-xl mx-1">chevron_right</span>
+ <span className="material-symbols-outlined text-slate-300 text-headline-sm mx-1">chevron_right</span>
  <span className="text-slate-400 cursor-pointer hover:text-primary" onClick={goBack}>{currentClass?.name}</span>
- <span className="material-symbols-outlined text-slate-300 text-xl mx-1">chevron_right</span>
+ <span className="material-symbols-outlined text-slate-300 text-headline-sm mx-1">chevron_right</span>
  <span className="text-slate-900 dark:text-white truncate max-w-[150px]">{student?.name}</span>
  </div>
  </div>
  <button 
  onClick={() => handlePrintStudent(viewingStudentId)}
- className="px-6 py-2 bg-primary text-white rounded-xl text-xs font-semibold uppercase tracking-widest flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-primary/20"
+ className="px-6 py-2 bg-primary text-white rounded-xl text-body-sm uppercase flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-primary/20"
  >
- <span className="material-symbols-outlined text-xl">print</span>
+ <span className="material-symbols-outlined text-headline-sm">print</span>
  Print Student Result
  </button>
  </div>
@@ -354,14 +354,14 @@ const ResultsPage = ({ role }) => {
  {userRole === 'student' && (
  <div className="flex justify-between items-center p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
  <div>
- <h2 className="text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">My Academic Record</h2>
- <p className="text-xs font-bold text-slate-500 mt-1">Official breakdown of your performance for the current year.</p>
+ <h2 className="text-stat-value text-slate-900 dark:text-white">My Academic Record</h2>
+ <p className="text-body-sm text-slate-500 mt-1">Official breakdown of your performance for the current year.</p>
  </div>
  <button 
  onClick={() => handlePrintStudent(currentUser.id)}
- className="px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl text-xs font-semibold uppercase tracking-widest flex items-center gap-2 hover:bg-slate-800 transition-all"
+ className="px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl text-body-sm uppercase flex items-center gap-2 hover:bg-slate-800 transition-all"
  >
- <span className="material-symbols-outlined text-xl">print</span>
+ <span className="material-symbols-outlined text-headline-sm">print</span>
  Print My Record
  </button>
  </div>
@@ -371,18 +371,18 @@ const ResultsPage = ({ role }) => {
  <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
  <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
  <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-8">
- <div className="w-24 h-24 rounded-3xl bg-white/10 flex items-center justify-center text-4xl font-semibold border border-white/20 shadow-inner backdrop-blur-sm">
+ <div className="w-24 h-24 rounded-3xl bg-white/10 flex items-center justify-center text-display-bold border border-white/20 shadow-inner backdrop-blur-sm">
  {student?.name?.charAt(0)}
  </div>
  <div>
- <h1 className="text-3xl font-semibold mb-3 tracking-tight">{student?.name}</h1>
- <div className="flex flex-wrap gap-6 text-white/60 text-xs font-bold uppercase tracking-widest">
+ <h1 className="text-stat-value mb-3">{student?.name}</h1>
+ <div className="flex flex-wrap gap-6 text-white/60 text-body-sm uppercase">
  <div className="flex items-center gap-2">
- <span className="material-symbols-outlined text-primary text-2xl">school</span>
+ <span className="material-symbols-outlined text-primary text-stat-value">school</span>
  Class: {currentClass?.name}
  </div>
  <div className="flex items-center gap-2">
- <span className="material-symbols-outlined text-indigo-400 text-2xl">fingerprint</span>
+ <span className="material-symbols-outlined text-indigo-400 text-stat-value">fingerprint</span>
  Student ID: {student?.id}
  </div>
  </div>
@@ -393,12 +393,12 @@ const ResultsPage = ({ role }) => {
  {/* Grades Table */}
  <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
  <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
- <h3 className="font-semibold text-slate-900 dark:text-white uppercase tracking-wider text-xs">Academic Subject Breakdown</h3>
+ <h3 className="text-slate-900 dark:text-white uppercase text-body-sm">Academic Subject Breakdown</h3>
  </div>
  <div className="overflow-x-auto">
  <table className="w-full text-left">
  <thead>
- <tr className="bg-slate-50 dark:bg-slate-800/50 text-xs font-semibold text-slate-400 uppercase tracking-widest">
+ <tr className="bg-slate-50 dark:bg-slate-800/50 text-body-sm text-slate-400 uppercase">
  <th className="px-6 py-5">Subject</th>
  <th className="px-4 py-5 text-center">Before Mid</th>
  <th className="px-4 py-5 text-center">Midterm</th>
@@ -410,17 +410,17 @@ const ResultsPage = ({ role }) => {
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
  {Object.keys(report.results).length === 0 ? (
  <tr>
- <td colSpan="6" className="py-20 text-center text-slate-400 italic font-medium">No grades published for this student yet.</td>
+ <td colSpan="6" className="py-20 text-center text-slate-400 italic">No grades published for this student yet.</td>
  </tr>
  ) : (
  Object.keys(report.results).map((subject, idx) => (
  <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
- <td className="px-6 py-5 font-semibold text-sm text-slate-700 dark:text-slate-300">{subject}</td>
- <td className="px-4 py-5 text-center text-sm font-bold text-slate-600 dark:text-slate-400">{report.results[subject]["Before Midterm"]}</td>
- <td className="px-4 py-5 text-center text-sm font-bold text-slate-600 dark:text-slate-400">{report.results[subject]["Midterm"]}</td>
- <td className="px-4 py-5 text-center text-sm font-bold text-slate-600 dark:text-slate-400">{report.results[subject]["After Midterm"]}</td>
- <td className="px-4 py-5 text-center text-sm font-bold text-slate-600 dark:text-slate-400">{report.results[subject]["Final"]}</td>
- <td className="px-6 py-5 text-right font-semibold text-sm text-primary bg-slate-50/30 dark:bg-slate-800/20">{report.results[subject].average}%</td>
+ <td className="px-6 py-5 text-body-sm text-slate-700 dark:text-slate-300">{subject}</td>
+ <td className="px-4 py-5 text-center text-body-sm text-slate-600 dark:text-slate-400">{report.results[subject]["Before Midterm"]}</td>
+ <td className="px-4 py-5 text-center text-body-sm text-slate-600 dark:text-slate-400">{report.results[subject]["Midterm"]}</td>
+ <td className="px-4 py-5 text-center text-body-sm text-slate-600 dark:text-slate-400">{report.results[subject]["After Midterm"]}</td>
+ <td className="px-4 py-5 text-center text-body-sm text-slate-600 dark:text-slate-400">{report.results[subject]["Final"]}</td>
+ <td className="px-6 py-5 text-right text-body-sm text-primary bg-slate-50/30 dark:bg-slate-800/20">{report.results[subject].average}%</td>
  </tr>
  ))
  )}
@@ -432,20 +432,20 @@ const ResultsPage = ({ role }) => {
  {/* Summary Section */}
  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
- <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Total Score</p>
- <p className="text-3xl font-semibold text-slate-900 dark:text-white">
+ <p className="text-body-sm text-slate-400 uppercase mb-2">Total Score</p>
+ <p className="text-stat-value text-slate-900 dark:text-white">
  {Object.values(report.results).reduce((a, b) => a + parseFloat(b.average), 0).toFixed(1)}
  </p>
  </div>
  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
- <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Average %</p>
- <p className="text-3xl font-semibold text-primary">
+ <p className="text-body-sm text-slate-400 uppercase mb-2">Average %</p>
+ <p className="text-stat-value text-primary">
  {(Object.values(report.results).reduce((a, b) => a + parseFloat(b.average), 0) / Object.keys(report.results).length || 0).toFixed(1)}%
  </p>
  </div>
  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
- <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Class Rank</p>
- <p className="text-3xl font-semibold text-amber-500">#{report.rank}</p>
+ <p className="text-body-sm text-slate-400 uppercase mb-2">Class Rank</p>
+ <p className="text-stat-value text-amber-500">#{report.rank}</p>
  </div>
  <div className={`p-6 rounded-2xl border text-center shadow-lg transition-all ${
  report.promotion === 'Promoted' ? 'bg-emerald-500 border-emerald-600 text-white shadow-emerald-500/20' : 
@@ -453,8 +453,8 @@ const ResultsPage = ({ role }) => {
  report.promotion === 'Failed' ? 'bg-rose-500 border-rose-600 text-white shadow-rose-500/20' :
  'bg-slate-900 border-slate-800 text-slate-400'
  }`}>
- <p className="text-xs font-semibold text-white/60 uppercase tracking-widest mb-2">Promotion Status</p>
- <p className="text-xl font-semibold">{report.promotion}</p>
+ <p className="text-body-sm text-white/60 uppercase mb-2">Promotion Status</p>
+ <p className="text-headline-sm">{report.promotion}</p>
  </div>
  </div>
  </div>
