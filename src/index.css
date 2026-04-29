@@ -5,7 +5,8 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    background-color: theme('colors.slate.50');
+    color: theme('colors.slate.900');
     font-family: 'Mona Sans', sans-serif;
     font-size: 14px;
     line-height: 1.5;
@@ -14,6 +15,11 @@
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 200ms;
+  }
+
+  .dark body {
+    background-color: theme('colors.slate.950');
+    color: theme('colors.slate.100');
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -84,11 +90,15 @@
   }
 
   .sidebar-collapsed .sidebar-item {
-    @apply lg:justify-center lg:px-0;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .sidebar-collapsed .sidebar-header {
-    @apply lg:justify-center lg:px-0;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .sidebar-collapsed .sidebar-logo-text {
@@ -196,11 +206,14 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    background-color: transparent;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply rounded-full transition-all;
+    border-radius: 9999px;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
     background-color: theme('colors.slate.200');
   }
 
@@ -222,7 +235,11 @@
     line-height: 28px;
     letter-spacing: -0.01em;
     font-weight: 600;
-    @apply text-slate-900 dark:text-slate-100;
+    color: theme('colors.slate.900');
+  }
+
+  .dark .text-title {
+    color: theme('colors.slate.100');
   }
 
   .section-title {
@@ -230,7 +247,11 @@
     line-height: 24px;
     letter-spacing: -0.01em;
     font-weight: 600;
-    @apply text-slate-800 dark:text-slate-200;
+    color: theme('colors.slate.800');
+  }
+
+  .dark .section-title {
+    color: theme('colors.slate.200');
   }
 
   .text-label {
@@ -238,8 +259,12 @@
     line-height: 18px;
     letter-spacing: 0.02em;
     font-weight: 500;
-    @apply text-slate-500 dark:text-slate-400;
+    color: theme('colors.slate.500');
     text-transform: none;
+  }
+
+  .dark .text-label {
+    color: theme('colors.slate.400');
   }
 
   .text-button {
@@ -252,25 +277,52 @@
 
   /* Table Enhancements */
   .table-container th {
-    @apply px-6 py-4 text-slate-400 uppercase;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    color: theme('colors.slate.400');
+    text-transform: uppercase;
     font-size: 13px;
     line-height: 18px;
     letter-spacing: 0.02em;
     font-weight: 600;
     border-bottom-width: 1px;
-    @apply border-slate-100 dark:border-slate-800;
+    border-color: theme('colors.slate.100');
+  }
+
+  .dark .table-container th {
+    border-color: theme('colors.slate.800');
   }
 
   .table-container td {
-    @apply px-6 py-5 text-slate-600 dark:text-slate-300;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    color: theme('colors.slate.600');
     font-size: 13px;
     line-height: 18px;
     letter-spacing: 0.01em;
     font-weight: 400;
   }
 
+  .dark .table-container td {
+    color: theme('colors.slate.300');
+  }
+
   .table-row-hover {
-    @apply hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  .table-row-hover:hover {
+    background-color: rgba(248, 250, 252, 0.8);
+  }
+
+  .dark .table-row-hover:hover {
+    background-color: rgba(30, 41, 59, 0.4);
   }
 }
 
