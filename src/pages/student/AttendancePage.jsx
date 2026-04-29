@@ -40,10 +40,10 @@ const StudentAttendancePage = () => {
  />
  </svg>
  <div className="absolute inset-0 flex items-center justify-center">
- <span className="text-section-title text-slate-900 dark:text-slate-100">{summary.rate}%</span>
+ <span className="text-section text-slate-900 dark:text-slate-100">{summary.rate}%</span>
  </div>
  </div>
- <p className="text-body-sm text-slate-400/80">Attendance Rate</p>
+ <p className="text-label text-slate-400/80">Attendance Rate</p>
  </div>
 
  <SummaryStat label="Present Marks" value={summary.present} color="emerald" icon="check_circle" />
@@ -57,22 +57,22 @@ const StudentAttendancePage = () => {
  <div className="flex bg-slate-200/50 dark:bg-slate-800/50 p-1.5 rounded-xl">
  <button 
  onClick={() => setActiveTab('daily')}
- className={`px-8 py-3 rounded-lg text-body-sm  transition-all ${activeTab === 'daily' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
+ className={`px-8 py-3 rounded-lg text-label  transition-all ${activeTab === 'daily' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
  >Daily Summaries</button>
  <button 
  onClick={() => setActiveTab('session')}
- className={`px-8 py-3 rounded-lg text-body-sm  transition-all ${activeTab === 'session' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
+ className={`px-8 py-3 rounded-lg text-label  transition-all ${activeTab === 'session' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
  >Session Breakdown</button>
  </div>
  <div className="flex items-center gap-3">
  <span className="w-3 h-3 rounded-full bg-primary animate-pulse"></span>
- <span className="text-body-sm text-slate-400/80">Real-time Performance Data</span>
+ <span className="text-label text-slate-400/80">Real-time Performance Data</span>
  </div>
  </div>
 
  <div className="overflow-x-auto min-h-[400px]">
- <table className="w-full text-left text-body-sm">
- <thead className="bg-white dark:bg-slate-900 text-body-sm text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
+ <table className="w-full text-left text-label">
+ <thead className="bg-white dark:bg-slate-900 text-label text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
  {activeTab === 'daily' ? (
  <tr>
  <th className="px-10 py-6">Calendar Date</th>
@@ -95,19 +95,19 @@ const StudentAttendancePage = () => {
  <td className="px-10 py-6">
  <div className="flex items-center gap-4">
  <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center border border-slate-200/50 dark:border-slate-700/50">
- <span className="text-body-sm text-slate-400/80">{new Date(day.date).toLocaleString('default', { month: 'short' })}</span>
- <span className="text-body-md text-slate-900 dark:text-slate-100">{new Date(day.date).getDate()}</span>
+ <span className="text-label text-slate-400/80">{new Date(day.date).toLocaleString('default', { month: 'short' })}</span>
+ <span className="text-body text-slate-900 dark:text-slate-100">{new Date(day.date).getDate()}</span>
  </div>
  <div>
  <span className="text-slate-800 dark:text-slate-200 block leading-tight">
  {new Date(day.date).toLocaleDateString('default', { weekday: 'long' })}
  </span>
- <span className="text-body-sm text-slate-400/80">{day.date}</span>
+ <span className="text-label text-slate-400/80">{day.date}</span>
  </div>
  </div>
  </td>
  <td className="px-10 py-6 text-center">
- <span className={`px-5 py-1.5 rounded-full text-body-sm  border shadow-sm ${
+ <span className={`px-5 py-1.5 rounded-full text-label  border shadow-sm ${
  day.status === 'Present' ? 'bg-emerald-500 text-white border-emerald-500 shadow-emerald-500/10' :
  day.status === 'Absent' ? 'bg-rose-500 text-white border-rose-500 shadow-rose-500/10' :
  day.status === 'Late' ? 'bg-amber-500 text-white border-amber-500 shadow-amber-500/10' :
@@ -117,7 +117,7 @@ const StudentAttendancePage = () => {
  </span>
  </td>
  <td className="px-10 py-6 text-right">
- <span className="text-body-sm text-slate-400/80 italic">
+ <span className="text-label text-slate-400/80 italic">
  {day.status === 'Present' ? 'Full Day Attended' : 
  day.status === 'Partial' ? 'Mixed Participation' : 
  day.status === 'Late' ? 'Late Arrivals' : 'Not Present'}
@@ -130,18 +130,18 @@ const StudentAttendancePage = () => {
  <tr key={session.id} className="hover:bg-slate-50/30 dark:hover:bg-slate-800/30 transition-colors">
  <td className="px-10 py-6">
  <div>
- <span className="text-body-sm text-slate-800 dark:text-slate-100 block mb-1">{session.subjectName}</span>
- <span className="text-body-sm text-primary bg-primary/5 px-2 py-0.5 rounded">{classes.find(c => c.id === session.classId)?.name}</span>
+ <span className="text-label text-slate-800 dark:text-slate-100 block mb-1">{session.subjectName}</span>
+ <span className="text-label text-primary bg-primary/5 px-2 py-0.5 rounded">{classes.find(c => c.id === session.classId)?.name}</span>
  </div>
  </td>
  <td className="px-10 py-6">
- <span className="text-body-sm font-mono text-slate-500/80">
+ <span className="text-label font-mono text-slate-500/80">
  {formatTime(session.startTime)} - {formatTime(session.endTime)}
  </span>
  </td>
- <td className="px-10 py-6 text-body-sm text-slate-400/80">{session.date}</td>
+ <td className="px-10 py-6 text-label text-slate-400/80">{session.date}</td>
  <td className="px-10 py-6 text-right">
- <span className={`px-3 py-1 rounded-lg text-body-sm  ${
+ <span className={`px-3 py-1 rounded-lg text-label  ${
  session.status === 'Present' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
  session.status === 'Absent' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
  'bg-amber-50 text-amber-600 border border-amber-100'
@@ -156,8 +156,8 @@ const StudentAttendancePage = () => {
  <tr>
  <td colSpan="4" className="px-10 py-32 text-center text-slate-300">
  <div className="flex flex-col items-center opacity-20">
- <span className="material-symbols-outlined text-kpi-value mb-4">history_toggle_off</span>
- <p className="text-body-sm">No records available for display</p>
+ <span className="material-symbols-outlined text-display mb-4">history_toggle_off</span>
+ <p className="text-label">No records available for display</p>
  </div>
  </td>
  </tr>
@@ -181,10 +181,10 @@ const SummaryStat = ({ label, value, color, icon }) => {
  return (
  <div className={`p-8 rounded-xl border transition-all flex flex-col items-center text-center shadow-sm ${colors[color]}`}>
  <div className="w-12 h-12 rounded-xl bg-white/60 dark:bg-black/20 flex items-center justify-center mb-4 border border-white/50 dark:border-white/5">
- <span className="material-symbols-outlined text-kpi-value">{icon}</span>
+ <span className="material-symbols-outlined text-display">{icon}</span>
  </div>
- <p className="text-kpi-value mb-1 leading-none">{value}</p>
- <p className="text-body-sm opacity-60">{label}</p>
+ <p className="text-display mb-1 leading-none">{value}</p>
+ <p className="text-label opacity-60">{label}</p>
  </div>
  );
 };

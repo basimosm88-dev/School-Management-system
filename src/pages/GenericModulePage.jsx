@@ -148,7 +148,7 @@ const GenericModulePage = ({ role, title, primaryActionText }) => {
  {item.name || item.subject || item.date}
  </td>
  <td className="px-4 py-3">
- <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-body-sm  border ${
+ <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-label  border ${
  item.status === 'PUBLISHED' || item.grade?.startsWith('A') 
  ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200' 
  : 'bg-blue-50 dark:bg-blue-900/30 text-primary border-blue-200'
@@ -160,10 +160,10 @@ const GenericModulePage = ({ role, title, primaryActionText }) => {
  {role === 'admin' && config && config.deleteMethod && (
  <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
  <button className="p-1.5 text-slate-400/80 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg">
- <span className="material-symbols-outlined text-section-title">edit</span>
+ <span className="material-symbols-outlined text-section">edit</span>
  </button>
  <button onClick={() => handleDelete(item.id)} className="p-1.5 text-slate-400/80 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg">
- <span className="material-symbols-outlined text-section-title">delete</span>
+ <span className="material-symbols-outlined text-section">delete</span>
  </button>
  </div>
  )}

@@ -26,7 +26,7 @@ const DynamicForm = ({ fields, initialData = {}, onChange }) => {
  <div className="space-y-5">
  {fields.map((field) => (
  <div key={field.name} className="animate-in fade-in slide-in-from-top-1 duration-300">
- <label className="block text-body-sm text-slate-700 dark:text-slate-300 mb-1.5">{field.label}</label>
+ <label className="block text-label text-slate-700 dark:text-slate-300 mb-1.5">{field.label}</label>
  {field.type === 'select' ? (
  <select
  value={formData[field.name] || ''}
@@ -54,7 +54,7 @@ const DynamicForm = ({ fields, initialData = {}, onChange }) => {
  onChange={(e) => handleChange(e, field.name)}
  className="w-5 h-5 text-primary rounded border-slate-300 focus:ring-primary/20"
  />
- <span className="text-body-sm text-slate-700 dark:text-slate-200">{field.label}</span>
+ <span className="text-label text-slate-700 dark:text-slate-200">{field.label}</span>
  </label>
  ) : (
  <input

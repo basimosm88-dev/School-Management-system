@@ -95,8 +95,8 @@ const TeachersPage = () => {
  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
  {/* Page Header */}
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-page-title text-slate-900 dark:text-white">{t('teachers')}</h2>
- <p className="text-body-sm text-slate-500/80 mt-1">{t('teachersSubtitle')}</p>
+ <h2 className="text-heading text-slate-900 dark:text-white">{t('teachers')}</h2>
+ <p className="text-label text-slate-500/80 mt-1">{t('teachersSubtitle')}</p>
  </div>
 
  {/* 1. TOP CONTROL BAR */}
@@ -109,7 +109,7 @@ const TeachersPage = () => {
  placeholder="Search by name, email, or phone..."
  value={searchTerm}
  onChange={(e) => setSearchTerm(e.target.value)}
- className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
+ className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
  />
  </div>
 
@@ -117,7 +117,7 @@ const TeachersPage = () => {
  <select
  value={filters.status}
  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
  <option value="">Status</option>
  <option value="Active">Active</option>
@@ -127,7 +127,7 @@ const TeachersPage = () => {
  <select
  value={filters.educationLevel}
  onChange={(e) => setFilters({ ...filters, educationLevel: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
  <option value="">Education</option>
  <option value="High School">High School</option>
@@ -136,7 +136,7 @@ const TeachersPage = () => {
  <select
  value={filters.certificateLevel}
  onChange={(e) => setFilters({ ...filters, certificateLevel: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
  <option value="">Certificate</option>
  <option value="Bachelor">Bachelor</option>
@@ -146,7 +146,7 @@ const TeachersPage = () => {
  <select
  value={filters.languages}
  onChange={(e) => setFilters({ ...filters, languages: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
  <option value="">Language</option>
  <option value="Somali">Somali</option>
@@ -156,7 +156,7 @@ const TeachersPage = () => {
  <select
  value={filters.classId}
  onChange={(e) => setFilters({ ...filters, classId: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-body-sm px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+ className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
  <option value="">Assigned Class</option>
  {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -166,9 +166,9 @@ const TeachersPage = () => {
 
  <button
  onClick={handleAdd}
- className="bg-primary text-white px-6 py-2.5 rounded-xl text-body-sm hover:bg-primary/90 transition-all shadow-md shadow-primary/20 flex items-center gap-2 text-button"
+ className="bg-primary text-white px-6 py-2.5 rounded-xl text-label hover:bg-primary/90 transition-all shadow-md shadow-primary/20 flex items-center gap-2 text-button"
  >
- <span className="material-symbols-outlined text-kpi-value">person_add</span>
+ <span className="material-symbols-outlined text-display">person_add</span>
  Add Teacher
  </button>
  </div>
@@ -195,35 +195,35 @@ const TeachersPage = () => {
  <td className="px-6 py-4">
  <div className="flex flex-col">
  <span className="text-slate-800 dark:text-slate-200">{teacher.name}</span>
- <span className="text-body-sm text-slate-400/80">{teacher.specialty}</span>
+ <span className="text-label text-slate-400/80">{teacher.specialty}</span>
  </div>
  </td>
  <td className="px-6 py-4">
  <div className="flex flex-col gap-0.5">
  <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400/80">
- <span className="material-symbols-outlined text-body-md">mail</span>
- <span className="text-body-sm truncate max-w-[150px]">{teacher.email}</span>
+ <span className="material-symbols-outlined text-body">mail</span>
+ <span className="text-label truncate max-w-[150px]">{teacher.email}</span>
  </div>
  <div className="flex items-center gap-1.5 text-slate-400/80">
- <span className="material-symbols-outlined text-body-md">phone</span>
- <span className="text-body-sm">{teacher.phone}</span>
+ <span className="material-symbols-outlined text-body">phone</span>
+ <span className="text-label">{teacher.phone}</span>
  </div>
  </div>
  </td>
  <td className="px-6 py-4">
  <div className="flex flex-wrap gap-1 max-w-[200px]">
  {(teacher.assignedClasses || []).map(cid => (
- <span key={cid} className="px-1.5 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded text-body-sm">
+ <span key={cid} className="px-1.5 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded text-label">
  {classes.find(c => c.id === cid)?.name || 'Class'}
  </span>
  ))}
  {(!teacher.assignedClasses || teacher.assignedClasses.length === 0) && (
- <span className="text-slate-400/80 text-body-sm italic">Unassigned</span>
+ <span className="text-slate-400/80 text-label italic">Unassigned</span>
  )}
  </div>
  </td>
  <td className="px-6 py-4">
- <span className={`px-2 py-1 rounded text-body-sm  ${teacher.status === 'Active'
+ <span className={`px-2 py-1 rounded text-label  ${teacher.status === 'Active'
  ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'
  : teacher.status === 'On Leave'
  ? 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400'
@@ -239,21 +239,21 @@ const TeachersPage = () => {
  className="p-1.5 text-slate-400/80 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
  title="View Profile"
  >
- <span className="material-symbols-outlined text-section-title">visibility</span>
+ <span className="material-symbols-outlined text-section">visibility</span>
  </button>
  <button
  onClick={(e) => handleEdit(teacher, e)}
  className="p-1.5 text-slate-400/80 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
  title="Edit"
  >
- <span className="material-symbols-outlined text-section-title">edit</span>
+ <span className="material-symbols-outlined text-section">edit</span>
  </button>
  <button
  onClick={(e) => handleDelete(teacher.id, e)}
  className="p-1.5 text-slate-400/80 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all"
  title="Delete"
  >
- <span className="material-symbols-outlined text-section-title">delete</span>
+ <span className="material-symbols-outlined text-section">delete</span>
  </button>
  </div>
  </td>
@@ -262,7 +262,7 @@ const TeachersPage = () => {
  {filteredTeachers.length === 0 && (
  <tr>
  <td colSpan="5" className="px-6 py-12 text-center text-slate-400/80">
- <span className="material-symbols-outlined text-kpi-value mb-2 opacity-30">person_off</span>
+ <span className="material-symbols-outlined text-display mb-2 opacity-30">person_off</span>
  <p>No teachers found matching your search.</p>
  </td>
  </tr>
@@ -377,7 +377,7 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto animate-in zoom-in-95 duration-300 flex flex-col max-h-[95vh]"
  >
  <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10 rounded-t-3xl shrink-0">
- <h3 className="text-slate-900 dark:text-slate-100 text-section-title flex items-center gap-2">
+ <h3 className="text-slate-900 dark:text-slate-100 text-section flex items-center gap-2">
  <span className="material-symbols-outlined text-primary">person_add</span>
  {teacher ? 'Edit Teacher Details' : 'Register New Teacher'}
  </h3>
@@ -393,18 +393,18 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  <FormSectionHeader icon="person" title="Section 1: Basic Information" />
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Full Name</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Full Name</label>
  <input type="text" value={formData.name || ''} onChange={e => handleChange('name', e.target.value)} className="form-input-custom" placeholder="Full Name" required />
  </div>
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Marital Status</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Marital Status</label>
  <select value={formData.maritalStatus} onChange={e => handleChange('maritalStatus', e.target.value)} className="form-input-custom cursor-pointer">
  <option value="Single">Single</option>
  <option value="Married">Married</option>
  </select>
  </div>
  <div className="col-span-full">
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Residential Address</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Residential Address</label>
  <input type="text" value={formData.address || ''} onChange={e => handleChange('address', e.target.value)} className="form-input-custom" placeholder="Full Address" />
  </div>
  </div>
@@ -415,11 +415,11 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  <FormSectionHeader icon="contact_mail" title="Section 2: Contact Details" />
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Email Address (Login Username)</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Email Address (Login Username)</label>
  <input type="email" value={formData.email || ''} onChange={e => handleChange('email', e.target.value)} className="form-input-custom" placeholder="email@school.com" required />
  </div>
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Phone Number</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Phone Number</label>
  <input type="text" value={formData.phone || ''} onChange={e => handleChange('phone', e.target.value)} className="form-input-custom" placeholder="+123..." required />
  </div>
  </div>
@@ -430,18 +430,18 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  <FormSectionHeader icon="work" title="Section 3: Professional Info" />
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Specialty</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Specialty</label>
  <input type="text" value={formData.specialty || ''} onChange={e => handleChange('specialty', e.target.value)} className="form-input-custom" placeholder="e.g. Physics, History" />
  </div>
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Subjects (Multi-select)</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Subjects (Multi-select)</label>
  <div className="flex flex-wrap gap-2 mt-2">
  {subjects.map(s => (
  <button
  key={s.id}
  type="button"
  onClick={() => toggleMultiSelect('subjects', s.name)}
- className={`px-3 py-1.5 rounded-lg text-body-sm  transition-all border ${formData.subjects.includes(s.name)
+ className={`px-3 py-1.5 rounded-lg text-label  transition-all border ${formData.subjects.includes(s.name)
  ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20'
  : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400/80 border-slate-200 dark:border-slate-700 hover:border-primary/50'
  }`}
@@ -452,14 +452,14 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  </div>
  </div>
  <div className="col-span-full">
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Assign Classes (Multi-select)</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Assign Classes (Multi-select)</label>
  <div className="flex flex-wrap gap-2 mt-2">
  {classes.map(c => (
  <button
  key={c.id}
  type="button"
  onClick={() => toggleMultiSelect('assignedClasses', c.id)}
- className={`px-3 py-1.5 rounded-lg text-body-sm  transition-all border ${formData.assignedClasses.includes(c.id)
+ className={`px-3 py-1.5 rounded-lg text-label  transition-all border ${formData.assignedClasses.includes(c.id)
  ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20'
  : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400/80 border-slate-200 dark:border-slate-700 hover:border-primary/50'
  }`}
@@ -470,11 +470,11 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  </div>
  </div>
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Started Date (In Profession)</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Started Date (In Profession)</label>
  <input type="date" value={formData.startedDate || ''} onChange={e => handleChange('startedDate', e.target.value)} className="form-input-custom" />
  </div>
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Joined Date (At School)</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Joined Date (At School)</label>
  <input type="date" value={formData.joinedDate || ''} onChange={e => handleChange('joinedDate', e.target.value)} className="form-input-custom" />
  </div>
  </div>
@@ -485,14 +485,14 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  <FormSectionHeader icon="school" title="Section 4: Education History" />
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Education Level</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Education Level</label>
  <select value={formData.educationLevel} onChange={e => handleChange('educationLevel', e.target.value)} className="form-input-custom">
  <option value="High School">High School</option>
  <option value="University">University</option>
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Last Certificate</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Last Certificate</label>
  <select value={formData.lastCertificate} onChange={e => handleChange('lastCertificate', e.target.value)} className="form-input-custom">
  <option value="Diploma">Diploma</option>
  <option value="Bachelor">Bachelor</option>
@@ -501,7 +501,7 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Extra Certificates</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Extra Certificates</label>
  <input type="text" value={formData.extraCertificates || ''} onChange={e => handleChange('extraCertificates', e.target.value)} className="form-input-custom" placeholder="Other certs..." />
  </div>
  </div>
@@ -518,11 +518,11 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  onChange={e => handleChange('trainedAsTeacher', e.target.checked)}
  className="w-5 h-5 text-primary rounded border-slate-300"
  />
- <span className="text-body-sm text-slate-700 dark:text-slate-200">Trained as Professional Teacher?</span>
+ <span className="text-label text-slate-700 dark:text-slate-200">Trained as Professional Teacher?</span>
  </label>
  {formData.trainedAsTeacher && (
  <div className="animate-in slide-in-from-top-2 duration-300">
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Where Trained?</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Where Trained?</label>
  <input type="text" value={formData.whereTrained || ''} onChange={e => handleChange('whereTrained', e.target.value)} className="form-input-custom md:w-1/2" placeholder="Institute Name" />
  </div>
  )}
@@ -541,11 +541,11 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  onChange={() => toggleLanguage(lang.toLowerCase())}
  className="w-5 h-5 text-primary rounded border-slate-300"
  />
- <span className="text-body-sm text-slate-700 dark:text-slate-200">{lang}</span>
+ <span className="text-label text-slate-700 dark:text-slate-200">{lang}</span>
  </label>
  ))}
  <div className="col-span-full mt-2">
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Other Languages</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Other Languages</label>
  <input type="text" value={formData.languages.other} onChange={e => handleChange('languages.other', e.target.value)} className="form-input-custom" placeholder="e.g. French, Turkish" />
  </div>
  </div>
@@ -556,23 +556,23 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  <FormSectionHeader icon="family_restroom" title="Section 7: Related Person" />
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Full Name</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Full Name</label>
  <input type="text" value={formData.relatedPerson.name} onChange={e => handleChange('relatedPerson.name', e.target.value)} className="form-input-custom" />
  </div>
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Relation Type</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Relation Type</label>
  <input type="text" value={formData.relatedPerson.relation} onChange={e => handleChange('relatedPerson.relation', e.target.value)} className="form-input-custom" placeholder="e.g. Spouse, Parent" />
  </div>
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Phone Number</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Phone Number</label>
  <input type="text" value={formData.relatedPerson.phone} onChange={e => handleChange('relatedPerson.phone', e.target.value)} className="form-input-custom" />
  </div>
  <div className="lg:col-span-2">
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Address</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Address</label>
  <input type="text" value={formData.relatedPerson.address} onChange={e => handleChange('relatedPerson.address', e.target.value)} className="form-input-custom" />
  </div>
  <div>
- <label className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Email (Optional)</label>
+ <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Email (Optional)</label>
  <input type="email" value={formData.relatedPerson.email} onChange={e => handleChange('relatedPerson.email', e.target.value)} className="form-input-custom" />
  </div>
  </div>
@@ -585,7 +585,7 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  {['Exam', 'Other'].map(t => (
  <label key={t} className="flex items-center gap-3 cursor-pointer group">
  <input type="radio" name="regType" value={t} checked={formData.registrationType === t} onChange={e => handleChange('registrationType', e.target.value)} className="w-5 h-5 text-primary focus:ring-primary/20" />
- <span className="text-body-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{t}</span>
+ <span className="text-label text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{t}</span>
  </label>
  ))}
  </div>
@@ -598,7 +598,7 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  {['Active', 'On Leave', 'Inactive'].map(s => (
  <label key={s} className="flex items-center gap-3 cursor-pointer group">
  <input type="radio" name="empStatus" value={s} checked={formData.status === s} onChange={e => handleChange('status', e.target.value)} className="w-5 h-5 text-primary focus:ring-primary/20" />
- <span className="text-body-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{s}</span>
+ <span className="text-label text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{s}</span>
  </label>
  ))}
  </div>
@@ -612,8 +612,8 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
  </div>
 
  <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl shrink-0">
- <button type="button" onClick={onClose} className="px-6 py-2.5 text-body-sm text-slate-500/80 dark:text-slate-400/80 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all">Cancel</button>
- <button type="submit" className="px-8 py-2.5 bg-primary text-white text-body-sm rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save teacher record</button>
+ <button type="button" onClick={onClose} className="px-6 py-2.5 text-label text-slate-500/80 dark:text-slate-400/80 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all">Cancel</button>
+ <button type="submit" className="px-8 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save teacher record</button>
  </div>
  </form>
  </div>
@@ -630,22 +630,22 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolName }) => {
  <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-5xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto overflow-hidden animate-in zoom-in-95 duration-400">
  <div className="flex justify-between items-center p-8 border-b border-slate-100 dark:border-slate-800 bg-indigo-600 text-white relative">
  <div className="flex items-center gap-6 relative z-10">
- <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-kpi-value shadow-inner">
+ <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-display shadow-inner">
  {teacher.name ? teacher.name[0] : 'T'}
  </div>
  <div>
- <h3 className="text-kpi-value mb-1">{teacher.name}</h3>
+ <h3 className="text-display mb-1">{teacher.name}</h3>
  <div className="flex flex-wrap gap-3 mt-2">
- <span className="flex items-center gap-1 text-white/80 text-body-sm bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
- <span className="material-symbols-outlined text-body-md">work</span>
+ <span className="flex items-center gap-1 text-white/80 text-label bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+ <span className="material-symbols-outlined text-body">work</span>
  {teacher.specialty}
  </span>
- <span className="flex items-center gap-1 text-white/80 text-body-sm bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
- <span className="material-symbols-outlined text-body-md">mail</span>
+ <span className="flex items-center gap-1 text-white/80 text-label bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+ <span className="material-symbols-outlined text-body">mail</span>
  {teacher.email}
  </span>
- <span className="flex items-center gap-1 text-white/80 text-body-sm bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
- <span className="material-symbols-outlined text-body-md">phone</span>
+ <span className="flex items-center gap-1 text-white/80 text-label bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+ <span className="material-symbols-outlined text-body">phone</span>
  {teacher.phone}
  </span>
  </div>
@@ -654,9 +654,9 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolName }) => {
  <div className="flex gap-2 relative z-10">
  <button
  onClick={handlePrint}
- className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all text-body-sm"
+ className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all text-label"
  >
- <span className="material-symbols-outlined text-kpi-value">print</span>
+ <span className="material-symbols-outlined text-display">print</span>
  Print Profile
  </button>
  <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all">
@@ -676,10 +676,10 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolName }) => {
  <InfoItem label="Joined Date" value={teacher.joinedDate} />
  <InfoItem label="Professional Start" value={teacher.startedDate} />
  <div className="col-span-full">
- <p className="text-body-sm text-slate-400/80 mb-3">Subjects Taught</p>
+ <p className="text-label text-slate-400/80 mb-3">Subjects Taught</p>
  <div className="flex flex-wrap gap-2">
  {teacher.subjects?.map(s => (
- <span key={s} className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-body-sm border border-indigo-100 dark:border-indigo-800">
+ <span key={s} className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-label border border-indigo-100 dark:border-indigo-800">
  {s}
  </span>
  ))}
@@ -730,11 +730,11 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolName }) => {
  return (
  <div key={cid} className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
  <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
- <span className="material-symbols-outlined text-indigo-600 text-section-title">class</span>
+ <span className="material-symbols-outlined text-indigo-600 text-section">class</span>
  </div>
  <div>
- <p className="text-body-sm text-slate-800 dark:text-slate-100">{cls?.name}</p>
- <p className="text-body-sm text-slate-400/80">Active Class</p>
+ <p className="text-label text-slate-800 dark:text-slate-100">{cls?.name}</p>
+ <p className="text-label text-slate-400/80">Active Class</p>
  </div>
  </div>
  );
@@ -747,7 +747,7 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolName }) => {
  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
  <InfoItem label="Current Status" value={teacher.status} />
  <div className="mt-2">
- <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-body-sm  ${teacher.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'
+ <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-label  ${teacher.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'
  }`}>
  Official
  </span>
@@ -758,7 +758,7 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolName }) => {
  </ProfileSection>
 
  <ProfileSection title="Notes" icon="notes">
- <p className="text-body-sm text-slate-600 dark:text-slate-400/80 italic leading-relaxed">
+ <p className="text-label text-slate-600 dark:text-slate-400/80 italic leading-relaxed">
  {teacher.notes || "No administrative notes provided."}
  </p>
  </ProfileSection>
@@ -776,27 +776,27 @@ const PrintableTeacherProfile = ({ teacher, classes, schoolName }) => {
  <div className="print-header flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
  <div className="flex items-center gap-4">
  <div className="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center text-white">
- <span className="material-symbols-outlined text-kpi-value">work</span>
+ <span className="material-symbols-outlined text-display">work</span>
  </div>
  <div>
- <h1 className="text-kpi-value">{schoolName}</h1>
- <p className="text-body-sm text-slate-500/80">Official Teacher Record</p>
+ <h1 className="text-display">{schoolName}</h1>
+ <p className="text-label text-slate-500/80">Official Teacher Record</p>
  </div>
  </div>
- <div className="text-right text-body-sm leading-relaxed text-slate-600">
+ <div className="text-right text-label leading-relaxed text-slate-600">
  <p className="text-slate-900">HR Department</p>
  <p>Main Campus, Administrative Block</p>
  <p>Phone: +1 (234) 567-8900</p>
  <p>Email: hr@school.com</p>
- <p className="mt-1 font-mono text-body-sm text-slate-400/80">Employee ID: TCH-{teacher.id}</p>
+ <p className="mt-1 font-mono text-label text-slate-400/80">Employee ID: TCH-{teacher.id}</p>
  </div>
  </div>
 
  <div className="flex justify-between items-center mb-8">
- <h2 className="text-section-title border-l-4 border-indigo-600 pl-4">Teacher Performance & Profile Record</h2>
+ <h2 className="text-section border-l-4 border-indigo-600 pl-4">Teacher Performance & Profile Record</h2>
  <div className="text-right">
- <p className="text-body-sm text-slate-400/80">Issue Date</p>
- <p className="text-body-sm">{new Date().toLocaleDateString()}</p>
+ <p className="text-label text-slate-400/80">Issue Date</p>
+ <p className="text-label">{new Date().toLocaleDateString()}</p>
  </div>
  </div>
 
@@ -847,7 +847,7 @@ const PrintableTeacherProfile = ({ teacher, classes, schoolName }) => {
  <h3 className="print-section-title">Assigned Classes</h3>
  <div className="flex flex-wrap gap-2 mt-2">
  {(teacher.assignedClasses || []).map(cid => (
- <span key={cid} className="px-2 py-1 bg-slate-100 rounded text-body-sm border border-slate-200">
+ <span key={cid} className="px-2 py-1 bg-slate-100 rounded text-label border border-slate-200">
  {classes.find(c => c.id === cid)?.name}
  </span>
  ))}
@@ -859,11 +859,11 @@ const PrintableTeacherProfile = ({ teacher, classes, schoolName }) => {
  <div className="fixed bottom-12 left-12 right-12 flex justify-between pt-8 border-t border-slate-200">
  <div className="text-center w-48">
  <div className="h-16 border-b border-slate-300 mb-2"></div>
- <p className="text-body-sm text-slate-500/80">Manager Signature</p>
+ <p className="text-label text-slate-500/80">Manager Signature</p>
  </div>
  <div className="text-center w-48">
  <div className="h-16 border-b border-slate-300 mb-2"></div>
- <p className="text-body-sm text-slate-500/80">Teacher Signature</p>
+ <p className="text-label text-slate-500/80">Teacher Signature</p>
  </div>
  </div>
  </div>
@@ -874,17 +874,17 @@ const PrintableTeacherProfile = ({ teacher, classes, schoolName }) => {
 const FormSectionHeader = ({ icon, title }) => (
  <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100 dark:border-slate-800">
  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
- <span className="material-symbols-outlined text-primary text-kpi-value">{icon}</span>
+ <span className="material-symbols-outlined text-primary text-display">{icon}</span>
  </div>
- <h4 className="text-slate-800 dark:text-slate-100 text-body-sm">{title}</h4>
+ <h4 className="text-slate-800 dark:text-slate-100 text-label">{title}</h4>
  </div>
 );
 
 const ProfileSection = ({ title, icon, children }) => (
  <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
  <div className="px-6 py-4 border-b border-slate-50 dark:border-slate-800 flex items-center gap-2 bg-slate-50/50 dark:bg-slate-800/30">
- <span className="material-symbols-outlined text-primary text-section-title">{icon}</span>
- <h4 className="text-body-sm text-slate-500/80 dark:text-slate-400/80">{title}</h4>
+ <span className="material-symbols-outlined text-primary text-section">{icon}</span>
+ <h4 className="text-label text-slate-500/80 dark:text-slate-400/80">{title}</h4>
  </div>
  <div className="p-6">
  {children}
@@ -894,24 +894,24 @@ const ProfileSection = ({ title, icon, children }) => (
 
 const InfoItem = ({ label, value }) => (
  <div className="space-y-1">
- <p className="text-body-sm text-slate-400/80">{label}</p>
- <p className="text-body-sm text-slate-700 dark:text-slate-200">{value || 'N/A'}</p>
+ <p className="text-label text-slate-400/80">{label}</p>
+ <p className="text-label text-slate-700 dark:text-slate-200">{value || 'N/A'}</p>
  </div>
 );
 
 const PrintItem = ({ label, value }) => (
  <div className="space-y-1">
- <p className="text-body-sm text-slate-400/80">{label}</p>
- <p className="text-body-sm text-slate-800">{value || 'N/A'}</p>
+ <p className="text-label text-slate-400/80">{label}</p>
+ <p className="text-label text-slate-800">{value || 'N/A'}</p>
  </div>
 );
 
 const ProfileBadge = ({ label, color, icon }) => (
- <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-body-sm   
+ <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-label   
  ${color === 'amber' ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800' :
  'bg-slate-50 dark:bg-slate-800 text-slate-500/80 border-slate-100 dark:border-slate-800'} 
  border shadow-sm`}>
- <span className="material-symbols-outlined text-section-title">{icon}</span>
+ <span className="material-symbols-outlined text-section">{icon}</span>
  {label}
  </span>
 );

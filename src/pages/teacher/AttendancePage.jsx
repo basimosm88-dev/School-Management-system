@@ -115,7 +115,7 @@ const TeacherAttendancePage = () => {
  <div className="bg-white dark:bg-slate-900 p-8 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors">
  <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
  <div>
- <label className="text-body-sm text-slate-400/80 mb-2 block">Select Class</label>
+ <label className="text-label text-slate-400/80 mb-2 block">Select Class</label>
  <select 
  value={selectedClassId}
  onChange={(e) => {
@@ -131,7 +131,7 @@ const TeacherAttendancePage = () => {
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-400/80 mb-2 block">Date</label>
+ <label className="text-label text-slate-400/80 mb-2 block">Date</label>
  <input 
  type="date" 
  value={selectedDate}
@@ -143,7 +143,7 @@ const TeacherAttendancePage = () => {
  />
  </div>
  <div>
- <label className="text-body-sm text-slate-400/80 mb-2 block">Select Session</label>
+ <label className="text-label text-slate-400/80 mb-2 block">Select Session</label>
  <select 
  value={selectedSessionId}
  onChange={(e) => setSelectedSessionId(e.target.value)}
@@ -164,15 +164,15 @@ const TeacherAttendancePage = () => {
  <button 
  onClick={handleMarkAllPresent}
  disabled={!selectedSessionId}
- className="w-full px-4 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-body-sm rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all disabled:opacity-50"
+ className="w-full px-4 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-label rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all disabled:opacity-50"
  >
  Mark All Present
  </button>
  </div>
  </div>
  {availableSessions.length === 0 && selectedClassId && (
- <p className="mt-4 text-body-sm text-rose-500 flex items-center gap-2">
- <span className="material-symbols-outlined text-body-sm">warning</span>
+ <p className="mt-4 text-label text-rose-500 flex items-center gap-2">
+ <span className="material-symbols-outlined text-label">warning</span>
  No sessions scheduled for this class on {dayName} ({selectedDate})
  </p>
  )}
@@ -183,14 +183,14 @@ const TeacherAttendancePage = () => {
  {!selectedSessionId ? (
  <div className="flex flex-col items-center justify-center h-[400px] text-slate-400/80">
  <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
- <span className="material-symbols-outlined text-kpi-value">fact_check</span>
+ <span className="material-symbols-outlined text-display">fact_check</span>
  </div>
- <p className="text-body-sm opacity-60">Select class and session to take attendance</p>
+ <p className="text-label opacity-60">Select class and session to take attendance</p>
  </div>
  ) : (
  <div className="overflow-x-auto">
- <table className="w-full text-left text-body-sm">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400/80 text-body-sm border-b border-slate-100 dark:border-slate-800">
+ <table className="w-full text-left text-label">
+ <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400/80 text-label border-b border-slate-100 dark:border-slate-800">
  <tr>
  <th className="px-8 py-5">Student Information</th>
  <th className="px-8 py-5">Student ID</th>
@@ -202,17 +202,17 @@ const TeacherAttendancePage = () => {
  <tr key={student.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
  <td className="px-8 py-5">
  <div className="flex items-center gap-4">
- <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-body-sm">
+ <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-label">
  {student.name[0]}
  </div>
  <div>
  <span className="text-slate-800 dark:text-slate-200 block">{student.name}</span>
- <span className="text-body-sm text-slate-400/80">{student.email}</span>
+ <span className="text-label text-slate-400/80">{student.email}</span>
  </div>
  </div>
  </td>
  <td className="px-8 py-5">
- <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-body-sm text-slate-500/80">
+ <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-label text-slate-500/80">
  {student.id}
  </span>
  </td>
@@ -222,7 +222,7 @@ const TeacherAttendancePage = () => {
  <button
  key={status}
  onClick={() => handleStatusChange(student.id, status)}
- className={`px-6 py-2 rounded-xl text-body-sm  transition-all border ${
+ className={`px-6 py-2 rounded-xl text-label  transition-all border ${
  attendanceData[student.id] === status
  ? status === 'Present' ? 'bg-emerald-500 text-white border-emerald-500 shadow-xl shadow-emerald-500/20' :
  status === 'Absent' ? 'bg-rose-500 text-white border-rose-500 shadow-xl shadow-rose-500/20' :
@@ -248,9 +248,9 @@ const TeacherAttendancePage = () => {
  <div className="flex justify-end sticky bottom-6 z-10">
  <button 
  onClick={handleSave}
- className="px-12 py-4 bg-primary text-white text-body-sm rounded-2xl shadow-2xl shadow-primary/30 hover:bg-blue-700 transition-all active:scale-95 flex items-center gap-3"
+ className="px-12 py-4 bg-primary text-white text-label rounded-2xl shadow-2xl shadow-primary/30 hover:bg-blue-700 transition-all active:scale-95 flex items-center gap-3"
  >
- <span className="material-symbols-outlined text-kpi-value">verified</span>
+ <span className="material-symbols-outlined text-display">verified</span>
  Submit Session Attendance
  </button>
  </div>

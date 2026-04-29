@@ -62,15 +62,15 @@ const AnnouncementsPage = ({ role }) => {
  <PageLayout role={role} title={t('announcements')}>
  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
  <div>
- <h2 className="text-page-title text-slate-900 dark:text-white">{t('announcements')}</h2>
- <p className="text-body-sm text-slate-500/80 mt-1">{t('announcementsSubtitle')}</p>
+ <h2 className="text-heading text-slate-900 dark:text-white">{t('announcements')}</h2>
+ <p className="text-label text-slate-500/80 mt-1">{t('announcementsSubtitle')}</p>
  </div>
  {(role === 'admin' || (role === 'teacher' && permissions.teachers.createAnnouncements)) && (
  <button 
  onClick={() => setModalOpen(true)}
- className="bg-primary text-white px-6 py-3 rounded-xl text-body-sm shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2"
+ className="bg-primary text-white px-6 py-3 rounded-xl text-label shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-kpi-value">campaign</span>
+ <span className="material-symbols-outlined text-display">campaign</span>
  New Announcement
  </button>
  )}
@@ -79,7 +79,7 @@ const AnnouncementsPage = ({ role }) => {
  <div className="space-y-4">
  {filteredAnnouncements.length === 0 ? (
  <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 text-center border border-slate-100 dark:border-slate-800">
- <span className="material-symbols-outlined text-kpi-value text-slate-200 mb-4">notifications_off</span>
+ <span className="material-symbols-outlined text-display text-slate-200 mb-4">notifications_off</span>
  <p className="text-slate-500/80">No announcements found.</p>
  </div>
  ) : (
@@ -88,36 +88,36 @@ const AnnouncementsPage = ({ role }) => {
  <div className="flex justify-between items-start mb-4">
  <div className="flex items-center gap-4">
  <div className={`p-2 rounded-xl border ${getPriorityStyles(ann.priority)}`}>
- <span className="material-symbols-outlined text-kpi-value">
+ <span className="material-symbols-outlined text-display">
  {ann.priority === 'urgent' ? 'error' : ann.priority === 'important' ? 'warning' : 'info'}
  </span>
  </div>
  <div>
- <h3 className="text-section-title text-slate-900 dark:text-white">{ann.title}</h3>
- <p className="text-body-sm text-slate-400/80">{ann.date}</p>
+ <h3 className="text-section text-slate-900 dark:text-white">{ann.title}</h3>
+ <p className="text-label text-slate-400/80">{ann.date}</p>
  </div>
  </div>
  <div className="flex items-center gap-2">
- <span className={`px-3 py-1 rounded-full text-body-sm  bg-slate-50 dark:bg-slate-800 text-slate-500/80 border border-slate-200 dark:border-slate-700`}>
+ <span className={`px-3 py-1 rounded-full text-label  bg-slate-50 dark:bg-slate-800 text-slate-500/80 border border-slate-200 dark:border-slate-700`}>
  To: {(ann.audience || 'all').replace('_', ' ')}
  </span>
  {role === 'admin' && (
  <button onClick={() => deleteAnnouncement(ann.id)} className="p-2 text-slate-400/80 hover:text-rose-500 transition-colors">
- <span className="material-symbols-outlined text-section-title">delete</span>
+ <span className="material-symbols-outlined text-section">delete</span>
  </button>
  )}
  </div>
  </div>
  <div className="prose prose-slate dark:prose-invert max-w-none">
- <p className="text-slate-600 dark:text-slate-300 text-body-sm leading-relaxed whitespace-pre-wrap">
+ <p className="text-slate-600 dark:text-slate-300 text-label leading-relaxed whitespace-pre-wrap">
  {ann.content || ann.message}
  </p>
  </div>
  {ann.attachment && (
  <div className="mt-4 flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 w-fit">
- <span className="material-symbols-outlined text-kpi-value text-primary">attachment</span>
- <span className="text-body-sm text-slate-700 dark:text-slate-300">{ann.attachment}</span>
- <button className="text-body-sm text-primary ml-4 hover:underline">Download</button>
+ <span className="material-symbols-outlined text-display text-primary">attachment</span>
+ <span className="text-label text-slate-700 dark:text-slate-300">{ann.attachment}</span>
+ <button className="text-label text-primary ml-4 hover:underline">Download</button>
  </div>
  )}
  </div>

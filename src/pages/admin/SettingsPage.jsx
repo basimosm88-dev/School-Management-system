@@ -46,8 +46,8 @@ const SettingsPage = () => {
  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
  {/* Page Header */}
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-page-title text-slate-900 dark:text-white">{t('settings')}</h2>
- <p className="text-body-sm text-slate-500/80 mt-1">{t('settingsSubtitle')}</p>
+ <h2 className="text-heading text-slate-900 dark:text-white">{t('settings')}</h2>
+ <p className="text-label text-slate-500/80 mt-1">{t('settingsSubtitle')}</p>
  </div>
  
  {/* Settings Navigation Tabs (Top) */}
@@ -56,21 +56,21 @@ const SettingsPage = () => {
  <button
  key={section.id}
  onClick={() => setActiveSection(section.id)}
- className={`flex items-center gap-2 px-6 py-3 rounded-lg text-body-sm   transition-all ${
+ className={`flex items-center gap-2 px-6 py-3 rounded-lg text-label   transition-all ${
  activeSection === section.id 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
  : 'text-slate-500/80 hover:text-slate-700 dark:text-slate-400/80 dark:hover:text-slate-200'
  }`}
  >
- <span className="material-symbols-outlined text-section-title">{section.icon}</span>
+ <span className="material-symbols-outlined text-section">{section.icon}</span>
  {section.label}
  </button>
  ))}
  <button 
  onClick={resetData}
- className="flex items-center gap-2 px-6 py-3 rounded-lg text-body-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all ml-4"
+ className="flex items-center gap-2 px-6 py-3 rounded-lg text-label text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all ml-4"
  >
- <span className="material-symbols-outlined text-section-title">factory</span>
+ <span className="material-symbols-outlined text-section">factory</span>
  Factory Reset
  </button>
  </div>
@@ -82,7 +82,7 @@ const SettingsPage = () => {
  {/* 1. BRANDING */}
  {activeSection === 'branding' && (
  <div className="space-y-6">
- <h2 className="text-section-title text-slate-900 dark:text-white flex items-center gap-3">
+ <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
  <span className="material-symbols-outlined text-primary">school</span>
  {t('school_branding')}
  </h2>
@@ -93,64 +93,64 @@ const SettingsPage = () => {
  {schoolSettings.logo ? (
  <img src={schoolSettings.logo} alt="School Logo" className="w-full h-full object-cover" />
  ) : (
- <span className="material-symbols-outlined text-kpi-value text-slate-300">add_a_photo</span>
+ <span className="material-symbols-outlined text-display text-slate-300">add_a_photo</span>
  )}
  </div>
  <label className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 rounded-2xl cursor-pointer transition-opacity">
- <span className="text-white text-body-sm">Change</span>
+ <span className="text-white text-label">Change</span>
  <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
  </label>
  </div>
  <div className="space-y-1">
  <h3 className="text-slate-800 dark:text-white">{t('logo')}</h3>
- <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80">Upload your official school logo. This will appear on all dashboards and PDF reports.</p>
+ <p className="text-label text-slate-500/80 dark:text-slate-400/80">Upload your official school logo. This will appear on all dashboards and PDF reports.</p>
  </div>
  </div>
 
  <div className="grid grid-cols-2 gap-6">
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">{t('schoolName')}</label>
+ <label className="text-label text-slate-500/80">{t('schoolName')}</label>
  <input 
  type="text" 
  value={schoolSettings.name}
  onChange={(e) => setSchoolSettings({ ...schoolSettings, name: e.target.value })}
- className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none"
+ className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Official Email</label>
+ <label className="text-label text-slate-500/80">Official Email</label>
  <input 
  type="email" 
  value={schoolSettings.email}
  onChange={(e) => setSchoolSettings({ ...schoolSettings, email: e.target.value })}
- className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none"
+ className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Contact Phone</label>
+ <label className="text-label text-slate-500/80">Contact Phone</label>
  <input 
  type="text" 
  value={schoolSettings.phone}
  onChange={(e) => setSchoolSettings({ ...schoolSettings, phone: e.target.value })}
- className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none"
+ className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Website URL</label>
+ <label className="text-label text-slate-500/80">Website URL</label>
  <input 
  type="text" 
  value={schoolSettings.website}
  onChange={(e) => setSchoolSettings({ ...schoolSettings, website: e.target.value })}
- className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none"
+ className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
  />
  </div>
  <div className="col-span-2 space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Physical Address</label>
+ <label className="text-label text-slate-500/80">Physical Address</label>
  <textarea 
  rows="2"
  value={schoolSettings.address}
  onChange={(e) => setSchoolSettings({ ...schoolSettings, address: e.target.value })}
- className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none resize-none"
+ className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none resize-none"
  ></textarea>
  </div>
  </div>
@@ -160,39 +160,39 @@ const SettingsPage = () => {
  {/* 2. ACADEMIC RULES */}
  {activeSection === 'academic' && (
  <div className="space-y-6">
- <h2 className="text-section-title text-slate-900 dark:text-white flex items-center gap-3">
+ <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
  <span className="material-symbols-outlined text-primary">menu_book</span>
  {t('academic_rules')}
  </h2>
  
  <div className="grid grid-cols-2 gap-8">
  <div className="space-y-4">
- <h3 className="text-slate-800 dark:text-white text-body-sm">Grading System</h3>
+ <h3 className="text-slate-800 dark:text-white text-label">Grading System</h3>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Global Passing Grade (%)</label>
+ <label className="text-label text-slate-500/80">Global Passing Grade (%)</label>
  <input 
  type="number" 
  value={academicSettings.passingGrade}
  onChange={(e) => setAcademicSettings({ ...academicSettings, passingGrade: parseInt(e.target.value) })}
- className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none"
+ className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Min. Subjects for Promotion</label>
+ <label className="text-label text-slate-500/80">Min. Subjects for Promotion</label>
  <input 
  type="number" 
  value={academicSettings.minSubjects}
  onChange={(e) => setAcademicSettings({ ...academicSettings, minSubjects: parseInt(e.target.value) })}
- className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none"
+ className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
  />
  </div>
  </div>
 
  <div className="space-y-4">
- <h3 className="text-slate-800 dark:text-white text-body-sm">Exam Weights</h3>
+ <h3 className="text-slate-800 dark:text-white text-label">Exam Weights</h3>
  {Object.entries(academicSettings.examWeights).map(([key, value]) => (
  <div key={key} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
- <span className="text-body-sm text-slate-600 dark:text-slate-400/80 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+ <span className="text-label text-slate-600 dark:text-slate-400/80 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
  <div className="flex items-center gap-2">
  <input 
  type="number" 
@@ -201,13 +201,13 @@ const SettingsPage = () => {
  ...academicSettings, 
  examWeights: { ...academicSettings.examWeights, [key]: parseInt(e.target.value) } 
  })}
- className="w-16 px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-center text-body-sm"
+ className="w-16 px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-center text-label"
  />
- <span className="text-body-sm text-slate-400/80">%</span>
+ <span className="text-label text-slate-400/80">%</span>
  </div>
  </div>
  ))}
- <p className="text-body-sm text-slate-400/80 italic">Total must equal 100% for correct average calculations.</p>
+ <p className="text-label text-slate-400/80 italic">Total must equal 100% for correct average calculations.</p>
  </div>
  </div>
  </div>
@@ -216,18 +216,18 @@ const SettingsPage = () => {
  {/* 3. PERMISSIONS */}
  {activeSection === 'permissions' && (
  <div className="space-y-6">
- <h2 className="text-section-title text-slate-900 dark:text-white flex items-center gap-3">
+ <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
  <span className="material-symbols-outlined text-primary">lock_person</span>
  {t('permissions')}
  </h2>
  
  <div className="space-y-6">
  <div className="space-y-4">
- <h3 className="text-body-sm text-slate-400/80">Teacher Permissions</h3>
+ <h3 className="text-label text-slate-400/80">Teacher Permissions</h3>
  <div className="grid grid-cols-2 gap-4">
  {Object.entries(permissions.teachers).map(([key, value]) => (
  <label key={key} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
- <span className="text-body-sm text-slate-700 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+ <span className="text-label text-slate-700 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
  <input 
  type="checkbox" 
  checked={value}
@@ -243,11 +243,11 @@ const SettingsPage = () => {
  </div>
 
  <div className="space-y-4">
- <h3 className="text-body-sm text-slate-400/80">Student Permissions</h3>
+ <h3 className="text-label text-slate-400/80">Student Permissions</h3>
  <div className="grid grid-cols-2 gap-4">
  {Object.entries(permissions.students).map(([key, value]) => (
  <label key={key} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
- <span className="text-body-sm text-slate-700 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+ <span className="text-label text-slate-700 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
  <input 
  type="checkbox" 
  checked={value}
@@ -268,7 +268,7 @@ const SettingsPage = () => {
  {/* 4. PDF CONFIG */}
  {activeSection === 'pdf' && (
  <div className="space-y-6">
- <h2 className="text-section-title text-slate-900 dark:text-white flex items-center gap-3">
+ <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
  <span className="material-symbols-outlined text-primary">picture_as_pdf</span>
  {t('pdf_config')}
  </h2>
@@ -276,33 +276,33 @@ const SettingsPage = () => {
  <div className="grid grid-cols-2 gap-6">
  <div className="space-y-4">
  <label className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl cursor-pointer">
- <span className="text-body-sm text-slate-700 dark:text-slate-300">Show Logo on Reports</span>
+ <span className="text-label text-slate-700 dark:text-slate-300">Show Logo on Reports</span>
  <input type="checkbox" checked={pdfSettings.showLogo} onChange={(e) => setPdfSettings({ ...pdfSettings, showLogo: e.target.checked })} />
  </label>
  <label className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl cursor-pointer">
- <span className="text-body-sm text-slate-700 dark:text-slate-300">Show Signature Labels</span>
+ <span className="text-label text-slate-700 dark:text-slate-300">Show Signature Labels</span>
  <input type="checkbox" checked={pdfSettings.showSignatureLabels} onChange={(e) => setPdfSettings({ ...pdfSettings, showSignatureLabels: e.target.checked })} />
  </label>
  </div>
  
  <div className="space-y-4">
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Principal Signature Label</label>
- <input type="text" value={pdfSettings.principalTitle} onChange={(e) => setPdfSettings({ ...pdfSettings, principalTitle: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" />
+ <label className="text-label text-slate-500/80">Principal Signature Label</label>
+ <input type="text" value={pdfSettings.principalTitle} onChange={(e) => setPdfSettings({ ...pdfSettings, principalTitle: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">{t('managerSignature')}</label>
- <input type="text" value={schoolSettings.managerSignature || ''} onChange={(e) => setSchoolSettings({ ...schoolSettings, managerSignature: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="e.g., Manager: Jane Doe" />
+ <label className="text-label text-slate-500/80">{t('managerSignature')}</label>
+ <input type="text" value={schoolSettings.managerSignature || ''} onChange={(e) => setSchoolSettings({ ...schoolSettings, managerSignature: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" placeholder="e.g., Manager: Jane Doe" />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Academic Manager Label</label>
- <input type="text" value={pdfSettings.academicManagerTitle} onChange={(e) => setPdfSettings({ ...pdfSettings, academicManagerTitle: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" />
+ <label className="text-label text-slate-500/80">Academic Manager Label</label>
+ <input type="text" value={pdfSettings.academicManagerTitle} onChange={(e) => setPdfSettings({ ...pdfSettings, academicManagerTitle: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
  </div>
  </div>
  
  <div className="col-span-2 space-y-1.5">
- <label className="text-body-sm text-slate-500/80">PDF Footer Text</label>
- <input type="text" value={pdfSettings.footerText} onChange={(e) => setPdfSettings({ ...pdfSettings, footerText: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" />
+ <label className="text-label text-slate-500/80">PDF Footer Text</label>
+ <input type="text" value={pdfSettings.footerText} onChange={(e) => setPdfSettings({ ...pdfSettings, footerText: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
  </div>
  </div>
  </div>
@@ -311,23 +311,23 @@ const SettingsPage = () => {
  {/* 5. SECURITY */}
  {activeSection === 'security' && (
  <div className="space-y-6">
- <h2 className="text-section-title text-slate-900 dark:text-white flex items-center gap-3">
+ <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
  <span className="material-symbols-outlined text-primary">shield</span>
  {t('security')}
  </h2>
  
  <div className="max-w-md space-y-6">
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Minimum Password Length</label>
- <input type="number" value={securitySettings.minPasswordLength} onChange={(e) => setSecuritySettings({ ...securitySettings, minPasswordLength: parseInt(e.target.value) })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" />
+ <label className="text-label text-slate-500/80">Minimum Password Length</label>
+ <input type="number" value={securitySettings.minPasswordLength} onChange={(e) => setSecuritySettings({ ...securitySettings, minPasswordLength: parseInt(e.target.value) })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
  </div>
  <label className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl cursor-pointer">
- <span className="text-body-sm text-slate-700 dark:text-slate-300">Require Special Characters</span>
+ <span className="text-label text-slate-700 dark:text-slate-300">Require Special Characters</span>
  <input type="checkbox" checked={securitySettings.requireSpecialChars} onChange={(e) => setSecuritySettings({ ...securitySettings, requireSpecialChars: e.target.checked })} />
  </label>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Session Timeout (Minutes)</label>
- <input type="number" value={securitySettings.sessionTimeout} onChange={(e) => setSecuritySettings({ ...securitySettings, sessionTimeout: parseInt(e.target.value) })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" />
+ <label className="text-label text-slate-500/80">Session Timeout (Minutes)</label>
+ <input type="number" value={securitySettings.sessionTimeout} onChange={(e) => setSecuritySettings({ ...securitySettings, sessionTimeout: parseInt(e.target.value) })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
  </div>
  </div>
  </div>
@@ -336,18 +336,18 @@ const SettingsPage = () => {
  {/* 6. APPEARANCE */}
  {activeSection === 'appearance' && (
  <div className="space-y-6">
- <h2 className="text-section-title text-slate-900 dark:text-white flex items-center gap-3">
+ <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
  <span className="material-symbols-outlined text-primary">palette</span>
  Appearance & Localization
  </h2>
  
  <div className="grid grid-cols-2 gap-6">
  <div className="space-y-4">
- <h3 className="text-body-sm text-slate-400/80">System Language</h3>
+ <h3 className="text-label text-slate-400/80">System Language</h3>
  <select 
  value={language}
  onChange={(e) => setLanguage(e.target.value)}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-body-sm outline-none"
+ className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label outline-none"
  >
  <option value="en">English (US)</option>
  <option value="ar">العربية (Arabic)</option>
@@ -356,10 +356,10 @@ const SettingsPage = () => {
  </div>
  
  <div className="space-y-4">
- <h3 className="text-body-sm text-slate-400/80">System Theme</h3>
+ <h3 className="text-label text-slate-400/80">System Theme</h3>
  <div className="flex gap-4">
- <button onClick={() => { if (darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2  text-body-sm transition-all ${!darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>Light</button>
- <button onClick={() => { if (!darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2  text-body-sm transition-all ${darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>Dark</button>
+ <button onClick={() => { if (darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2  text-label transition-all ${!darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>Light</button>
+ <button onClick={() => { if (!darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2  text-label transition-all ${darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>Dark</button>
  </div>
  </div>
  </div>
@@ -369,8 +369,8 @@ const SettingsPage = () => {
  </div>
  
  <div className="flex justify-end p-4">
- <p className="text-body-sm text-slate-400/80 flex items-center gap-2">
- <span className="material-symbols-outlined text-body-md">info</span>
+ <p className="text-label text-slate-400/80 flex items-center gap-2">
+ <span className="material-symbols-outlined text-body">info</span>
  All changes are saved automatically and applied instantly.
  </p>
  </div>

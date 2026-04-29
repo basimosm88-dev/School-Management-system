@@ -22,7 +22,7 @@ const TeacherTimetablePage = () => {
  const renderGridBlock = (title, hoursRange) => (
  <div className="mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
  <div className="flex items-center gap-4 mb-4">
- <h3 className="text-body-sm text-slate-800 dark:text-slate-200">{title}</h3>
+ <h3 className="text-label text-slate-800 dark:text-slate-200">{title}</h3>
  <div className="h-[1px] flex-1 bg-slate-100 dark:bg-slate-800"></div>
  </div>
  
@@ -31,7 +31,7 @@ const TeacherTimetablePage = () => {
  <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
  <div className="p-4"></div>
  {days.map(day => (
- <div key={day} className="p-4 text-center text-slate-600 dark:text-slate-300 border-l border-slate-100 dark:border-slate-800 text-body-sm">
+ <div key={day} className="p-4 text-center text-slate-600 dark:text-slate-300 border-l border-slate-100 dark:border-slate-800 text-label">
  {day}
  </div>
  ))}
@@ -44,7 +44,7 @@ const TeacherTimetablePage = () => {
  
  return (
  <div key={hour} className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 min-h-[130px]">
- <div className="p-4 text-body-sm text-slate-400/80 text-center pt-8">
+ <div className="p-4 text-label text-slate-400/80 text-center pt-8">
  {timeLabel}
  </div>
  
@@ -84,11 +84,11 @@ const TeacherTimetablePage = () => {
  
  return (
  <div key={slot.id} className={`w-full rounded-xl p-4 relative group transition-all border shadow-sm ${colorClass}`}>
- <div className="text-body-sm opacity-40 mb-2">
+ <div className="text-label opacity-40 mb-2">
  {formatSlotTime(slot.startTime)} - {formatSlotTime(slot.endTime)}
  </div>
  
- <div className="text-body-sm leading-relaxed">
+ <div className="text-label leading-relaxed">
  {classNameDisplay} - {slot.subjectName}
  </div>
  </div>
@@ -113,17 +113,17 @@ const TeacherTimetablePage = () => {
  <div className="bg-primary/5 p-8 rounded-xl border border-primary/10 flex flex-col md:flex-row justify-between items-center gap-6">
  <div className="flex items-center gap-6">
  <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center text-white shadow-xl shadow-primary/20 rotate-3">
- <span className="material-symbols-outlined text-kpi-value">schedule</span>
+ <span className="material-symbols-outlined text-display">schedule</span>
  </div>
  <div>
- <h3 className="text-slate-900 dark:text-slate-100 text-section-title">Weekly Planner</h3>
- <p className="text-body-sm text-slate-500/80 mt-1 opacity-60">Synchronized with Academic Administration</p>
+ <h3 className="text-slate-900 dark:text-slate-100 text-section">Weekly Planner</h3>
+ <p className="text-label text-slate-500/80 mt-1 opacity-60">Synchronized with Academic Administration</p>
  </div>
  </div>
  <div className="flex gap-4">
  <div className="px-8 py-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 text-center shadow-sm">
- <p className="text-body-sm text-slate-400/80 mb-1">Total Periods</p>
- <p className="text-kpi-value text-primary">{teacherSchedule.length}</p>
+ <p className="text-label text-slate-400/80 mb-1">Total Periods</p>
+ <p className="text-display text-primary">{teacherSchedule.length}</p>
  </div>
  </div>
  </div>
@@ -133,24 +133,24 @@ const TeacherTimetablePage = () => {
  <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl flex gap-2 w-full max-w-md">
  <button
  onClick={() => setActivePeriod('morning')}
- className={`flex-1 py-3 rounded-lg text-body-sm  transition-all flex items-center justify-center gap-2 ${
+ className={`flex-1 py-3 rounded-lg text-label  transition-all flex items-center justify-center gap-2 ${
  activePeriod === 'morning' 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
  : 'text-slate-400/80'
  }`}
  >
- <span className="material-symbols-outlined text-section-title">wb_sunny</span>
+ <span className="material-symbols-outlined text-section">wb_sunny</span>
  Morning Period
  </button>
  <button
  onClick={() => setActivePeriod('afternoon')}
- className={`flex-1 py-3 rounded-lg text-body-sm  transition-all flex items-center justify-center gap-2 ${
+ className={`flex-1 py-3 rounded-lg text-label  transition-all flex items-center justify-center gap-2 ${
  activePeriod === 'afternoon' 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
  : 'text-slate-400/80'
  }`}
  >
- <span className="material-symbols-outlined text-section-title">dark_mode</span>
+ <span className="material-symbols-outlined text-section">dark_mode</span>
  Afternoon Period
  </button>
  </div>

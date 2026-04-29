@@ -100,7 +100,7 @@ const TeacherExamsPage = () => {
  <div className="bg-white dark:bg-slate-900 p-8 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors">
  <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
  <div>
- <label className="text-body-sm text-slate-400/80 mb-2 block">Exam Type</label>
+ <label className="text-label text-slate-400/80 mb-2 block">Exam Type</label>
  <select 
  value={selectedExamType}
  onChange={(e) => setSelectedExamType(e.target.value)}
@@ -110,7 +110,7 @@ const TeacherExamsPage = () => {
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-400/80 mb-2 block">Select Class</label>
+ <label className="text-label text-slate-400/80 mb-2 block">Select Class</label>
  <select 
  value={selectedClassId}
  onChange={(e) => {
@@ -126,7 +126,7 @@ const TeacherExamsPage = () => {
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-400/80 mb-2 block">Subject</label>
+ <label className="text-label text-slate-400/80 mb-2 block">Subject</label>
  <select 
  value={selectedSubjectId}
  onChange={(e) => setSelectedSubjectId(e.target.value)}
@@ -143,21 +143,21 @@ const TeacherExamsPage = () => {
  <button 
  onClick={() => handleSubmit('DRAFT')}
  disabled={!selectedSubjectId || isLocked}
- className="flex-1 px-4 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-body-sm rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all disabled:opacity-30"
+ className="flex-1 px-4 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-label rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all disabled:opacity-30"
  >
  Save Draft
  </button>
  <button 
  onClick={() => handleSubmit('SUBMITTED')}
  disabled={!selectedSubjectId || isLocked}
- className="flex-1 px-4 py-3.5 bg-primary text-white text-body-sm rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all disabled:opacity-30"
+ className="flex-1 px-4 py-3.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all disabled:opacity-30"
  >
  Submit
  </button>
  {(selectedExamType === 'Before Midterm' || selectedExamType === 'After Midterm') && currentExamStatus === 'APPROVED' && (
  <button 
  onClick={() => handleSubmit('PUBLISHED')}
- className="flex-1 px-4 py-3.5 bg-emerald-500 text-white text-body-sm rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all"
+ className="flex-1 px-4 py-3.5 bg-emerald-500 text-white text-label rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all"
  >
  Release Results
  </button>
@@ -167,8 +167,8 @@ const TeacherExamsPage = () => {
 
  {currentExamStatus && (
  <div className="mt-6 flex items-center gap-3">
- <span className="text-body-sm text-slate-400/80">Workflow Status:</span>
- <span className={`px-4 py-1 rounded-full text-body-sm  border ${
+ <span className="text-label text-slate-400/80">Workflow Status:</span>
+ <span className={`px-4 py-1 rounded-full text-label  border ${
  currentExamStatus === 'PUBLISHED' ? 'bg-emerald-500 text-white border-emerald-500' :
  currentExamStatus === 'APPROVED' ? 'bg-sky-500 text-white border-sky-500' :
  currentExamStatus === 'SUBMITTED' ? 'bg-amber-500 text-white border-amber-500' :
@@ -178,14 +178,14 @@ const TeacherExamsPage = () => {
  {currentExamStatus}
  </span>
  {isLocked && (
- <p className="text-body-sm text-rose-500 italic">Editing is locked for this exam.</p>
+ <p className="text-label text-rose-500 italic">Editing is locked for this exam.</p>
  )}
  </div>
  )}
  
  {successMessage && (
- <div className="mt-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-body-sm rounded-xl border border-emerald-100 dark:border-emerald-800/50 flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
- <span className="material-symbols-outlined text-section-title">check_circle</span>
+ <div className="mt-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-label rounded-xl border border-emerald-100 dark:border-emerald-800/50 flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+ <span className="material-symbols-outlined text-section">check_circle</span>
  {successMessage}
  </div>
  )}
@@ -196,14 +196,14 @@ const TeacherExamsPage = () => {
  {!selectedSubjectId ? (
  <div className="flex flex-col items-center justify-center h-[400px] text-slate-400/80">
  <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
- <span className="material-symbols-outlined text-kpi-value">edit_document</span>
+ <span className="material-symbols-outlined text-display">edit_document</span>
  </div>
- <p className="text-body-sm opacity-60">Select filters to enter academic results</p>
+ <p className="text-label opacity-60">Select filters to enter academic results</p>
  </div>
  ) : (
  <div className="overflow-x-auto">
- <table className="w-full text-left text-body-sm">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400/80 text-body-sm border-b border-slate-100 dark:border-slate-800">
+ <table className="w-full text-left text-label">
+ <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400/80 text-label border-b border-slate-100 dark:border-slate-800">
  <tr>
  <th className="px-8 py-5">Student Information</th>
  <th className="px-8 py-5 w-32">Grade (0-100)</th>
@@ -215,12 +215,12 @@ const TeacherExamsPage = () => {
  <tr key={student.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
  <td className="px-8 py-5">
  <div className="flex items-center gap-4">
- <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-body-sm">
+ <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-label">
  {student.name[0]}
  </div>
  <div>
  <span className="text-slate-800 dark:text-slate-200 block">{student.name}</span>
- <span className="text-body-sm text-slate-400/80">{student.email}</span>
+ <span className="text-label text-slate-400/80">{student.email}</span>
  </div>
  </div>
  </td>
@@ -242,7 +242,7 @@ const TeacherExamsPage = () => {
  value={remarks[student.id] || ''}
  onChange={(e) => handleRemarkChange(student.id, e.target.value)}
  disabled={isLocked}
- className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-body-sm text-slate-600 dark:text-slate-300 focus:ring-2 focus:ring-primary/50 transition-all disabled:opacity-50"
+ className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label text-slate-600 dark:text-slate-300 focus:ring-2 focus:ring-primary/50 transition-all disabled:opacity-50"
  placeholder="e.g. Needs improvement"
  />
  </td>

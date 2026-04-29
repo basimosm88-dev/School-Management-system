@@ -56,14 +56,14 @@ const AdminDashboard = () => {
  <PageLayout role="admin" title={t('dashboard')}>
  {/* Page Header */}
  <div className="mb-8 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-page-title text-slate-900 dark:text-white">{t('dashboard')}</h2>
- <p className="text-body-sm text-slate-500/80 mt-1">{t('dashboardSubtitle')}</p>
+ <h2 className="text-heading text-slate-900 dark:text-white">{t('dashboard')}</h2>
+ <p className="text-label text-slate-500/80 mt-1">{t('dashboardSubtitle')}</p>
  </div>
 
  {/* Welcome Section */}
  <div className="mb-8 p-6 bg-gradient-to-r from-primary to-indigo-600 rounded-2xl text-white shadow-lg shadow-primary/20">
- <h1 className="text-kpi-value mb-1">{t(greetingKey)}, {currentUser?.name || 'Admin'}!</h1>
- <p className="text-white/80 text-body-sm">Here is what is happening in your school today.</p>
+ <h1 className="text-display mb-1">{t(greetingKey)}, {currentUser?.name || 'Admin'}!</h1>
+ <p className="text-white/80 text-label">Here is what is happening in your school today.</p>
  </div>
 
  {/* 1. KPI CARDS (TOP SECTION) */}
@@ -81,8 +81,8 @@ const AdminDashboard = () => {
  <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-4 md:p-8 shadow-sm transition-colors relative overflow-hidden">
  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
  <div>
- <h2 className="text-section-title text-slate-900 dark:text-slate-100">Attendance Report</h2>
- <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mt-1">Daily presence vs absence tracking</p>
+ <h2 className="text-section text-slate-900 dark:text-slate-100">Attendance Report</h2>
+ <p className="text-label text-slate-500/80 dark:text-slate-400/80 mt-1">Daily presence vs absence tracking</p>
  </div>
  
  <div className="flex items-center gap-4">
@@ -90,13 +90,13 @@ const AdminDashboard = () => {
  <select 
  value={attendanceRange} 
  onChange={(e) => setAttendanceRange(e.target.value)}
- className="appearance-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 pr-10 text-body-sm text-slate-600 dark:text-slate-300 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
+ className="appearance-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 pr-10 text-label text-slate-600 dark:text-slate-300 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
  >
  <option value="weekly">Weekly View</option>
  <option value="monthly">Monthly View</option>
  <option value="year">Yearly View</option>
  </select>
- <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400/80 pointer-events-none text-section-title">
+ <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400/80 pointer-events-none text-section">
  expand_more
  </span>
  </div>
@@ -120,7 +120,7 @@ const AdminDashboard = () => {
  ></div>
  </div>
  {attendanceRange === 'weekly' && (
- <span className="text-body-sm text-slate-400/80">{day.date?.split('-').slice(1).join('/')}</span>
+ <span className="text-label text-slate-400/80">{day.date?.split('-').slice(1).join('/')}</span>
  )}
  </div>
  ))}
@@ -130,12 +130,12 @@ const AdminDashboard = () => {
 
  {/* TOP PERFORMERS */}
  <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
- <h2 className="text-section-title text-slate-900 dark:text-slate-100 mb-6">{t('topPerformers')}</h2>
+ <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">{t('topPerformers')}</h2>
  <div className="overflow-x-auto">
  {topStudents.length === 0 ? (
  <EmptyState icon="emoji_events" message="No Performers Found" description="Not enough graded data yet." />
  ) : (
- <table className="w-full text-left text-body-sm">
+ <table className="w-full text-left text-label">
  <thead>
  <tr className="text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
  <th className="pb-3">Rank</th>
@@ -151,7 +151,7 @@ const AdminDashboard = () => {
  <td className="py-3 text-slate-800 dark:text-slate-200">{s.name}</td>
  <td className="py-3 text-slate-500/80">{classes.find(c => c.id === s.classId)?.name}</td>
  <td className="py-3 text-right">
- <span className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded text-body-sm">
+ <span className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded text-label">
  {s.average.toFixed(1)}%
  </span>
  </td>
@@ -165,7 +165,7 @@ const AdminDashboard = () => {
 
  {/* RECENT ACTIVITY */}
  <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
- <h2 className="text-section-title text-slate-900 dark:text-slate-100 mb-6">{t('recentActivity')}</h2>
+ <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">{t('recentActivity')}</h2>
  <div className="space-y-4">
  {(!systemLogs || systemLogs.length === 0) ? (
  <EmptyState icon="history" message="No Activity" description="No recent system activities found." />
@@ -173,11 +173,11 @@ const AdminDashboard = () => {
  systemLogs.map((log) => (
  <div key={log.id} className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
  <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-primary flex items-center justify-center shrink-0">
- <span className="material-symbols-outlined text-section-title">history</span>
+ <span className="material-symbols-outlined text-section">history</span>
  </div>
  <div className="flex-1 min-w-0">
- <p className="text-body-sm text-slate-800 dark:text-slate-200">{log.message}</p>
- <p className="text-body-sm text-slate-400/80 mt-0.5">{new Date(log.date).toLocaleString()}</p>
+ <p className="text-label text-slate-800 dark:text-slate-200">{log.message}</p>
+ <p className="text-label text-slate-400/80 mt-0.5">{new Date(log.date).toLocaleString()}</p>
  </div>
  </div>
  ))
@@ -191,11 +191,11 @@ const AdminDashboard = () => {
  {/* CALENDAR */}
  <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
  <div className="flex justify-between items-center mb-6">
- <h2 className="text-section-title text-slate-900 dark:text-slate-100">Calendar</h2>
- <span className="text-body-sm bg-blue-50 dark:bg-blue-900/30 text-primary px-2 py-1 rounded">{monthName} {currentYear}</span>
+ <h2 className="text-section text-slate-900 dark:text-slate-100">Calendar</h2>
+ <span className="text-label bg-blue-50 dark:bg-blue-900/30 text-primary px-2 py-1 rounded">{monthName} {currentYear}</span>
  </div>
  <div className="grid grid-cols-7 gap-1 text-center mb-2">
- {['S','M','T','W','T','F','S'].map(d => <span key={d} className="text-body-sm text-slate-400/80">{d}</span>)}
+ {['S','M','T','W','T','F','S'].map(d => <span key={d} className="text-label text-slate-400/80">{d}</span>)}
  </div>
  <div className="grid grid-cols-7 gap-1">
  {Array.from({ length: firstDayOfMonth }).map((_, i) => (
@@ -208,7 +208,7 @@ const AdminDashboard = () => {
  const isToday = day === today.getDate();
  
  return (
- <div key={i} className={`h-8 flex items-center justify-center rounded-lg text-body-sm  cursor-pointer transition-all
+ <div key={i} className={`h-8 flex items-center justify-center rounded-lg text-label  cursor-pointer transition-all
  ${isToday ? 'bg-primary text-white shadow-md shadow-primary/20' : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400/80'}
  ${hasEvent && !isToday ? 'ring-2 ring-primary/20 ring-offset-1 dark:ring-offset-slate-900' : ''}
  `}>
@@ -221,7 +221,7 @@ const AdminDashboard = () => {
 
  {/* GENDER DISTRIBUTION */}
  <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
- <h2 className="text-section-title text-slate-900 dark:text-slate-100 mb-6">{t('studentGenders')}</h2>
+ <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">{t('studentGenders')}</h2>
  <div className="flex flex-col items-center gap-6">
  <div className="relative w-32 h-32">
  <svg viewBox="0 0 36 36" className="w-full h-full rotate-[-90deg]">
@@ -233,19 +233,19 @@ const AdminDashboard = () => {
  />
  </svg>
  <div className="absolute inset-0 flex flex-col items-center justify-center">
- <span className="text-section-title text-slate-900 dark:text-slate-100">{maleCount + femaleCount}</span>
- <span className="text-body-sm text-slate-400/80">Total</span>
+ <span className="text-section text-slate-900 dark:text-slate-100">{maleCount + femaleCount}</span>
+ <span className="text-label text-slate-400/80">Total</span>
  </div>
  </div>
  <div className="w-full space-y-2">
- <div className="flex justify-between items-center text-body-sm">
+ <div className="flex justify-between items-center text-label">
  <div className="flex items-center gap-2">
  <span className="w-2 h-2 rounded-full bg-primary"></span>
  <span className="text-slate-500/80">Male Students</span>
  </div>
  <span className="text-slate-900 dark:text-slate-100">{maleCount}</span>
  </div>
- <div className="flex justify-between items-center text-body-sm">
+ <div className="flex justify-between items-center text-label">
  <div className="flex items-center gap-2">
  <span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700"></span>
  <span className="text-slate-500/80">Female Students</span>
@@ -258,7 +258,7 @@ const AdminDashboard = () => {
 
  {/* UPCOMING EVENTS */}
  <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
- <h2 className="text-section-title text-slate-900 dark:text-slate-100 mb-6">{t('upcomingEvents')}</h2>
+ <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">{t('upcomingEvents')}</h2>
  <div className="space-y-4">
  {(!events || events.length === 0) ? (
  <EmptyState icon="event_busy" message="No Events" description="There are no upcoming events." />
@@ -266,9 +266,9 @@ const AdminDashboard = () => {
  events.slice().sort((a,b) => new Date(a.date || 0) - new Date(b.date || 0)).slice(0, 3).map((event) => (
  <div key={event.id} className="p-3 border border-slate-100 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-800/30">
  <div className="flex justify-between items-start mb-1">
- <h4 className="text-body-sm text-slate-900 dark:text-slate-100">{event.title}</h4>
+ <h4 className="text-label text-slate-900 dark:text-slate-100">{event.title}</h4>
  </div>
- <p className="text-primary text-body-sm mt-1">{event.date}</p>
+ <p className="text-primary text-label mt-1">{event.date}</p>
  </div>
  ))
  )}
@@ -277,15 +277,15 @@ const AdminDashboard = () => {
 
  {/* ANNOUNCEMENTS */}
  <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
- <h2 className="text-section-title text-slate-900 dark:text-slate-100 mb-6">{t('announcements')}</h2>
+ <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">{t('announcements')}</h2>
  <div className="space-y-4">
  {(!announcements || announcements.length === 0) ? (
  <EmptyState icon="campaign" message="No Announcements" description="No active announcements at this time." />
  ) : (
  announcements.slice().reverse().slice(0, 3).map((ann) => (
  <div key={ann.id} className={`relative pl-4 border-l-2 ${ann.priority === 'urgent' ? 'border-rose-500' : 'border-primary/30'}`}>
- <h4 className="text-body-sm text-slate-800 dark:text-slate-200">{ann.title}</h4>
- <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mt-1 line-clamp-2">{ann.content || ann.message || ''}</p>
+ <h4 className="text-label text-slate-800 dark:text-slate-200">{ann.title}</h4>
+ <p className="text-label text-slate-500/80 dark:text-slate-400/80 mt-1 line-clamp-2">{ann.content || ann.message || ''}</p>
  </div>
  ))
  )}

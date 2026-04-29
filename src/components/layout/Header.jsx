@@ -51,13 +51,13 @@ const Header = () => {
  onClick={toggleSidebar}
  className="lg:hidden p-2 text-slate-500/80 dark:text-slate-400/80 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
  >
- <span className="material-symbols-outlined text-kpi-value">menu</span>
+ <span className="material-symbols-outlined text-display">menu</span>
  </button>
 
  <div className="relative hidden md:block">
- <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400/80 text-kpi-value">search</span>
+ <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400/80 text-display">search</span>
  <input
- className="pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg text-body-sm w-48 lg:w-64 focus:ring-2 focus:ring-primary/10 focus:bg-white dark:focus:bg-slate-900 transition-all outline-none dark:text-slate-200"
+ className="pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg text-label w-48 lg:w-64 focus:ring-2 focus:ring-primary/10 focus:bg-white dark:focus:bg-slate-900 transition-all outline-none dark:text-slate-200"
  placeholder={t('searchPlaceholder')}
  type="text"
  value={searchQuery}
@@ -72,13 +72,13 @@ const Header = () => {
  {searchResults.map((res, i) => (
  <button key={i} onClick={() => handleSearchClick(res.path)} className="w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3 transition-colors">
  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
- <span className="material-symbols-outlined text-section-title text-primary">
+ <span className="material-symbols-outlined text-section text-primary">
  {res.type === 'Student' ? 'person' : res.type === 'Teacher' ? 'badge' : res.type === 'Class' ? 'class' : 'menu_book'}
  </span>
  </div>
  <div>
- <p className="text-body-sm text-slate-800 dark:text-slate-200">{res.text}</p>
- <p className="text-body-sm text-slate-500/80">{res.type}</p>
+ <p className="text-label text-slate-800 dark:text-slate-200">{res.text}</p>
+ <p className="text-label text-slate-500/80">{res.type}</p>
  </div>
  </button>
  ))}
@@ -91,24 +91,24 @@ const Header = () => {
  {/* Language Dropdown */}
  <button onClick={() => setLangOpen(!langOpen)} className="p-1.5 lg:p-2 text-slate-500/80 dark:text-slate-400/80 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
  <div className="w-8 h-8 lg:w-9 lg:h-9 border border-slate-100 dark:border-slate-700 rounded-lg flex items-center justify-center shrink-0">
- <span className="material-symbols-outlined text-section-title lg:text-kpi-value">language</span>
+ <span className="material-symbols-outlined text-section lg:text-display">language</span>
  </div>
  </button>
  {langOpen && (
  <div className="absolute top-12 right-12 lg:right-16 w-32 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-lg rounded-xl overflow-hidden z-50">
- <button onClick={() => { setLanguage('en'); setLangOpen(false); }} className={`w-full text-left px-4 py-2 text-body-sm hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-slate-200 ${language === 'en' ? ' text-primary' : ''}`}>English</button>
- <button onClick={() => { setLanguage('ar'); setLangOpen(false); }} className={`w-full text-left px-4 py-2 text-body-sm hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-slate-200 ${language === 'ar' ? ' text-primary' : ''}`}>العربية</button>
- <button onClick={() => { setLanguage('so'); setLangOpen(false); }} className={`w-full text-left px-4 py-2 text-body-sm hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-slate-200 ${language === 'so' ? ' text-primary' : ''}`}>Somali</button>
+ <button onClick={() => { setLanguage('en'); setLangOpen(false); }} className={`w-full text-left px-4 py-2 text-label hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-slate-200 ${language === 'en' ? ' text-primary' : ''}`}>English</button>
+ <button onClick={() => { setLanguage('ar'); setLangOpen(false); }} className={`w-full text-left px-4 py-2 text-label hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-slate-200 ${language === 'ar' ? ' text-primary' : ''}`}>العربية</button>
+ <button onClick={() => { setLanguage('so'); setLangOpen(false); }} className={`w-full text-left px-4 py-2 text-label hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-slate-200 ${language === 'so' ? ' text-primary' : ''}`}>Somali</button>
  </div>
  )}
 
  {/* Notifications Dropdown */}
  <button onClick={() => setNotifOpen(!notifOpen)} className="p-1.5 lg:p-2 text-slate-500/80 dark:text-slate-400/80 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors relative" id="notification-button">
  <div className="w-8 h-8 lg:w-9 lg:h-9 border border-slate-100 dark:border-slate-700 rounded-lg flex items-center justify-center shrink-0">
- <span className="material-symbols-outlined text-section-title lg:text-kpi-value">notifications</span>
+ <span className="material-symbols-outlined text-section lg:text-display">notifications</span>
  </div>
  {unreadCount > 0 && (
- <span className="absolute top-1 right-1 w-4 h-4 lg:w-5 lg:h-5 bg-rose-500 text-white text-body-sm lg:text-body-sm flex items-center justify-center rounded-full border-2 border-white dark:border-slate-900 shadow-sm animate-bounce">
+ <span className="absolute top-1 right-1 w-4 h-4 lg:w-5 lg:h-5 bg-rose-500 text-white text-label lg:text-label flex items-center justify-center rounded-full border-2 border-white dark:border-slate-900 shadow-sm animate-bounce">
  {unreadCount > 9 ? '9+' : unreadCount}
  </span>
  )}
@@ -116,9 +116,9 @@ const Header = () => {
  {notifOpen && (
  <div className="absolute top-12 right-0 w-72 md:w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl z-50 flex flex-col max-h-[400px] md:max-h-[500px] animate-in fade-in slide-in-from-top-2 duration-200">
  <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
- <h3 className="text-slate-800 dark:text-slate-200 text-body-sm">Notifications</h3>
+ <h3 className="text-slate-800 dark:text-slate-200 text-label">Notifications</h3>
  {unreadCount > 0 && (
- <span className="text-body-sm bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-full">
+ <span className="text-label bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-full">
  {unreadCount} new
  </span>
  )}
@@ -126,8 +126,8 @@ const Header = () => {
  <div className="overflow-y-auto p-2 flex-1 scrollbar-thin">
  {notifications.length === 0 ? (
  <div className="flex flex-col items-center justify-center py-8 text-slate-400/80">
- <span className="material-symbols-outlined text-kpi-value mb-2 opacity-20">notifications_off</span>
- <p className="text-body-sm italic">No notifications yet.</p>
+ <span className="material-symbols-outlined text-display mb-2 opacity-20">notifications_off</span>
+ <p className="text-label italic">No notifications yet.</p>
  </div>
  ) : (
  notifications.slice().reverse().slice(0, 8).map(n => (
@@ -137,14 +137,14 @@ const Header = () => {
  n.type === 'warning' ? 'bg-amber-50 text-amber-600' :
  'bg-blue-50 text-primary'
  }`}>
- <span className="material-symbols-outlined text-section-title">
+ <span className="material-symbols-outlined text-section">
  {n.type === 'success' ? 'check_circle' : n.type === 'warning' ? 'warning' : 'info'}
  </span>
  </div>
  <div className="min-w-0">
- <p className="text-body-sm text-slate-800 dark:text-slate-200 truncate">{n.title || 'System Update'}</p>
- <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80 line-clamp-2 mt-0.5">{n.message}</p>
- <p className="text-body-sm text-slate-400/80 mt-1">{new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+ <p className="text-label text-slate-800 dark:text-slate-200 truncate">{n.title || 'System Update'}</p>
+ <p className="text-label text-slate-500/80 dark:text-slate-400/80 line-clamp-2 mt-0.5">{n.message}</p>
+ <p className="text-label text-slate-400/80 mt-1">{new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
  </div>
  </div>
  </div>
@@ -156,7 +156,7 @@ const Header = () => {
 
  <button onClick={toggleDarkMode} className="p-1.5 lg:p-2 text-slate-500/80 dark:text-slate-400/80 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
  <div className={`w-8 h-8 lg:w-9 lg:h-9 border ${darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-700'} rounded-lg flex items-center justify-center shrink-0`}>
- <span className="material-symbols-outlined text-section-title lg:text-kpi-value">{darkMode ? 'light_mode' : 'dark_mode'}</span>
+ <span className="material-symbols-outlined text-section lg:text-display">{darkMode ? 'light_mode' : 'dark_mode'}</span>
  </div>
  </button>
  </div>

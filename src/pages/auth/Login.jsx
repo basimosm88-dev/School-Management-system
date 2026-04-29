@@ -81,11 +81,11 @@ const Login = () => {
  {schoolSettings.logo ? (
  <img src={schoolSettings.logo} alt="Logo" className="w-full h-full object-cover" />
  ) : (
- <span className="material-symbols-outlined text-white text-kpi-value animate-pulse">school</span>
+ <span className="material-symbols-outlined text-white text-display animate-pulse">school</span>
  )}
  </div>
- <h1 className="text-kpi-value text-slate-900 dark:text-white">{schoolSettings.name || 'EduCore Pro'}</h1>
- <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mt-1">{roleConfigs[selectedRole].welcome}</p>
+ <h1 className="text-display text-slate-900 dark:text-white">{schoolSettings.name || 'EduCore Pro'}</h1>
+ <p className="text-label text-slate-500/80 dark:text-slate-400/80 mt-1">{roleConfigs[selectedRole].welcome}</p>
  </div>
 
  {/* Role Selection */}
@@ -100,26 +100,26 @@ const Login = () => {
  : 'text-slate-400/80 dark:text-slate-500/80 hover:text-slate-600 dark:hover:text-slate-400/80'
  }`}
  >
- <span className="material-symbols-outlined text-kpi-value mb-1">{config.icon}</span>
- <span className="text-body-sm">{config.label}</span>
+ <span className="material-symbols-outlined text-display mb-1">{config.icon}</span>
+ <span className="text-label">{config.label}</span>
  </button>
  ))}
  </div>
 
  {error && (
- <div className="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-body-sm rounded-xl border border-rose-100 dark:border-rose-800 flex items-center gap-3 animate-shake">
- <span className="material-symbols-outlined text-section-title">error</span>
+ <div className="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-label rounded-xl border border-rose-100 dark:border-rose-800 flex items-center gap-3 animate-shake">
+ <span className="material-symbols-outlined text-section">error</span>
  {error}
  </div>
  )}
 
  <form onSubmit={handleLogin} className="space-y-5">
  <div>
- <label className="block text-body-sm text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
+ <label className="block text-label text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
  {selectedRole === 'student' ? 'Student ID' : 'Email Address'}
  </label>
  <div className="relative">
- <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400/80 text-kpi-value">
+ <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400/80 text-display">
  {selectedRole === 'student' ? 'id_card' : 'mail'}
  </span>
  <input
@@ -133,9 +133,9 @@ const Login = () => {
  </div>
  </div>
  <div>
- <label className="block text-body-sm text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Password</label>
+ <label className="block text-label text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Password</label>
  <div className="relative">
- <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400/80 text-kpi-value">lock</span>
+ <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400/80 text-display">lock</span>
  <input
  type="password"
  required
@@ -153,14 +153,14 @@ const Login = () => {
  className="w-full bg-primary text-white py-3.5 rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 mt-2"
  >
  {loading ? 'Authenticating...' : `Sign In as ${roleConfigs[selectedRole].label}`}
- {!loading && <span className="material-symbols-outlined text-kpi-value">login</span>}
+ {!loading && <span className="material-symbols-outlined text-display">login</span>}
  </button>
  </form>
  
  <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
  <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl">
- <h4 className="text-body-sm text-slate-400/80 mb-2">Demo Credentials</h4>
- <div className="space-y-1 text-body-sm text-slate-600 dark:text-slate-400/80">
+ <h4 className="text-label text-slate-400/80 mb-2">Demo Credentials</h4>
+ <div className="space-y-1 text-label text-slate-600 dark:text-slate-400/80">
  {selectedRole === 'admin' && <p><span className="text-slate-900 dark:text-slate-200">Admin:</span> admin / admin123</p>}
  {selectedRole === 'teacher' && <p><span className="text-slate-900 dark:text-slate-200">Teacher:</span> (Add via Admin Panel)</p>}
  {selectedRole === 'student' && (

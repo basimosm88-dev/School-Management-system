@@ -85,7 +85,7 @@ const Sidebar = ({ role = 'admin' }) => {
  )}
 
  <aside 
- className={`fixed left-0 lg:left-4 top-0 lg:top-4 bottom-0 lg:bottom-4 ${sidebarOpen ? 'w-[280px] translate-x-0' : 'w-[88px] -translate-x-full lg:translate-x-0'} bg-white dark:bg-slate-900 flex flex-col py-6 px-4 gap-y-1 z-[60] text-body-md font-medium  lg:rounded-2xl shadow-xl lg:shadow-sm border-r lg:border border-slate-200/80 dark:border-slate-700/50 overflow-hidden transition-all duration-300 ${!sidebarOpen ? 'sidebar-collapsed' : ''}`} 
+ className={`fixed left-0 lg:left-4 top-0 lg:top-4 bottom-0 lg:bottom-4 ${sidebarOpen ? 'w-[280px] translate-x-0' : 'w-[88px] -translate-x-full lg:translate-x-0'} bg-white dark:bg-slate-900 flex flex-col py-6 px-4 gap-y-1 z-[60] text-body   lg:rounded-2xl shadow-xl lg:shadow-sm border-r lg:border border-slate-200/80 dark:border-slate-700/50 overflow-hidden transition-all duration-300 ${!sidebarOpen ? 'sidebar-collapsed' : ''}`} 
  id="sidebar"
  >
  {/* Sidebar Header */}
@@ -100,7 +100,7 @@ const Sidebar = ({ role = 'admin' }) => {
  </div>
  <div className={`sidebar-logo-text overflow-hidden ${!sidebarOpen ? 'hidden' : 'block'}`}>
  <h1 className="text-slate-900 dark:text-slate-100 whitespace-nowrap">{schoolSettings.name}</h1>
- <p className="text-body-md font-medium text-slate-400/80 dark:text-slate-500/80 whitespace-nowrap uppercase">School management</p>
+ <p className="text-body text-slate-400/80 dark:text-slate-500/80 whitespace-nowrap uppercase">School management</p>
  </div>
  </div>
 
@@ -111,7 +111,7 @@ const Sidebar = ({ role = 'admin' }) => {
  id="sidebar-toggle"
  title={sidebarOpen ? "Collapse" : "Expand"}
  >
- <span className={`material-symbols-outlined text-section-title transition-all duration-300 ${!sidebarOpen ? 'rotate-180' : ''}`}>
+ <span className={`material-symbols-outlined text-section transition-all duration-300 ${!sidebarOpen ? 'rotate-180' : ''}`}>
  chevron_left
  </span>
  </button>
@@ -121,7 +121,7 @@ const Sidebar = ({ role = 'admin' }) => {
  onClick={toggleSidebar}
  className="flex lg:hidden items-center justify-center w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-400/80 hover:text-primary transition-all"
  >
- <span className="material-symbols-outlined text-kpi-value">close</span>
+ <span className="material-symbols-outlined text-display">close</span>
  </button>
  </div>
 
@@ -188,10 +188,10 @@ const Sidebar = ({ role = 'admin' }) => {
  <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-2xl w-full max-w-sm animate-in zoom-in-95 duration-300">
  <div className="flex flex-col items-center text-center">
  <div className="w-20 h-20 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
- <span className="material-symbols-outlined text-kpi-value">logout</span>
+ <span className="material-symbols-outlined text-display">logout</span>
  </div>
- <h3 className="text-kpi-value text-slate-900 dark:text-slate-100 mb-2">Sign out</h3>
- <p className="text-body-md font-medium text-slate-500/80 dark:text-slate-400/80 mb-8 leading-relaxed">Are you sure you want to logout? You will need to login again to access your account.</p>
+ <h3 className="text-display text-slate-900 dark:text-slate-100 mb-2">Sign out</h3>
+ <p className="text-body text-slate-500/80 dark:text-slate-400/80 mb-8 leading-relaxed">Are you sure you want to logout? You will need to login again to access your account.</p>
 
  <div className="flex gap-3 w-full">
  <button

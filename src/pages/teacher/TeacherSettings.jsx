@@ -63,13 +63,13 @@ const TeacherSettings = () => {
  <button
  key={tab.id}
  onClick={() => setActiveTab(tab.id)}
- className={`flex items-center gap-3 px-4 py-3 rounded-xl  text-body-sm transition-all ${
+ className={`flex items-center gap-3 px-4 py-3 rounded-xl  text-label transition-all ${
  activeTab === tab.id 
  ? 'bg-primary text-white shadow-lg shadow-primary/20' 
  : 'bg-white dark:bg-slate-900 text-slate-500/80 dark:text-slate-400/80 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
  }`}
  >
- <span className="material-symbols-outlined text-kpi-value">{tab.icon}</span>
+ <span className="material-symbols-outlined text-display">{tab.icon}</span>
  {tab.label}
  </button>
  ))}
@@ -83,46 +83,46 @@ const TeacherSettings = () => {
  {activeTab === 'profile' && (
  <form onSubmit={handleProfileUpdate} className="space-y-6">
  <div className="flex items-center gap-6 mb-8 pb-8 border-b border-slate-100 dark:border-slate-800">
- <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-900/30 rounded-3xl flex items-center justify-center text-kpi-value text-indigo-600 dark:text-indigo-400">
+ <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-900/30 rounded-3xl flex items-center justify-center text-display text-indigo-600 dark:text-indigo-400">
  {currentUser?.name?.[0] || 'T'}
  </div>
  <div>
- <h2 className="text-section-title text-slate-900 dark:text-white">{currentUser?.name}</h2>
- <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80">Teacher ID: {currentUser?.id}</p>
+ <h2 className="text-section text-slate-900 dark:text-white">{currentUser?.name}</h2>
+ <p className="text-label text-slate-500/80 dark:text-slate-400/80">Teacher ID: {currentUser?.id}</p>
  </div>
  </div>
 
  <div className="grid grid-cols-1 gap-6">
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Full Name</label>
+ <label className="text-label text-slate-500/80">Full Name</label>
  <input 
  type="text" 
  value={profileData.name}
  onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Email Address</label>
+ <label className="text-label text-slate-500/80">Email Address</label>
  <input 
  type="email" 
  value={profileData.email}
  onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Phone Number</label>
+ <label className="text-label text-slate-500/80">Phone Number</label>
  <input 
  type="text" 
  value={profileData.phone}
  onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  </div>
  <div className="pt-4">
- <button type="submit" className="bg-primary text-white px-8 py-3 rounded-xl text-body-sm shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all">Save Profile Changes</button>
+ <button type="submit" className="bg-primary text-white px-8 py-3 rounded-xl text-label shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all">Save Profile Changes</button>
  </div>
  </form>
  )}
@@ -131,41 +131,41 @@ const TeacherSettings = () => {
  {activeTab === 'security' && (
  <form onSubmit={handlePasswordChange} className="space-y-6">
  <h3 className="text-slate-800 dark:text-white mb-4">Security & Password</h3>
- {error && <div className="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-body-sm rounded-xl border border-rose-100 dark:border-rose-800">{error}</div>}
+ {error && <div className="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-label rounded-xl border border-rose-100 dark:border-rose-800">{error}</div>}
  
  <div className="space-y-4">
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Current Password</label>
+ <label className="text-label text-slate-500/80">Current Password</label>
  <input 
  type="password" 
  value={passwords.current}
  onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">New Password</label>
+ <label className="text-label text-slate-500/80">New Password</label>
  <input 
  type="password" 
  value={passwords.new}
  onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500/80">Confirm New</label>
+ <label className="text-label text-slate-500/80">Confirm New</label>
  <input 
  type="password" 
  value={passwords.confirm}
  onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-body-sm focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  </div>
  </div>
  <div className="pt-4">
- <button type="submit" className="bg-primary text-white px-8 py-3 rounded-xl text-body-sm shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all">Update Password</button>
+ <button type="submit" className="bg-primary text-white px-8 py-3 rounded-xl text-label shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all">Update Password</button>
  </div>
  </form>
  )}
@@ -174,13 +174,13 @@ const TeacherSettings = () => {
  {activeTab === 'appearance' && (
  <div className="space-y-8">
  <div className="space-y-4">
- <h3 className="text-slate-800 dark:text-white text-body-sm">System Language</h3>
+ <h3 className="text-slate-800 dark:text-white text-label">System Language</h3>
  <div className="grid grid-cols-3 gap-3">
  {['en', 'ar', 'so'].map(lang => (
  <button
  key={lang}
  onClick={() => setLanguage(lang)}
- className={`py-3 rounded-xl border-2  text-body-sm transition-all ${
+ className={`py-3 rounded-xl border-2  text-label transition-all ${
  language === lang 
  ? 'border-primary bg-primary/5 text-primary' 
  : 'border-slate-100 dark:border-slate-800 text-slate-400/80'
@@ -193,21 +193,21 @@ const TeacherSettings = () => {
  </div>
 
  <div className="space-y-4">
- <h3 className="text-slate-800 dark:text-white text-body-sm">Theme Mode</h3>
+ <h3 className="text-slate-800 dark:text-white text-label">Theme Mode</h3>
  <div className="flex gap-4">
  <button 
  onClick={() => setTheme('light')}
  className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl border-2 transition-all ${theme === 'light' ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}
  >
  <span className="material-symbols-outlined">light_mode</span>
- <span className="text-body-sm">Light Mode</span>
+ <span className="text-label">Light Mode</span>
  </button>
  <button 
  onClick={() => setTheme('dark')}
  className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl border-2 transition-all ${theme === 'dark' ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}
  >
  <span className="material-symbols-outlined">dark_mode</span>
- <span className="text-body-sm">Dark Mode</span>
+ <span className="text-label">Dark Mode</span>
  </button>
  </div>
  </div>
@@ -228,8 +228,8 @@ const TeacherSettings = () => {
  </span>
  </div>
  <div>
- <p className="text-body-sm text-slate-700 dark:text-slate-200 capitalize">{key}</p>
- <p className="text-body-sm text-slate-400/80">Receive alerts for new {key}</p>
+ <p className="text-label text-slate-700 dark:text-slate-200 capitalize">{key}</p>
+ <p className="text-label text-slate-400/80">Receive alerts for new {key}</p>
  </div>
  </div>
  <div 
