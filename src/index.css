@@ -218,54 +218,54 @@
 
   /* Typography Utilities */
   .text-title {
-    font-size: theme('fontSize.heading[0]');
-    line-height: theme('fontSize.heading[1].lineHeight');
-    letter-spacing: theme('fontSize.heading[1].letterSpacing');
-    font-weight: theme('fontSize.heading[1].fontWeight');
+    font-size: 22px;
+    line-height: 28px;
+    letter-spacing: -0.01em;
+    font-weight: 600;
     @apply text-slate-900 dark:text-slate-100;
   }
 
   .section-title {
-    font-size: theme('fontSize.section[0]');
-    line-height: theme('fontSize.section[1].lineHeight');
-    letter-spacing: theme('fontSize.section[1].letterSpacing');
-    font-weight: theme('fontSize.section[1].fontWeight');
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.01em;
+    font-weight: 600;
     @apply text-slate-800 dark:text-slate-200;
   }
 
   .text-label {
-    font-size: theme('fontSize.label[0]');
-    line-height: theme('fontSize.label[1].lineHeight');
-    letter-spacing: theme('fontSize.label[1].letterSpacing');
-    font-weight: theme('fontSize.label[1].fontWeight');
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: 0.02em;
+    font-weight: 500;
     @apply text-slate-500 dark:text-slate-400;
     text-transform: none;
   }
 
   .text-button {
-    font-size: theme('fontSize.body[0]');
-    line-height: theme('fontSize.body[1].lineHeight');
-    letter-spacing: theme('fontSize.body[1].letterSpacing');
-    font-weight: theme('fontSize.body[1].fontWeight');
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: 0.01em;
+    font-weight: 400;
     text-transform: capitalize;
   }
 
   /* Table Enhancements */
   .table-container th {
     @apply px-6 py-4 text-slate-400 uppercase;
-    font-size: theme('fontSize.label[0]');
-    line-height: theme('fontSize.label[1].lineHeight');
-    letter-spacing: theme('fontSize.label[1].letterSpacing');
-    font-weight: 600; /* Force bold for headers */
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: 0.02em;
+    font-weight: 600;
     border-bottom-width: 1px;
     @apply border-slate-100 dark:border-slate-800;
   }
 
   .table-container td {
     @apply px-6 py-5 text-slate-600 dark:text-slate-300;
-    font-size: theme('fontSize.label[0]');
-    line-height: theme('fontSize.label[1].lineHeight');
-    letter-spacing: theme('fontSize.label[1].letterSpacing');
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: 0.01em;
     font-weight: 400;
   }
 
