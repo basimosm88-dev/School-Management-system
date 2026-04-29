@@ -101,7 +101,7 @@ const AdminExamsPage = () => {
  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
  {/* Page Header */}
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-section-title text-slate-900 dark:text-white">{t('exams')}</h2>
+ <h2 className="text-page-title text-slate-900 dark:text-white">{t('exams')}</h2>
  <p className="text-body-sm text-slate-500/80 mt-1">{t('examsSubtitle')}</p>
  </div>
 

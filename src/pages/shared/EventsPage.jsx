@@ -61,7 +61,7 @@ const EventsPage = ({ role }) => {
  <PageLayout role={role} title={t('events')}>
  <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
  <div>
- <h2 className="text-section-title text-slate-900 dark:text-white">{t('events')}</h2>
+ <h2 className="text-page-title text-slate-900 dark:text-white">{t('events')}</h2>
  <p className="text-body-sm text-slate-500/80 mt-1">{t('eventsSubtitle')}</p>
  </div>
  {(role === 'admin' || (role === 'teacher' && permissions.teachers.createEvents)) && (

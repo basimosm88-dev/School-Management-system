@@ -137,7 +137,7 @@ const ResultsPage = ({ role }) => {
  <PageLayout role={userRole} title={t('results')}>
  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-kpi-value text-slate-900 dark:text-white">{t('results')}</h2>
+ <h2 className="text-page-title text-slate-900 dark:text-white">{t('results')}</h2>
  <p className="text-body-sm text-slate-500/80 mt-1">Select a class to view academic performance and rankings.</p>
  </div>
 

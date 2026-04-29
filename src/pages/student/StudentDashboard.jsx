@@ -33,7 +33,7 @@ const StudentDashboard = () => {
  <PageLayout role="student" title={t('dashboard')}>
  {/* Welcome Section */}
  <div className="mb-8 p-6 bg-gradient-to-r from-primary to-indigo-600 rounded-2xl text-white shadow-lg shadow-primary/20">
- <h1 className="text-kpi-value mb-1">{t(greetingKey)}, {currentUser.name}!</h1>
+ <h1 className="text-page-title mb-1">{t(greetingKey)}, {currentUser.name}!</h1>
  <p className="text-white/80 text-body-sm">Here is your academic progress for the current semester.</p>
  
  {currentUser.isDefaultPassword && (

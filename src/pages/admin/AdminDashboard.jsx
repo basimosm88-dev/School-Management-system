@@ -56,7 +56,7 @@ const AdminDashboard = () => {
  <PageLayout role="admin" title={t('dashboard')}>
  {/* Page Header */}
  <div className="mb-8 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-kpi-value text-slate-900 dark:text-white">{t('dashboard')}</h2>
+ <h2 className="text-page-title text-slate-900 dark:text-white">{t('dashboard')}</h2>
  <p className="text-body-sm text-slate-500/80 mt-1">{t('dashboardSubtitle')}</p>
  </div>
 

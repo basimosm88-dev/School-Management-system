@@ -40,7 +40,7 @@ const NotificationsPage = ({ role }) => {
  <PageLayout role={role} title="Notifications Center">
  <div className="flex justify-between items-center mb-8">
  <div>
- <h2 className="text-section-title text-slate-900 dark:text-white">Activity Notifications</h2>
+ <h2 className="text-page-title text-slate-900 dark:text-white">Activity Notifications</h2>
  <p className="text-slate-500/80 dark:text-slate-400/80 text-body-sm">Stay updated with important school activities and personal alerts.</p>
  </div>
  <button 
