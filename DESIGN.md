@@ -49,36 +49,31 @@ colors:
   on-background: '#191b25'
   surface-variant: '#e1e1ef'
 typography:
-  display-bold:
-    fontFamily: Inter
-    fontSize: 24px
-    fontWeight: '600'
+  display:
+    fontFamily: Mona Sans
+    fontSize: 26px
+    fontWeight: '700'
     lineHeight: 32px
-  headline-sm:
-    fontFamily: Inter
-    fontSize: 18px
-    fontWeight: '600'
-    lineHeight: 24px
-  body-md:
-    fontFamily: Inter
-    fontSize: 14px
-    fontWeight: '400'
-    lineHeight: 20px
-  body-sm:
-    fontFamily: Inter
-    fontSize: 12px
-    fontWeight: '400'
-    lineHeight: 16px
-  label-bold:
-    fontFamily: Inter
-    fontSize: 13px
-    fontWeight: '600'
-    lineHeight: 18px
-  stat-value:
-    fontFamily: Inter
-    fontSize: 20px
+  heading:
+    fontFamily: Mona Sans
+    fontSize: 22px
     fontWeight: '600'
     lineHeight: 28px
+  section:
+    fontFamily: Mona Sans
+    fontSize: 16px
+    fontWeight: '600'
+    lineHeight: 24px
+  body:
+    fontFamily: Mona Sans
+    fontSize: 14px
+    fontWeight: '400'
+    lineHeight: 22px
+  label:
+    fontFamily: Mona Sans
+    fontSize: 13px
+    fontWeight: '500'
+    lineHeight: 18px
 rounded:
   sm: 0.25rem
   DEFAULT: 0.5rem
@@ -105,7 +100,7 @@ The palette is rooted in a functional "Light Mode" default, emphasizing a clean,
 - **Text Hierarchy:** Deep slate (#0F172A) is used for headings to ensure maximum legibility, while a mid-gray (#757682) is used for secondary body text and metadata.
 
 ## Typography
-The system uses **Inter** for its neutral, systematic qualities which excel in dashboard environments. 
+The system uses **Mona Sans** for its modern, dynamic, and systematic qualities which excel in dashboard environments. 
 - **Headings:** Bold weights are used for page titles and card headers to establish a clear hierarchy.
 - **Stats:** Numeric data should use semi-bold weights with consistent tabular lining where possible.
 - **Labels:** Small caps or slightly smaller font sizes with increased weight are used for secondary labels to distinguish them from actionable body text.
