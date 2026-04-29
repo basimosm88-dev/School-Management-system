@@ -69,8 +69,6 @@ export default {
       },
       fontFamily: {
         sans: ["Mona Sans", "system-ui", "sans-serif"],
-        display: ["Mona Sans", "system-ui", "sans-serif"],
-        body: ["Mona Sans", "system-ui", "sans-serif"]
       },
       fontSize: {
         "display": ["26px", { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "700" }],
