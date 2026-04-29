@@ -7,9 +7,9 @@ const ErrorState = ({ title, message, onRetry }) => {
  return (
  <div className="flex flex-col items-center justify-center py-12 px-4 text-center bg-rose-50/50 dark:bg-rose-900/10 rounded-2xl border border-rose-100 dark:border-rose-900/30">
  <div className="w-16 h-16 bg-rose-100 dark:bg-rose-900/30 text-rose-500 rounded-full flex items-center justify-center mb-4">
- <span className="material-symbols-outlined text-stat-value">error</span>
+ <span className="material-symbols-outlined text-kpi-value">error</span>
  </div>
- <h3 className="text-headline-sm text-rose-700 dark:text-rose-400 mb-1">{title || t('error')}</h3>
+ <h3 className="text-section-title text-rose-700 dark:text-rose-400 mb-1">{title || t('error')}</h3>
  {message && <p className="text-body-sm text-rose-600/80 dark:text-rose-300/80 max-w-sm mx-auto mb-6">{message}</p>}
  
  {onRetry && (

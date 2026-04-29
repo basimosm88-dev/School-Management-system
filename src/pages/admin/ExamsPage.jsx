@@ -101,8 +101,8 @@ const AdminExamsPage = () => {
  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
  {/* Page Header */}
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-headline-sm text-slate-900 dark:text-white">{t('exams')}</h2>
- <p className="text-body-sm text-slate-500 mt-1">{t('examsSubtitle')}</p>
+ <h2 className="text-section-title text-slate-900 dark:text-white">{t('exams')}</h2>
+ <p className="text-body-sm text-slate-500/80 mt-1">{t('examsSubtitle')}</p>
  </div>
 
  {/* TABS */}
@@ -114,7 +114,7 @@ const AdminExamsPage = () => {
  className={`px-8 py-3 rounded-lg text-body-sm   transition-all ${
  activeTab === tab.toLowerCase() 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+ : 'text-slate-500/80 hover:text-slate-700 dark:text-slate-400/80 dark:hover:text-slate-200'
  }`}
  >
  {tab}
@@ -126,17 +126,17 @@ const AdminExamsPage = () => {
  {activeTab === 'review' && (
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors min-h-[400px]">
  <div className="p-8 border-b border-slate-100 dark:border-slate-800">
- <h3 className="text-headline-sm text-slate-800 dark:text-slate-200">Pending Approvals</h3>
+ <h3 className="text-section-title text-slate-800 dark:text-slate-200">Pending Approvals</h3>
  </div>
  {pendingSubmissions.length === 0 ? (
- <div className="flex flex-col items-center justify-center h-[400px] text-slate-400">
- <span className="material-symbols-outlined text-display-bold mb-4 opacity-20">fact_check</span>
+ <div className="flex flex-col items-center justify-center h-[400px] text-slate-400/80">
+ <span className="material-symbols-outlined text-kpi-value mb-4 opacity-20">fact_check</span>
  <p className="text-body-sm">No pending exam submissions</p>
  </div>
  ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-left text-body-sm">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 text-body-sm border-b border-slate-100 dark:border-slate-800">
+ <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400/80 text-body-sm border-b border-slate-100 dark:border-slate-800">
  <tr>
  <th className="px-8 py-5">Class & Subject</th>
  <th className="px-8 py-5">Exam Type</th>
@@ -151,8 +151,8 @@ const AdminExamsPage = () => {
  <div className="text-slate-800 dark:text-slate-200">{sub.className}</div>
  <div className="text-body-sm text-primary">{sub.subjectName}</div>
  </td>
- <td className="px-8 py-5 text-body-sm text-slate-500">{sub.examType}</td>
- <td className="px-8 py-5 text-body-sm text-slate-500">{sub.teacherName}</td>
+ <td className="px-8 py-5 text-body-sm text-slate-500/80">{sub.examType}</td>
+ <td className="px-8 py-5 text-body-sm text-slate-500/80">{sub.teacherName}</td>
  <td className="px-8 py-5">
  <div className="flex justify-end gap-2">
  <button 
@@ -192,14 +192,14 @@ const AdminExamsPage = () => {
  </div>
  <button 
  onClick={() => setViewingSubmission(null)}
- className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors"
+ className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400/80 transition-colors"
  >
- <span className="material-symbols-outlined text-stat-value">close</span>
+ <span className="material-symbols-outlined text-kpi-value">close</span>
  </button>
  </div>
  <div className="p-6 max-h-[60vh] overflow-y-auto">
  <table className="w-full text-left text-body-sm">
- <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-400 text-body-sm">
+ <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-400/80 text-body-sm">
  <tr>
  <th className="px-6 py-4 rounded-l-xl">Student</th>
  <th className="px-6 py-4">Grade</th>
@@ -221,7 +221,7 @@ const AdminExamsPage = () => {
  {record.grade}%
  </span>
  </td>
- <td className="px-6 py-4 text-body-sm text-slate-400 italic">{record.remarks || '-'}</td>
+ <td className="px-6 py-4 text-body-sm text-slate-400/80 italic">{record.remarks || '-'}</td>
  </tr>
  );
  })}
@@ -239,7 +239,7 @@ const AdminExamsPage = () => {
  onClick={() => { handleApprove(viewingSubmission); setViewingSubmission(null); }}
  className="px-6 py-2.5 bg-emerald-500 text-white text-body-sm rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-headline-sm">check_circle</span>
+ <span className="material-symbols-outlined text-section-title">check_circle</span>
  Approve Submission
  </button>
  </div>
@@ -254,11 +254,11 @@ const AdminExamsPage = () => {
  <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
  <div>
  <h3 className="text-body-sm text-slate-800 dark:text-slate-200">Approved for Release</h3>
- <p className="text-body-sm text-slate-400 mt-1">Midterm and Final exams only. Other terms are released by teachers.</p>
+ <p className="text-body-sm text-slate-400/80 mt-1">Midterm and Final exams only. Other terms are released by teachers.</p>
  </div>
  </div>
  {releasableExams.length === 0 ? (
- <div className="flex flex-col items-center justify-center h-[300px] text-slate-400">
+ <div className="flex flex-col items-center justify-center h-[300px] text-slate-400/80">
  <p className="text-body-sm">No approved exams pending release</p>
  </div>
  ) : (
@@ -269,10 +269,10 @@ const AdminExamsPage = () => {
  <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
  <td className="px-8 py-5">
  <div className="text-slate-800 dark:text-slate-200">{exam.className}</div>
- <div className="text-body-sm text-slate-400">{exam.examType} Results</div>
+ <div className="text-body-sm text-slate-400/80">{exam.examType} Results</div>
  <div className="flex flex-wrap gap-1 mt-2">
  {exam.subjects.map(s => (
- <span key={s} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-body-sm text-slate-500">{s}</span>
+ <span key={s} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-body-sm text-slate-500/80">{s}</span>
  ))}
  </div>
  </td>
@@ -298,7 +298,7 @@ const AdminExamsPage = () => {
  <h3 className="text-body-sm text-slate-800 dark:text-slate-200 mb-6">Schedule {type}</h3>
  <div className="space-y-6">
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Release Date</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Release Date</label>
  <input 
  type="date" 
  value={examReleaseSettings[type].date}
@@ -310,7 +310,7 @@ const AdminExamsPage = () => {
  />
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Release Time</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Release Time</label>
  <input 
  type="time" 
  value={examReleaseSettings[type].time}
@@ -370,7 +370,7 @@ const AdminExamsPage = () => {
  <h3 className="text-body-sm text-slate-800 dark:text-slate-200 mb-8">Promotion Rules</h3>
  <div className="space-y-8">
  <div>
- <label className="text-body-sm text-slate-400 mb-3 block">Minimum Passing Grade (%)</label>
+ <label className="text-body-sm text-slate-400/80 mb-3 block">Minimum Passing Grade (%)</label>
  <div className="flex items-center gap-4">
  <input 
  type="range" 
@@ -380,20 +380,20 @@ const AdminExamsPage = () => {
  onChange={e => setPromotionSettings({...promotionSettings, passingGrade: parseInt(e.target.value)})}
  className="flex-1 accent-primary"
  />
- <span className="w-16 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-headline-sm">
+ <span className="w-16 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-section-title">
  {promotionSettings.passingGrade}%
  </span>
  </div>
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-3 block">Subjects Required to Pass</label>
+ <label className="text-body-sm text-slate-400/80 mb-3 block">Subjects Required to Pass</label>
  <input 
  type="number" 
  value={promotionSettings.minSubjects}
  onChange={e => setPromotionSettings({...promotionSettings, minSubjects: parseInt(e.target.value)})}
  className="form-input-custom w-32"
  />
- <p className="text-body-sm text-slate-400 mt-2">Maximum subjects a student can fail before total failure.</p>
+ <p className="text-body-sm text-slate-400/80 mt-2">Maximum subjects a student can fail before total failure.</p>
  </div>
  <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
  <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800">
@@ -406,7 +406,7 @@ const AdminExamsPage = () => {
  { label: 'Final', val: '50%' }
  ].map(w => (
  <div key={w.label} className="text-center p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm">
- <p className="text-body-sm text-slate-400 mb-1">{w.label}</p>
+ <p className="text-body-sm text-slate-400/80 mb-1">{w.label}</p>
  <p className="text-body-sm text-primary">{w.val}</p>
  </div>
  ))}

@@ -100,7 +100,7 @@ const TeacherExamsPage = () => {
  <div className="bg-white dark:bg-slate-900 p-8 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors">
  <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Exam Type</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Exam Type</label>
  <select 
  value={selectedExamType}
  onChange={(e) => setSelectedExamType(e.target.value)}
@@ -110,7 +110,7 @@ const TeacherExamsPage = () => {
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Select Class</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Select Class</label>
  <select 
  value={selectedClassId}
  onChange={(e) => {
@@ -126,7 +126,7 @@ const TeacherExamsPage = () => {
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Subject</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Subject</label>
  <select 
  value={selectedSubjectId}
  onChange={(e) => setSelectedSubjectId(e.target.value)}
@@ -167,13 +167,13 @@ const TeacherExamsPage = () => {
 
  {currentExamStatus && (
  <div className="mt-6 flex items-center gap-3">
- <span className="text-body-sm text-slate-400">Workflow Status:</span>
+ <span className="text-body-sm text-slate-400/80">Workflow Status:</span>
  <span className={`px-4 py-1 rounded-full text-body-sm  border ${
  currentExamStatus === 'PUBLISHED' ? 'bg-emerald-500 text-white border-emerald-500' :
  currentExamStatus === 'APPROVED' ? 'bg-sky-500 text-white border-sky-500' :
  currentExamStatus === 'SUBMITTED' ? 'bg-amber-500 text-white border-amber-500' :
  currentExamStatus === 'REJECTED' ? 'bg-rose-500 text-white border-rose-500' :
- 'bg-slate-200 dark:bg-slate-800 text-slate-500 border-slate-300 dark:border-slate-700'
+ 'bg-slate-200 dark:bg-slate-800 text-slate-500/80 border-slate-300 dark:border-slate-700'
  }`}>
  {currentExamStatus}
  </span>
@@ -185,7 +185,7 @@ const TeacherExamsPage = () => {
  
  {successMessage && (
  <div className="mt-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-body-sm rounded-xl border border-emerald-100 dark:border-emerald-800/50 flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
- <span className="material-symbols-outlined text-headline-sm">check_circle</span>
+ <span className="material-symbols-outlined text-section-title">check_circle</span>
  {successMessage}
  </div>
  )}
@@ -194,16 +194,16 @@ const TeacherExamsPage = () => {
  {/* GRADES LIST */}
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden transition-colors min-h-[400px]">
  {!selectedSubjectId ? (
- <div className="flex flex-col items-center justify-center h-[400px] text-slate-400">
+ <div className="flex flex-col items-center justify-center h-[400px] text-slate-400/80">
  <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
- <span className="material-symbols-outlined text-display-bold">edit_document</span>
+ <span className="material-symbols-outlined text-kpi-value">edit_document</span>
  </div>
  <p className="text-body-sm opacity-60">Select filters to enter academic results</p>
  </div>
  ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-left text-body-sm">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 text-body-sm border-b border-slate-100 dark:border-slate-800">
+ <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400/80 text-body-sm border-b border-slate-100 dark:border-slate-800">
  <tr>
  <th className="px-8 py-5">Student Information</th>
  <th className="px-8 py-5 w-32">Grade (0-100)</th>
@@ -220,7 +220,7 @@ const TeacherExamsPage = () => {
  </div>
  <div>
  <span className="text-slate-800 dark:text-slate-200 block">{student.name}</span>
- <span className="text-body-sm text-slate-400">{student.email}</span>
+ <span className="text-body-sm text-slate-400/80">{student.email}</span>
  </div>
  </div>
  </td>

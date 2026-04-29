@@ -49,7 +49,7 @@ const StudentTimetablePage = () => {
  
  return (
  <div key={hour} className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 min-h-[130px]">
- <div className="p-4 text-body-sm text-slate-400 text-center pt-8">
+ <div className="p-4 text-body-sm text-slate-400/80 text-center pt-8">
  {timeLabel}
  </div>
  
@@ -73,7 +73,7 @@ const StudentTimetablePage = () => {
  const str = slot.subjectName || 'Break';
  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
  const colorClass = slot.isBreak 
- ? 'bg-slate-50 text-slate-500 dark:bg-slate-800/50 dark:text-slate-400 border-slate-100 dark:border-slate-700/50' 
+ ? 'bg-slate-50 text-slate-500/80 dark:bg-slate-800/50 dark:text-slate-400/80 border-slate-100 dark:border-slate-700/50' 
  : colors[Math.abs(hash) % colors.length];
  
  const formatSlotTime = (time24) => {
@@ -129,17 +129,17 @@ const StudentTimetablePage = () => {
  <div className="bg-primary/5 p-8 rounded-xl border border-primary/10 flex flex-col md:flex-row justify-between items-center gap-6">
  <div className="flex items-center gap-6">
  <div className="w-16 h-16 bg-white dark:bg-slate-900 rounded-xl flex items-center justify-center text-primary shadow-xl shadow-primary/5 rotate-3 border border-primary/10">
- <span className="material-symbols-outlined text-stat-value">menu_book</span>
+ <span className="material-symbols-outlined text-kpi-value">menu_book</span>
  </div>
  <div>
- <p className="text-body-sm text-slate-400 mb-1 block">Assigned Schedule</p>
- <h3 className="text-slate-900 dark:text-slate-100 text-stat-value">{studentClass?.name || 'Unassigned'}</h3>
+ <p className="text-body-sm text-slate-400/80 mb-1 block">Assigned Schedule</p>
+ <h3 className="text-slate-900 dark:text-slate-100 text-kpi-value">{studentClass?.name || 'Unassigned'}</h3>
  </div>
  </div>
  <div className="flex gap-4">
  <div className="px-8 py-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 text-center shadow-sm">
- <p className="text-body-sm text-slate-400 mb-1">Weekly Periods</p>
- <p className="text-stat-value text-primary">{classSchedule.length}</p>
+ <p className="text-body-sm text-slate-400/80 mb-1">Weekly Periods</p>
+ <p className="text-kpi-value text-primary">{classSchedule.length}</p>
  </div>
  </div>
  </div>
@@ -153,10 +153,10 @@ const StudentTimetablePage = () => {
  className={`flex-1 py-3 rounded-lg text-body-sm  transition-all flex items-center justify-center gap-2 ${
  activePeriod === 'morning' 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-400'
+ : 'text-slate-400/80'
  }`}
  >
- <span className="material-symbols-outlined text-headline-sm">wb_sunny</span>
+ <span className="material-symbols-outlined text-section-title">wb_sunny</span>
  Morning Period
  </button>
  <button
@@ -164,10 +164,10 @@ const StudentTimetablePage = () => {
  className={`flex-1 py-3 rounded-lg text-body-sm  transition-all flex items-center justify-center gap-2 ${
  activePeriod === 'afternoon' 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-400'
+ : 'text-slate-400/80'
  }`}
  >
- <span className="material-symbols-outlined text-headline-sm">dark_mode</span>
+ <span className="material-symbols-outlined text-section-title">dark_mode</span>
  Afternoon Period
  </button>
  </div>
@@ -177,8 +177,8 @@ const StudentTimetablePage = () => {
  {/* WEEKLY GRID */}
  {!studentClass ? (
  <div className="p-12 bg-rose-50 dark:bg-rose-900/10 rounded-xl border border-rose-100 dark:border-rose-900/20 text-center">
- <span className="material-symbols-outlined text-rose-500 text-display-bold mb-6">error_outline</span>
- <h3 className="text-headline-sm text-rose-900 dark:text-rose-100 mb-2">Unassigned Record</h3>
+ <span className="material-symbols-outlined text-rose-500 text-kpi-value mb-6">error_outline</span>
+ <h3 className="text-section-title text-rose-900 dark:text-rose-100 mb-2">Unassigned Record</h3>
  <p className="text-body-sm text-rose-600/70">Contact administration to update your class records</p>
  </div>
  ) : (

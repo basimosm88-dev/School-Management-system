@@ -118,7 +118,7 @@ const AdminTimetablePage = () => {
  return (
  <div key={hour} className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 min-h-[130px]">
  {/* Time Label */}
- <div className="p-4 text-body-sm text-slate-400 text-center pt-8">
+ <div className="p-4 text-body-sm text-slate-400/80 text-center pt-8">
  {timeLabel}
  </div>
  
@@ -143,7 +143,7 @@ const AdminTimetablePage = () => {
  const str = slot.subjectName || 'Break';
  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
  const colorClass = slot.isBreak 
- ? 'bg-slate-50 text-slate-500 dark:bg-slate-800/50 dark:text-slate-400 border-slate-100 dark:border-slate-700/50' 
+ ? 'bg-slate-50 text-slate-500/80 dark:bg-slate-800/50 dark:text-slate-400/80 border-slate-100 dark:border-slate-700/50' 
  : colors[Math.abs(hash) % colors.length];
  
  const formatSlotTime = (time24) => {
@@ -195,21 +195,21 @@ const AdminTimetablePage = () => {
  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
  {/* Page Header */}
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-headline-sm text-slate-900 dark:text-white">{t('timetable')}</h2>
- <p className="text-body-sm text-slate-500 mt-1">{t('timetableSubtitle')}</p>
+ <h2 className="text-section-title text-slate-900 dark:text-white">{t('timetable')}</h2>
+ <p className="text-body-sm text-slate-500/80 mt-1">{t('timetableSubtitle')}</p>
  </div>
 
  {/* CLASS SELECTION BUTTONS */}
  <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors">
  <div className="flex flex-col gap-4">
  <div className="flex items-center justify-between">
- <label className="text-body-sm text-slate-400 block">Select Class to Manage</label>
+ <label className="text-body-sm text-slate-400/80 block">Select Class to Manage</label>
  <button 
  disabled={!selectedClassId}
  onClick={() => setShowModal(true)}
  className="px-6 py-3 bg-primary text-white text-body-sm rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-30 flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-headline-sm">add_circle</span>
+ <span className="material-symbols-outlined text-section-title">add_circle</span>
  Add Session
  </button>
  </div>
@@ -222,7 +222,7 @@ const AdminTimetablePage = () => {
  className={`px-6 py-3 rounded-xl text-body-sm  transition-all border whitespace-nowrap ${
  selectedClassId === c.id.toString()
  ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
- : 'bg-white dark:bg-slate-800 text-slate-400 border-slate-100 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+ : 'bg-white dark:bg-slate-800 text-slate-400/80 border-slate-100 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
  }`}
  >
  {c.name}
@@ -241,10 +241,10 @@ const AdminTimetablePage = () => {
  className={`flex-1 py-3 rounded-lg text-body-sm  transition-all flex items-center justify-center gap-2 ${
  activePeriod === 'morning' 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-400'
+ : 'text-slate-400/80'
  }`}
  >
- <span className="material-symbols-outlined text-headline-sm">wb_sunny</span>
+ <span className="material-symbols-outlined text-section-title">wb_sunny</span>
  Morning Period
  </button>
  <button
@@ -252,10 +252,10 @@ const AdminTimetablePage = () => {
  className={`flex-1 py-3 rounded-lg text-body-sm  transition-all flex items-center justify-center gap-2 ${
  activePeriod === 'afternoon' 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-400'
+ : 'text-slate-400/80'
  }`}
  >
- <span className="material-symbols-outlined text-headline-sm">dark_mode</span>
+ <span className="material-symbols-outlined text-section-title">dark_mode</span>
  Afternoon Period
  </button>
  </div>
@@ -266,7 +266,7 @@ const AdminTimetablePage = () => {
  {!selectedClassId ? (
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 h-[400px] flex flex-col items-center justify-center text-slate-300 transition-colors">
  <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
- <span className="material-symbols-outlined text-display-bold">event_note</span>
+ <span className="material-symbols-outlined text-kpi-value">event_note</span>
  </div>
  <p className="text-body-sm opacity-60">Choose a class to manage its schedule</p>
  </div>
@@ -286,7 +286,7 @@ const AdminTimetablePage = () => {
  <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
  <div className="px-8 py-8 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
  <h3 className="text-body-sm text-slate-800 dark:text-slate-200">New Session Slot</h3>
- <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+ <button onClick={() => setShowModal(false)} className="text-slate-400/80 hover:text-slate-600 transition-colors">
  <span className="material-symbols-outlined">close</span>
  </button>
  </div>
@@ -294,14 +294,14 @@ const AdminTimetablePage = () => {
  <div className="p-8 space-y-6">
  {error && (
  <div className="p-4 bg-rose-50 text-rose-600 text-body-sm rounded-2xl border border-rose-100 flex items-center gap-3 animate-shake">
- <span className="material-symbols-outlined text-headline-sm">error</span>
+ <span className="material-symbols-outlined text-section-title">error</span>
  {error}
  </div>
  )}
 
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Select Day</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Select Day</label>
  <select 
  value={formData.day}
  onChange={e => setFormData({...formData, day: e.target.value})}
@@ -311,15 +311,15 @@ const AdminTimetablePage = () => {
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Type</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Type</label>
  <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
  <button 
  onClick={() => handleTypeChange(false)}
- className={`flex-1 py-2 rounded-lg text-body-sm  transition-all ${!formData.isBreak ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400'}`}
+ className={`flex-1 py-2 rounded-lg text-body-sm  transition-all ${!formData.isBreak ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
  >Subject</button>
  <button 
  onClick={() => handleTypeChange(true)}
- className={`flex-1 py-2 rounded-lg text-body-sm  transition-all ${formData.isBreak ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400'}`}
+ className={`flex-1 py-2 rounded-lg text-body-sm  transition-all ${formData.isBreak ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
  >Break</button>
  </div>
  </div>
@@ -327,7 +327,7 @@ const AdminTimetablePage = () => {
 
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Start Time</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Start Time</label>
  <input 
  type="time" 
  value={formData.startTime}
@@ -336,7 +336,7 @@ const AdminTimetablePage = () => {
  />
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">End Time</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">End Time</label>
  <input 
  type="time" 
  value={formData.endTime}
@@ -350,7 +350,7 @@ const AdminTimetablePage = () => {
  {!formData.isBreak && (
  <>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Subject</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Subject</label>
  <select 
  value={formData.subjectName}
  onChange={e => handleSubjectChange(e.target.value)}
@@ -361,7 +361,7 @@ const AdminTimetablePage = () => {
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Teacher</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Teacher</label>
  <div className="form-input-custom w-full bg-slate-50 dark:bg-slate-800/50 flex items-center text-slate-600">
  {formData.teacherId ? teachers.find(t => t.id === parseInt(formData.teacherId))?.name : 'Auto-filled based on subject'}
  </div>

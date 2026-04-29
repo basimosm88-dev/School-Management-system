@@ -66,10 +66,10 @@ const TeacherSettings = () => {
  className={`flex items-center gap-3 px-4 py-3 rounded-xl  text-body-sm transition-all ${
  activeTab === tab.id 
  ? 'bg-primary text-white shadow-lg shadow-primary/20' 
- : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
+ : 'bg-white dark:bg-slate-900 text-slate-500/80 dark:text-slate-400/80 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
  }`}
  >
- <span className="material-symbols-outlined text-stat-value">{tab.icon}</span>
+ <span className="material-symbols-outlined text-kpi-value">{tab.icon}</span>
  {tab.label}
  </button>
  ))}
@@ -83,18 +83,18 @@ const TeacherSettings = () => {
  {activeTab === 'profile' && (
  <form onSubmit={handleProfileUpdate} className="space-y-6">
  <div className="flex items-center gap-6 mb-8 pb-8 border-b border-slate-100 dark:border-slate-800">
- <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-900/30 rounded-3xl flex items-center justify-center text-stat-value text-indigo-600 dark:text-indigo-400">
+ <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-900/30 rounded-3xl flex items-center justify-center text-kpi-value text-indigo-600 dark:text-indigo-400">
  {currentUser?.name?.[0] || 'T'}
  </div>
  <div>
- <h2 className="text-headline-sm text-slate-900 dark:text-white">{currentUser?.name}</h2>
- <p className="text-body-sm text-slate-500 dark:text-slate-400">Teacher ID: {currentUser?.id}</p>
+ <h2 className="text-section-title text-slate-900 dark:text-white">{currentUser?.name}</h2>
+ <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80">Teacher ID: {currentUser?.id}</p>
  </div>
  </div>
 
  <div className="grid grid-cols-1 gap-6">
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500">Full Name</label>
+ <label className="text-body-sm text-slate-500/80">Full Name</label>
  <input 
  type="text" 
  value={profileData.name}
@@ -103,7 +103,7 @@ const TeacherSettings = () => {
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500">Email Address</label>
+ <label className="text-body-sm text-slate-500/80">Email Address</label>
  <input 
  type="email" 
  value={profileData.email}
@@ -112,7 +112,7 @@ const TeacherSettings = () => {
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500">Phone Number</label>
+ <label className="text-body-sm text-slate-500/80">Phone Number</label>
  <input 
  type="text" 
  value={profileData.phone}
@@ -135,7 +135,7 @@ const TeacherSettings = () => {
  
  <div className="space-y-4">
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500">Current Password</label>
+ <label className="text-body-sm text-slate-500/80">Current Password</label>
  <input 
  type="password" 
  value={passwords.current}
@@ -145,7 +145,7 @@ const TeacherSettings = () => {
  </div>
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500">New Password</label>
+ <label className="text-body-sm text-slate-500/80">New Password</label>
  <input 
  type="password" 
  value={passwords.new}
@@ -154,7 +154,7 @@ const TeacherSettings = () => {
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-body-sm text-slate-500">Confirm New</label>
+ <label className="text-body-sm text-slate-500/80">Confirm New</label>
  <input 
  type="password" 
  value={passwords.confirm}
@@ -183,7 +183,7 @@ const TeacherSettings = () => {
  className={`py-3 rounded-xl border-2  text-body-sm transition-all ${
  language === lang 
  ? 'border-primary bg-primary/5 text-primary' 
- : 'border-slate-100 dark:border-slate-800 text-slate-400'
+ : 'border-slate-100 dark:border-slate-800 text-slate-400/80'
  }`}
  >
  {lang === 'en' ? 'English' : lang === 'ar' ? 'العربية' : 'Somali'}
@@ -197,14 +197,14 @@ const TeacherSettings = () => {
  <div className="flex gap-4">
  <button 
  onClick={() => setTheme('light')}
- className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl border-2 transition-all ${theme === 'light' ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 dark:border-slate-800 text-slate-400'}`}
+ className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl border-2 transition-all ${theme === 'light' ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}
  >
  <span className="material-symbols-outlined">light_mode</span>
  <span className="text-body-sm">Light Mode</span>
  </button>
  <button 
  onClick={() => setTheme('dark')}
- className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl border-2 transition-all ${theme === 'dark' ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 dark:border-slate-800 text-slate-400'}`}
+ className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl border-2 transition-all ${theme === 'dark' ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}
  >
  <span className="material-symbols-outlined">dark_mode</span>
  <span className="text-body-sm">Dark Mode</span>
@@ -223,13 +223,13 @@ const TeacherSettings = () => {
  <label key={key} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
  <div className="flex items-center gap-3">
  <div className="w-10 h-10 bg-white dark:bg-slate-900 rounded-lg flex items-center justify-center shadow-sm">
- <span className="material-symbols-outlined text-slate-400">
+ <span className="material-symbols-outlined text-slate-400/80">
  {key === 'grades' ? 'grade' : key === 'announcements' ? 'campaign' : key === 'messages' ? 'mail' : 'event'}
  </span>
  </div>
  <div>
  <p className="text-body-sm text-slate-700 dark:text-slate-200 capitalize">{key}</p>
- <p className="text-body-sm text-slate-400">Receive alerts for new {key}</p>
+ <p className="text-body-sm text-slate-400/80">Receive alerts for new {key}</p>
  </div>
  </div>
  <div 

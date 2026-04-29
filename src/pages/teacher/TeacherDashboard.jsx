@@ -58,7 +58,7 @@ const TeacherDashboard = () => {
  <PageLayout role="teacher" title={t('dashboard')}>
  {/* Welcome Section */}
  <div className="mb-8 p-6 bg-gradient-to-r from-primary to-indigo-600 rounded-2xl text-white shadow-lg shadow-primary/20">
- <h1 className="text-stat-value mb-1">{t(greetingKey)}, {currentUser?.name || 'Teacher'}!</h1>
+ <h1 className="text-kpi-value mb-1">{t(greetingKey)}, {currentUser?.name || 'Teacher'}!</h1>
  <p className="text-white/80 text-body-sm">Here is your schedule and tasks for today.</p>
  </div>
 
@@ -75,39 +75,39 @@ const TeacherDashboard = () => {
  <div className="col-span-8 flex flex-col gap-6">
  <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
  <div className="flex justify-between items-center mb-6">
- <h2 className="text-headline-sm text-slate-900 dark:text-slate-100">{t('myTasks')}</h2>
+ <h2 className="text-section-title text-slate-900 dark:text-slate-100">{t('myTasks')}</h2>
  <button 
  onClick={() => setModalOpen(true)}
  className="bg-primary text-white px-4 py-2 rounded-lg text-body-sm hover:bg-primary/90 transition-all shadow-sm flex items-center gap-2"
  >
- <span className="material-symbols-outlined text-headline-sm">add</span>
+ <span className="material-symbols-outlined text-section-title">add</span>
  Add Grades
  </button>
  </div>
  <div className="space-y-3">
  <div className="group flex items-center justify-between p-4 bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-primary/20 dark:hover:border-primary/40 hover:bg-blue-50/20 dark:hover:bg-blue-900/10 transition-all">
  <div className="flex items-center gap-4">
- <div className="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-700 group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
+ <div className="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400/80 border border-slate-100 dark:border-slate-700 group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
  <span className="material-symbols-outlined">grade</span>
  </div>
  <div>
  <h4 className="text-slate-900 dark:text-slate-100 text-body-sm">{t('enterGrades')}</h4>
- <p className="text-body-sm text-slate-500 dark:text-slate-400">Submit new grades for review</p>
+ <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80">Submit new grades for review</p>
  </div>
  </div>
  <button onClick={() => setModalOpen(true)} className="px-4 py-1.5 text-body-sm text-white bg-primary rounded-lg shadow-sm hover:bg-blue-700 transition-all">{t('enterGrades')}</button>
  </div>
  <div className="group flex items-center justify-between p-4 bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-primary/20 dark:hover:border-primary/40 hover:bg-blue-50/20 dark:hover:bg-blue-900/10 transition-all">
  <div className="flex items-center gap-4">
- <div className="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-700 group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
+ <div className="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400/80 border border-slate-100 dark:border-slate-700 group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
  <span className="material-symbols-outlined">how_to_reg</span>
  </div>
  <div>
  <h4 className="text-slate-900 dark:text-slate-100 text-body-sm">{t('markAttendance')}</h4>
- <p className="text-body-sm text-slate-500 dark:text-slate-400">Grade 11 Physics</p>
+ <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80">Grade 11 Physics</p>
  </div>
  </div>
- <button className="px-4 py-1.5 text-body-sm text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">Mark Now</button>
+ <button className="px-4 py-1.5 text-body-sm text-slate-500/80 dark:text-slate-400/80 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">Mark Now</button>
  </div>
  </div>
  </section>
@@ -116,9 +116,9 @@ const TeacherDashboard = () => {
  {/* Right Sidebar Column */}
  <div className="col-span-4 flex flex-col gap-6">
  <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
- <h2 className="text-headline-sm text-slate-900 dark:text-slate-100 mb-6">{t('schoolNotices')}</h2>
+ <h2 className="text-section-title text-slate-900 dark:text-slate-100 mb-6">{t('schoolNotices')}</h2>
  <div className="space-y-4">
- <h3 className="text-body-sm text-slate-400">{t('upcomingEvents')}</h3>
+ <h3 className="text-body-sm text-slate-400/80">{t('upcomingEvents')}</h3>
  {(!events || events.filter(e => e.audience === 'all' || e.audience === 'teachers').length === 0) ? (
  <EmptyState icon="event_busy" message="No Events" description="No upcoming events." />
  ) : (
@@ -126,24 +126,24 @@ const TeacherDashboard = () => {
  <div key={event.id} className="flex gap-4 p-3 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl">
  <div className="flex flex-col items-center justify-center w-12 h-12 bg-white dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700">
  <span className="text-body-sm text-primary">{event.date ? new Date(event.date).toLocaleString('default', { month: 'short' }) : 'N/A'}</span>
- <span className="text-headline-sm text-slate-900 dark:text-slate-100">{event.date ? new Date(event.date).getDate() : '-'}</span>
+ <span className="text-section-title text-slate-900 dark:text-slate-100">{event.date ? new Date(event.date).getDate() : '-'}</span>
  </div>
  <div className="flex-1">
  <h4 className="text-body-sm text-slate-900 dark:text-slate-100">{event.title}</h4>
- <p className="text-body-sm text-slate-500 dark:text-slate-400">{event.location || 'N/A'}</p>
+ <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80">{event.location || 'N/A'}</p>
  </div>
  </div>
  ))
  )}
  
- <h3 className="text-body-sm text-slate-400 mt-6">{t('announcements')}</h3>
+ <h3 className="text-body-sm text-slate-400/80 mt-6">{t('announcements')}</h3>
  {(!announcements || announcements.filter(a => a.audience === 'all' || a.audience === 'teachers').length === 0) ? (
  <EmptyState icon="campaign" message="No Announcements" description="No active announcements." />
  ) : (
  announcements.filter(a => a.audience === 'all' || a.audience === 'teachers').slice(0, 2).map(ann => (
  <div key={ann.id} className={`p-3 border-l-4 rounded-r-xl bg-slate-50/50 dark:bg-slate-800/50 ${ann.priority === 'urgent' ? 'border-rose-500' : 'border-primary/20'}`}>
  <h4 className="text-body-sm text-slate-800 dark:text-slate-200">{ann.title}</h4>
- <p className="text-body-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">{ann.content || ann.message || ''}</p>
+ <p className="text-body-sm text-slate-500/80 dark:text-slate-400/80 mt-1 line-clamp-1">{ann.content || ann.message || ''}</p>
  </div>
  ))
  )}

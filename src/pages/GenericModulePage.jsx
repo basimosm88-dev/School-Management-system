@@ -159,11 +159,11 @@ const GenericModulePage = ({ role, title, primaryActionText }) => {
  <td className="px-4 py-3 text-right">
  {role === 'admin' && config && config.deleteMethod && (
  <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
- <button className="p-1.5 text-slate-400 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg">
- <span className="material-symbols-outlined text-headline-sm">edit</span>
+ <button className="p-1.5 text-slate-400/80 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg">
+ <span className="material-symbols-outlined text-section-title">edit</span>
  </button>
- <button onClick={() => handleDelete(item.id)} className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg">
- <span className="material-symbols-outlined text-headline-sm">delete</span>
+ <button onClick={() => handleDelete(item.id)} className="p-1.5 text-slate-400/80 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg">
+ <span className="material-symbols-outlined text-section-title">delete</span>
  </button>
  </div>
  )}
@@ -171,7 +171,7 @@ const GenericModulePage = ({ role, title, primaryActionText }) => {
  </tr>
  )) : (
  <tr>
- <td colSpan="4" className="px-4 py-10 text-center text-slate-500 italic">
+ <td colSpan="4" className="px-4 py-10 text-center text-slate-500/80 italic">
  No records found.
  </td>
  </tr>

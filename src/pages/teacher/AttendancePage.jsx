@@ -115,7 +115,7 @@ const TeacherAttendancePage = () => {
  <div className="bg-white dark:bg-slate-900 p-8 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors">
  <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Select Class</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Select Class</label>
  <select 
  value={selectedClassId}
  onChange={(e) => {
@@ -131,7 +131,7 @@ const TeacherAttendancePage = () => {
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Date</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Date</label>
  <input 
  type="date" 
  value={selectedDate}
@@ -143,7 +143,7 @@ const TeacherAttendancePage = () => {
  />
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Select Session</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Select Session</label>
  <select 
  value={selectedSessionId}
  onChange={(e) => setSelectedSessionId(e.target.value)}
@@ -181,16 +181,16 @@ const TeacherAttendancePage = () => {
  {/* STUDENTS LIST */}
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden transition-colors min-h-[400px]">
  {!selectedSessionId ? (
- <div className="flex flex-col items-center justify-center h-[400px] text-slate-400">
+ <div className="flex flex-col items-center justify-center h-[400px] text-slate-400/80">
  <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
- <span className="material-symbols-outlined text-display-bold">fact_check</span>
+ <span className="material-symbols-outlined text-kpi-value">fact_check</span>
  </div>
  <p className="text-body-sm opacity-60">Select class and session to take attendance</p>
  </div>
  ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-left text-body-sm">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 text-body-sm border-b border-slate-100 dark:border-slate-800">
+ <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400/80 text-body-sm border-b border-slate-100 dark:border-slate-800">
  <tr>
  <th className="px-8 py-5">Student Information</th>
  <th className="px-8 py-5">Student ID</th>
@@ -207,12 +207,12 @@ const TeacherAttendancePage = () => {
  </div>
  <div>
  <span className="text-slate-800 dark:text-slate-200 block">{student.name}</span>
- <span className="text-body-sm text-slate-400">{student.email}</span>
+ <span className="text-body-sm text-slate-400/80">{student.email}</span>
  </div>
  </div>
  </td>
  <td className="px-8 py-5">
- <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-body-sm text-slate-500">
+ <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-body-sm text-slate-500/80">
  {student.id}
  </span>
  </td>
@@ -227,7 +227,7 @@ const TeacherAttendancePage = () => {
  ? status === 'Present' ? 'bg-emerald-500 text-white border-emerald-500 shadow-xl shadow-emerald-500/20' :
  status === 'Absent' ? 'bg-rose-500 text-white border-rose-500 shadow-xl shadow-rose-500/20' :
  'bg-amber-500 text-white border-amber-500 shadow-xl shadow-amber-500/20'
- : 'bg-white dark:bg-slate-800 text-slate-400 border-slate-100 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+ : 'bg-white dark:bg-slate-800 text-slate-400/80 border-slate-100 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
  }`}
  >
  {status}
@@ -250,7 +250,7 @@ const TeacherAttendancePage = () => {
  onClick={handleSave}
  className="px-12 py-4 bg-primary text-white text-body-sm rounded-2xl shadow-2xl shadow-primary/30 hover:bg-blue-700 transition-all active:scale-95 flex items-center gap-3"
  >
- <span className="material-symbols-outlined text-stat-value">verified</span>
+ <span className="material-symbols-outlined text-kpi-value">verified</span>
  Submit Session Attendance
  </button>
  </div>

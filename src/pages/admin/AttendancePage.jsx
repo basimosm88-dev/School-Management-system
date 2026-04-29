@@ -93,8 +93,8 @@ const AdminAttendancePage = () => {
  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
  {/* Page Header */}
  <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-headline-sm text-slate-900 dark:text-white">{t('attendance')}</h2>
- <p className="text-body-sm text-slate-500 mt-1">{t('attendanceSubtitle')}</p>
+ <h2 className="text-section-title text-slate-900 dark:text-white">{t('attendance')}</h2>
+ <p className="text-body-sm text-slate-500/80 mt-1">{t('attendanceSubtitle')}</p>
  </div>
 
  {/* STATS OVERVIEW */}
@@ -111,11 +111,11 @@ const AdminAttendancePage = () => {
  <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl w-full md:w-auto">
  <button 
  onClick={() => setViewType('session')}
- className={`flex-1 md:w-48 py-3 rounded-lg text-body-sm  transition-all ${viewType === 'session' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400'}`}
+ className={`flex-1 md:w-48 py-3 rounded-lg text-body-sm  transition-all ${viewType === 'session' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
  >Session Details</button>
  <button 
  onClick={() => setViewType('daily')}
- className={`flex-1 md:w-48 py-3 rounded-lg text-body-sm  transition-all ${viewType === 'daily' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400'}`}
+ className={`flex-1 md:w-48 py-3 rounded-lg text-body-sm  transition-all ${viewType === 'daily' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
  >Daily Summaries</button>
  </div>
  
@@ -128,14 +128,14 @@ const AdminAttendancePage = () => {
  endDate: new Date().toISOString().split('T')[0],
  status: ''
  })}
- className="px-6 py-3 bg-slate-50 dark:bg-slate-800 text-slate-500 text-body-sm rounded-lg hover:bg-slate-100 transition-all border border-slate-100 dark:border-slate-700"
+ className="px-6 py-3 bg-slate-50 dark:bg-slate-800 text-slate-500/80 text-body-sm rounded-lg hover:bg-slate-100 transition-all border border-slate-100 dark:border-slate-700"
  >Reset Filters</button>
  </div>
  </div>
 
  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Class Filter</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Class Filter</label>
  <select 
  value={filters.classId}
  onChange={e => setFilters({...filters, classId: e.target.value})}
@@ -146,7 +146,7 @@ const AdminAttendancePage = () => {
  </select>
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Start Date</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Start Date</label>
  <input 
  type="date"
  value={filters.startDate}
@@ -155,7 +155,7 @@ const AdminAttendancePage = () => {
  />
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">End Date</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">End Date</label>
  <input 
  type="date"
  value={filters.endDate}
@@ -164,7 +164,7 @@ const AdminAttendancePage = () => {
  />
  </div>
  <div>
- <label className="text-body-sm text-slate-400 mb-2 block">Session Status</label>
+ <label className="text-body-sm text-slate-400/80 mb-2 block">Session Status</label>
  <select 
  value={filters.status}
  onChange={e => setFilters({...filters, status: e.target.value})}
@@ -192,7 +192,7 @@ const AdminAttendancePage = () => {
  </div>
  <div className="overflow-x-auto max-h-[600px]">
  <table className="w-full text-left text-body-sm">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-body-sm text-slate-400 border-b border-slate-100 dark:border-slate-800">
+ <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-body-sm text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
  {viewType === 'session' ? (
  <tr>
  <th className="px-8 py-4">Student</th>
@@ -222,10 +222,10 @@ const AdminAttendancePage = () => {
  <td className="px-8 py-5">
  <div>
  <span className="text-body-sm text-slate-800 dark:text-slate-100 block mb-1">{a.subjectName}</span>
- <span className="text-body-sm text-slate-400">{formatTime(a.startTime)} - {formatTime(a.endTime)}</span>
+ <span className="text-body-sm text-slate-400/80">{formatTime(a.startTime)} - {formatTime(a.endTime)}</span>
  </div>
  </td>
- <td className="px-8 py-5 text-body-sm font-mono text-slate-400">{a.date}</td>
+ <td className="px-8 py-5 text-body-sm font-mono text-slate-400/80">{a.date}</td>
  <td className="px-8 py-5">
  <span className={`px-3 py-1 rounded-lg text-body-sm  ${
  a.status === 'Present' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
@@ -235,7 +235,7 @@ const AdminAttendancePage = () => {
  {a.status}
  </span>
  </td>
- <td className="px-8 py-5 text-body-sm text-slate-400 truncate max-w-[120px]">
+ <td className="px-8 py-5 text-body-sm text-slate-400/80 truncate max-w-[120px]">
  {teachers.find(t => t.id === a.teacherId)?.name || 'Admin'}
  </td>
  </tr>
@@ -249,9 +249,9 @@ const AdminAttendancePage = () => {
  </span>
  </td>
  <td className="px-8 py-5 text-center">
- <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md text-body-sm text-slate-500">{s.sessionCount}</span>
+ <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md text-body-sm text-slate-500/80">{s.sessionCount}</span>
  </td>
- <td className="px-8 py-5 text-body-sm font-mono text-slate-400">{s.date}</td>
+ <td className="px-8 py-5 text-body-sm font-mono text-slate-400/80">{s.date}</td>
  <td className="px-8 py-5">
  <span className={`px-4 py-1 rounded-full text-body-sm  border ${
  s.status === 'Present' ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/20' :
@@ -269,7 +269,7 @@ const AdminAttendancePage = () => {
  <tr>
  <td colSpan="5" className="px-8 py-24 text-center">
  <div className="flex flex-col items-center opacity-20">
- <span className="material-symbols-outlined text-display-bold mb-4">search_off</span>
+ <span className="material-symbols-outlined text-kpi-value mb-4">search_off</span>
  <p className="text-body-sm">No records matching filters</p>
  </div>
  </td>
@@ -285,11 +285,11 @@ const AdminAttendancePage = () => {
  <div className="bg-white dark:bg-slate-900 p-8 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors">
  <div className="flex items-center gap-3 mb-8">
  <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
- <span className="material-symbols-outlined text-stat-value">stars</span>
+ <span className="material-symbols-outlined text-kpi-value">stars</span>
  </div>
  <div>
  <h4 className="text-body-sm text-slate-800 dark:text-slate-200">Attendance Rankings</h4>
- <p className="text-body-sm text-slate-400">Based on daily averages</p>
+ <p className="text-body-sm text-slate-400/80">Based on daily averages</p>
  </div>
  </div>
  
@@ -302,7 +302,7 @@ const AdminAttendancePage = () => {
  idx === 0 ? 'bg-amber-400 text-white shadow-lg shadow-amber-400/20' :
  idx === 1 ? 'bg-slate-300 text-white shadow-lg shadow-slate-300/20' :
  idx === 2 ? 'bg-orange-400 text-white shadow-lg shadow-orange-400/20' :
- 'bg-white dark:bg-slate-800 text-slate-400 border border-slate-100 dark:border-slate-700'
+ 'bg-white dark:bg-slate-800 text-slate-400/80 border border-slate-100 dark:border-slate-700'
  }`}>
  {idx + 1}
  </div>
@@ -312,7 +312,7 @@ const AdminAttendancePage = () => {
  <div className="w-16 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
  <div className={`h-full rounded-full ${s.rate > 90 ? 'bg-emerald-500' : s.rate < 75 ? 'bg-rose-500' : 'bg-amber-500'}`} style={{width: `${s.rate}%`}}></div>
  </div>
- <span className="text-body-sm text-slate-400">{s.rate}%</span>
+ <span className="text-body-sm text-slate-400/80">{s.rate}%</span>
  </div>
  </div>
  </div>
@@ -342,11 +342,11 @@ const StatCard = ({ label, value, icon, color }) => {
  return (
  <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors flex items-center gap-5">
  <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${colors[color]} shadow-sm`}>
- <span className="material-symbols-outlined text-stat-value">{icon}</span>
+ <span className="material-symbols-outlined text-kpi-value">{icon}</span>
  </div>
  <div>
- <p className="text-body-sm text-slate-400 mb-1">{label}</p>
- <p className="text-stat-value text-slate-900 dark:text-slate-100">{value}</p>
+ <p className="text-body-sm text-slate-400/80 mb-1">{label}</p>
+ <p className="text-kpi-value text-slate-900 dark:text-slate-100">{value}</p>
  </div>
  </div>
  );

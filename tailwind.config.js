@@ -73,12 +73,12 @@ export default {
         body: ["Mona Sans", "system-ui", "sans-serif"]
       },
       fontSize: {
-        "display-bold": ["26px", { lineHeight: "34px", letterSpacing: "-0.01em", fontWeight: "700" }],
-        "headline-sm": ["18px", { lineHeight: "26px", letterSpacing: "-0.01em", fontWeight: "600" }],
-        "stat-value": ["24px", { lineHeight: "30px", letterSpacing: "-0.01em", fontWeight: "700" }],
+        "page-title": ["22px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }],
+        "section-title": ["16px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "600" }],
         "body-md": ["14px", { lineHeight: "22px", letterSpacing: "0.01em", fontWeight: "400" }],
         "body-sm": ["13px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "400" }],
-        "label-bold": ["13px", { lineHeight: "18px", letterSpacing: "0.02em", fontWeight: "500" }],
+        "kpi-value": ["26px", { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "700" }],
+        "kpi-label": ["13px", { lineHeight: "18px", letterSpacing: "0.02em", fontWeight: "500" }],
       }
     },
   },

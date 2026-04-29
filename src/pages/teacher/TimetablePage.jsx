@@ -44,7 +44,7 @@ const TeacherTimetablePage = () => {
  
  return (
  <div key={hour} className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 min-h-[130px]">
- <div className="p-4 text-body-sm text-slate-400 text-center pt-8">
+ <div className="p-4 text-body-sm text-slate-400/80 text-center pt-8">
  {timeLabel}
  </div>
  
@@ -68,7 +68,7 @@ const TeacherTimetablePage = () => {
  const str = slot.subjectName || 'Break';
  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
  const colorClass = slot.isBreak 
- ? 'bg-slate-50 text-slate-500 dark:bg-slate-800/50 dark:text-slate-400 border-slate-100 dark:border-slate-700/50' 
+ ? 'bg-slate-50 text-slate-500/80 dark:bg-slate-800/50 dark:text-slate-400/80 border-slate-100 dark:border-slate-700/50' 
  : colors[Math.abs(hash) % colors.length];
  
  const formatSlotTime = (time24) => {
@@ -113,17 +113,17 @@ const TeacherTimetablePage = () => {
  <div className="bg-primary/5 p-8 rounded-xl border border-primary/10 flex flex-col md:flex-row justify-between items-center gap-6">
  <div className="flex items-center gap-6">
  <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center text-white shadow-xl shadow-primary/20 rotate-3">
- <span className="material-symbols-outlined text-stat-value">schedule</span>
+ <span className="material-symbols-outlined text-kpi-value">schedule</span>
  </div>
  <div>
- <h3 className="text-slate-900 dark:text-slate-100 text-headline-sm">Weekly Planner</h3>
- <p className="text-body-sm text-slate-500 mt-1 opacity-60">Synchronized with Academic Administration</p>
+ <h3 className="text-slate-900 dark:text-slate-100 text-section-title">Weekly Planner</h3>
+ <p className="text-body-sm text-slate-500/80 mt-1 opacity-60">Synchronized with Academic Administration</p>
  </div>
  </div>
  <div className="flex gap-4">
  <div className="px-8 py-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 text-center shadow-sm">
- <p className="text-body-sm text-slate-400 mb-1">Total Periods</p>
- <p className="text-stat-value text-primary">{teacherSchedule.length}</p>
+ <p className="text-body-sm text-slate-400/80 mb-1">Total Periods</p>
+ <p className="text-kpi-value text-primary">{teacherSchedule.length}</p>
  </div>
  </div>
  </div>
@@ -136,10 +136,10 @@ const TeacherTimetablePage = () => {
  className={`flex-1 py-3 rounded-lg text-body-sm  transition-all flex items-center justify-center gap-2 ${
  activePeriod === 'morning' 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-400'
+ : 'text-slate-400/80'
  }`}
  >
- <span className="material-symbols-outlined text-headline-sm">wb_sunny</span>
+ <span className="material-symbols-outlined text-section-title">wb_sunny</span>
  Morning Period
  </button>
  <button
@@ -147,10 +147,10 @@ const TeacherTimetablePage = () => {
  className={`flex-1 py-3 rounded-lg text-body-sm  transition-all flex items-center justify-center gap-2 ${
  activePeriod === 'afternoon' 
  ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-400'
+ : 'text-slate-400/80'
  }`}
  >
- <span className="material-symbols-outlined text-headline-sm">dark_mode</span>
+ <span className="material-symbols-outlined text-section-title">dark_mode</span>
  Afternoon Period
  </button>
  </div>
