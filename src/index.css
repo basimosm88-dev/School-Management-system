@@ -1,4 +1,26 @@
-@import url('https://fonts.cdnfonts.com/css/mona-sans');
+@font-face {
+  font-family: "Mona Sans";
+  src: url("/fonts/MonaSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Mona Sans";
+  src: url("/fonts/MonaSans-Medium.woff2") format("woff2");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Mona Sans";
+  src: url("/fonts/MonaSans-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Mona Sans";
+  src: url("/fonts/MonaSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+}
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
@@ -7,7 +29,7 @@
   body {
     background-color: theme('colors.slate.50');
     color: theme('colors.slate.900');
-    font-family: 'Mona Sans', sans-serif;
+    font-family: "Mona Sans", sans-serif;
     font-size: 14px;
     line-height: 1.5;
     font-weight: 400;
@@ -467,10 +489,7 @@
    FORCE GLOBAL TYPOGRAPHY OVERRIDE (HIGHEST PRIORITY)
    ========================================================================== */
 
-/* 1. Force Font Family Everywhere */
-*, *::before, *::after {
-  font-family: "Mona Sans", system-ui, sans-serif !important;
-}
+
 
 /* 2. Page Titles */
 h1, .text-title, [class*="page-title"] {
