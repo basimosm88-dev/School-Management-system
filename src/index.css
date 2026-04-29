@@ -462,3 +462,75 @@
 .modal-overlay {
   z-index: 100;
 }
+
+/* ==========================================================================
+   FORCE GLOBAL TYPOGRAPHY OVERRIDE (HIGHEST PRIORITY)
+   ========================================================================== */
+
+/* 1. Force Font Family Everywhere */
+*, *::before, *::after {
+  font-family: "Mona Sans", system-ui, sans-serif !important;
+}
+
+/* 2. Page Titles */
+h1, .text-title, [class*="page-title"] {
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  line-height: 28px !important;
+}
+
+/* 3. Section Titles */
+h2, h3, .section-title, [class*="section-title"] {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  line-height: 24px !important;
+}
+
+/* 4. Body Text */
+p, li, .text-body {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 22px !important;
+}
+
+/* 5. Labels & Small Text */
+label, .text-label, .sidebar-text, [class*="label"], .text-sm {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+small, .text-xs, [class*="small"], [class*="muted"] {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+}
+
+/* 6. KPI Values (CRITICAL) */
+.stat-value, [class*="stat-value"], [class*="kpi-value"], .text-display {
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  line-height: 32px !important;
+}
+
+/* 7. Tables */
+.table-container th, table th, thead th {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 18px !important;
+}
+
+.table-container td, table td, tbody td {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+}
+
+/* 8. Buttons */
+button, .btn, [role="button"], .text-button {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+/* Reset specific overrides that might interfere with layout */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+}
