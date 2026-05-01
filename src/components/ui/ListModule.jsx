@@ -8,7 +8,7 @@ const ListModule = ({ role, title, primaryActionText, onPrimaryAction, children 
  <div className="flex justify-between items-center mb-6">
  <h2 className="text-section text-slate-900 dark:text-slate-100">{title} Directory</h2>
  <div className="flex gap-2">
- <button className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400/80 rounded-lg text-label hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
+ <button className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400/80 rounded-lg text-label hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
  <span className="material-symbols-outlined text-section">filter_list</span>
  Filter
  </button>
@@ -26,7 +26,7 @@ const ListModule = ({ role, title, primaryActionText, onPrimaryAction, children 
  
  <div className="overflow-x-auto">
  <table className="w-full text-left text-label text-slate-600 dark:text-slate-400/80">
- <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500/80 dark:text-slate-400/80 border-b border-slate-200 dark:border-slate-700">
+ <thead className="bg-slate-100 dark:bg-slate-800/50 text-slate-500/80 dark:text-slate-400/80 border-b border-slate-200 dark:border-slate-700">
  <tr>
  <th className="px-4 py-3 rounded-tl-lg">ID</th>
  <th className="px-4 py-3">Name</th>

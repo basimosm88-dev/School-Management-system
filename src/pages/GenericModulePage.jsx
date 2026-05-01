@@ -142,7 +142,7 @@ const GenericModulePage = ({ role, title, primaryActionText }) => {
  onPrimaryAction={primaryActionText ? () => setModalOpen(true) : null}
  >
  {items && items.length > 0 ? items.map((item) => (
- <tr key={item.id || item.date} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
+ <tr key={item.id || item.date} className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors group">
  <td className="px-4 py-3 text-slate-900 dark:text-slate-100">#{item.id || 'N/A'}</td>
  <td className="px-4 py-3 text-slate-800 dark:text-slate-300">
  {item.name || item.subject || item.date}

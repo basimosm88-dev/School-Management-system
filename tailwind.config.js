@@ -68,14 +68,24 @@ export default {
         gutter: "20px"
       },
       fontFamily: {
-        sans: ["Mona Sans", "system-ui", "sans-serif"],
+        "headline-sm": ["Inter", "sans-serif"],
+        "label-bold": ["Inter", "sans-serif"],
+        "stat-value": ["Inter", "sans-serif"],
+        "body-sm": ["Inter", "sans-serif"],
+        "body-md": ["Inter", "sans-serif"],
+        "display-bold": ["Inter", "sans-serif"],
+        headline: ["Inter", "sans-serif"],
+        display: ["Inter", "sans-serif"],
+        body: ["Inter", "sans-serif"],
+        label: ["Inter", "sans-serif"]
       },
       fontSize: {
-        "display": ["26px", { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "700" }],
-        "heading": ["22px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }],
-        "section": ["16px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "600" }],
-        "body": ["14px", { lineHeight: "22px", letterSpacing: "0.01em", fontWeight: "400" }],
-        "label": ["13px", { lineHeight: "18px", letterSpacing: "0.02em", fontWeight: "500" }],
+        "headline-sm": ["18px", { lineHeight: "24px", fontWeight: "600" }],
+        "label-bold": ["13px", { lineHeight: "18px", fontWeight: "600" }],
+        "stat-value": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+        "body-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+        "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+        "display-bold": ["24px", { lineHeight: "32px", fontWeight: "600" }]
       }
     },
   },

@@ -33,7 +33,7 @@ const StudentTimetablePage = () => {
  
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden overflow-x-auto transition-colors">
  <div className="min-w-[900px]">
- <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+ <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/20">
  <div className="p-4"></div>
  {days.map(day => (
  <div key={day} className="p-4 text-center text-slate-600 dark:text-slate-300 border-l border-slate-100 dark:border-slate-800 text-label">
@@ -73,7 +73,7 @@ const StudentTimetablePage = () => {
  const str = slot.subjectName || 'Break';
  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
  const colorClass = slot.isBreak 
- ? 'bg-slate-50 text-slate-500/80 dark:bg-slate-800/50 dark:text-slate-400/80 border-slate-100 dark:border-slate-700/50' 
+ ? 'bg-slate-100 text-slate-500/80 dark:bg-slate-800/50 dark:text-slate-400/80 border-slate-100 dark:border-slate-700/50' 
  : colors[Math.abs(hash) % colors.length];
  
  const formatSlotTime = (time24) => {

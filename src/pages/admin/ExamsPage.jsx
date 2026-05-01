@@ -136,7 +136,7 @@ const AdminExamsPage = () => {
  ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-left text-label">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400/80 text-label border-b border-slate-100 dark:border-slate-800">
+ <thead className="bg-slate-100/50 dark:bg-slate-800/50 text-slate-400/80 text-label border-b border-slate-100 dark:border-slate-800">
  <tr>
  <th className="px-8 py-5">Class & Subject</th>
  <th className="px-8 py-5">Exam Type</th>
@@ -146,7 +146,7 @@ const AdminExamsPage = () => {
  </thead>
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
  {pendingSubmissions.map((sub, i) => (
- <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+ <tr key={i} className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
  <td className="px-8 py-5">
  <div className="text-slate-800 dark:text-slate-200">{sub.className}</div>
  <div className="text-label text-primary">{sub.subjectName}</div>
@@ -199,7 +199,7 @@ const AdminExamsPage = () => {
  </div>
  <div className="p-6 max-h-[60vh] overflow-y-auto">
  <table className="w-full text-left text-label">
- <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-400/80 text-label">
+ <thead className="bg-slate-100 dark:bg-slate-800/50 text-slate-400/80 text-label">
  <tr>
  <th className="px-6 py-4 rounded-l-xl">Student</th>
  <th className="px-6 py-4">Grade</th>
@@ -228,20 +228,20 @@ const AdminExamsPage = () => {
  </tbody>
  </table>
  </div>
- <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl shrink-0">
- <button 
- onClick={() => setViewingSubmission(null)}
- className="px-6 py-2.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-label rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition-all"
- >
- Close
- </button>
- <button 
- onClick={() => { handleApprove(viewingSubmission); setViewingSubmission(null); }}
- className="px-6 py-2.5 bg-emerald-500 text-white text-label rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center gap-2"
- >
- <span className="material-symbols-outlined text-section">check_circle</span>
- Approve Submission
- </button>
+ <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl shrink-0">
+  <button 
+  onClick={() => setViewingSubmission(null)}
+  className="btn-secondary"
+  >
+  Close
+  </button>
+  <button 
+  onClick={() => { handleApprove(viewingSubmission); setViewingSubmission(null); }}
+  className="btn-success"
+  >
+  <span className="btn-icon">check_circle</span>
+  Approve Submission
+  </button>
  </div>
  </div>
  </div>
@@ -266,7 +266,7 @@ const AdminExamsPage = () => {
  <table className="w-full text-left text-label">
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
  {releasableExams.map((exam, i) => (
- <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+ <tr key={i} className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
  <td className="px-8 py-5">
  <div className="text-slate-800 dark:text-slate-200">{exam.className}</div>
  <div className="text-label text-slate-400/80">{exam.examType} Results</div>
@@ -396,7 +396,7 @@ const AdminExamsPage = () => {
  <p className="text-label text-slate-400/80 mt-2">Maximum subjects a student can fail before total failure.</p>
  </div>
  <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
- <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800">
+ <div className="bg-slate-100 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800">
  <h4 className="text-label text-slate-800 dark:text-slate-200 mb-4">Weightage Breakdown</h4>
  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
  {[

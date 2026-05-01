@@ -66,7 +66,7 @@ const TeacherSettings = () => {
  className={`flex items-center gap-3 px-4 py-3 rounded-xl  text-label transition-all ${
  activeTab === tab.id 
  ? 'bg-primary text-white shadow-lg shadow-primary/20' 
- : 'bg-white dark:bg-slate-900 text-slate-500/80 dark:text-slate-400/80 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
+ : 'bg-white dark:bg-slate-900 text-slate-500/80 dark:text-slate-400/80 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
  }`}
  >
  <span className="material-symbols-outlined text-display">{tab.icon}</span>
@@ -99,7 +99,7 @@ const TeacherSettings = () => {
  type="text" 
  value={profileData.name}
  onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  <div className="space-y-1.5">
@@ -108,7 +108,7 @@ const TeacherSettings = () => {
  type="email" 
  value={profileData.email}
  onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  <div className="space-y-1.5">
@@ -117,7 +117,7 @@ const TeacherSettings = () => {
  type="text" 
  value={profileData.phone}
  onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  </div>
@@ -140,7 +140,7 @@ const TeacherSettings = () => {
  type="password" 
  value={passwords.current}
  onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  <div className="grid grid-cols-2 gap-4">
@@ -150,7 +150,7 @@ const TeacherSettings = () => {
  type="password" 
  value={passwords.new}
  onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  <div className="space-y-1.5">
@@ -159,7 +159,7 @@ const TeacherSettings = () => {
  type="password" 
  value={passwords.confirm}
  onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
- className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+ className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
  />
  </div>
  </div>
@@ -220,7 +220,7 @@ const TeacherSettings = () => {
  <h3 className="text-slate-800 dark:text-white mb-4">Notification Preferences</h3>
  <div className="space-y-3">
  {Object.entries(notificationSettings.types).map(([key, value]) => (
- <label key={key} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
+ <label key={key} className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
  <div className="flex items-center gap-3">
  <div className="w-10 h-10 bg-white dark:bg-slate-900 rounded-lg flex items-center justify-center shadow-sm">
  <span className="material-symbols-outlined text-slate-400/80">

@@ -47,7 +47,7 @@ const DynamicForm = ({ fields, initialData = {}, onChange }) => {
  className="form-input-custom min-h-[100px] resize-none"
  ></textarea>
  ) : field.type === 'checkbox' ? (
- <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
+ <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all">
  <input
  type="checkbox"
  checked={!!formData[field.name]}

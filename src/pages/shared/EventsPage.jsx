@@ -67,9 +67,9 @@ const EventsPage = ({ role }) => {
  {(role === 'admin' || (role === 'teacher' && permissions.teachers.createEvents)) && (
  <button 
  onClick={() => setModalOpen(true)}
- className="bg-primary text-white px-6 py-3 rounded-xl text-label shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2"
+ className="btn-primary"
  >
- <span className="material-symbols-outlined text-display">add</span>
+ <span className="btn-icon">add</span>
  Create Event
  </button>
  )}
@@ -86,7 +86,7 @@ const EventsPage = ({ role }) => {
  filteredEvents.sort((a,b) => new Date(a.date) - new Date(b.date)).map(event => (
  <div key={event.id} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
  <div className="flex gap-6">
- <div className="flex flex-col items-center justify-center w-20 h-20 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group-hover:bg-primary group-hover:border-primary transition-all">
+ <div className="flex flex-col items-center justify-center w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group-hover:bg-primary group-hover:border-primary transition-all">
  <span className="text-label text-slate-400/80 dark:text-slate-500/80 group-hover:text-white/70">
  {event.date ? new Date(event.date).toLocaleString('default', { month: 'short' }) : 'N/A'}
  </span>
@@ -136,53 +136,60 @@ const EventsPage = ({ role }) => {
 
  {/* Calendar Sidebar */}
  <div className="col-span-1 md:col-span-12 lg:col-span-4">
- <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm sticky top-24">
- <div className="flex justify-between items-center mb-6">
- <h3 className="text-label text-slate-900 dark:text-white flex items-center gap-2">
- <span className="material-symbols-outlined text-primary">calendar_month</span>
- Monthly Overview
- </h3>
- <span className="text-label bg-blue-50 dark:bg-blue-900/30 text-primary px-2 py-1 rounded">{monthName} {currentYear}</span>
- </div>
- 
- <div className="grid grid-cols-7 gap-1 text-center mb-4">
- {['S','M','T','W','T','F','S'].map(d => (
- <span key={d} className="text-label text-slate-400/80 dark:text-slate-500/80">{d}</span>
- ))}
- </div>
- <div className="grid grid-cols-7 gap-1">
- {Array.from({ length: firstDayOfMonth }).map((_, i) => (
- <div key={`empty-${i}`} className="aspect-square"></div>
- ))}
- {Array.from({length: daysInMonth}).map((_, i) => {
- const day = i + 1;
- const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
- const hasEvent = (events || []).some(e => e.date === dateStr);
- const isToday = day === today.getDate();
- 
- return (
- <div key={i} className={`aspect-square flex items-center justify-center rounded-xl text-label  cursor-pointer transition-all
- ${isToday ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-slate-600 dark:text-slate-400/80 hover:bg-slate-50 dark:hover:bg-slate-800'}
- ${hasEvent && !isToday ? 'ring-2 ring-primary/20 ring-offset-1 dark:ring-offset-slate-900' : ''}
- `}>
- {day}
- </div>
- );
- })}
- </div>
+   <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm sticky top-24 transition-all">
+     <div className="flex justify-between items-center mb-6 shrink-0">
+       <h2 className="text-headline text-slate-900 dark:text-white">Calendar</h2>
+       <div className="bg-primary/5 dark:bg-primary/10 text-primary px-3 py-1.5 rounded-xl text-label font-bold border border-primary/10">
+         {monthName} {currentYear}
+       </div>
+     </div>
+     
+     <div className="grid grid-cols-7 gap-1 text-center mb-4 shrink-0">
+       {['S','M','T','W','T','F','S'].map(d => (
+         <span key={d} className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{d}</span>
+       ))}
+     </div>
+     
+     <div className="grid grid-cols-7 gap-1">
+       {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+         <div key={`empty-${i}`} className="aspect-square flex items-center justify-center"></div>
+       ))}
+       {Array.from({length: daysInMonth}).map((_, i) => {
+         const day = i + 1;
+         const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+         const hasEvent = (events || []).some(e => e.date === dateStr);
+         const isToday = day === today.getDate();
+         
+         return (
+           <div 
+             key={i} 
+             className={`aspect-square flex items-center justify-center rounded-lg text-xs font-semibold cursor-pointer transition-all relative
+               ${isToday 
+                 ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105 z-10' 
+                 : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'
+               }`}
+           >
+             {day}
+             {hasEvent && (
+               <span className={`absolute bottom-1 w-1 h-1 rounded-full ${isToday ? 'bg-white' : 'bg-primary'}`}></span>
+             )}
+           </div>
+         );
+       })}
+     </div>
 
- <div className="mt-8 space-y-4">
- <h4 className="text-label text-slate-400/80">Legend</h4>
- <div className="flex items-center gap-3 text-label text-slate-600 dark:text-slate-400/80">
- <span className="w-2 h-2 rounded-full bg-primary"></span>
- <span>General Event</span>
- </div>
- <div className="flex items-center gap-3 text-label text-slate-600 dark:text-slate-400/80">
- <span className="w-2 h-2 rounded-full bg-amber-400"></span>
- <span>Teacher Meeting</span>
- </div>
- </div>
- </div>
+     <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3 shrink-0">
+       <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Legend</h4>
+       <div className="flex items-center gap-3 text-label text-slate-600 dark:text-slate-400/80">
+         <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+         <span>General Event</span>
+       </div>
+       <div className="flex items-center gap-3 text-label text-slate-600 dark:text-slate-400/80">
+         <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+         <span>Teacher Meeting</span>
+       </div>
+     </div>
+   </div>
  </div>
  </div>
 
@@ -194,3 +201,4 @@ const EventsPage = ({ role }) => {
 };
 
 export default EventsPage;
+

@@ -128,7 +128,7 @@ const AdminAttendancePage = () => {
  endDate: new Date().toISOString().split('T')[0],
  status: ''
  })}
- className="px-6 py-3 bg-slate-50 dark:bg-slate-800 text-slate-500/80 text-label rounded-lg hover:bg-slate-100 transition-all border border-slate-100 dark:border-slate-700"
+ className="btn-secondary"
  >Reset Filters</button>
  </div>
  </div>
@@ -182,7 +182,7 @@ const AdminAttendancePage = () => {
  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
  {/* MAIN DATA TABLE */}
  <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden transition-colors">
- <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/30 dark:bg-slate-800/20">
+ <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-100/30 dark:bg-slate-800/20">
  <h4 className="text-label text-slate-800 dark:text-slate-200">
  {viewType === 'session' ? 'Subject Session Logs' : 'Auto-Calculated Daily Summaries'}
  </h4>
@@ -192,7 +192,7 @@ const AdminAttendancePage = () => {
  </div>
  <div className="overflow-x-auto max-h-[600px]">
  <table className="w-full text-left text-label">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-label text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
+ <thead className="bg-slate-100/50 dark:bg-slate-800/50 text-label text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
  {viewType === 'session' ? (
  <tr>
  <th className="px-8 py-4">Student</th>
@@ -213,7 +213,7 @@ const AdminAttendancePage = () => {
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
  {viewType === 'session' ? (
  filteredAttendance.map(a => (
- <tr key={a.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+ <tr key={a.id} className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
  <td className="px-8 py-5">
  <span className="text-slate-700 dark:text-slate-200 block truncate max-w-[150px]">
  {students.find(s => s.id === a.studentId)?.name || 'Unknown'}
@@ -242,7 +242,7 @@ const AdminAttendancePage = () => {
  ))
  ) : (
  dailySummaries.map(s => (
- <tr key={s.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+ <tr key={s.id} className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
  <td className="px-8 py-5">
  <span className="text-slate-700 dark:text-slate-200">
  {students.find(std => std.id === s.studentId)?.name || 'Unknown'}
@@ -296,7 +296,7 @@ const AdminAttendancePage = () => {
  <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
  {studentPerformance.map((s, idx) => (
  <div key={s.id} className="group relative">
- <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100/50 dark:border-slate-700/50 hover:border-primary/30 transition-all">
+ <div className="flex items-center justify-between p-4 rounded-xl bg-slate-100/50 dark:bg-slate-800/30 border border-slate-100/50 dark:border-slate-700/50 hover:border-primary/30 transition-all">
  <div className="flex items-center gap-4">
  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-label  ${
  idx === 0 ? 'bg-amber-400 text-white shadow-lg shadow-amber-400/20' :

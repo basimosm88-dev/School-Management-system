@@ -49,31 +49,36 @@ colors:
   on-background: '#191b25'
   surface-variant: '#e1e1ef'
 typography:
-  display:
-    fontFamily: Mona Sans
-    fontSize: 26px
-    fontWeight: '700'
-    lineHeight: 32px
-  heading:
-    fontFamily: Mona Sans
-    fontSize: 22px
+  display-bold:
+    fontFamily: Epilogue
+    fontSize: 24px
     fontWeight: '600'
-    lineHeight: 28px
-  section:
-    fontFamily: Mona Sans
-    fontSize: 16px
+    lineHeight: 32px
+  headline-sm:
+    fontFamily: Epilogue
+    fontSize: 18px
     fontWeight: '600'
     lineHeight: 24px
-  body:
-    fontFamily: Mona Sans
+  body-md:
+    fontFamily: Epilogue
     fontSize: 14px
     fontWeight: '400'
-    lineHeight: 22px
-  label:
-    fontFamily: Mona Sans
+    lineHeight: 20px
+  body-sm:
+    fontFamily: Epilogue
+    fontSize: 12px
+    fontWeight: '400'
+    lineHeight: 16px
+  label-bold:
+    fontFamily: Epilogue
     fontSize: 13px
-    fontWeight: '500'
+    fontWeight: '600'
     lineHeight: 18px
+  stat-value:
+    fontFamily: Epilogue
+    fontSize: 20px
+    fontWeight: '600'
+    lineHeight: 28px
 rounded:
   sm: 0.25rem
   DEFAULT: 0.5rem
@@ -100,7 +105,7 @@ The palette is rooted in a functional "Light Mode" default, emphasizing a clean,
 - **Text Hierarchy:** Deep slate (#0F172A) is used for headings to ensure maximum legibility, while a mid-gray (#757682) is used for secondary body text and metadata.
 
 ## Typography
-The system uses **Mona Sans** for its modern, dynamic, and systematic qualities which excel in dashboard environments. 
+The system uses **Epilogue** for its contemporary, sans-serif character which brings a slightly more distinct and personality-driven feel to dashboard environments while maintaining high readability. 
 - **Headings:** Bold weights are used for page titles and card headers to establish a clear hierarchy.
 - **Stats:** Numeric data should use semi-bold weights with consistent tabular lining where possible.
 - **Labels:** Small caps or slightly smaller font sizes with increased weight are used for secondary labels to distinguish them from actionable body text.
@@ -114,7 +119,7 @@ The layout follows a **Fixed-Fluid Hybrid** model.
 ## Elevation & Depth
 This system avoids heavy, traditional shadows in favor of **Tonal Layering** and **Ambient Depth**.
 - **Level 0 (Background):** #F8FAFC.
-- **Level 1 (Cards/Sidebar):** White (#FFFFFF) with a very soft, high-diffusion shadow (`0px 4px 20px rgba(0, 0, 0, 0.03)`).
+- **Level 1 (Cards/Sidebar):** White (#FFFFFF) with a very soft, high-diffusion shadow (0px 4px 20px rgba(0, 0, 0, 0.03)).
 - **Overlays (Tooltips/Dropdowns):** Use a slightly more defined shadow and a thin 1px border (#757682 at low opacity) to ensure separation from Level 1 surfaces.
 - **Focus States:** Elements "lift" slightly or receive a primary blue ring rather than a shadow increase.
 

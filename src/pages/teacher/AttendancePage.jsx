@@ -182,7 +182,7 @@ const TeacherAttendancePage = () => {
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden transition-colors min-h-[400px]">
  {!selectedSessionId ? (
  <div className="flex flex-col items-center justify-center h-[400px] text-slate-400/80">
- <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
+ <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
  <span className="material-symbols-outlined text-display">fact_check</span>
  </div>
  <p className="text-label opacity-60">Select class and session to take attendance</p>
@@ -190,7 +190,7 @@ const TeacherAttendancePage = () => {
  ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-left text-label">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-400/80 text-label border-b border-slate-100 dark:border-slate-800">
+ <thead className="bg-slate-100/50 dark:bg-slate-800/50 text-slate-400/80 text-label border-b border-slate-100 dark:border-slate-800">
  <tr>
  <th className="px-8 py-5">Student Information</th>
  <th className="px-8 py-5">Student ID</th>
@@ -199,7 +199,7 @@ const TeacherAttendancePage = () => {
  </thead>
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
  {classStudents.map(student => (
- <tr key={student.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
+ <tr key={student.id} className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors group">
  <td className="px-8 py-5">
  <div className="flex items-center gap-4">
  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-label">

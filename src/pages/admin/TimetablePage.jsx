@@ -85,10 +85,14 @@ const AdminTimetablePage = () => {
  setFormData({ ...formData, isBreak, subjectName: '', teacherId: '' });
  };
 
- const handleSubjectChange = (name) => {
- const sub = classSubjects.find(s => s.name === name);
- setFormData({ ...formData, subjectName: name, teacherId: sub?.teacherId || '' });
- };
+  const handleSubjectChange = (name) => {
+    const classSub = classSubjects.find(s => s.name === name);
+    if (classSub) {
+      setFormData({ ...formData, subjectName: name, teacherId: classSub.teacherId.toString() });
+    } else {
+      setFormData({ ...formData, subjectName: name, teacherId: '' });
+    }
+  };
 
  const renderGridBlock = (title, hoursRange) => (
  <div className="mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
@@ -100,7 +104,7 @@ const AdminTimetablePage = () => {
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden overflow-x-auto transition-colors">
  <div className="min-w-[900px]">
  {/* Header Row */}
- <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
+ <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/20">
  <div className="p-4"></div>
  {days.map(day => (
  <div key={day} className="p-4 text-center text-slate-600 dark:text-slate-300 border-l border-slate-100 dark:border-slate-800 text-label">
@@ -143,7 +147,7 @@ const AdminTimetablePage = () => {
  const str = slot.subjectName || 'Break';
  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
  const colorClass = slot.isBreak 
- ? 'bg-slate-50 text-slate-500/80 dark:bg-slate-800/50 dark:text-slate-400/80 border-slate-100 dark:border-slate-700/50' 
+ ? 'bg-slate-100 text-slate-500/80 dark:bg-slate-800/50 dark:text-slate-400/80 border-slate-100 dark:border-slate-700/50' 
  : colors[Math.abs(hash) % colors.length];
  
  const formatSlotTime = (time24) => {
@@ -207,9 +211,9 @@ const AdminTimetablePage = () => {
  <button 
  disabled={!selectedClassId}
  onClick={() => setShowModal(true)}
- className="px-6 py-3 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-30 flex items-center gap-2"
+ className="btn-primary"
  >
- <span className="material-symbols-outlined text-section">add_circle</span>
+ <span className="btn-icon">add_circle</span>
  Add Session
  </button>
  </div>
@@ -265,7 +269,7 @@ const AdminTimetablePage = () => {
  {/* WEEKLY GRID */}
  {!selectedClassId ? (
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 h-[400px] flex flex-col items-center justify-center text-slate-300 transition-colors">
- <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
+ <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
  <span className="material-symbols-outlined text-display">event_note</span>
  </div>
  <p className="text-label opacity-60">Choose a class to manage its schedule</p>
@@ -284,7 +288,7 @@ const AdminTimetablePage = () => {
  {showModal && (
  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
  <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
- <div className="px-8 py-8 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+ <div className="px-8 py-8 bg-slate-100 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
  <h3 className="text-label text-slate-800 dark:text-slate-200">New Session Slot</h3>
  <button onClick={() => setShowModal(false)} className="text-slate-400/80 hover:text-slate-600 transition-colors">
  <span className="material-symbols-outlined">close</span>
@@ -347,27 +351,54 @@ const AdminTimetablePage = () => {
  </div>
  </div>
 
- {!formData.isBreak && (
- <>
- <div>
- <label className="text-label text-slate-400/80 mb-2 block">Subject</label>
- <select 
- value={formData.subjectName}
- onChange={e => handleSubjectChange(e.target.value)}
- className="form-input-custom w-full"
- >
- <option value="">Select subject...</option>
- {classSubjects.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
- </select>
- </div>
- <div>
- <label className="text-label text-slate-400/80 mb-2 block">Teacher</label>
- <div className="form-input-custom w-full bg-slate-50 dark:bg-slate-800/50 flex items-center text-slate-600">
- {formData.teacherId ? teachers.find(t => t.id === parseInt(formData.teacherId))?.name : 'Auto-filled based on subject'}
- </div>
- </div>
- </>
- )}
+  {!formData.isBreak && (
+    <>
+      <div>
+        <label className="text-label text-slate-400/80 mb-2 block">Subject</label>
+        <select 
+          value={formData.subjectName}
+          onChange={e => handleSubjectChange(e.target.value)}
+          className="form-input-custom w-full"
+        >
+          <option value="">Select subject...</option>
+          {classSubjects.length > 0 && (
+            <optgroup label="Class Subjects">
+              {classSubjects.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+            </optgroup>
+          )}
+          <optgroup label="Other Subjects">
+            {subjects
+              .filter(s => !classSubjects.some(cs => cs.name === s.name))
+              .map(s => <option key={s.id} value={s.name}>{s.name}</option>)
+            }
+          </optgroup>
+        </select>
+      </div>
+      <div>
+        <label className="text-label text-slate-400/80 mb-2 block">Teacher</label>
+        {classSubjects.some(s => s.name === formData.subjectName) ? (
+          <div className="form-input-custom w-full bg-slate-100 dark:bg-slate-800/50 flex items-center text-slate-600">
+            {formData.teacherId ? teachers.find(t => t.id === parseInt(formData.teacherId))?.name : 'Auto-filled based on subject'}
+          </div>
+        ) : (
+          <select 
+            value={formData.teacherId}
+            onChange={e => setFormData({...formData, teacherId: e.target.value})}
+            className="form-input-custom w-full"
+            required={!formData.isBreak}
+          >
+            <option value="">Select Teacher...</option>
+            {teachers.map(t => <option key={t.id} value={t.id.toString()}>{t.name}</option>)}
+          </select>
+        )}
+        {!classSubjects.some(s => s.name === formData.subjectName) && formData.subjectName && (
+          <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1 font-bold">
+            Note: This subject is not assigned to this class. Manual teacher selection required.
+          </p>
+        )}
+      </div>
+    </>
+  )}
 
  <button 
  onClick={handleAddSlot}

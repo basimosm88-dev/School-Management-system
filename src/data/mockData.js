@@ -139,17 +139,24 @@ export const initialData = {
  { id: 2, name: "Physics", code: "PHY101", levels: ["Secondary"], weeklyPeriods: 4, status: "Active" },
  { id: 3, name: "English", code: "ENG101", levels: ["Primary", "Middle", "Secondary"], weeklyPeriods: 5, status: "Active" }
  ],
- attendance: [
- { studentId: 1, present: 95, absent: 5, lastUpdated: "2026-04-25" },
- { studentId: 2, present: 88, absent: 12, lastUpdated: "2026-04-25" },
- { date: "2026-04-19", present: 95, absent: 5 },
- { date: "2026-04-20", present: 92, absent: 8 },
- { date: "2026-04-21", present: 98, absent: 2 },
- { date: "2026-04-22", present: 94, absent: 6 },
- { date: "2026-04-23", present: 91, absent: 9 },
- { date: "2026-04-24", present: 96, absent: 4 },
- { date: "2026-04-25", present: 97, absent: 3 }
- ],
+  attendance: [
+    // Summary records (keep for backward compat)
+    { studentId: 1, present: 95, absent: 5, lastUpdated: "2026-04-25" },
+    { studentId: 2, present: 88, absent: 12, lastUpdated: "2026-04-25" },
+    
+    // Daily records for Student 1
+    { id: 101, studentId: 1, classId: 1, date: "2026-04-25", status: "Present", startTime: "08:00", endTime: "12:00", subjectName: "Mathematics" },
+    { id: 102, studentId: 1, classId: 1, date: "2026-04-24", status: "Present", startTime: "08:00", endTime: "12:00", subjectName: "Physics" },
+    { id: 103, studentId: 1, classId: 1, date: "2026-04-23", status: "Late", startTime: "08:00", endTime: "12:00", subjectName: "English" },
+    { id: 104, studentId: 1, classId: 1, date: "2026-04-22", status: "Present", startTime: "08:00", endTime: "12:00", subjectName: "Mathematics" },
+    { id: 105, studentId: 1, classId: 1, date: "2026-04-21", status: "Absent", startTime: "08:00", endTime: "12:00", subjectName: "Physics" },
+    { id: 106, studentId: 1, classId: 1, date: "2026-04-20", status: "Present", startTime: "08:00", endTime: "12:00", subjectName: "English" },
+    { id: 107, studentId: 1, classId: 1, date: "2026-04-19", status: "Present", startTime: "08:00", endTime: "12:00", subjectName: "Mathematics" },
+
+    // Daily records for Student 2
+    { id: 201, studentId: 2, classId: 1, date: "2026-04-25", status: "Present", startTime: "08:00", endTime: "12:00", subjectName: "Mathematics" },
+    { id: 202, studentId: 2, classId: 1, date: "2026-04-24", status: "Absent", startTime: "08:00", endTime: "12:00", subjectName: "Physics" },
+  ],
  events: [
  { 
  id: 1, 
@@ -244,11 +251,36 @@ export const initialData = {
  { id: 2, message: "Teacher Mark Stevens assigned to Class 10A", date: "2026-04-25T11:30:00Z" },
  { id: 3, message: "Grades submitted for Mathematics", date: "2026-04-25T14:15:00Z" }
  ],
- grades: [
- { id: 1, studentId: 1, subject: "Mathematics", type: "Midterm", grade: "A", status: "PUBLISHED", releaseDate: new Date().toISOString(), teacherId: 1 },
- { id: 2, studentId: 2, subject: "Mathematics", type: "Midterm", grade: "B+", status: "APPROVED", releaseDate: new Date(Date.now() + 86400000).toISOString(), teacherId: 1 },
- { id: 3, studentId: 3, subject: "Physics", type: "Quiz 1", grade: "A-", status: "SUBMITTED", releaseDate: null, teacherId: 2 }
- ],
+  exams: [
+    // --- PREVIOUS YEAR (Class 9A - id: 2) ---
+    { id: 101, studentId: 1, classId: 2, subjectName: "Mathematics", examType: "Before Midterm", grade: 80, status: "PUBLISHED", releaseDate: "2025-03-10", date: "2025-03-05" },
+    { id: 102, studentId: 1, classId: 2, subjectName: "Mathematics", examType: "Midterm", grade: 82, status: "PUBLISHED", releaseDate: "2025-04-15", date: "2025-04-10" },
+    { id: 103, studentId: 1, classId: 2, subjectName: "Mathematics", examType: "After Midterm", grade: 85, status: "PUBLISHED", releaseDate: "2025-05-20", date: "2025-05-15" },
+    { id: 104, studentId: 1, classId: 2, subjectName: "Mathematics", examType: "Final", grade: 88, status: "PUBLISHED", releaseDate: "2025-06-25", date: "2025-06-20" },
+    
+    { id: 105, studentId: 1, classId: 2, subjectName: "Physics", examType: "Before Midterm", grade: 75, status: "PUBLISHED", releaseDate: "2025-03-10", date: "2025-03-06" },
+    { id: 106, studentId: 1, classId: 2, subjectName: "Physics", examType: "Midterm", grade: 72, status: "PUBLISHED", releaseDate: "2025-04-15", date: "2025-04-11" },
+    { id: 107, studentId: 1, classId: 2, subjectName: "Physics", examType: "After Midterm", grade: 78, status: "PUBLISHED", releaseDate: "2025-05-20", date: "2025-05-16" },
+    { id: 108, studentId: 1, classId: 2, subjectName: "Physics", examType: "Final", grade: 80, status: "PUBLISHED", releaseDate: "2025-06-25", date: "2025-06-21" },
+
+    // --- CURRENT YEAR (Class 10A - id: 1) ---
+    // Mathematics
+    { id: 1, studentId: 1, classId: 1, subjectName: "Mathematics", examType: "Before Midterm", grade: 85, status: "PUBLISHED", releaseDate: "2026-03-10", date: "2026-03-05" },
+    { id: 3, studentId: 1, classId: 1, subjectName: "Mathematics", examType: "Midterm", grade: 92, status: "PUBLISHED", releaseDate: "2026-04-15", date: "2026-04-10" },
+    
+    // Physics
+    { id: 2, studentId: 1, classId: 1, subjectName: "Physics", examType: "Before Midterm", grade: 78, status: "PUBLISHED", releaseDate: "2026-03-10", date: "2026-03-06" },
+    { id: 109, studentId: 1, classId: 1, subjectName: "Physics", examType: "Midterm", grade: 81, status: "PUBLISHED", releaseDate: "2026-04-15", date: "2026-04-11" },
+
+    // English
+    { id: 110, studentId: 1, classId: 1, subjectName: "English", examType: "Before Midterm", grade: 88, status: "PUBLISHED", releaseDate: "2026-03-10", date: "2026-03-07" },
+    { id: 111, studentId: 1, classId: 1, subjectName: "English", examType: "Midterm", grade: 90, status: "PUBLISHED", releaseDate: "2026-04-15", date: "2026-04-12" },
+
+    // Upcoming / Draft (Should NOT show for students)
+    { id: 4, studentId: 1, classId: 1, subjectName: "Mathematics", examType: "After Midterm", grade: 0, status: "SCHEDULED", date: "2026-05-20" },
+    { id: 5, studentId: 1, classId: 1, subjectName: "Physics", examType: "After Midterm", grade: 0, status: "SCHEDULED", date: "2026-05-22" },
+    { id: 112, studentId: 1, classId: 1, subjectName: "English", examType: "After Midterm", grade: 75, status: "DRAFT", date: "2026-05-25" },
+  ],
  notifications: [
  { 
  id: 1, 

@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import AdminDashboard from './pages/admin/AdminDashboard';
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
 import StudentDashboard from './pages/student/StudentDashboard';
+import ProfilePage from './pages/student/ProfilePage';
 import StudentSettings from './pages/student/StudentSettings';
 import Login from './pages/auth/Login';
 import GenericModulePage from './pages/GenericModulePage';
@@ -75,9 +76,8 @@ function App() {
 
  {/* Student Routes */}
  <Route path="/student" element={<StudentDashboard />} />
- <Route path="/student/profile" element={<GenericModulePage role="student" title="My Profile" />} />
+ <Route path="/student/profile" element={<ProfilePage />} />
  <Route path="/student/attendance" element={<StudentAttendancePage />} />
- <Route path="/student/grades" element={<GenericModulePage role="student" title="My Grades" />} />
  <Route path="/student/timetable" element={<StudentTimetablePage />} />
  <Route path="/student/exams" element={<StudentExamsPage />} />
  <Route path="/student/results" element={<ResultsPage role="student" />} />

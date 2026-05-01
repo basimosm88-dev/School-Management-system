@@ -53,7 +53,7 @@ const StudentAttendancePage = () => {
 
  {/* TABS & LISTS */}
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden transition-colors">
- <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-50/30 dark:bg-slate-800/10">
+ <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-100/30 dark:bg-slate-800/10">
  <div className="flex bg-slate-200/50 dark:bg-slate-800/50 p-1.5 rounded-xl">
  <button 
  onClick={() => setActiveTab('daily')}
@@ -91,7 +91,7 @@ const StudentAttendancePage = () => {
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
  {activeTab === 'daily' ? (
  summary.dailySummary.map(day => (
- <tr key={day.date} className="hover:bg-slate-50/30 dark:hover:bg-slate-800/30 transition-colors">
+ <tr key={day.date} className="hover:bg-slate-100/30 dark:hover:bg-slate-800/30 transition-colors">
  <td className="px-10 py-6">
  <div className="flex items-center gap-4">
  <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center border border-slate-200/50 dark:border-slate-700/50">
@@ -127,7 +127,7 @@ const StudentAttendancePage = () => {
  ))
  ) : (
  summary.sessionHistory.map(session => (
- <tr key={session.id} className="hover:bg-slate-50/30 dark:hover:bg-slate-800/30 transition-colors">
+ <tr key={session.id} className="hover:bg-slate-100/30 dark:hover:bg-slate-800/30 transition-colors">
  <td className="px-10 py-6">
  <div>
  <span className="text-label text-slate-800 dark:text-slate-100 block mb-1">{session.subjectName}</span>

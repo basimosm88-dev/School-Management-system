@@ -64,7 +64,7 @@ const ClassFullResultsPrint = () => {
  <div className="flex justify-between items-center border-b-4 border-slate-900 pb-10 mb-10 relative z-10">
  <div className="flex items-center gap-6">
  {pdfSettings.showLogo && (
- <div className="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center border-2 border-slate-900 overflow-hidden">
+ <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center border-2 border-slate-900 overflow-hidden">
  {schoolSettings.logo ? (
  <img src={schoolSettings.logo} alt="Logo" className="w-full h-full object-cover" />
  ) : (
@@ -127,7 +127,7 @@ const ClassFullResultsPrint = () => {
  const studentRank = rankings.find(r => r.studentId === student.id);
  
  return (
- <tr key={student.id} className={sIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+ <tr key={student.id} className={sIdx % 2 === 0 ? 'bg-white' : 'bg-slate-100'}>
  <td className="border border-slate-300 px-3 py-3 text-label sticky left-0 bg-inherit z-10">
  {student.name}
  </td>

@@ -104,7 +104,7 @@ const ClassesPage = () => {
  placeholder="Search by grade or section..."
  value={searchTerm}
  onChange={(e) => setSearchTerm(e.target.value)}
- className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
+ className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
  />
  </div>
 
@@ -112,7 +112,7 @@ const ClassesPage = () => {
  <select
  value={filters.level}
  onChange={(e) => setFilters({ ...filters, level: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+ className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
  <option value="">Level</option>
  <option value="Primary">Primary</option>
@@ -122,7 +122,7 @@ const ClassesPage = () => {
  <select
  value={filters.status}
  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
- className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+ className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
  <option value="">Status</option>
  <option value="Active">Active</option>
@@ -134,9 +134,9 @@ const ClassesPage = () => {
 
  <button
  onClick={handleAdd}
- className="bg-primary text-white px-5 py-2.5 rounded-lg text-label hover:bg-primary/90 transition-all shadow-sm flex items-center gap-2"
+ className="btn-primary"
  >
- <span className="material-symbols-outlined text-display">add_box</span>
+ <span className="btn-icon">add_box</span>
  Add Class Section
  </button>
  </div>
@@ -145,7 +145,7 @@ const ClassesPage = () => {
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden transition-colors">
  <div className="overflow-x-auto">
  <table className="w-full text-left text-label">
- <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-500/80 dark:text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
+ <thead className="bg-slate-100/50 dark:bg-slate-800/50 text-slate-500/80 dark:text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
  <tr>
  <th className="px-6 py-4">Class Name</th>
  <th className="px-6 py-4">Level</th>
@@ -163,7 +163,7 @@ const ClassesPage = () => {
  return (
  <tr
  key={cls.id}
- className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer"
+ className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer"
  onClick={() => handleViewProfile(cls)}
  >
  <td className="px-6 py-4">
@@ -300,7 +300,7 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  onSubmit={(e) => { e.preventDefault(); onSave(formData); }}
  className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto animate-in zoom-in-95 duration-300 flex flex-col"
  >
- <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-3xl">
+ <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 rounded-t-3xl">
  <h3 className="text-slate-900 dark:text-slate-100 text-section flex items-center gap-2">
  <span className="material-symbols-outlined text-primary">add_box</span>
  {cls ? 'Edit Class Section' : 'Create New Class Section'}
@@ -436,7 +436,7 @@ const ClassForm = ({ cls, teachers, onClose, onSave }) => {
  </div>
  </div>
 
- <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl">
+ <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl">
  <button type="button" onClick={onClose} className="px-6 py-2.5 text-label text-slate-500/80 dark:text-slate-400/80 hover:text-slate-700 transition-all">Cancel</button>
  <button type="submit" className="px-8 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save class details</button>
  </div>
@@ -469,7 +469,7 @@ const ClassProfile = ({
  <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-6xl shadow-2xl border border-slate-200 dark:border-slate-700/50 animate-in zoom-in-95 duration-300 overflow-hidden flex flex-col max-h-[95vh]">
  
  {/* Header Section */}
- <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20 relative">
+ <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-950/20 relative">
  <div className="flex justify-between items-start">
  <div className="flex gap-6 items-center">
  <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20">
@@ -547,7 +547,7 @@ const ClassProfile = ({
  </div>
 
  <div className="grid grid-cols-1 gap-8">
- <div className="bg-slate-50/50 dark:bg-slate-950/20 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
+ <div className="bg-slate-100/50 dark:bg-slate-950/20 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
  <h4 className="text-label text-slate-800 dark:text-slate-200 mb-6">Class Supervision</h4>
  <div className="flex flex-col sm:flex-row gap-6">
  <div className="flex-1 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
@@ -569,7 +569,7 @@ const ClassProfile = ({
  </div>
  </div>
 
- <div className="bg-slate-50/50 dark:bg-slate-950/20 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
+ <div className="bg-slate-100/50 dark:bg-slate-950/20 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
  <h4 className="text-label text-slate-800 dark:text-slate-200 mb-4">Description / Notes</h4>
  <p className="text-label text-slate-600 dark:text-slate-400/80 italic leading-relaxed">
  {cls.notes || "No detailed notes provided for this class section."}
@@ -594,7 +594,7 @@ const ClassProfile = ({
  </div>
 
  {isAddingStudent && (
- <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2">
+ <div className="p-6 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2">
  <p className="text-label text-slate-400/80 mb-4">Select Unassigned Student</p>
  <div className="flex gap-4">
  <select 
@@ -674,7 +674,7 @@ const ClassProfile = ({
  </div>
 
  {isAddingSubject && (
- <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2">
+ <div className="p-6 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2">
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  <div>
  <label className="text-label text-slate-400/80 mb-2 block">Select Subject</label>
@@ -723,7 +723,7 @@ const ClassProfile = ({
  return (
  <div key={idx} className="p-6 bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm flex items-center justify-between">
  <div className="flex items-center gap-4">
- <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center">
+ <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center">
  <span className="material-symbols-outlined text-slate-400/80">auto_stories</span>
  </div>
  <div>
@@ -742,7 +742,7 @@ const ClassProfile = ({
  );
  })}
  {(cls.subjects || []).length === 0 && (
- <div className="col-span-full py-16 text-center bg-slate-50/50 dark:bg-slate-950/20 rounded-3xl border-2 border-dashed border-slate-100 dark:border-slate-800">
+ <div className="col-span-full py-16 text-center bg-slate-100/50 dark:bg-slate-950/20 rounded-3xl border-2 border-dashed border-slate-100 dark:border-slate-800">
  <span className="material-symbols-outlined text-display text-slate-200 mb-2">menu_book</span>
  <p className="text-slate-400/80">No subjects assigned to this section yet.</p>
  </div>
@@ -754,7 +754,7 @@ const ClassProfile = ({
  </div>
 
  {/* Footer */}
- <div className="p-8 bg-slate-50/50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+ <div className="p-8 bg-slate-100/50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
  <div className="flex gap-4">
  <div className="flex items-center gap-2">
  <span className="w-3 h-3 rounded-full bg-emerald-400"></span>

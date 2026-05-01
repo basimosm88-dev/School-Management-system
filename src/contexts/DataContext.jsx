@@ -258,7 +258,7 @@ export const DataProvider = ({ children }) => {
  "Final": academicSettings.examWeights.final / 100 
  };
  const rankings = classStudents.map(student => {
- const studentExams = exams.filter(e => e.studentId === student.id && e.status === 'PUBLISHED');
+ const studentExams = exams.filter(e => parseInt(e.studentId) === parseInt(student.id) && e.status === 'PUBLISHED' && parseInt(e.classId) === parseInt(classId));
  const subjectScores = {};
  studentExams.forEach(e => {
  if (!subjectScores[e.subjectName]) subjectScores[e.subjectName] = 0;
@@ -300,30 +300,72 @@ export const DataProvider = ({ children }) => {
  return 'Failed';
  };
 
- const getReportCardData = (studentId) => {
- const student = students.find(s => s.id === parseInt(studentId));
- const studentExams = exams.filter(e => e.studentId === parseInt(studentId) && e.status === 'PUBLISHED');
- const classId = student?.classId;
- const classRankings = classId ? calculateRankings(classId) : [];
- const studentRank = classRankings.find(r => r.studentId === parseInt(studentId))?.rank || '-';
- const report = {};
- studentExams.forEach(e => {
- if (!report[e.subjectName]) report[e.subjectName] = { "Before Midterm": "-", "Midterm": "-", "After Midterm": "-", "Final": "-", average: 0 };
- report[e.subjectName][e.examType] = e.grade;
- });
- const weights = { 
- "Before Midterm": academicSettings.examWeights.beforeMidterm / 100, 
- "Midterm": academicSettings.examWeights.midterm / 100, 
- "After Midterm": academicSettings.examWeights.afterMidterm / 100, 
- "Final": academicSettings.examWeights.final / 100 
- };
- Object.keys(report).forEach(sub => {
- let weightedSum = 0;
- Object.keys(weights).forEach(type => { if (typeof report[sub][type] === 'number') weightedSum += report[sub][type] * weights[type]; });
- report[sub].average = weightedSum.toFixed(1);
- });
- return { student, results: report, rank: studentRank, promotion: promotions?.find(p => p.studentId === parseInt(studentId))?.status || 'Pending' };
- };
+  const getReportCardData = (studentId, classId) => {
+    const student = students.find(s => s.id === parseInt(studentId));
+    const targetClassId = classId ? parseInt(classId) : student?.classId;
+    
+    // 1. Get the class definition to find all assigned subjects
+    const classObj = classes.find(c => c.id === targetClassId);
+    const classSubjects = classObj?.subjects || [];
+
+    // 2. Filter exams for this student/class that are PUBLISHED
+    const studentExams = exams.filter(e => 
+      parseInt(e.studentId) === parseInt(studentId) && 
+      e.status === 'PUBLISHED' && 
+      (!targetClassId || parseInt(e.classId) === parseInt(targetClassId))
+    );
+    
+    const classRankings = targetClassId ? calculateRankings(targetClassId) : [];
+    const studentRank = classRankings.find(r => r.studentId === parseInt(studentId))?.rank || '-';
+    
+    // 3. Initialize report with ALL subjects from the class
+    const report = {};
+    classSubjects.forEach(sub => {
+      report[sub.name] = { 
+        "Before Midterm": "-", 
+        "Midterm": "-", 
+        "After Midterm": "-", 
+        "Final": "-", 
+        average: 0 
+      };
+    });
+
+    // 4. Fill in the published grades
+    studentExams.forEach(e => {
+      if (!report[e.subjectName]) {
+        // If an exam exists for a subject not currently in class (archived/transferred)
+        report[e.subjectName] = { "Before Midterm": "-", "Midterm": "-", "After Midterm": "-", "Final": "-", average: 0 };
+      }
+      report[e.subjectName][e.examType] = e.grade;
+    });
+    
+    const weights = { 
+      "Before Midterm": academicSettings.examWeights.beforeMidterm / 100, 
+      "Midterm": academicSettings.examWeights.midterm / 100, 
+      "After Midterm": academicSettings.examWeights.afterMidterm / 100, 
+      "Final": academicSettings.examWeights.final / 100 
+    };
+    
+    Object.keys(report).forEach(sub => {
+      let weightedSum = 0;
+      let hasData = false;
+      Object.keys(weights).forEach(type => { 
+        if (typeof report[sub][type] === 'number') {
+          weightedSum += report[sub][type] * weights[type];
+          hasData = true;
+        }
+      });
+      report[sub].average = hasData ? weightedSum.toFixed(1) : "0";
+    });
+    
+    return { 
+      student, 
+      results: report, 
+      rank: studentRank, 
+      classId: targetClassId,
+      promotion: promotions?.find(p => p.studentId === parseInt(studentId) && p.classId === targetClassId)?.status || 'Pending' 
+    };
+  };
 
  // --- LEGACY GRADES (For Dashboard compatibility) ---
  const submitGrade = (gradeData) => {
@@ -344,14 +386,35 @@ export const DataProvider = ({ children }) => {
  return { total, present, absent, late, rate: Math.round(((present + late) / total) * 100) };
  };
 
- const getStudentAttendanceSummary = (studentId) => {
- const studentAttendance = attendance.filter(a => a.studentId === studentId);
- const total = studentAttendance.length;
- const present = studentAttendance.filter(a => a.status === 'Present').length;
- const absent = studentAttendance.filter(a => a.status === 'Absent').length;
- const late = studentAttendance.filter(a => a.status === 'Late').length;
- return { present, absent, late, rate: total === 0 ? 0 : Math.round(((present + late) / total) * 100), sessionHistory: studentAttendance.sort((a, b) => new Date(b.date) - new Date(a.date)) };
- };
+  const getStudentAttendanceSummary = (studentId) => {
+    const studentAttendance = attendance.filter(a => a.studentId === studentId);
+    const total = studentAttendance.length;
+    const present = studentAttendance.filter(a => a.status === 'Present').length;
+    const absent = studentAttendance.filter(a => a.status === 'Absent').length;
+    const late = studentAttendance.filter(a => a.status === 'Late').length;
+
+    // Group by date for daily summary
+    const dailyMap = {};
+    studentAttendance.forEach(a => {
+      if (!dailyMap[a.date]) dailyMap[a.date] = { date: a.date, status: 'Present', count: 0, presentCount: 0 };
+      dailyMap[a.date].count++;
+      if (a.status === 'Present') dailyMap[a.date].presentCount++;
+      else if (a.status === 'Absent') dailyMap[a.date].status = 'Absent';
+      else if (a.status === 'Late' && dailyMap[a.date].status !== 'Absent') dailyMap[a.date].status = 'Late';
+    });
+
+    const dailySummary = Object.values(dailyMap).map(d => ({
+      ...d,
+      status: d.presentCount === d.count ? 'Present' : (d.presentCount === 0 ? 'Absent' : 'Partial')
+    })).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    return { 
+      present, absent, late, 
+      rate: total === 0 ? 0 : Math.round(((present + late) / total) * 100), 
+      sessionHistory: studentAttendance.sort((a, b) => new Date(b.date) - new Date(a.date)),
+      dailySummary
+    };
+  };
 
  const saveAttendanceRecords = (records) => {
  setAttendance(prev => {

@@ -68,9 +68,9 @@ const AnnouncementsPage = ({ role }) => {
  {(role === 'admin' || (role === 'teacher' && permissions.teachers.createAnnouncements)) && (
  <button 
  onClick={() => setModalOpen(true)}
- className="bg-primary text-white px-6 py-3 rounded-xl text-label shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2"
+ className="btn-primary"
  >
- <span className="material-symbols-outlined text-display">campaign</span>
+ <span className="btn-icon">campaign</span>
  New Announcement
  </button>
  )}
@@ -98,7 +98,7 @@ const AnnouncementsPage = ({ role }) => {
  </div>
  </div>
  <div className="flex items-center gap-2">
- <span className={`px-3 py-1 rounded-full text-label  bg-slate-50 dark:bg-slate-800 text-slate-500/80 border border-slate-200 dark:border-slate-700`}>
+ <span className={`px-3 py-1 rounded-full text-label  bg-slate-100 dark:bg-slate-800 text-slate-500/80 border border-slate-200 dark:border-slate-700`}>
  To: {(ann.audience || 'all').replace('_', ' ')}
  </span>
  {role === 'admin' && (
@@ -114,7 +114,7 @@ const AnnouncementsPage = ({ role }) => {
  </p>
  </div>
  {ann.attachment && (
- <div className="mt-4 flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 w-fit">
+ <div className="mt-4 flex items-center gap-2 p-3 bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 w-fit">
  <span className="material-symbols-outlined text-display text-primary">attachment</span>
  <span className="text-label text-slate-700 dark:text-slate-300">{ann.attachment}</span>
  <button className="text-label text-primary ml-4 hover:underline">Download</button>

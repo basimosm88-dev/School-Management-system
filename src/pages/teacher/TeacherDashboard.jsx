@@ -87,7 +87,7 @@ const TeacherDashboard = () => {
  <div className="space-y-3">
  <div className="group flex items-center justify-between p-4 bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-primary/20 dark:hover:border-primary/40 hover:bg-blue-50/20 dark:hover:bg-blue-900/10 transition-all">
  <div className="flex items-center gap-4">
- <div className="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400/80 border border-slate-100 dark:border-slate-700 group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
+ <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400/80 border border-slate-100 dark:border-slate-700 group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
  <span className="material-symbols-outlined">grade</span>
  </div>
  <div>
@@ -99,7 +99,7 @@ const TeacherDashboard = () => {
  </div>
  <div className="group flex items-center justify-between p-4 bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-primary/20 dark:hover:border-primary/40 hover:bg-blue-50/20 dark:hover:bg-blue-900/10 transition-all">
  <div className="flex items-center gap-4">
- <div className="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400/80 border border-slate-100 dark:border-slate-700 group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
+ <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400/80 border border-slate-100 dark:border-slate-700 group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
  <span className="material-symbols-outlined">how_to_reg</span>
  </div>
  <div>
@@ -107,7 +107,7 @@ const TeacherDashboard = () => {
  <p className="text-label text-slate-500/80 dark:text-slate-400/80">Grade 11 Physics</p>
  </div>
  </div>
- <button className="px-4 py-1.5 text-label text-slate-500/80 dark:text-slate-400/80 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">Mark Now</button>
+ <button className="px-4 py-1.5 text-label text-slate-500/80 dark:text-slate-400/80 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">Mark Now</button>
  </div>
  </div>
  </section>
@@ -123,7 +123,7 @@ const TeacherDashboard = () => {
  <EmptyState icon="event_busy" message="No Events" description="No upcoming events." />
  ) : (
  events.filter(e => e.audience === 'all' || e.audience === 'teachers').slice(0, 2).map(event => (
- <div key={event.id} className="flex gap-4 p-3 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl">
+ <div key={event.id} className="flex gap-4 p-3 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl">
  <div className="flex flex-col items-center justify-center w-12 h-12 bg-white dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700">
  <span className="text-label text-primary">{event.date ? new Date(event.date).toLocaleString('default', { month: 'short' }) : 'N/A'}</span>
  <span className="text-section text-slate-900 dark:text-slate-100">{event.date ? new Date(event.date).getDate() : '-'}</span>
@@ -141,7 +141,7 @@ const TeacherDashboard = () => {
  <EmptyState icon="campaign" message="No Announcements" description="No active announcements." />
  ) : (
  announcements.filter(a => a.audience === 'all' || a.audience === 'teachers').slice(0, 2).map(ann => (
- <div key={ann.id} className={`p-3 border-l-4 rounded-r-xl bg-slate-50/50 dark:bg-slate-800/50 ${ann.priority === 'urgent' ? 'border-rose-500' : 'border-primary/20'}`}>
+ <div key={ann.id} className={`p-3 border-l-4 rounded-r-xl bg-slate-100/50 dark:bg-slate-800/50 ${ann.priority === 'urgent' ? 'border-rose-500' : 'border-primary/20'}`}>
  <h4 className="text-label text-slate-800 dark:text-slate-200">{ann.title}</h4>
  <p className="text-label text-slate-500/80 dark:text-slate-400/80 mt-1 line-clamp-1">{ann.content || ann.message || ''}</p>
  </div>
