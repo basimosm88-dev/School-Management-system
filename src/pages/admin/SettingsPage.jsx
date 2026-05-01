@@ -5,379 +5,408 @@ import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
 
 const SettingsPage = () => {
- const { 
- schoolSettings, setSchoolSettings,
- language, setLanguage,
- permissions, setPermissions,
- academicSettings, setAcademicSettings,
- pdfSettings, setPdfSettings,
- securitySettings, setSecuritySettings,
- t 
- } = useSettings();
- 
- const { darkMode, toggleDarkMode } = useAppContext();
- 
- const { resetData } = useData();
+  const { 
+    schoolSettings, setSchoolSettings,
+    language, setLanguage,
+    permissions, setPermissions,
+    academicSettings, setAcademicSettings,
+    pdfSettings, setPdfSettings,
+    securitySettings, setSecuritySettings,
+    t 
+  } = useSettings();
+  
+  const { darkMode, toggleDarkMode } = useAppContext();
+  const { 
+    resetData, students, teachers, classes, subjects, 
+    attendance, exams, announcements, events, systemLogs 
+  } = useData();
 
- const [activeSection, setActiveSection] = useState('branding');
+  const [activeSection, setActiveSection] = useState('branding');
 
- const handleLogoUpload = (e) => {
- const file = e.target.files[0];
- if (file) {
- const reader = new FileReader();
- reader.onloadend = () => {
- setSchoolSettings({ ...schoolSettings, logo: reader.result });
- };
- reader.readAsDataURL(file);
- }
- };
+  const handleLogoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSchoolSettings({ ...schoolSettings, logo: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
- const sections = [
- { id: 'branding', label: t('school_branding'), icon: 'school' },
- { id: 'academic', label: t('academic_rules'), icon: 'menu_book' },
- { id: 'permissions', label: t('permissions'), icon: 'lock_person' },
- { id: 'pdf', label: t('pdf_config'), icon: 'picture_as_pdf' },
- { id: 'security', label: t('security'), icon: 'shield' },
- { id: 'appearance', label: 'Appearance', icon: 'palette' }
- ];
+  const handleExportData = () => {
+    const fullData = {
+      students, teachers, classes, subjects, 
+      attendance, exams, announcements, events, systemLogs,
+      settings: {
+        schoolSettings,
+        academicSettings,
+        pdfSettings,
+        securitySettings,
+        permissions
+      }
+    };
+    
+    const blob = new Blob([JSON.stringify(fullData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `sms_backup_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    navigator.clipboard.writeText(JSON.stringify(fullData));
+    alert('System data has been exported and copied to your clipboard!');
+  };
 
- return (
- <PageLayout role="admin" title={t('settings')}>
- <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
- {/* Page Header */}
- <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
- <h2 className="text-heading text-slate-900 dark:text-white">{t('settings')}</h2>
- <p className="text-label text-slate-500/80 mt-1">{t('settingsSubtitle')}</p>
- </div>
- 
- {/* Settings Navigation Tabs (Top) */}
- <div className="flex flex-wrap gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
- {sections.map(section => (
- <button
- key={section.id}
- onClick={() => setActiveSection(section.id)}
- className={`flex items-center gap-2 px-6 py-3 rounded-lg text-label   transition-all ${
- activeSection === section.id 
- ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-500/80 hover:text-slate-700 dark:text-slate-400/80 dark:hover:text-slate-200'
- }`}
- >
- <span className="material-symbols-outlined text-section">{section.icon}</span>
- {section.label}
- </button>
- ))}
- <button 
- onClick={resetData}
- className="flex items-center gap-2 px-6 py-3 rounded-lg text-label text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all ml-4"
- >
- <span className="material-symbols-outlined text-section">factory</span>
- Factory Reset
- </button>
- </div>
+  const sections = [
+    { id: 'branding', label: t('school_branding'), icon: 'school' },
+    { id: 'academic', label: t('academic_rules'), icon: 'menu_book' },
+    { id: 'permissions', label: t('permissions'), icon: 'lock_person' },
+    { id: 'pdf', label: t('pdf_config'), icon: 'picture_as_pdf' },
+    { id: 'security', label: t('security'), icon: 'shield' },
+    { id: 'appearance', label: 'Appearance', icon: 'palette' },
+    { id: 'data', label: 'Data Management', icon: 'database' }
+  ];
 
- {/* Settings Content */}
- <div className="w-full space-y-6">
- <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 md:p-8 shadow-sm transition-colors">
- 
- {/* 1. BRANDING */}
- {activeSection === 'branding' && (
- <div className="space-y-6">
- <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
- <span className="material-symbols-outlined text-primary">school</span>
- {t('school_branding')}
- </h2>
- 
- <div className="flex items-center gap-8 pb-6 border-b border-slate-100 dark:border-slate-800">
- <div className="relative group">
- <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center overflow-hidden">
- {schoolSettings.logo ? (
- <img src={schoolSettings.logo} alt="School Logo" className="w-full h-full object-cover" />
- ) : (
- <span className="material-symbols-outlined text-display text-slate-300">add_a_photo</span>
- )}
- </div>
- <label className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 rounded-2xl cursor-pointer transition-opacity">
- <span className="text-white text-label">Change</span>
- <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
- </label>
- </div>
- <div className="space-y-1">
- <h3 className="text-slate-800 dark:text-white">{t('logo')}</h3>
- <p className="text-label text-slate-500/80 dark:text-slate-400/80">Upload your official school logo. This will appear on all dashboards and PDF reports.</p>
- </div>
- </div>
+  return (
+    <PageLayout role="admin" title={t('settings')}>
+      <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+          <h2 className="text-heading text-slate-900 dark:text-white">{t('settings')}</h2>
+          <p className="text-label text-slate-500/80 mt-1">{t('settingsSubtitle')}</p>
+        </div>
+        
+        <div className="flex flex-wrap gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
+          {sections.map(section => (
+            <button
+              key={section.id}
+              onClick={() => setActiveSection(section.id)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg text-label transition-all ${
+                activeSection === section.id 
+                ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
+                : 'text-slate-500/80 hover:text-slate-700 dark:text-slate-400/80 dark:hover:text-slate-200'
+              }`}
+            >
+              <span className="material-symbols-outlined text-section">{section.icon}</span>
+              {section.label}
+            </button>
+          ))}
+          <button 
+            onClick={resetData}
+            className="flex items-center gap-2 px-6 py-3 rounded-lg text-label text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all ml-4"
+          >
+            <span className="material-symbols-outlined text-section">factory</span>
+            Factory Reset
+          </button>
+        </div>
 
- <div className="grid grid-cols-2 gap-6">
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">{t('schoolName')}</label>
- <input 
- type="text" 
- value={schoolSettings.name}
- onChange={(e) => setSchoolSettings({ ...schoolSettings, name: e.target.value })}
- className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
- />
- </div>
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Official Email</label>
- <input 
- type="email" 
- value={schoolSettings.email}
- onChange={(e) => setSchoolSettings({ ...schoolSettings, email: e.target.value })}
- className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
- />
- </div>
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Contact Phone</label>
- <input 
- type="text" 
- value={schoolSettings.phone}
- onChange={(e) => setSchoolSettings({ ...schoolSettings, phone: e.target.value })}
- className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
- />
- </div>
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Website URL</label>
- <input 
- type="text" 
- value={schoolSettings.website}
- onChange={(e) => setSchoolSettings({ ...schoolSettings, website: e.target.value })}
- className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
- />
- </div>
- <div className="col-span-2 space-y-1.5">
- <label className="text-label text-slate-500/80">Physical Address</label>
- <textarea 
- rows="2"
- value={schoolSettings.address}
- onChange={(e) => setSchoolSettings({ ...schoolSettings, address: e.target.value })}
- className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none resize-none"
- ></textarea>
- </div>
- </div>
- </div>
- )}
+        <div className="w-full space-y-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 md:p-8 shadow-sm transition-colors">
+            
+            {activeSection === 'branding' && (
+              <div className="space-y-6">
+                <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
+                  <span className="material-symbols-outlined text-primary">school</span>
+                  {t('school_branding')}
+                </h2>
+                
+                <div className="flex items-center gap-8 pb-6 border-b border-slate-100 dark:border-slate-800">
+                  <div className="relative group">
+                    <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center overflow-hidden">
+                      {schoolSettings.logo ? (
+                        <img src={schoolSettings.logo} alt="School Logo" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="material-symbols-outlined text-display text-slate-300">add_a_photo</span>
+                      )}
+                    </div>
+                    <label className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 rounded-2xl cursor-pointer transition-opacity">
+                      <span className="text-white text-label">Change</span>
+                      <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
+                    </label>
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-slate-800 dark:text-white">{t('logo')}</h3>
+                    <p className="text-label text-slate-500/80 dark:text-slate-400/80">Upload your official school logo. This will appear on all dashboards and PDF reports.</p>
+                  </div>
+                </div>
 
- {/* 2. ACADEMIC RULES */}
- {activeSection === 'academic' && (
- <div className="space-y-6">
- <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
- <span className="material-symbols-outlined text-primary">menu_book</span>
- {t('academic_rules')}
- </h2>
- 
- <div className="grid grid-cols-2 gap-8">
- <div className="space-y-4">
- <h3 className="text-slate-800 dark:text-white text-label">Grading System</h3>
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Global Passing Grade (%)</label>
- <input 
- type="number" 
- value={academicSettings.passingGrade}
- onChange={(e) => setAcademicSettings({ ...academicSettings, passingGrade: parseInt(e.target.value) })}
- className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
- />
- </div>
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Min. Subjects for Promotion</label>
- <input 
- type="number" 
- value={academicSettings.minSubjects}
- onChange={(e) => setAcademicSettings({ ...academicSettings, minSubjects: parseInt(e.target.value) })}
- className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
- />
- </div>
- </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-1.5">
+                    <label className="text-label text-slate-500/80">{t('schoolName')}</label>
+                    <input 
+                      type="text" 
+                      value={schoolSettings.name}
+                      onChange={(e) => setSchoolSettings({ ...schoolSettings, name: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-label text-slate-500/80">Official Email</label>
+                    <input 
+                      type="email" 
+                      value={schoolSettings.email}
+                      onChange={(e) => setSchoolSettings({ ...schoolSettings, email: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-label text-slate-500/80">Contact Phone</label>
+                    <input 
+                      type="text" 
+                      value={schoolSettings.phone}
+                      onChange={(e) => setSchoolSettings({ ...schoolSettings, phone: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-label text-slate-500/80">Website URL</label>
+                    <input 
+                      type="text" 
+                      value={schoolSettings.website}
+                      onChange={(e) => setSchoolSettings({ ...schoolSettings, website: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
+                    />
+                  </div>
+                  <div className="col-span-2 space-y-1.5">
+                    <label className="text-label text-slate-500/80">Physical Address</label>
+                    <textarea 
+                      rows="2"
+                      value={schoolSettings.address}
+                      onChange={(e) => setSchoolSettings({ ...schoolSettings, address: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none resize-none"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            )}
 
- <div className="space-y-4">
- <h3 className="text-slate-800 dark:text-white text-label">Exam Weights</h3>
- {Object.entries(academicSettings.examWeights).map(([key, value]) => (
- <div key={key} className="flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-800 rounded-xl">
- <span className="text-label text-slate-600 dark:text-slate-400/80 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
- <div className="flex items-center gap-2">
- <input 
- type="number" 
- value={value}
- onChange={(e) => setAcademicSettings({ 
- ...academicSettings, 
- examWeights: { ...academicSettings.examWeights, [key]: parseInt(e.target.value) } 
- })}
- className="w-16 px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-center text-label"
- />
- <span className="text-label text-slate-400/80">%</span>
- </div>
- </div>
- ))}
- <p className="text-label text-slate-400/80 italic">Total must equal 100% for correct average calculations.</p>
- </div>
- </div>
- </div>
- )}
+            {activeSection === 'academic' && (
+              <div className="space-y-6">
+                <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
+                  <span className="material-symbols-outlined text-primary">menu_book</span>
+                  {t('academic_rules')}
+                </h2>
+                <div className="grid grid-cols-2 gap-8">
+                  <div className="space-y-4">
+                    <h3 className="text-slate-800 dark:text-white text-label">Grading System</h3>
+                    <div className="space-y-1.5">
+                      <label className="text-label text-slate-500/80">Global Passing Grade (%)</label>
+                      <input 
+                        type="number" 
+                        value={academicSettings.passingGrade}
+                        onChange={(e) => setAcademicSettings({ ...academicSettings, passingGrade: parseInt(e.target.value) })}
+                        className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-label text-slate-500/80">Min. Subjects for Promotion</label>
+                      <input 
+                        type="number" 
+                        value={academicSettings.minSubjects}
+                        onChange={(e) => setAcademicSettings({ ...academicSettings, minSubjects: parseInt(e.target.value) })}
+                        className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-slate-800 dark:text-white text-label">Exam Weights</h3>
+                    {Object.entries(academicSettings.examWeights).map(([key, value]) => (
+                      <div key={key} className="flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                        <span className="text-label text-slate-600 dark:text-slate-400/80 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                        <div className="flex items-center gap-2">
+                          <input 
+                            type="number" 
+                            value={value}
+                            onChange={(e) => setAcademicSettings({ 
+                              ...academicSettings, 
+                              examWeights: { ...academicSettings.examWeights, [key]: parseInt(e.target.value) } 
+                            })}
+                            className="w-16 px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-center text-label"
+                          />
+                          <span className="text-label text-slate-400/80">%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
- {/* 3. PERMISSIONS */}
- {activeSection === 'permissions' && (
- <div className="space-y-6">
- <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
- <span className="material-symbols-outlined text-primary">lock_person</span>
- {t('permissions')}
- </h2>
- 
- <div className="space-y-6">
- <div className="space-y-4">
- <h3 className="text-label text-slate-400/80">Teacher Permissions</h3>
- <div className="grid grid-cols-2 gap-4">
- {Object.entries(permissions.teachers).map(([key, value]) => (
- <label key={key} className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
- <span className="text-label text-slate-700 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
- <input 
- type="checkbox" 
- checked={value}
- onChange={(e) => setPermissions({
- ...permissions,
- teachers: { ...permissions.teachers, [key]: e.target.checked }
- })}
- className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary"
- />
- </label>
- ))}
- </div>
- </div>
+            {activeSection === 'permissions' && (
+              <div className="space-y-6">
+                <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
+                  <span className="material-symbols-outlined text-primary">lock_person</span>
+                  {t('permissions')}
+                </h2>
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <h3 className="text-label text-slate-400/80">Teacher Permissions</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Object.entries(permissions.teachers).map(([key, value]) => (
+                        <label key={key} className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
+                          <span className="text-label text-slate-700 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                          <input 
+                            type="checkbox" 
+                            checked={value}
+                            onChange={(e) => setPermissions({
+                              ...permissions,
+                              teachers: { ...permissions.teachers, [key]: e.target.checked }
+                            })}
+                            className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary"
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-label text-slate-400/80">Student Permissions</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Object.entries(permissions.students).map(([key, value]) => (
+                        <label key={key} className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
+                          <span className="text-label text-slate-700 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                          <input 
+                            type="checkbox" 
+                            checked={value}
+                            onChange={(e) => setPermissions({
+                              ...permissions,
+                              students: { ...permissions.students, [key]: e.target.checked }
+                            })}
+                            className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary"
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
- <div className="space-y-4">
- <h3 className="text-label text-slate-400/80">Student Permissions</h3>
- <div className="grid grid-cols-2 gap-4">
- {Object.entries(permissions.students).map(([key, value]) => (
- <label key={key} className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
- <span className="text-label text-slate-700 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
- <input 
- type="checkbox" 
- checked={value}
- onChange={(e) => setPermissions({
- ...permissions,
- students: { ...permissions.students, [key]: e.target.checked }
- })}
- className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary"
- />
- </label>
- ))}
- </div>
- </div>
- </div>
- </div>
- )}
+            {activeSection === 'pdf' && (
+              <div className="space-y-6">
+                <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
+                  <span className="material-symbols-outlined text-primary">picture_as_pdf</span>
+                  {t('pdf_config')}
+                </h2>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <label className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer">
+                      <span className="text-label text-slate-700 dark:text-slate-300">Show Logo on Reports</span>
+                      <input type="checkbox" checked={pdfSettings.showLogo} onChange={(e) => setPdfSettings({ ...pdfSettings, showLogo: e.target.checked })} />
+                    </label>
+                    <label className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer">
+                      <span className="text-label text-slate-700 dark:text-slate-300">Show Signature Labels</span>
+                      <input type="checkbox" checked={pdfSettings.showSignatureLabels} onChange={(e) => setPdfSettings({ ...pdfSettings, showSignatureLabels: e.target.checked })} />
+                    </label>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="text-label text-slate-500/80">Principal Signature Label</label>
+                      <input type="text" value={pdfSettings.principalTitle} onChange={(e) => setPdfSettings({ ...pdfSettings, principalTitle: e.target.value })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-label text-slate-500/80">Manager Signature</label>
+                      <input type="text" value={schoolSettings.managerSignature || ''} onChange={(e) => setSchoolSettings({ ...schoolSettings, managerSignature: e.target.value })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
- {/* 4. PDF CONFIG */}
- {activeSection === 'pdf' && (
- <div className="space-y-6">
- <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
- <span className="material-symbols-outlined text-primary">picture_as_pdf</span>
- {t('pdf_config')}
- </h2>
- 
- <div className="grid grid-cols-2 gap-6">
- <div className="space-y-4">
- <label className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer">
- <span className="text-label text-slate-700 dark:text-slate-300">Show Logo on Reports</span>
- <input type="checkbox" checked={pdfSettings.showLogo} onChange={(e) => setPdfSettings({ ...pdfSettings, showLogo: e.target.checked })} />
- </label>
- <label className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer">
- <span className="text-label text-slate-700 dark:text-slate-300">Show Signature Labels</span>
- <input type="checkbox" checked={pdfSettings.showSignatureLabels} onChange={(e) => setPdfSettings({ ...pdfSettings, showSignatureLabels: e.target.checked })} />
- </label>
- </div>
- 
- <div className="space-y-4">
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Principal Signature Label</label>
- <input type="text" value={pdfSettings.principalTitle} onChange={(e) => setPdfSettings({ ...pdfSettings, principalTitle: e.target.value })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
- </div>
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">{t('managerSignature')}</label>
- <input type="text" value={schoolSettings.managerSignature || ''} onChange={(e) => setSchoolSettings({ ...schoolSettings, managerSignature: e.target.value })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" placeholder="e.g., Manager: Jane Doe" />
- </div>
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Academic Manager Label</label>
- <input type="text" value={pdfSettings.academicManagerTitle} onChange={(e) => setPdfSettings({ ...pdfSettings, academicManagerTitle: e.target.value })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
- </div>
- </div>
- 
- <div className="col-span-2 space-y-1.5">
- <label className="text-label text-slate-500/80">PDF Footer Text</label>
- <input type="text" value={pdfSettings.footerText} onChange={(e) => setPdfSettings({ ...pdfSettings, footerText: e.target.value })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
- </div>
- </div>
- </div>
- )}
+            {activeSection === 'security' && (
+              <div className="space-y-6">
+                <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
+                  <span className="material-symbols-outlined text-primary">shield</span>
+                  {t('security')}
+                </h2>
+                <div className="max-w-md space-y-6">
+                  <div className="space-y-1.5">
+                    <label className="text-label text-slate-500/80">Minimum Password Length</label>
+                    <input type="number" value={securitySettings.minPasswordLength} onChange={(e) => setSecuritySettings({ ...securitySettings, minPasswordLength: parseInt(e.target.value) })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
+                  </div>
+                  <label className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer">
+                    <span className="text-label text-slate-700 dark:text-slate-300">Require Special Characters</span>
+                    <input type="checkbox" checked={securitySettings.requireSpecialChars} onChange={(e) => setSecuritySettings({ ...securitySettings, requireSpecialChars: e.target.checked })} />
+                  </label>
+                </div>
+              </div>
+            )}
 
- {/* 5. SECURITY */}
- {activeSection === 'security' && (
- <div className="space-y-6">
- <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
- <span className="material-symbols-outlined text-primary">shield</span>
- {t('security')}
- </h2>
- 
- <div className="max-w-md space-y-6">
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Minimum Password Length</label>
- <input type="number" value={securitySettings.minPasswordLength} onChange={(e) => setSecuritySettings({ ...securitySettings, minPasswordLength: parseInt(e.target.value) })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
- </div>
- <label className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer">
- <span className="text-label text-slate-700 dark:text-slate-300">Require Special Characters</span>
- <input type="checkbox" checked={securitySettings.requireSpecialChars} onChange={(e) => setSecuritySettings({ ...securitySettings, requireSpecialChars: e.target.checked })} />
- </label>
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Session Timeout (Minutes)</label>
- <input type="number" value={securitySettings.sessionTimeout} onChange={(e) => setSecuritySettings({ ...securitySettings, sessionTimeout: parseInt(e.target.value) })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
- </div>
- </div>
- </div>
- )}
+            {activeSection === 'appearance' && (
+              <div className="space-y-6">
+                <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
+                  <span className="material-symbols-outlined text-primary">palette</span>
+                  Appearance & Localization
+                </h2>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h3 className="text-label text-slate-400/80">System Language</h3>
+                    <select 
+                      value={language}
+                      onChange={(e) => setLanguage(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label outline-none"
+                    >
+                      <option value="en">English (US)</option>
+                      <option value="ar">العربية (Arabic)</option>
+                      <option value="so">Somali (SO)</option>
+                    </select>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-label text-slate-400/80">System Theme</h3>
+                    <div className="flex gap-4">
+                      <button onClick={() => { if (darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2 text-label transition-all ${!darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>Light</button>
+                      <button onClick={() => { if (!darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2 text-label transition-all ${darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>Dark</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
- {/* 6. APPEARANCE */}
- {activeSection === 'appearance' && (
- <div className="space-y-6">
- <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
- <span className="material-symbols-outlined text-primary">palette</span>
- Appearance & Localization
- </h2>
- 
- <div className="grid grid-cols-2 gap-6">
- <div className="space-y-4">
- <h3 className="text-label text-slate-400/80">System Language</h3>
- <select 
- value={language}
- onChange={(e) => setLanguage(e.target.value)}
- className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label outline-none"
- >
- <option value="en">English (US)</option>
- <option value="ar">العربية (Arabic)</option>
- <option value="so">Somali (SO)</option>
- </select>
- </div>
- 
- <div className="space-y-4">
- <h3 className="text-label text-slate-400/80">System Theme</h3>
- <div className="flex gap-4">
- <button onClick={() => { if (darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2  text-label transition-all ${!darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>Light</button>
- <button onClick={() => { if (!darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2  text-label transition-all ${darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>Dark</button>
- </div>
- </div>
- </div>
- </div>
- )}
-
- </div>
- 
- <div className="flex justify-end p-4">
- <p className="text-label text-slate-400/80 flex items-center gap-2">
- <span className="material-symbols-outlined text-body">info</span>
- All changes are saved automatically and applied instantly.
- </p>
- </div>
- </div>
- </div>
- </PageLayout>
- );
+            {activeSection === 'data' && (
+              <div className="space-y-6">
+                <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
+                  <span className="material-symbols-outlined text-primary">database</span>
+                  Data Management & Migration
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="p-6 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+                    <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                      <span className="material-symbols-outlined text-display">cloud_upload</span>
+                    </div>
+                    <div>
+                      <h3 className="text-label font-black text-on-surface uppercase">Export Local Data</h3>
+                      <p className="text-[10px] text-on-surface-variant mt-1 leading-relaxed">
+                        Bundle all your locally added students, teachers, and records into a JSON package. 
+                        Use this to migrate your local testing data to the live GitHub repository.
+                      </p>
+                    </div>
+                    <button onClick={handleExportData} className="w-full btn-primary py-3">
+                      Export System State
+                    </button>
+                  </div>
+                  <div className="p-6 bg-rose-50/30 dark:bg-rose-900/10 rounded-2xl border border-rose-100 dark:border-rose-900/30 space-y-4">
+                    <div className="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center">
+                      <span className="material-symbols-outlined text-display">dangerous</span>
+                    </div>
+                    <div>
+                      <h3 className="text-label font-black text-rose-600 uppercase">System Reset</h3>
+                      <p className="text-[10px] text-rose-600/70 mt-1 leading-relaxed">
+                        Wipe all local changes and restore the system to its initial state.
+                      </p>
+                    </div>
+                    <button onClick={resetData} className="w-full px-6 py-3 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-600/20">
+                      Factory Reset
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </PageLayout>
+  );
 };
 
 export default SettingsPage;
