@@ -1,4 +1,4 @@
-export const initialData = {
+{
   "students": [
     {
       "name": "Leyla Osman Abukar",
@@ -1854,7 +1854,5 @@ export const initialData = {
         "viewEvents": true
       }
     }
-  },
-  "messages": [],
-  "notifications": []
-};
+  }
+}

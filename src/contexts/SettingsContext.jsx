@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { translations } from '../lib/translations';
+import { initialData } from '../data/mockData';
 
 const SettingsContext = createContext();
 
@@ -26,7 +27,7 @@ export const SettingsProvider = ({ children }) => {
  };
 
  // --- 1. SCHOOL BRANDING ---
- const [schoolSettings, setSchoolSettings] = useState(() => getSaved('schoolSettings', {
+ const [schoolSettings, setSchoolSettings] = useState(() => getSaved('schoolSettings', initialData.settings?.schoolSettings || {
  name: 'Elite Academy',
  logo: null, // Base64 or URL
  managerSignature: null, // Base64 or URL
@@ -40,7 +41,7 @@ export const SettingsProvider = ({ children }) => {
  const [language, setLanguage] = useState(() => localStorage.getItem('sms_language') || 'en');
 
  // --- 3. PERMISSIONS ---
- const [permissions, setPermissions] = useState(() => getSaved('permissions', {
+ const [permissions, setPermissions] = useState(() => getSaved('permissions', initialData.settings?.permissions || {
  teachers: {
  createAnnouncements: true,
  createEvents: true,
@@ -60,7 +61,7 @@ export const SettingsProvider = ({ children }) => {
  }));
 
  // --- 4. ACADEMIC SETTINGS ---
- const [academicSettings, setAcademicSettings] = useState(() => getSaved('academicSettings', {
+ const [academicSettings, setAcademicSettings] = useState(() => getSaved('academicSettings', initialData.settings?.academicSettings || {
  passingGrade: 50,
  minSubjects: 5,
  examWeights: {
@@ -84,7 +85,7 @@ export const SettingsProvider = ({ children }) => {
  }));
 
  // --- 6. PDF SETTINGS ---
- const [pdfSettings, setPdfSettings] = useState(() => getSaved('pdfSettings', {
+ const [pdfSettings, setPdfSettings] = useState(() => getSaved('pdfSettings', initialData.settings?.pdfSettings || {
  showLogo: true,
  showSignatureLabels: true,
  principalTitle: 'Principal Signature',
@@ -93,7 +94,7 @@ export const SettingsProvider = ({ children }) => {
  }));
 
  // --- 7. SECURITY SETTINGS ---
- const [securitySettings, setSecuritySettings] = useState(() => getSaved('securitySettings', {
+ const [securitySettings, setSecuritySettings] = useState(() => getSaved('securitySettings', initialData.settings?.securitySettings || {
  minPasswordLength: 6,
  requireSpecialChars: false,
  sessionTimeout: 60 // minutes
