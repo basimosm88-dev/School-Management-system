@@ -1,4 +1,4 @@
-// System Version: 1.3.0 - Production Sync & Infrastructure Update
+// System Version: 1.3.1 - Mandatory Field Enforcement & Data Integrity
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'

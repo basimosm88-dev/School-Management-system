@@ -90,12 +90,16 @@ const StudentsPage = () => {
   };
 
   const handleSave = (studentData) => {
+    if (!studentData.classId) {
+      addNotification('Please select an assigned class for the student.', 'error');
+      return;
+    }
     if (editingStudent) {
       updateStudent(editingStudent.id, studentData);
-      addNotification('Student updated successfully', 'success');
+      addNotification('Student record updated successfully', 'success');
     } else {
       addStudent(studentData);
-      addNotification('Student added successfully', 'success');
+      addNotification('Student registered successfully', 'success');
     }
     setIsFormOpen(false);
   };
@@ -419,7 +423,14 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-4 bg-slate-900/80 dark:bg-black/80 backdrop-blur-md overflow-y-auto animate-in fade-in duration-300">
       <form
-        onSubmit={(e) => { e.preventDefault(); onSave(formData); }}
+        onSubmit={(e) => { 
+          e.preventDefault(); 
+          if (!formData.classId) {
+            alert("Mandatory Field: Please select a Class for this student.");
+            return;
+          }
+          onSave(formData); 
+        }}
         className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto animate-in zoom-in-95 duration-300 flex flex-col max-h-[95vh]"
       >
         <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10 rounded-t-3xl shrink-0">
@@ -519,8 +530,13 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Class</label>
-                <select value={formData.classId || ''} onChange={e => handleChange('classId', e.target.value ? parseInt(e.target.value) : '')} className="form-input-custom cursor-pointer">
-                  <option value="">Select Class</option>
+                <select 
+                  value={formData.classId || ''} 
+                  onChange={e => handleChange('classId', e.target.value ? parseInt(e.target.value) : '')} 
+                  className={`form-input-custom cursor-pointer ${!formData.classId ? 'border-rose-300 bg-rose-50/30' : ''}`}
+                  required
+                >
+                  <option value="">Select Class (Required)</option>
                   {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
