@@ -5,7 +5,8 @@
 
 @layer base {
   body {
-    @apply bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    background-color: #f1f5f9;
+    color: #0f172a;
     font-family: 'Epilogue', sans-serif;
     font-size: 14px;
     line-height: 1.5;
@@ -14,6 +15,11 @@
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 200ms;
+  }
+
+  .dark body {
+    background-color: #020617;
+    color: #f1f5f9;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -65,11 +71,19 @@
   }
 
   .text-on-surface {
-    @apply text-slate-900 dark:text-slate-100;
+    color: #0f172a;
+  }
+
+  .dark .text-on-surface {
+    color: #f1f5f9;
   }
 
   .text-on-surface-variant {
-    @apply text-slate-500 dark:text-slate-400;
+    color: #64748b;
+  }
+
+  .dark .text-on-surface-variant {
+    color: #94a3b8;
   }
 }
 
@@ -112,11 +126,15 @@
   }
 
   .sidebar-collapsed .sidebar-item {
-    @apply lg:justify-center lg:px-0;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .sidebar-collapsed .sidebar-header {
-    @apply lg:justify-center lg:px-0;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .sidebar-collapsed .sidebar-logo-text {
@@ -166,7 +184,7 @@
     font-size: 0.875rem;
     line-height: 1.25rem;
     outline: none;
-    @apply text-on-surface;
+    color: #191b25;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -224,13 +242,13 @@
   .stat-label {
     font-size: 12px;
     font-weight: 500;
-    @apply text-on-surface-variant;
+    color: #434656;
   }
 
   .stat-value {
     font-size: 20px;
     font-weight: 600;
-    @apply text-on-surface;
+    color: #191b25;
     line-height: 28px;
   }
 
@@ -273,7 +291,6 @@
     letter-spacing: -0.01em;
   }
 
-  /* headline-sm alias */
   .text-headline, .text-heading, .text-section {
     font-size: 18px;
     font-weight: 500;
@@ -282,19 +299,24 @@
   }
 
   .text-title {
-    @apply font-semibold;
+    font-weight: 600;
     font-size: 16px;
-    line-height: 22px;
+    line-height: 24px;
   }
 
   .text-label {
     font-size: 13px;
     font-weight: 500;
     line-height: 18px;
-    /* Removed hardcoded color to allow for contrast-aware overrides */
   }
 
   .text-body {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .text-body-md {
     font-size: 14px;
     font-weight: 400;
     line-height: 20px;
@@ -310,25 +332,67 @@
     font-size: 13px;
     font-weight: 600;
     line-height: 18px;
-    @apply tracking-wide;
+    letter-spacing: 0.025em;
     text-transform: capitalize;
   }
 
   /* Standardized Button Styles */
   .btn-base {
-    @apply px-6 py-2.5 rounded-xl text-label transition-all flex items-center justify-center gap-2 text-button whitespace-nowrap active:scale-[0.98];
+    padding: 10px 24px;
+    border-radius: 0.75rem;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .btn-base:active {
+    transform: scale(0.98);
   }
 
   .btn-primary {
-    @apply btn-base bg-primary text-white shadow-md shadow-primary/20 hover:bg-primary/90;
+    background-color: #004bd3;
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0, 75, 211, 0.1), 0 2px 4px -1px rgba(0, 75, 211, 0.06);
+  }
+
+  .btn-primary:hover {
+    background-color: rgba(0, 75, 211, 0.9);
   }
 
   .btn-success {
-    @apply btn-base bg-emerald-500 text-white shadow-md shadow-emerald-500/20 hover:bg-emerald-600;
+    background-color: #10b981;
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1), 0 2px 4px -1px rgba(16, 185, 129, 0.06);
+  }
+
+  .btn-success:hover {
+    background-color: #059669;
   }
 
   .btn-secondary {
-    @apply btn-base bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 shadow-sm;
+    background-color: #ffffff;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .btn-secondary {
+    background-color: #1e293b;
+    color: #cbd5e1;
+    border-color: #334155;
+  }
+
+  .btn-secondary:hover {
+    background-color: #f1f5f9;
+  }
+
+  .dark .btn-secondary:hover {
+    background-color: rgba(51, 65, 85, 0.5);
   }
 
   .btn-icon {
@@ -345,22 +409,37 @@
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
-    @apply shrink-0;
+    flex-shrink: 0;
   }
 
   /* Table Enhancements */
   .table-container th {
-    @apply px-6 py-4 text-[13px] font-bold text-on-surface-variant uppercase tracking-wider;
-    border-bottom-width: 1px;
-    @apply border-slate-100 dark:border-slate-800;
+    padding: 16px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #434656;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .dark .table-container th {
+    color: #94a3b8;
+    border-color: #1e293b;
   }
 
   .table-container td {
-    @apply px-6 py-5 text-sm;
+    padding: 20px 24px;
+    font-size: 14px;
   }
 
-  .table-row-hover {
-    @apply hover:bg-slate-100/80 dark:hover:bg-slate-800/40 transition-colors;
+  .table-row-hover:hover {
+    background-color: rgba(241, 245, 249, 0.8);
+    transition: background-color 0.2s;
+  }
+
+  .dark .table-row-hover:hover {
+    background-color: rgba(30, 41, 59, 0.4);
   }
 }
 

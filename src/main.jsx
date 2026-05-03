@@ -1,4 +1,4 @@
-// System Version: 1.3.2 - UI Refinements & Linter Fixes
+// System Version: 1.3.3 - CSS Linter Harmony & Production Sync
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
