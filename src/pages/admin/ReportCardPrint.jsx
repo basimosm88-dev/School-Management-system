@@ -19,7 +19,7 @@ const ReportCardPrint = () => {
  const academicYear = `2026 - 2027`; 
 
  return (
- <div className="bg-white min-h-0 p-10 font-serif text-slate-900 print:p-0">
+ <div className="bg-white min-h-screen p-10 font-serif text-slate-900 print:p-0">
  <style>{`
  @media print {
  body { background: white !important; }

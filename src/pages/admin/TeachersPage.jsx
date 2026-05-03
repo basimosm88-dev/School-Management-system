@@ -784,7 +784,7 @@ const PrintableFooter = ({ signatureTitle }) => (
 const PrintableTeacherProfile = ({ teacher, classes, schoolSettings }) => {
   const { name: schoolName, logo, phone, email, address } = schoolSettings || {};
   return (
-    <div className="print-only font-sans text-slate-900 bg-white flex flex-col">
+    <div className="print-only font-sans text-slate-900 bg-white min-h-screen flex flex-col">
       <div className="print-header flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
         <div className="flex items-center gap-4">
           {logo ? (

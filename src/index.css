@@ -393,13 +393,20 @@
   .print-only {
     display: flex !important;
     flex-direction: column !important;
-    min-height: auto !important;
+    min-height: 100vh !important;
     visibility: visible !important;
     position: relative !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 10mm 15mm !important;
     box-sizing: border-box !important;
+  }
+
+  /* Specific fix for mobile printing where 100vh often causes an extra blank page */
+  @media (max-width: 768px) {
+    .print-only {
+      min-height: auto !important;
+    }
   }
 
   /* Force light mode and background visibility */
@@ -450,11 +457,18 @@
   }
 
   .print-footer {
-    margin-top: 40px; /* Consistent spacing instead of auto which can cause overflow */
+    margin-top: auto; /* Pushes the footer to the bottom of the flex container */
     padding-top: 20px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
+    gap: 100px;
+  }
+
+  @media (max-width: 768px) {
+    .print-footer {
+      margin-top: 40px !important;
+      gap: 60px !important;
+    }
   }
 
   .signature-line {
