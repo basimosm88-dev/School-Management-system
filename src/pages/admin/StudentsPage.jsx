@@ -826,10 +826,16 @@ const StudentProfile = ({ student, onClose, classes, schoolSettings }) => {
  * PDF PRINTABLE VERSION
  * Only visible during window.print() via CSS .print-only
  */
+const PrintableFooter = () => (
+  <div className="mt-8 text-center">
+    <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
+  </div>
+);
+
 const PrintableStudentProfile = ({ student, classes, schoolSettings }) => {
   const { name: schoolName, logo, phone, email, address } = schoolSettings || {};
   return (
-    <div className="print-only font-sans text-slate-900 bg-white">
+    <div className="print-only font-sans text-slate-900 bg-white min-h-screen flex flex-col">
       {/* PDF HEADER */}
       <div className="print-header flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
         <div className="flex items-center gap-4">
@@ -846,11 +852,9 @@ const PrintableStudentProfile = ({ student, classes, schoolSettings }) => {
           </div>
         </div>
         <div className="text-right text-label leading-relaxed text-slate-600">
-          <p className="text-slate-900 font-bold">{schoolName}</p>
           <p>{address}</p>
           <p>Phone: {phone}</p>
           <p>Email: {email}</p>
-          <p className="mt-1 font-mono text-label text-slate-400/80">Document ID: SMS-STD-{student.id}-{new Date().getFullYear()}</p>
         </div>
       </div>
 
@@ -863,7 +867,7 @@ const PrintableStudentProfile = ({ student, classes, schoolSettings }) => {
       </div>
 
       {/* PDF BODY */}
-      <div className="space-y-6">
+      <div className="space-y-6 flex-1">
         {/* Personal & Academic */}
         <div className="grid grid-cols-2 gap-8">
           <div className="print-section">
@@ -924,20 +928,15 @@ const PrintableStudentProfile = ({ student, classes, schoolSettings }) => {
       </div>
 
       {/* PDF FOOTER (Signatures) */}
-      <div className="print-footer mt-8 pt-6">
-        <div className="signature-area">
-          <div className="signature-line">
-            Manager Signature
-            <p className="text-label font-normal text-slate-400/80 mt-1">Official Stamp Required</p>
-          </div>
+      <div className="mt-auto grid grid-cols-2 gap-12 pt-8">
+        <div className="signature-area text-center border-t-2 border-slate-900 pt-2">
+          <p className="text-[10px] font-black uppercase tracking-widest">Manager's Signature</p>
         </div>
-        <div className="signature-area">
-          <div className="signature-line">
-            Responsible Person Signature
-            <p className="text-label font-normal text-slate-400/80 mt-1">Date: ____ / ____ / 2026</p>
-          </div>
+        <div className="signature-area text-center border-t-2 border-slate-900 pt-2">
+          <p className="text-[10px] font-black uppercase tracking-widest">Responsible Person's Signature</p>
         </div>
       </div>
+      <PrintableFooter />
     </div>
   );
 };

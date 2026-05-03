@@ -17,12 +17,39 @@ const AdminDashboard = () => {
 
  const [attendanceRange, setAttendanceRange] = useState('weekly');
 
- const filteredAttendance = useMemo(() => {
- const sorted = [...attendance].filter(day => day.date).sort((a, b) => new Date(a.date) - new Date(b.date));
- if (attendanceRange === 'weekly') return sorted.slice(-7);
- if (attendanceRange === 'monthly') return sorted.slice(-30);
- return sorted;
- }, [attendance, attendanceRange]);
+  const filteredAttendance = useMemo(() => {
+    // 1. Filter out items without a date (like the summary objects) and sort by date
+    const recordsWithDate = attendance.filter(day => day.date);
+    
+    // 2. Group by date to get daily statistics
+    const groupedByDate = recordsWithDate.reduce((acc, curr) => {
+      const dateKey = curr.date;
+      if (!acc[dateKey]) {
+        acc[dateKey] = { total: 0, presentCount: 0 };
+      }
+      acc[dateKey].total += 1;
+      if (curr.status === 'Present' || curr.status === 'Late') {
+        acc[dateKey].presentCount += 1;
+      }
+      return acc;
+    }, {});
+
+    // 3. Convert grouped data to chart-friendly format with percentages
+    const mapped = Object.keys(groupedByDate).map(date => {
+      const stats = groupedByDate[date];
+      const presentPct = stats.total > 0 ? Math.round((stats.presentCount / stats.total) * 100) : 0;
+      return {
+        date,
+        present: presentPct,
+        absent: 100 - presentPct
+      };
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // 4. Return the appropriate slice based on the range
+    if (attendanceRange === 'weekly') return mapped.slice(-7);
+    if (attendanceRange === 'monthly') return mapped.slice(-30);
+    return mapped;
+  }, [attendance, attendanceRange]);
 
  const currentHour = new Date().getHours();
  let greetingKey = 'goodEvening';

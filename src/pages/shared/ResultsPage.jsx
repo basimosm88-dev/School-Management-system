@@ -18,6 +18,7 @@ const ResultsPage = ({ role }) => {
   const userRole = role || currentUser?.role || 'admin';
   const [viewMode, setViewMode] = useState(userRole === 'student' ? 'history' : 'grid'); 
   const [selectedClassId, setSelectedClassId] = useState(null);
+  const [selectedSubject, setSelectedSubject] = useState(null);
   const [viewingStudentId, setViewingStudentId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +52,19 @@ const ResultsPage = ({ role }) => {
     setIsLoading(true);
     setTimeout(() => {
       setSelectedClassId(classId);
+      if (userRole === 'teacher') {
+        setViewMode('subject');
+      } else {
+        setViewMode('list');
+      }
+      setIsLoading(false);
+    }, 400);
+  };
+
+  const handleSelectSubject = (subjectName) => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setSelectedSubject(subjectName);
       setViewMode('list');
       setIsLoading(false);
     }, 400);
@@ -69,11 +83,29 @@ const ResultsPage = ({ role }) => {
     if (viewMode === 'detail' && userRole !== 'student') {
       setViewMode('list');
     } else if (viewMode === 'list') {
+      if (userRole === 'teacher') {
+        setViewMode('subject');
+      } else {
+        setViewMode('grid');
+      }
+    } else if (viewMode === 'subject') {
       setViewMode('grid');
     } else if (viewMode === 'detail' && userRole === 'student') {
       setViewMode('history');
     }
   };
+
+  // Teacher Subject Filter
+  const teacherSubjectNames = useMemo(() => {
+    if (userRole !== 'teacher') return null;
+    const subjects = new Set();
+    classes.forEach(c => {
+      (c.subjects || []).forEach(s => {
+        if (s.teacherId === currentUser?.id) subjects.add(s.name);
+      });
+    });
+    return subjects;
+  }, [classes, currentUser, userRole]);
 
   // Student Academic History Calculation
   const studentAcademicHistory = useMemo(() => {
@@ -99,16 +131,24 @@ const ResultsPage = ({ role }) => {
       const classObj = classes.find(c => parseInt(c.id) === parseInt(cid));
       const reportData = getReportCardData(sId, cid);
       
-      const subjects = Object.keys(reportData.results);
+      // Filter subjects for teacher role
+      let subjects = Object.keys(reportData.results);
+      if (userRole === 'teacher' && teacherSubjectNames) {
+        subjects = subjects.filter(s => teacherSubjectNames.has(s));
+      }
+
+      const filteredResults = {};
+      subjects.forEach(s => { filteredResults[s] = reportData.results[s]; });
+
       const totalAverage = subjects.length > 0 
-        ? (subjects.reduce((acc, sub) => acc + (parseFloat(reportData.results[sub].average) || 0), 0) / subjects.length).toFixed(1)
+        ? (subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].average) || 0), 0) / subjects.length).toFixed(1)
         : "0.0";
       
-      const totalScore = subjects.reduce((acc, sub) => acc + (parseFloat(reportData.results[sub].average) || 0), 0).toFixed(1);
+      const totalScore = subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].average) || 0), 0).toFixed(1);
 
       const examAverages = {};
       ["Before Midterm", "Midterm", "After Midterm", "Final"].forEach(type => {
-        const scores = subjects.map(sub => reportData.results[sub][type]).filter(s => typeof s === 'number');
+        const scores = subjects.map(sub => filteredResults[sub][type]).filter(s => typeof s === 'number');
         examAverages[type] = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : null;
       });
 
@@ -122,6 +162,7 @@ const ResultsPage = ({ role }) => {
 
       return {
         ...reportData,
+        results: filteredResults,
         student,
         className: classObj?.name || `Class ${cid}`,
         totalAverage,
@@ -132,7 +173,7 @@ const ResultsPage = ({ role }) => {
         promotion: status === 'Pass' ? 'Promoted' : 'Held Back'
       };
     }).sort((a, b) => b.classId - a.classId);
-  }, [viewingStudentId, currentUser, exams, classes, getReportCardData, students, calculateRankings]);
+  }, [viewingStudentId, currentUser, exams, classes, getReportCardData, students, calculateRankings, userRole, teacherSubjectNames]);
 
   // Admin/Teacher Student List Data
   const studentResults = useMemo(() => {
@@ -147,29 +188,39 @@ const ResultsPage = ({ role }) => {
       const reportData = getReportCardData(student.id, cid);
       const studentRank = rankings.find(r => parseInt(r.studentId) === parseInt(student.id));
       
-      // Calculate averages for each exam type across all subjects
-      const subjects = Object.keys(reportData.results);
+      // Calculate averages for each exam type
+      // If teacher role with a selected subject, only show that subject's scores
+      const subjects = userRole === 'teacher' && selectedSubject 
+        ? [selectedSubject] 
+        : Object.keys(reportData.results);
+
       const examTypes = ["Before Midterm", "Midterm", "After Midterm", "Final"];
       const examAverages = {};
       
       examTypes.forEach(type => {
         const scores = subjects.map(sub => reportData.results[sub][type]).filter(s => typeof s === 'number');
-        examAverages[type] = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) + '%' : "Not entered yet";
+        examAverages[type] = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : "Not entered yet";
       });
 
-      // Calculate Outcome based on Midterm and Final being entered
+      // Calculate Outcome
       let outcome = "Pending";
       const midtermEntered = examAverages["Midterm"] !== "Not entered yet";
       const finalEntered = examAverages["Final"] !== "Not entered yet";
       
       if (midtermEntered && finalEntered) {
-        outcome = (studentRank?.averageScore || 0) >= 50 ? 'Pass' : 'Fail';
+        const avg = subjects.reduce((acc, sub) => acc + (parseFloat(reportData.results[sub].average) || 0), 0) / subjects.length;
+        outcome = avg >= 50 ? 'Pass' : 'Fail';
       }
+
+      const displayAverage = userRole === 'teacher' && selectedSubject
+        ? parseFloat(reportData.results[selectedSubject]?.average || 0)
+        : (studentRank ? parseFloat(studentRank.averageScore.toFixed(1)) : 0);
 
       return {
         ...student,
+        results: reportData.results,
         examAverages,
-        displayAverage: studentRank ? parseFloat(studentRank.averageScore.toFixed(1)) : 0,
+        displayAverage,
         displayTotal: studentRank ? parseFloat(studentRank.totalScore.toFixed(1)) : 0,
         rank: studentRank?.rank || '-',
         status: outcome
@@ -179,7 +230,7 @@ const ResultsPage = ({ role }) => {
       if (b.rank === '-') return -1;
       return a.rank - b.rank;
     });
-  }, [students, selectedClassId, searchTerm, getReportCardData, calculateRankings]);
+  }, [students, selectedClassId, searchTerm, getReportCardData, calculateRankings, userRole, selectedSubject]);
 
   if (isLoading) {
     return (
@@ -244,6 +295,50 @@ const ResultsPage = ({ role }) => {
       );
     }
 
+    if (viewMode === 'subject') {
+      // Get subjects for the selected class that this teacher teaches
+      const classSubjects = currentClass?.subjects?.filter(s => s.teacherId === currentUser?.id) || [];
+      
+      return (
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <button onClick={goBack} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-on-surface-variant transition-colors">
+              <span className="material-symbols-outlined">arrow_back</span>
+            </button>
+            <div className="flex items-center text-label truncate">
+              <span className="text-on-surface-variant cursor-pointer hover:text-primary" onClick={goBack}>Classes</span>
+              <span className="material-symbols-outlined text-on-surface-variant/30 text-section mx-1">chevron_right</span>
+              <span className="text-on-surface truncate font-bold">{currentClass?.name} Subjects</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {classSubjects.map((sub, idx) => (
+              <div 
+                key={idx}
+                onClick={() => handleSelectSubject(sub.name)}
+                className="group p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-primary transition-all cursor-pointer relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-bl-full transition-transform group-hover:scale-110"></div>
+                <div className="relative z-10 flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                    <span className="material-symbols-outlined text-display">auto_stories</span>
+                  </div>
+                  <div>
+                    <h3 className="text-section font-black text-on-surface">{sub.name}</h3>
+                    <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest mt-1">Select to view results</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          {classSubjects.length === 0 && (
+            <EmptyState icon="auto_stories" message="No Subjects Found" description="You are not assigned to any subjects in this class." />
+          )}
+        </div>
+      );
+    }
+
     if (viewMode === 'list') {
       return (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 print:hidden">
@@ -253,31 +348,50 @@ const ResultsPage = ({ role }) => {
                 <span className="material-symbols-outlined">arrow_back</span>
               </button>
               <div className="flex items-center text-label truncate">
-                <span className="text-on-surface-variant cursor-pointer hover:text-primary" onClick={goBack}>Classes</span>
+                <span className="text-on-surface-variant cursor-pointer hover:text-primary" onClick={goBack}>
+                  {userRole === 'teacher' ? 'Subjects' : 'Classes'}
+                </span>
                 <span className="material-symbols-outlined text-on-surface-variant/30 text-section mx-1">chevron_right</span>
-                <span className="text-on-surface truncate font-bold">{currentClass?.name}</span>
+                <span className="text-on-surface truncate font-bold">
+                  {userRole === 'teacher' ? selectedSubject : currentClass?.name}
+                </span>
               </div>
             </div>
-            
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => handlePrint(null, { type: 'class-list' })} 
-                className="btn-secondary py-2 border-primary/20 text-primary flex items-center gap-2"
-              >
-                <span className="material-symbols-outlined text-section">print</span>
-                Print Class Results
-              </button>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant text-section">search</span>
-                <input 
-                  type="text"
-                  placeholder="Find student..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label outline-none focus:ring-2 focus:ring-primary/20 transition-all w-48"
-                />
-              </div>
+          <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+            {/* Search Bar - Top on mobile */}
+            <div className="relative order-1 lg:order-2 w-full lg:w-auto">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant text-section">search</span>
+              <input 
+                type="text"
+                placeholder="Find student..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label outline-none focus:ring-2 focus:ring-primary/20 transition-all w-full lg:w-48"
+              />
             </div>
+
+            {/* Print Buttons - Bottom of search on mobile */}
+            <div className="flex items-center gap-3 order-2 lg:order-1 w-full lg:w-auto">
+              {userRole === 'teacher' && selectedSubject && (
+                <button 
+                  onClick={() => handlePrint(null, { type: 'subject-class', subjectName: selectedSubject })} 
+                  className="btn-primary flex-1 lg:flex-none py-2 px-6 flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+                >
+                  <span className="material-symbols-outlined text-section">print</span>
+                  Print Full Class Results
+                </button>
+              )}
+              {userRole !== 'teacher' && (
+                <button 
+                  onClick={() => handlePrint(null, { type: 'class-list' })} 
+                  className="btn-secondary flex-1 lg:flex-none py-2 border-primary/20 text-primary flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-section">print</span>
+                  Print Class Results
+                </button>
+              )}
+            </div>
+          </div>
           </div>
 
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden table-container">
@@ -355,13 +469,15 @@ const ResultsPage = ({ role }) => {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <button 
-                              onClick={() => handlePrint(res.id, { type: 'report-card' })}
-                              className="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
-                              title="Quick Print Report Card"
-                            >
-                              <span className="material-symbols-outlined text-section">print</span>
-                            </button>
+                             {userRole !== 'teacher' && (
+                               <button 
+                                 onClick={() => handlePrint(res.id, { type: 'report-card' })}
+                                 className="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                                 title="Quick Print Report Card"
+                               >
+                                 <span className="material-symbols-outlined text-section">print</span>
+                               </button>
+                             )}
                             <button onClick={() => handleSelectStudent(res.id)} className="btn-secondary py-1.5 px-4">Full Details</button>
                           </div>
                         </td>
@@ -396,13 +512,15 @@ const ResultsPage = ({ role }) => {
               <p className="text-label text-on-surface-variant">Official academic transcript and historical examination data.</p>
             </div>
             
-            <button 
-              onClick={() => handlePrint(sId, { type: 'transcript' })}
-              className="btn-primary"
-            >
-              <span className="material-symbols-outlined text-section">print_connect</span>
-              Print Full Transcript
-            </button>
+            {userRole !== 'teacher' && (
+              <button 
+                onClick={() => handlePrint(sId, { type: 'transcript' })}
+                className="btn-primary"
+              >
+                <span className="material-symbols-outlined text-section">print_connect</span>
+                Print Full Transcript
+              </button>
+            )}
           </div>
 
           {/* History Sections */}
@@ -423,13 +541,20 @@ const ResultsPage = ({ role }) => {
                       </p>
                     </div>
                   </div>
-                  <button 
-                    onClick={() => handlePrint(sId, { type: 'report-card', classId: classRecord.classId })}
-                    className="btn-secondary py-1.5 px-4 text-primary border-primary/20 hover:bg-primary/5"
-                  >
-                    <span className="material-symbols-outlined text-section">print</span>
-                    Print Year Results
-                  </button>
+                  {userRole !== 'teacher' && (
+                    <div className="flex flex-wrap gap-2">
+                      {Object.keys(classRecord.results).map(sub => (
+                        <button 
+                          key={sub}
+                          onClick={() => handlePrint(sId, { type: 'subject-student', subjectName: sub, classId: classRecord.classId })}
+                          className="btn-secondary py-1.5 px-4 text-emerald-600 border-emerald-500/20 hover:bg-emerald-50"
+                        >
+                          <span className="material-symbols-outlined text-section">print</span>
+                          Print {sub} Results
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Performance Cards */}
@@ -500,32 +625,34 @@ const ResultsPage = ({ role }) => {
                 </div>
 
                 {/* Exam Slip Print Center - ENHANCED UI */}
-                <div className="bg-slate-50 dark:bg-slate-800/30 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 p-6 mt-4">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                      <span className="material-symbols-outlined">print</span>
+                {userRole !== 'teacher' && (
+                  <div className="bg-slate-50 dark:bg-slate-800/30 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 p-6 mt-4">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                        <span className="material-symbols-outlined">print</span>
+                      </div>
+                      <div>
+                        <h3 className="text-label font-black text-on-surface uppercase tracking-tight">Exam Slip Print Center</h3>
+                        <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Select an individual exam type to generate a printable slip</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-label font-black text-on-surface uppercase tracking-tight">Exam Slip Print Center</h3>
-                      <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Select an individual exam type to generate a printable slip</p>
-                    </div>
-                  </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {["Before Midterm", "Midterm", "After Midterm", "Final"].map(type => (
-                      <button 
-                        key={type}
-                        onClick={() => handlePrint(sId, { type: 'exam-slip', examType: type, classId: classRecord.classId })}
-                        className="group flex flex-col items-center justify-center p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-primary hover:shadow-xl hover:shadow-primary/5 transition-all"
-                      >
-                        <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:bg-primary group-hover:text-white rounded-lg flex items-center justify-center mb-2 transition-colors">
-                          <span className="material-symbols-outlined text-section">description</span>
-                        </div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant group-hover:text-primary transition-colors text-center">{type}</span>
-                      </button>
-                    ))}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {["Before Midterm", "Midterm", "After Midterm", "Final"].map(type => (
+                        <button 
+                          key={type}
+                          onClick={() => handlePrint(sId, { type: 'exam-slip', examType: type, classId: classRecord.classId })}
+                          className="group flex flex-col items-center justify-center p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-primary hover:shadow-xl hover:shadow-primary/5 transition-all"
+                        >
+                          <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:bg-primary group-hover:text-white rounded-lg flex items-center justify-center mb-2 transition-colors">
+                            <span className="material-symbols-outlined text-section">description</span>
+                          </div>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant group-hover:text-primary transition-colors text-center">{type}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             ))
           )}
@@ -569,7 +696,27 @@ const ResultsPage = ({ role }) => {
         />
       )}
 
-      {/* 4. Single Exam Slip */}
+      {/* 5. Subject Results Slip (Class-wide) */}
+      {printConfig.type === 'subject-class' && (
+        <PrintableSubjectClassResults 
+          className={currentClass?.name}
+          subjectName={printConfig.subjectName}
+          results={studentResults}
+          schoolSettings={schoolSettings}
+        />
+      )}
+
+      {/* 6. Subject Results Slip (Individual Student) */}
+      {printConfig.type === 'subject-student' && (
+        <PrintableSubjectStudentResults 
+          student={students.find(s => parseInt(s.id) === parseInt(viewingStudentId || currentUser?.id))}
+          classRecord={studentAcademicHistory.find(h => parseInt(h.classId) === parseInt(printConfig.classId))}
+          subjectName={printConfig.subjectName}
+          schoolSettings={schoolSettings}
+        />
+      )}
+
+      {/* 7. Individual Exam Slip */}
       {printConfig.type === 'exam-slip' && (
         <PrintableExamSlip 
           student={students.find(s => parseInt(s.id) === parseInt(viewingStudentId || currentUser?.id))}
@@ -602,7 +749,6 @@ const PrintableHeader = ({ schoolSettings, title }) => {
         </div>
       </div>
       <div className="text-right text-label leading-relaxed text-slate-600">
-        <p className="text-slate-900 font-bold">{schoolName}</p>
         <p>{address}</p>
         <p>Phone: {phone}</p>
         <p>Email: {email}</p>
@@ -610,6 +756,15 @@ const PrintableHeader = ({ schoolSettings, title }) => {
     </div>
   );
 };
+
+const PrintableFooter = ({ signatureTitle }) => (
+  <div className="mt-auto pt-12 text-center">
+    <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-4">
+      <p className="text-[10px] font-black uppercase tracking-widest">{signatureTitle || "Manager's Signature"}</p>
+    </div>
+    <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
+  </div>
+);
 
 const PrintableClassResults = ({ className, results, schoolSettings }) => {
   return (
@@ -627,7 +782,6 @@ const PrintableClassResults = ({ className, results, schoolSettings }) => {
             <th className="p-3 text-center text-[10px] uppercase font-bold">A.Mid</th>
             <th className="p-3 text-center text-[10px] uppercase font-bold">Final</th>
             <th className="p-3 text-center text-[10px] uppercase font-bold">Average</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">Outcome</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200">
@@ -640,22 +794,12 @@ const PrintableClassResults = ({ className, results, schoolSettings }) => {
               <td className="p-3 text-center text-xs">{res.examAverages["After Midterm"]}</td>
               <td className="p-3 text-center text-xs">{res.examAverages["Final"]}</td>
               <td className="p-3 text-center font-bold text-blue-600">{res.displayAverage}%</td>
-              <td className={`p-3 text-center font-bold uppercase text-[10px] ${res.status === 'Pass' ? 'text-emerald-600' : 'text-rose-600'}`}>
-                {res.status}
-              </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div className="print-footer mt-auto pt-12 flex justify-between">
-        <div className="signature-area w-48 text-center border-t-2 border-slate-300 pt-2">
-          <p className="text-[10px] font-bold">Principal Signature</p>
-        </div>
-        <div className="signature-area w-48 text-center border-t-2 border-slate-300 pt-2">
-          <p className="text-[10px] font-bold">Class Teacher Signature</p>
-        </div>
-      </div>
+      <PrintableFooter signatureTitle="Manager's Signature" />
     </div>
   );
 };
@@ -683,7 +827,7 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 gap-4 mb-10">
         <div className="border border-slate-200 p-4 rounded-xl text-center bg-white shadow-sm">
           <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Yearly Average</p>
           <p className="text-xl font-black text-blue-600">{record.totalAverage}%</p>
@@ -691,16 +835,6 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
         <div className="border border-slate-200 p-4 rounded-xl text-center bg-white shadow-sm">
           <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Rank</p>
           <p className="text-xl font-black text-slate-900">#{record.rank}</p>
-        </div>
-        <div className="border border-slate-200 p-4 rounded-xl text-center bg-white shadow-sm">
-          <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Decision</p>
-          <p className={`text-xl font-black uppercase ${record.status === 'Pass' ? 'text-emerald-600' : 'text-rose-600'}`}>
-            {record.status}
-          </p>
-        </div>
-        <div className="border border-slate-200 p-4 rounded-xl text-center bg-white shadow-sm">
-          <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Promotion</p>
-          <p className="text-xl font-black text-indigo-600 uppercase">{record.promotion}</p>
         </div>
       </div>
 
@@ -730,16 +864,7 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
         </tbody>
       </table>
 
-      <div className="mt-auto grid grid-cols-2 gap-12 pt-12">
-        <div className="signature-area border-t-2 border-slate-300 pt-2 text-center">
-          <p className="text-[10px] font-bold">Controller of Examinations</p>
-          <p className="text-[8px] text-slate-400">Official Seal Required</p>
-        </div>
-        <div className="signature-area border-t-2 border-slate-300 pt-2 text-center">
-          <p className="text-[10px] font-bold">Principal / Headmaster</p>
-          <p className="text-[8px] text-slate-400">Date: ____ / ____ / 2026</p>
-        </div>
-      </div>
+      <PrintableFooter signatureTitle="Manager's Signature" />
     </div>
   );
 };
@@ -781,14 +906,14 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
         </div>
       </div>
 
-      <h3 className="text-[10px] font-black uppercase tracking-widest mb-4 border-b-2 border-slate-900 pb-1">Subject Performance Matrix</h3>
-      <table className="w-full border-collapse mb-10">
+      <h3 className="text-[10px] font-black uppercase tracking-widest mb-2 border-b-2 border-slate-900 pb-1">Subject Performance Matrix</h3>
+      <table className="w-full border-collapse mb-6">
         <thead>
           <tr className="bg-slate-100 border-y border-slate-900">
-            <th className="p-3 text-left text-[10px] uppercase font-black">Subject Identification</th>
-            <th className="p-3 text-center text-[10px] uppercase font-black">Marks Obtained</th>
-            <th className="p-3 text-center text-[10px] uppercase font-black">Status</th>
-            <th className="p-3 text-right text-[10px] uppercase font-black">Remarks</th>
+            <th className="p-2 text-left text-[10px] uppercase font-black">Subject Identification</th>
+            <th className="p-2 text-center text-[10px] uppercase font-black">Marks Obtained</th>
+            <th className="p-2 text-center text-[10px] uppercase font-black">Status</th>
+            <th className="p-2 text-right text-[10px] uppercase font-black">Remarks</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200">
@@ -797,13 +922,13 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
             const isNumeric = typeof grade === 'number';
             return (
               <tr key={idx} className="border-b border-slate-100">
-                <td className="p-3">
+                <td className="p-2">
                   <p className="text-xs font-black">{subject}</p>
                 </td>
-                <td className="p-3 text-center">
+                <td className="p-2 text-center">
                   <span className="text-label font-bold font-mono">{grade}</span>
                 </td>
-                <td className="p-3 text-center">
+                <td className="p-2 text-center">
                   {isNumeric ? (
                     <span className={`text-[10px] font-black px-2 py-0.5 rounded ${grade >= 50 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
                       {grade >= 50 ? 'PASS' : 'FAIL'}
@@ -812,7 +937,7 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
                     <span className="text-[10px] text-slate-400 font-bold italic">N/A</span>
                   )}
                 </td>
-                <td className="p-3 text-right text-[10px] text-slate-500 font-bold italic">
+                <td className="p-2 text-right text-[10px] text-slate-500 font-bold italic">
                   {isNumeric ? (grade >= 80 ? 'Excellent' : grade >= 60 ? 'Good' : grade >= 50 ? 'Satisfactory' : 'Needs Work') : '-'}
                 </td>
               </tr>
@@ -821,44 +946,14 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
         </tbody>
       </table>
 
-      <div className="grid grid-cols-3 gap-6 mb-12">
-        <div className="col-span-1 p-6 bg-slate-900 text-white rounded-xl text-center">
+      <div className="flex justify-center mb-8">
+        <div className="w-48 p-4 bg-slate-900 text-white rounded-xl text-center">
           <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Exam Average</p>
-          <p className="text-[32px] font-black leading-none">{avg}%</p>
-        </div>
-        <div className="col-span-2 p-6 border-2 border-dashed border-slate-200 rounded-xl flex items-center gap-6">
-          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center">
-            <span className="material-symbols-outlined">security</span>
-          </div>
-          <div>
-            <p className="text-[10px] uppercase font-black text-slate-900">Official Document Security Hash</p>
-            <p className="font-mono text-[10px] text-slate-400 break-all leading-tight mt-1">
-              SHA256-{Math.random().toString(36).substring(2, 15).toUpperCase()}{Math.random().toString(36).substring(2, 15).toUpperCase()}
-            </p>
-          </div>
+          <p className="text-[28px] font-black leading-none">{avg}%</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-12 pt-12 border-t-2 border-slate-100">
-        <div className="text-center">
-          <div className="h-16 flex items-end justify-center mb-2">
-             <div className="w-48 border-b border-slate-300"></div>
-          </div>
-          <p className="text-[10px] font-black uppercase text-slate-900">Class Teacher Signature</p>
-          <p className="text-[8px] text-slate-400 italic">Date: ____ / ____ / 2026</p>
-        </div>
-        <div className="text-center">
-          <div className="h-16 flex items-end justify-center mb-2">
-             <div className="w-48 border-b border-slate-300"></div>
-          </div>
-          <p className="text-[10px] font-black uppercase text-slate-900">Controller of Examinations</p>
-          <p className="text-[8px] text-slate-400 italic">Official Seal Required</p>
-        </div>
-      </div>
-
-      <div className="mt-12 pt-4 border-t border-slate-100 text-center">
-        <p className="text-[8px] text-slate-400 uppercase font-bold tracking-[0.3em]">This is an electronically generated document. No handwritten signature required unless specified.</p>
-      </div>
+      <PrintableFooter signatureTitle="Manager's Signature" />
     </div>
   );
 };
@@ -875,7 +970,6 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
         </div>
         <div className="text-right text-label uppercase font-bold text-slate-500">
           <p>Student ID: {student?.id}</p>
-          <p>Enrollment: {student?.enrollmentDate || 'N/A'}</p>
         </div>
       </div>
 
@@ -912,7 +1006,7 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
               </tbody>
             </table>
             
-            <div className="grid grid-cols-4 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <div className="grid grid-cols-3 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
               <div>
                 <p className="text-[8px] uppercase font-bold text-slate-400">Yearly Average</p>
                 <p className="text-label font-black text-blue-700">{record.totalAverage}%</p>
@@ -925,30 +1019,107 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
                 <p className="text-[8px] uppercase font-bold text-slate-400">Total Points</p>
                 <p className="text-label font-black">{record.totalScore}</p>
               </div>
-              <div>
-                <p className="text-[8px] uppercase font-bold text-slate-400">Outcome</p>
-                <p className={`text-label font-black ${record.status === 'Pass' ? 'text-emerald-600' : 'text-rose-600'}`}>{record.status}</p>
-              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-20 pt-10 border-t-2 border-slate-900 flex justify-between">
-        <div className="text-center w-64">
-          <p className="text-xs font-bold uppercase mb-8">Official Registrar Seal</p>
-          <div className="w-32 h-32 border-2 border-slate-200 rounded-full mx-auto flex items-center justify-center">
-            <span className="text-[10px] text-slate-300 font-bold">CERTIFIED</span>
-          </div>
+      <PrintableFooter signatureTitle="Manager's Signature" />
+    </div>
+  );
+};
+
+const PrintableSubjectClassResults = ({ className, subjectName, results, schoolSettings }) => {
+  return (
+    <div className="print-only font-sans text-slate-900 bg-white">
+      <PrintableHeader schoolSettings={schoolSettings} title="Subject Performance Analysis" />
+      <div className="mb-8 border-b-4 border-slate-900 pb-4 flex justify-between items-end">
+        <div>
+          <h2 className="text-display font-black">{subjectName}</h2>
+          <p className="text-label text-slate-500 uppercase tracking-widest font-bold">Class: {className}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs font-bold uppercase mb-1">Date of Issue</p>
-          <p className="text-label font-mono">{new Date().toLocaleDateString()}</p>
-          <div className="mt-12 w-64 border-t border-slate-900 pt-2 ml-auto">
-            <p className="text-[10px] font-bold">Principal's Signature</p>
-          </div>
+          <p className="text-[10px] font-black uppercase text-slate-400">Academic Year</p>
+          <p className="text-section font-black">2025 / 2026</p>
         </div>
       </div>
+
+      <table className="w-full border-collapse mb-12">
+        <thead>
+          <tr className="bg-slate-100 border-y border-slate-900">
+            <th className="p-3 text-left text-[10px] uppercase font-black">Student Name</th>
+            <th className="p-3 text-center text-[10px] uppercase font-black">B.Mid</th>
+            <th className="p-3 text-center text-[10px] uppercase font-black">Mid</th>
+            <th className="p-3 text-center text-[10px] uppercase font-black">A.Mid</th>
+            <th className="p-3 text-center text-[10px] uppercase font-black">Final</th>
+            <th className="p-3 text-right text-[10px] uppercase font-black">Subject Avg</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-200">
+          {results.map(res => {
+            const subjData = res.results[subjectName];
+            if (!subjData) return null;
+            return (
+              <tr key={res.id}>
+                <td className="p-3 font-bold">{res.name}</td>
+                <td className="p-3 text-center text-xs">{subjData["Before Midterm"]}</td>
+                <td className="p-3 text-center text-xs">{subjData["Midterm"]}</td>
+                <td className="p-3 text-center text-xs">{subjData["After Midterm"]}</td>
+                <td className="p-3 text-center text-xs">{subjData["Final"]}</td>
+                <td className="p-3 text-right font-bold text-blue-600">{subjData.average}%</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      <PrintableFooter signatureTitle="Subject Teacher's Signature" />
+    </div>
+  );
+};
+
+const PrintableSubjectStudentResults = ({ student, classRecord, subjectName, schoolSettings }) => {
+  if (!classRecord || !classRecord.results[subjectName]) return null;
+  const subjData = classRecord.results[subjectName];
+
+  return (
+    <div className="print-only font-sans text-slate-900 bg-white">
+      <PrintableHeader schoolSettings={schoolSettings} title="Individual Subject Performance" />
+      
+      <div className="mb-12 flex justify-between border-b-4 border-slate-900 pb-6">
+        <div>
+          <h2 className="text-display font-black">{student?.name}</h2>
+          <p className="text-label text-slate-500 uppercase tracking-widest font-bold">Subject: {subjectName}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-[10px] font-black uppercase text-slate-400">Class Section</p>
+          <p className="text-section font-black">{classRecord.className}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-5 gap-4 mb-12">
+        {[
+          { label: 'B.Midterm', val: subjData["Before Midterm"] },
+          { label: 'Midterm', val: subjData["Midterm"] },
+          { label: 'A.Midterm', val: subjData["After Midterm"] },
+          { label: 'Final', val: subjData["Final"] },
+          { label: 'Total Avg', val: subjData.average + '%', highlight: true }
+        ].map((item, i) => (
+          <div key={i} className={`p-6 rounded-2xl border ${item.highlight ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 border-slate-200'} text-center shadow-sm`}>
+            <p className={`text-[10px] uppercase font-bold mb-2 ${item.highlight ? 'text-slate-400' : 'text-slate-500'}`}>{item.label}</p>
+            <p className="text-2xl font-black">{item.val || '-'}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-8 bg-blue-50 border-2 border-blue-100 rounded-3xl mb-12">
+        <h3 className="text-label font-black uppercase tracking-widest text-blue-700 mb-2">Teacher Assessment</h3>
+        <p className="text-label text-slate-600 leading-relaxed italic">
+          "The student has shown {parseFloat(subjData.average) >= 80 ? 'exceptional' : parseFloat(subjData.average) >= 50 ? 'consistent' : 'room for improvement'} performance in {subjectName} during this academic cycle. Continued focus on core concepts is recommended."
+        </p>
+      </div>
+
+      <PrintableFooter signatureTitle="Manager's Signature" />
     </div>
   );
 };

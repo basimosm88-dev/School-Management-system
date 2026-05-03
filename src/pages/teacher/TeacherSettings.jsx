@@ -56,24 +56,24 @@ const TeacherSettings = () => {
 
  return (
  <PageLayout role="teacher" title="Settings">
- <div className="max-w-4xl mx-auto flex gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
- {/* Settings Sidebar */}
- <div className="w-64 flex flex-col gap-2 shrink-0">
- {tabs.map(tab => (
- <button
- key={tab.id}
- onClick={() => setActiveTab(tab.id)}
- className={`flex items-center gap-3 px-4 py-3 rounded-xl  text-label transition-all ${
- activeTab === tab.id 
- ? 'bg-primary text-white shadow-lg shadow-primary/20' 
- : 'bg-white dark:bg-slate-900 text-slate-500/80 dark:text-slate-400/80 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
- }`}
- >
- <span className="material-symbols-outlined text-display">{tab.icon}</span>
- {tab.label}
- </button>
- ))}
- </div>
+  <div className="max-w-4xl mx-auto flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+  {/* Settings Sidebar - Top on Mobile */}
+  <div className="w-full lg:w-64 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 shrink-0 scrollbar-hide">
+  {tabs.map(tab => (
+  <button
+  key={tab.id}
+  onClick={() => setActiveTab(tab.id)}
+  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-label transition-all whitespace-nowrap lg:whitespace-normal flex-1 lg:flex-none justify-center lg:justify-start ${
+  activeTab === tab.id 
+  ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+  : 'bg-white dark:bg-slate-900 text-slate-500/80 dark:text-slate-400/80 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
+  }`}
+  >
+  <span className="material-symbols-outlined text-display">{tab.icon}</span>
+  {tab.label}
+  </button>
+  ))}
+  </div>
 
  {/* Settings Content */}
  <div className="flex-1 space-y-6">

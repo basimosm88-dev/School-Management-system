@@ -1,12 +1,35 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
- const [sidebarOpen, setSidebarOpen] = useState(() => {
- const saved = localStorage.getItem('sidebarOpen');
- return saved !== null ? JSON.parse(saved) : true;
- });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      }
+    };
+
+    // Initial check & restoration on desktop
+    if (window.innerWidth >= 1024) {
+      const saved = localStorage.getItem('sidebarOpen');
+      setSidebarOpen(saved !== null ? JSON.parse(saved) : true);
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Auto-close sidebar on mobile navigation
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname]);
 
  const [theme, setTheme] = useState(() => {
  const saved = localStorage.getItem('theme');

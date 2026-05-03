@@ -75,123 +75,123 @@ const EventsPage = ({ role }) => {
  )}
  </div>
 
- <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
- {/* Event List */}
- <div className="col-span-12 lg:col-span-8 space-y-4">
- {filteredEvents.length === 0 ? (
- <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 border border-slate-100 dark:border-slate-800">
- <EmptyState icon="event_busy" message="No Events" description="No events found for your account." />
- </div>
- ) : (
- filteredEvents.sort((a,b) => new Date(a.date) - new Date(b.date)).map(event => (
- <div key={event.id} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
- <div className="flex gap-6">
- <div className="flex flex-col items-center justify-center w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group-hover:bg-primary group-hover:border-primary transition-all">
- <span className="text-label text-slate-400/80 dark:text-slate-500/80 group-hover:text-white/70">
- {event.date ? new Date(event.date).toLocaleString('default', { month: 'short' }) : 'N/A'}
- </span>
- <span className="text-display text-slate-900 dark:text-white group-hover:text-white">
- {event.date ? new Date(event.date).getDate() : '-'}
- </span>
- </div>
- <div className="flex-1">
- <div className="flex justify-between items-start">
- <div>
- <h3 className="text-section text-slate-900 dark:text-white mb-1">{event.title}</h3>
- <div className="flex items-center gap-4 text-label text-slate-500/80 dark:text-slate-400/80">
- <span className="flex items-center gap-1">
- <span className="material-symbols-outlined text-section">schedule</span>
- {event.start_time} - {event.end_time}
- </span>
- <span className="flex items-center gap-1">
- <span className="material-symbols-outlined text-section">location_on</span>
- {event.location}
- </span>
- </div>
- </div>
- <div className="flex items-center gap-2">
- <span className={`px-3 py-1 rounded-full text-label  ${
- event.audience === 'all' ? 'bg-blue-50 text-primary border border-blue-100' :
- event.audience === 'teachers' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
- 'bg-emerald-50 text-emerald-600 border border-emerald-100'
- }`}>
- {(event.audience || 'all').replace('_', ' ')}
- </span>
- {role === 'admin' && (
- <button onClick={() => deleteEvent(event.id)} className="p-2 text-slate-400/80 hover:text-rose-500 transition-colors">
- <span className="material-symbols-outlined text-section">delete</span>
- </button>
- )}
- </div>
- </div>
- <p className="mt-4 text-label text-slate-600 dark:text-slate-300 leading-relaxed">
- {event.description}
- </p>
- </div>
- </div>
- </div>
- ))
- )}
- </div>
+  <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6">
+    {/* Calendar Sidebar - Top on Mobile */}
+    <div className="order-1 lg:order-2 lg:col-span-4">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm lg:sticky lg:top-24 transition-all">
+        <div className="flex justify-between items-center mb-6 shrink-0">
+          <h2 className="text-headline text-slate-900 dark:text-white">Calendar</h2>
+          <div className="bg-primary/5 dark:bg-primary/10 text-primary px-3 py-1.5 rounded-xl text-label font-bold border border-primary/10">
+            {monthName} {currentYear}
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-7 gap-1 text-center mb-4 shrink-0">
+          {['S','M','T','W','T','F','S'].map(d => (
+            <span key={d} className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{d}</span>
+          ))}
+        </div>
+        
+        <div className="grid grid-cols-7 gap-1">
+          {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+            <div key={`empty-${i}`} className="aspect-square flex items-center justify-center"></div>
+          ))}
+          {Array.from({length: daysInMonth}).map((_, i) => {
+            const day = i + 1;
+            const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const hasEvent = (events || []).some(e => e.date === dateStr);
+            const isToday = day === today.getDate();
+            
+            return (
+              <div 
+                key={i} 
+                className={`aspect-square flex items-center justify-center rounded-lg text-xs font-semibold cursor-pointer transition-all relative
+                  ${isToday 
+                    ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105 z-10' 
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'
+                  }`}
+              >
+                {day}
+                {hasEvent && (
+                  <span className={`absolute bottom-1 w-1 h-1 rounded-full ${isToday ? 'bg-white' : 'bg-primary'}`}></span>
+                )}
+              </div>
+            );
+          })}
+        </div>
 
- {/* Calendar Sidebar */}
- <div className="col-span-1 md:col-span-12 lg:col-span-4">
-   <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm sticky top-24 transition-all">
-     <div className="flex justify-between items-center mb-6 shrink-0">
-       <h2 className="text-headline text-slate-900 dark:text-white">Calendar</h2>
-       <div className="bg-primary/5 dark:bg-primary/10 text-primary px-3 py-1.5 rounded-xl text-label font-bold border border-primary/10">
-         {monthName} {currentYear}
-       </div>
-     </div>
-     
-     <div className="grid grid-cols-7 gap-1 text-center mb-4 shrink-0">
-       {['S','M','T','W','T','F','S'].map(d => (
-         <span key={d} className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{d}</span>
-       ))}
-     </div>
-     
-     <div className="grid grid-cols-7 gap-1">
-       {Array.from({ length: firstDayOfMonth }).map((_, i) => (
-         <div key={`empty-${i}`} className="aspect-square flex items-center justify-center"></div>
-       ))}
-       {Array.from({length: daysInMonth}).map((_, i) => {
-         const day = i + 1;
-         const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-         const hasEvent = (events || []).some(e => e.date === dateStr);
-         const isToday = day === today.getDate();
-         
-         return (
-           <div 
-             key={i} 
-             className={`aspect-square flex items-center justify-center rounded-lg text-xs font-semibold cursor-pointer transition-all relative
-               ${isToday 
-                 ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105 z-10' 
-                 : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'
-               }`}
-           >
-             {day}
-             {hasEvent && (
-               <span className={`absolute bottom-1 w-1 h-1 rounded-full ${isToday ? 'bg-white' : 'bg-primary'}`}></span>
-             )}
-           </div>
-         );
-       })}
-     </div>
+        <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3 shrink-0">
+          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Legend</h4>
+          <div className="flex items-center gap-3 text-label text-slate-600 dark:text-slate-400/80">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            <span>General Event</span>
+          </div>
+          <div className="flex items-center gap-3 text-label text-slate-600 dark:text-slate-400/80">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+            <span>Teacher Meeting</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-     <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3 shrink-0">
-       <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Legend</h4>
-       <div className="flex items-center gap-3 text-label text-slate-600 dark:text-slate-400/80">
-         <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-         <span>General Event</span>
-       </div>
-       <div className="flex items-center gap-3 text-label text-slate-600 dark:text-slate-400/80">
-         <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-         <span>Teacher Meeting</span>
-       </div>
-     </div>
-   </div>
- </div>
- </div>
+    {/* Event List - Below Calendar on Mobile */}
+    <div className="order-2 lg:order-1 lg:col-span-8 space-y-4">
+      {filteredEvents.length === 0 ? (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 border border-slate-100 dark:border-slate-800">
+          <EmptyState icon="event_busy" message="No Events" description="No events found for your account." />
+        </div>
+      ) : (
+        filteredEvents.sort((a,b) => new Date(a.date) - new Date(b.date)).map(event => (
+          <div key={event.id} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
+            <div className="flex gap-6">
+              <div className="flex flex-col items-center justify-center w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group-hover:bg-primary group-hover:border-primary transition-all">
+                <span className="text-label text-slate-400/80 dark:text-slate-500/80 group-hover:text-white/70">
+                  {event.date ? new Date(event.date).toLocaleString('default', { month: 'short' }) : 'N/A'}
+                </span>
+                <span className="text-display text-slate-900 dark:text-white group-hover:text-white">
+                  {event.date ? new Date(event.date).getDate() : '-'}
+                </span>
+              </div>
+              <div className="flex-1">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-section text-slate-900 dark:text-white mb-1">{event.title}</h3>
+                    <div className="flex items-center gap-4 text-label text-slate-500/80 dark:text-slate-400/80">
+                      <span className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-section">schedule</span>
+                        {event.start_time} - {event.end_time}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-section">location_on</span>
+                        {event.location}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-3 py-1 rounded-full text-label  ${
+                      event.audience === 'all' ? 'bg-blue-50 text-primary border border-blue-100' :
+                      event.audience === 'teachers' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
+                      'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                    }`}>
+                      {(event.audience || 'all').replace('_', ' ')}
+                    </span>
+                    {role === 'admin' && (
+                      <button onClick={() => deleteEvent(event.id)} className="p-2 text-slate-400/80 hover:text-rose-500 transition-colors">
+                        <span className="material-symbols-outlined text-section">delete</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <p className="mt-4 text-label text-slate-600 dark:text-slate-300 leading-relaxed">
+                  {event.description}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
 
  <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Create New Event" onSave={handleSave}>
  <DynamicForm fields={eventFields} onChange={setFormData} />

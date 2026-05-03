@@ -99,10 +99,11 @@ const TeachersPage = () => {
           <p className="text-label text-slate-500/80 mt-1">{t('teachersSubtitle')}</p>
         </div>
 
-        {/* 1. TOP CONTROL BAR */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm flex flex-wrap items-center justify-between gap-4 transition-colors">
-          <div className="flex items-center gap-4 flex-1 min-w-[300px]">
-            <div className="relative flex-1">
+        {/* 1. TOP CONTROL BAR - Responsive */}
+        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition-colors">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4 flex-1 w-full lg:w-auto">
+            {/* Search Bar - Top on mobile */}
+            <div className="relative w-full lg:flex-1">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400/80">search</span>
               <input
                 type="text"
@@ -113,11 +114,12 @@ const TeachersPage = () => {
               />
             </div>
 
-            <div className="flex gap-2">
+            {/* Filters - Grid on mobile, flex on desktop */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap gap-2 w-full lg:w-auto">
               <select
                 value={filters.status}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+                className="lg:flex-none min-w-[100px] bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
               >
                 <option value="">Status</option>
                 <option value="Active">Active</option>
@@ -127,7 +129,7 @@ const TeachersPage = () => {
               <select
                 value={filters.educationLevel}
                 onChange={(e) => setFilters({ ...filters, educationLevel: e.target.value })}
-                className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+                className="lg:flex-none min-w-[100px] bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
               >
                 <option value="">Education</option>
                 <option value="High School">High School</option>
@@ -136,7 +138,7 @@ const TeachersPage = () => {
               <select
                 value={filters.certificateLevel}
                 onChange={(e) => setFilters({ ...filters, certificateLevel: e.target.value })}
-                className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+                className="lg:flex-none min-w-[100px] bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
               >
                 <option value="">Certificate</option>
                 <option value="Bachelor">Bachelor</option>
@@ -146,7 +148,7 @@ const TeachersPage = () => {
               <select
                 value={filters.languages}
                 onChange={(e) => setFilters({ ...filters, languages: e.target.value })}
-                className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+                className="lg:flex-none min-w-[100px] bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
               >
                 <option value="">Language</option>
                 <option value="Somali">Somali</option>
@@ -156,7 +158,7 @@ const TeachersPage = () => {
               <select
                 value={filters.classId}
                 onChange={(e) => setFilters({ ...filters, classId: e.target.value })}
-                className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
+                className="col-span-2 sm:col-span-1 lg:flex-none min-w-[140px] bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
               >
                 <option value="">Assigned Class</option>
                 {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -166,7 +168,7 @@ const TeachersPage = () => {
 
           <button
             onClick={handleAdd}
-            className="btn-primary"
+            className="btn-primary w-full lg:w-auto justify-center"
           >
             <span className="btn-icon">person_add</span>
             Add Teacher
@@ -770,10 +772,19 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolSettings }) => {
   );
 };
 
+const PrintableFooter = ({ signatureTitle }) => (
+  <div className="mt-auto pt-12 text-center">
+    <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-4">
+      <p className="text-[10px] font-black uppercase tracking-widest">{signatureTitle || "Manager's Signature"}</p>
+    </div>
+    <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
+  </div>
+);
+
 const PrintableTeacherProfile = ({ teacher, classes, schoolSettings }) => {
   const { name: schoolName, logo, phone, email, address } = schoolSettings || {};
   return (
-    <div className="print-only font-sans text-slate-900 bg-white">
+    <div className="print-only font-sans text-slate-900 bg-white min-h-screen flex flex-col">
       <div className="print-header flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
         <div className="flex items-center gap-4">
           {logo ? (
@@ -789,11 +800,9 @@ const PrintableTeacherProfile = ({ teacher, classes, schoolSettings }) => {
           </div>
         </div>
         <div className="text-right text-label leading-relaxed text-slate-600">
-          <p className="text-slate-900 font-bold">{schoolName}</p>
           <p>{address}</p>
           <p>Phone: {phone}</p>
           <p>Email: {email}</p>
-          <p className="mt-1 font-mono text-label text-slate-400/80">Employee ID: TCH-{teacher.id}</p>
         </div>
       </div>
 
@@ -805,7 +814,7 @@ const PrintableTeacherProfile = ({ teacher, classes, schoolSettings }) => {
         </div>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-8 flex-1">
         <div className="grid grid-cols-2 gap-8">
           <div className="print-section">
             <h3 className="print-section-title">Personal & Contact Info</h3>
@@ -861,16 +870,7 @@ const PrintableTeacherProfile = ({ teacher, classes, schoolSettings }) => {
         </div>
       </div>
 
-      <div className="fixed bottom-12 left-12 right-12 flex justify-between pt-8 border-t border-slate-200">
-        <div className="text-center w-48">
-          <div className="h-16 border-b border-slate-300 mb-2"></div>
-          <p className="text-label text-slate-500/80">Manager Signature</p>
-        </div>
-        <div className="text-center w-48">
-          <div className="h-16 border-b border-slate-300 mb-2"></div>
-          <p className="text-label text-slate-500/80">Teacher Signature</p>
-        </div>
-      </div>
+      <PrintableFooter signatureTitle="Manager's Signature" />
     </div>
   );
 };

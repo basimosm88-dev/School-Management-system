@@ -142,26 +142,13 @@ const ClassExamReportPrint = () => {
  </table>
  </div>
 
- {/* FOOTER / SIGNATURES */}
- <div className={`grid ${schoolSettings.managerSignature ? 'grid-cols-3' : 'grid-cols-2'} gap-10 pt-10 relative z-10`}>
- <div className="text-center">
- <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-label text-slate-900">{pdfSettings.principalTitle}</p>
- {pdfSettings.showSignatureLabels && <p className="text-label text-slate-400/80 mt-1">Official School Seal</p>}
- </div>
- {schoolSettings.managerSignature && (
- <div className="text-center">
- <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-label text-slate-900">{schoolSettings.managerSignature}</p>
- {pdfSettings.showSignatureLabels && <p className="text-label text-slate-400/80 mt-1">Management</p>}
- </div>
- )}
- <div className="text-center">
- <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-label text-slate-900">{pdfSettings.academicManagerTitle}</p>
- {pdfSettings.showSignatureLabels && <p className="text-label text-slate-400/80 mt-1">Records & Exams</p>}
- </div>
- </div>
+  {/* FOOTER / SIGNATURES */}
+  <div className="mt-auto pt-12 text-center relative z-10">
+    <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-4">
+      <p className="text-[10px] font-black uppercase tracking-widest">Manager's Signature</p>
+    </div>
+    <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
+  </div>
 
  <div className="absolute bottom-4 left-0 right-0 text-center">
  <p className="text-label text-slate-300">{pdfSettings.footerText}</p>

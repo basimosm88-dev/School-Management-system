@@ -128,46 +128,29 @@ const ReportCardPrint = () => {
  </tbody>
  </table>
 
- {/* SUMMARY SECTION */}
- <div className="grid grid-cols-3 gap-8 mb-20">
- <div className="p-6 bg-slate-100 border border-slate-200 rounded-xl text-center">
- <p className="text-label text-slate-400/80 mb-2 uppercase">Total Average</p>
- <p className="text-display text-slate-900">
- {(Object.values(data.results).reduce((acc, curr) => acc + parseFloat(curr.average), 0) / Object.keys(data.results).length || 0).toFixed(1)}%
- </p>
- </div>
- <div className="p-6 bg-slate-100 border border-slate-200 rounded-xl text-center">
- <p className="text-label text-slate-400/80 mb-2 uppercase">Class Ranking</p>
- <p className="text-display text-primary">#{data.rank}</p>
- </div>
- <div className="p-6 bg-slate-900 rounded-xl text-center shadow-xl">
- <p className="text-label text-slate-400/80 mb-2 uppercase">Annual Decision</p>
- <p className="text-section text-white uppercase">{data.promotion}</p>
- </div>
- </div>
+  {/* SUMMARY SECTION */}
+  <div className="grid grid-cols-2 gap-8 mb-20">
+    <div className="p-6 bg-slate-100 border border-slate-200 rounded-xl text-center">
+      <p className="text-label text-slate-400/80 mb-2 uppercase">Total Average</p>
+      <p className="text-display text-slate-900">
+        {(Object.values(data.results).reduce((acc, curr) => acc + parseFloat(curr.average), 0) / Object.keys(data.results).length || 0).toFixed(1)}%
+      </p>
+    </div>
+    <div className="p-6 bg-slate-100 border border-slate-200 rounded-xl text-center">
+      <p className="text-label text-slate-400/80 mb-2 uppercase">Class Ranking</p>
+      <p className="text-display text-primary">#{data.rank}</p>
+    </div>
+  </div>
 
- {/* FOOTER / SIGNATURES */}
- {isManagementView && (
- <div className={`grid ${schoolSettings.managerSignature ? 'grid-cols-3' : 'grid-cols-2'} gap-10 pt-20 relative z-10`}>
- <div className="text-center">
- <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-label uppercase text-slate-900">{pdfSettings.principalTitle}</p>
- {pdfSettings.showSignatureLabels && <p className="text-label text-slate-400/80 mt-1">Official School Seal</p>}
- </div>
- {schoolSettings.managerSignature && (
- <div className="text-center">
- <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-label uppercase text-slate-900">{schoolSettings.managerSignature}</p>
- {pdfSettings.showSignatureLabels && <p className="text-label text-slate-400/80 mt-1">Management Signature</p>}
- </div>
- )}
- <div className="text-center">
- <div className="w-full border-b-2 border-slate-900 mb-4 h-12"></div>
- <p className="text-label uppercase text-slate-900">{pdfSettings.academicManagerTitle}</p>
- {pdfSettings.showSignatureLabels && <p className="text-label text-slate-400/80 mt-1">Exams & Records</p>}
- </div>
- </div>
- )}
+  {/* FOOTER / SIGNATURES */}
+  {isManagementView && (
+    <div className="mt-auto pt-12 text-center relative z-10">
+      <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-4">
+        <p className="text-[10px] font-black uppercase tracking-widest">Manager's Signature</p>
+      </div>
+      <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
+    </div>
+  )}
 
  {/* WATERMARK */}
  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none -rotate-45 whitespace-nowrap">
