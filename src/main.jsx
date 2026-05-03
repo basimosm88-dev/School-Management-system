@@ -1,4 +1,4 @@
-// System Version: 1.3.5 - Search & Navigation Enhancements
+// System Version: 1.3.5 - Advanced Global Search Integration
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
