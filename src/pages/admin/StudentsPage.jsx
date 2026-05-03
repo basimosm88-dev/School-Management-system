@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+// System Version: 1.3.9 - Global Student Search Implementation
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -133,23 +134,39 @@ const StudentsPage = () => {
     <PageLayout role={userRole} title={t('students')}>
       <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
-        {/* 1. GRID VIEW — CLASS CARDS */}
-        {viewMode === 'grid' && (
-          <>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all duration-300">
-              <div>
-                <h2 className="text-heading text-slate-900 dark:text-white">{t('students')}</h2>
-                <p className="text-label text-slate-500/80 mt-1">{t('studentsSubtitle')}</p>
-              </div>
-              <button
-                onClick={handleAdd}
-                className="btn-primary"
-              >
-                <span className="btn-icon">person_add</span>
-                Add Student
-              </button>
-            </div>
+        {/* 1. HEADER & GLOBAL CONTROLS */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all duration-300">
+          <div className="shrink-0">
+            <h2 className="text-heading text-slate-900 dark:text-white">{t('students')}</h2>
+            <p className="text-label text-slate-500/80 mt-1">
+              {searchTerm ? `Found ${filteredStudents.length} matching students` : t('studentsSubtitle')}
+            </p>
+          </div>
 
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1 lg:max-w-2xl justify-end">
+            <div className="relative flex-1">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400/80">search</span>
+              <input
+                type="text"
+                placeholder="Search students by name or phone across all classes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
+              />
+            </div>
+            <button
+              onClick={handleAdd}
+              className="btn-primary shrink-0"
+            >
+              <span className="btn-icon">person_add</span>
+              Add Student
+            </button>
+          </div>
+        </div>
+
+        {/* 2. GRID VIEW — CLASS CARDS (Shown when not searching and no class selected) */}
+        {viewMode === 'grid' && !searchTerm && (
+          <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {availableClasses.map(c => {
                 const classStudents = students.filter(s => s.classId === c.id);
@@ -188,8 +205,8 @@ const StudentsPage = () => {
           </>
         )}
 
-        {/* 2. TABLE VIEW — STUDENTS LIST */}
-        {viewMode === 'table' && (
+        {/* 3. TABLE VIEW — STUDENTS LIST (Shown when searching OR when a class is selected) */}
+        {(viewMode === 'table' || searchTerm) && (
           <>
             {/* Breadcrumbs & Navigation */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -204,25 +221,16 @@ const StudentsPage = () => {
                   <span className="text-slate-400/80 cursor-pointer hover:text-primary" onClick={goBack}>{t('students')}</span>
                   <span className="material-symbols-outlined text-slate-300 text-section mx-1">chevron_right</span>
                   <span className="text-slate-900 dark:text-white truncate">
-                    {classes.find(c => c.id === parseInt(selectedClassId))?.name}
+                    {searchTerm ? `Search Results: "${searchTerm}"` : classes.find(c => c.id === parseInt(selectedClassId))?.name}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* TOP CONTROL BAR */}
+            {/* TOP CONTROL BAR — Filters only (Search moved to global) */}
             <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm flex flex-wrap items-center justify-between gap-4 transition-colors">
-              <div className="flex items-center gap-4 flex-1 min-w-[300px]">
-                <div className="relative flex-1">
-                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400/80">search</span>
-                  <input
-                    type="text"
-                    placeholder="Search students in this class..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
-                  />
-                </div>
+              <div className="flex items-center gap-4 flex-1">
+                <p className="text-label text-slate-500/80 px-2">Filters:</p>
 
                 <div className="flex gap-2">
                   <select
