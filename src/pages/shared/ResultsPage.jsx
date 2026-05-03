@@ -271,7 +271,7 @@ const ResultsPage = ({ role }) => {
                       <span className="material-symbols-outlined text-display">school</span>
                     </div>
                     <h3 className="text-section text-on-surface mb-1">{c.name}</h3>
-                    <p className="text-label text-on-surface-variant mb-6">{c.studentsCount || 0} Students enrolled</p>
+                    <p className="text-label text-on-surface-variant mb-6">{students.filter(s => parseInt(s.classId) === parseInt(c.id)).length} Students enrolled</p>
                     
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                       <div>
