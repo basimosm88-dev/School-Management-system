@@ -1,4 +1,4 @@
-// System Version: 1.3.4 - CSS Compatibility & Icon Rendering Fixes
+// System Version: 1.3.5 - Search & Navigation Enhancements
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'

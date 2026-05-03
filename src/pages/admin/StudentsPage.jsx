@@ -15,6 +15,7 @@ const StudentsPage = () => {
     status: '',
     special: '' // noFather, noMother, disabled, refugee
   });
+  const [classSearchTerm, setClassSearchTerm] = useState('');
 
   // Modal States
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -56,13 +57,20 @@ const StudentsPage = () => {
   }, [students, searchTerm, filters, classes, selectedClassId]);
 
   const availableClasses = useMemo(() => {
-    if (userRole === 'admin') return classes;
-    if (userRole === 'teacher') {
+    let baseClasses = [];
+    if (userRole === 'admin') baseClasses = classes;
+    else if (userRole === 'teacher') {
       const assignedIds = currentUser?.assignedClasses || [];
-      return classes.filter(c => assignedIds.includes(c.id));
+      baseClasses = classes.filter(c => assignedIds.includes(c.id));
+    } else {
+      baseClasses = classes;
     }
-    return classes;
-  }, [classes, userRole, currentUser]);
+
+    if (!classSearchTerm) return baseClasses;
+    return baseClasses.filter(c => 
+      (c.name || '').toLowerCase().includes(classSearchTerm.toLowerCase())
+    );
+  }, [classes, userRole, currentUser, classSearchTerm]);
 
   // Handlers
   const handleAdd = () => {
@@ -137,13 +145,27 @@ const StudentsPage = () => {
         {viewMode === 'grid' && (
           <>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all duration-300">
-              <div>
-                <h2 className="text-heading text-slate-900 dark:text-white">{t('students')}</h2>
-                <p className="text-label text-slate-500/80 mt-1">{t('studentsSubtitle')}</p>
+              <div className="flex flex-col md:flex-row md:items-center gap-6 flex-1">
+                <div>
+                  <h2 className="text-heading text-slate-900 dark:text-white">{t('students')}</h2>
+                  <p className="text-label text-slate-500/80 mt-1">{t('studentsSubtitle')}</p>
+                </div>
+
+                <div className="relative flex-1 max-w-md">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400/80">search</span>
+                  <input
+                    type="text"
+                    placeholder="Search classes by name..."
+                    value={classSearchTerm}
+                    onChange={(e) => setClassSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
+                  />
+                </div>
               </div>
+
               <button
                 onClick={handleAdd}
-                className="btn-primary"
+                className="btn-primary shrink-0"
               >
                 <span className="btn-icon">person_add</span>
                 Add Student
