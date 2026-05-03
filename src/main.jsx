@@ -1,4 +1,4 @@
-// System Version: 1.2.9 - Desktop Print Restoration & Mobile PDF Fixes
+// System Version: 1.3.0 - Production Sync & Infrastructure Update
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'

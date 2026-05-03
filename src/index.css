@@ -402,13 +402,6 @@
     box-sizing: border-box !important;
   }
 
-  /* Specific fix for mobile printing where 100vh often causes an extra blank page */
-  @media (max-width: 768px) {
-    .print-only {
-      min-height: auto !important;
-    }
-  }
-
   /* Force light mode and background visibility */
   * {
     color: black !important;
@@ -462,13 +455,6 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 100px;
-  }
-
-  @media (max-width: 768px) {
-    .print-footer {
-      margin-top: 40px !important;
-      gap: 60px !important;
-    }
   }
 
   .signature-line {
