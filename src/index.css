@@ -337,41 +337,49 @@
   }
 
   /* Standardized Button Styles */
-  .btn-base {
+  .btn-primary, .btn-success, .btn-secondary {
     padding: 10px 24px;
     border-radius: 0.75rem;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     white-space: nowrap;
+    cursor: pointer;
+    line-height: 1.5;
   }
 
-  .btn-base:active {
+  .btn-primary:active, .btn-success:active, .btn-secondary:active {
     transform: scale(0.98);
   }
 
   .btn-primary {
     background-color: #004bd3;
     color: #ffffff;
-    box-shadow: 0 4px 6px -1px rgba(0, 75, 211, 0.1), 0 2px 4px -1px rgba(0, 75, 211, 0.06);
+    border: 1px solid #004bd3;
+    box-shadow: 0 4px 6px -1px rgba(0, 75, 211, 0.15), 0 2px 4px -1px rgba(0, 75, 211, 0.1);
   }
 
   .btn-primary:hover {
-    background-color: rgba(0, 75, 211, 0.9);
+    background-color: #003cac;
+    border-color: #003cac;
+    box-shadow: 0 10px 15px -3px rgba(0, 75, 211, 0.2);
   }
 
   .btn-success {
     background-color: #10b981;
     color: #ffffff;
-    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1), 0 2px 4px -1px rgba(16, 185, 129, 0.06);
+    border: 1px solid #10b981;
+    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.15), 0 2px 4px -1px rgba(16, 185, 129, 0.1);
   }
 
   .btn-success:hover {
     background-color: #059669;
+    border-color: #059669;
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);
   }
 
   .btn-secondary {
@@ -388,11 +396,13 @@
   }
 
   .btn-secondary:hover {
-    background-color: #f1f5f9;
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
   }
 
   .dark .btn-secondary:hover {
-    background-color: rgba(51, 65, 85, 0.5);
+    background-color: #334155;
+    border-color: #475569;
   }
 
   .btn-icon {
