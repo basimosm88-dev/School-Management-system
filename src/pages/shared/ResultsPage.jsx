@@ -541,20 +541,7 @@ const ResultsPage = ({ role }) => {
                       </p>
                     </div>
                   </div>
-                  {userRole !== 'teacher' && (
-                    <div className="flex flex-wrap gap-2">
-                      {Object.keys(classRecord.results).map(sub => (
-                        <button 
-                          key={sub}
-                          onClick={() => handlePrint(sId, { type: 'subject-student', subjectName: sub, classId: classRecord.classId })}
-                          className="btn-secondary py-1.5 px-4 text-emerald-600 border-emerald-500/20 hover:bg-emerald-50"
-                        >
-                          <span className="material-symbols-outlined text-section">print</span>
-                          Print {sub} Results
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  {/* Removed individual subject print buttons per user request */}
                 </div>
 
                 {/* Performance Cards */}

@@ -1,4 +1,4 @@
-// System Version: 1.2.5 - Professionalized Reporting & Dashboard Fixes
+// System Version: 1.2.6 - Professionalized Reporting & UI Optimization
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
