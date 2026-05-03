@@ -393,7 +393,7 @@
   .print-only {
     display: flex !important;
     flex-direction: column !important;
-    min-height: 100vh !important;
+    min-height: auto !important;
     visibility: visible !important;
     position: relative !important;
     width: 100% !important;
@@ -450,11 +450,11 @@
   }
 
   .print-footer {
-    margin-top: auto; /* Pushes the footer to the bottom of the flex container */
+    margin-top: 40px; /* Consistent spacing instead of auto which can cause overflow */
     padding-top: 20px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 100px;
+    gap: 60px;
   }
 
   .signature-line {

@@ -28,7 +28,7 @@ const ClassFullResultsPrint = () => {
  const uniqueSubjects = [...new Set(classExams.map(e => e.subjectName))].sort();
 
  return (
- <div className="bg-white min-h-screen font-serif text-slate-900">
+ <div className="bg-white font-serif text-slate-900">
  <style>
  {`
  @media print {

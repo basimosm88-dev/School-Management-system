@@ -1,4 +1,4 @@
-// System Version: 1.2.7 - Professionalized Reporting & Data Sync Fixes
+// System Version: 1.2.8 - Professionalized Reporting & Mobile Print Fixes
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
