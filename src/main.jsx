@@ -1,4 +1,4 @@
-// System Version: 1.4.0 - Bulk Student Import Implementation
+// System Version: 1.4.1 - Deployment Sync & Build Optimization
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
