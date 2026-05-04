@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
-// System Version: 1.3.9 - Global Student Search Implementation
+// System Version: 1.4.0 - Bulk Student Import Implementation
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
+import ImportStudentsModal from '../../components/modals/ImportStudentsModal';
 
 const StudentsPage = () => {
-  const { students, classes, addStudent, updateStudent, deleteStudent, addNotification } = useData();
+  const { students, classes, addStudent, bulkAddStudents, updateStudent, deleteStudent, addNotification } = useData();
   const { schoolSettings, t } = useSettings();
 
   // Search & Filter State
@@ -19,6 +20,7 @@ const StudentsPage = () => {
 
   // Modal States
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [editingStudent, setEditingStudent] = useState(null);
@@ -144,25 +146,34 @@ const StudentsPage = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1 lg:max-w-2xl justify-end">
-            <div className="relative flex-1">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400/80">search</span>
-              <input
-                type="text"
-                placeholder="Search students by name or phone across all classes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
-              />
+              <div className="relative flex-1">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400/80">search</span>
+                <input
+                  type="text"
+                  placeholder="Search students by name or phone across all classes..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setIsImportOpen(true)}
+                  className="btn-secondary shrink-0"
+                >
+                  <span className="btn-icon">upload_file</span>
+                  Import Students
+                </button>
+                <button
+                  onClick={handleAdd}
+                  className="btn-primary shrink-0"
+                >
+                  <span className="btn-icon">person_add</span>
+                  Add Student
+                </button>
+              </div>
             </div>
-            <button
-              onClick={handleAdd}
-              className="btn-primary shrink-0"
-            >
-              <span className="btn-icon">person_add</span>
-              Add Student
-            </button>
           </div>
-        </div>
 
         {/* 2. GRID VIEW — CLASS CARDS (Shown when not searching and no class selected) */}
         {viewMode === 'grid' && !searchTerm && (
@@ -354,6 +365,17 @@ const StudentsPage = () => {
         )}
       </div>
 
+      {isImportOpen && (
+        <ImportStudentsModal
+          onClose={() => setIsImportOpen(false)}
+          onImport={(data) => {
+            bulkAddStudents(data);
+          }}
+          classes={classes}
+          existingStudents={students}
+        />
+      )}
+
       {/* 3. STUDENT PROFILE VIEW */}
       {isProfileOpen && selectedStudent && (
         <StudentProfile
@@ -361,6 +383,11 @@ const StudentsPage = () => {
           onClose={() => setIsProfileOpen(false)}
           classes={classes}
           schoolSettings={schoolSettings}
+          onEdit={(s) => {
+            setIsProfileOpen(false);
+            setEditingStudent(s);
+            setIsFormOpen(true);
+          }}
         />
       )}
 

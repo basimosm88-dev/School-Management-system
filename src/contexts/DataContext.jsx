@@ -103,19 +103,43 @@ export const DataProvider = ({ children }) => {
  };
 
  // --- STUDENTS ---
- const addStudent = (studentData) => {
- const id = Date.now();
- const idStr = id.toString();
- const defaultPassword = idStr.substring(Math.max(0, idStr.length - 6));
- setStudents(prev => [...prev, { ...studentData, id, password: defaultPassword, isDefaultPassword: true, createdAt: new Date().toISOString() }]);
- triggerSmartNotification({
- title: 'New Student Added',
- message: `${studentData.name} has been registered in the system.`,
- type: 'success',
- recipientId: 'admin'
- });
- };
- const updateStudent = (id, updates) => updateRecord(setStudents)(id, updates);
+  const addStudent = (studentData) => {
+    const id = Date.now();
+    const idStr = id.toString();
+    const defaultPassword = idStr.substring(Math.max(0, idStr.length - 6));
+    setStudents(prev => [...prev, { ...studentData, id, password: defaultPassword, isDefaultPassword: true, createdAt: new Date().toISOString() }]);
+    triggerSmartNotification({
+      title: 'New Student Added',
+      message: `${studentData.name} has been registered in the system.`,
+      type: 'success',
+      recipientId: 'admin'
+    });
+  };
+
+  const bulkAddStudents = (studentsList) => {
+    const timestamp = Date.now();
+    const newStudents = studentsList.map((s, index) => {
+      const id = timestamp + index;
+      const idStr = id.toString();
+      const defaultPassword = idStr.substring(Math.max(0, idStr.length - 6));
+      return {
+        ...s,
+        id,
+        password: defaultPassword,
+        isDefaultPassword: true,
+        createdAt: new Date().toISOString()
+      };
+    });
+    setStudents(prev => [...prev, ...newStudents]);
+    triggerSmartNotification({
+      title: 'Bulk Import Successful',
+      message: `Successfully imported ${newStudents.length} students into the system.`,
+      type: 'success',
+      recipientId: 'admin'
+    });
+  };
+
+  const updateStudent = (id, updates) => updateRecord(setStudents)(id, updates);
  const deleteStudent = (id) => deleteRecord(setStudents)(id);
  const changeStudentPassword = (id, newPassword) => {
  setStudents(prev => prev.map(s => s.id === id ? { ...s, password: newPassword, isDefaultPassword: false } : s));
@@ -483,8 +507,8 @@ export const DataProvider = ({ children }) => {
  });
  };
 
- const value = useMemo(() => ({
- students, addStudent, updateStudent, deleteStudent, changeStudentPassword,
+  const value = useMemo(() => ({
+    students, addStudent, bulkAddStudents, updateStudent, deleteStudent, changeStudentPassword,
  teachers, addTeacher, updateTeacher, deleteTeacher, changeTeacherPassword,
  classes, addClass, updateClass, deleteClass, assignStudentToClass, removeStudentFromClass, assignSubjectToClass,
  subjects, addSubject, updateSubject, deleteSubject,

@@ -22,25 +22,43 @@
     color: #f1f5f9;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Epilogue', sans-serif !important;
     line-height: 1.2;
     letter-spacing: -0.01em;
     color: inherit;
   }
 
-  h1 { 
-    font-size: 24px !important; 
+  h1 {
+    font-size: 24px !important;
     font-weight: 700 !important;
   }
 
-  h2, h3, h4, h5, h6 { 
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-weight: 500;
   }
-  h2 { font-size: 20px !important; }
-  h3 { font-size: 18px !important; }
 
-  button, input, select, textarea {
+  h2 {
+    font-size: 20px !important;
+  }
+
+  h3 {
+    font-size: 18px !important;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
     font-family: 'Epilogue', sans-serif !important;
     letter-spacing: 0.01em;
   }
@@ -63,7 +81,7 @@
     background-color: #dce1ff;
   }
 
-  button.bg-primary, 
+  button.bg-primary,
   button.bg-rose-600,
   button.bg-blue-600,
   .text-on-primary {
@@ -291,7 +309,9 @@
     letter-spacing: -0.01em;
   }
 
-  .text-headline, .text-heading, .text-section {
+  .text-headline,
+  .text-heading,
+  .text-section {
     font-size: 18px;
     font-weight: 500;
     line-height: 24px;
@@ -337,7 +357,9 @@
   }
 
   /* Standardized Button Styles */
-  .btn-primary, .btn-success, .btn-secondary {
+  .btn-primary,
+  .btn-success,
+  .btn-secondary {
     padding: 10px 24px;
     border-radius: 0.75rem;
     font-size: 13px;
@@ -352,7 +374,9 @@
     line-height: 1.5;
   }
 
-  .btn-primary:active, .btn-success:active, .btn-secondary:active {
+  .btn-primary:active,
+  .btn-success:active,
+  .btn-secondary:active {
     transform: scale(0.98);
   }
 
@@ -471,8 +495,8 @@
   }
 
   /* Hide specific UI elements */
-  #sidebar, 
-  header, 
+  #sidebar,
+  header,
   .fixed,
   .absolute,
   button {
@@ -490,7 +514,7 @@
     width: 100% !important;
   }
 
-  main > *:not(.print-only) {
+  main>*:not(.print-only) {
     display: none !important;
   }
 
@@ -555,7 +579,8 @@
   }
 
   .print-footer {
-    margin-top: auto; /* Pushes the footer to the bottom of the flex container */
+    margin-top: auto;
+    /* Pushes the footer to the bottom of the flex container */
     padding-top: 20px;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -579,8 +604,14 @@
 }
 
 @keyframes barGrow {
-  from { height: 0; opacity: 0; }
-  to { opacity: 1; }
+  from {
+    height: 0;
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .animate-bar-grow {
