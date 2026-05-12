@@ -158,7 +158,7 @@ const ClassesPage = () => {
  </thead>
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
  {filteredClasses.map(cls => {
- const supervisor = teachers.find(t => t.id === parseInt(cls.teacherId));
+ const supervisor = teachers.find(t => String(t.id) === String(cls.teacherId));
  const classStudentsCount = students.filter(s => s.classId == cls.id).length;
  return (
  <tr
@@ -460,7 +460,7 @@ const ClassProfile = ({
  const [isAddingStudent, setIsAddingStudent] = useState(false);
  const [isAddingSubject, setIsAddingSubject] = useState(false);
 
- const supervisor = teachers.find(t => t.id === parseInt(cls.teacherId));
+ const supervisor = teachers.find(t => String(t.id) === String(cls.teacherId));
  const classStudents = students.filter(s => s.classId == cls.id);
  const unassignedStudents = students.filter(s => !s.classId);
 
@@ -606,7 +606,7 @@ const ClassProfile = ({
  </select>
  <button 
  onClick={() => {
- const sid = parseInt(document.getElementById('student-select').value);
+ const sid = document.getElementById('student-select').value;
  if (sid) {
  if (classStudents.length >= cls.capacity) {
  addNotification('Cannot add student: Class capacity reached!', 'error');

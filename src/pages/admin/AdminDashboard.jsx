@@ -257,8 +257,8 @@ const AdminDashboard = () => {
     </div>
     
     <div className="grid grid-cols-7 gap-1 text-center mb-4 shrink-0">
-      {['S','M','T','W','T','F','S'].map(d => (
-        <span key={d} className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{d}</span>
+      {['S','M','T','W','T','F','S'].map((d, i) => (
+        <span key={`${d}-${i}`} className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{d}</span>
       ))}
     </div>
     

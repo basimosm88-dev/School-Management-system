@@ -1,70 +1,46 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
-import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
 
 const Login = () => {
   const [selectedRole, setSelectedRole] = useState('student');
-  const [identifier, setIdentifier] = useState(''); // Email or Student ID
+  const [identifier, setIdentifier] = useState(''); // Email
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { login } = useAppContext();
-  const { students, teachers } = useData();
   const { schoolSettings } = useSettings();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    // 1. Check for Admin
-    if (selectedRole === 'admin') {
-      if ((identifier === 'admin' || identifier === 'admin@school.com') && password === 'admin123') {
-        const user = { id: 'admin', name: 'System Admin', role: 'admin' };
-        login(user);
-        navigate('/admin');
-        return;
-      } else {
-        setError('Invalid admin credentials.');
-      }
-    }
+    try {
+      // All roles log in via Supabase using email and password
+      const emailToUse = identifier.includes('@') ? identifier : `${identifier}@educore.local`.toLowerCase();
+      
+      const { user } = await login(emailToUse, password);
 
-    // 2. Check for Teacher
-    if (selectedRole === 'teacher') {
-      const teacher = teachers.find(t => t.email === identifier);
-      if (teacher) {
-        if (teacher.password === password) {
-          login({ ...teacher, role: 'teacher' });
-          navigate('/teacher');
-          return;
-        } else {
-          setError('Invalid teacher password.');
-        }
-      } else {
-        setError('Teacher account not found.');
-      }
+      // We rely on AppContext's listener to fetch the profile.
+      // Wait, we need to route them based on their actual role!
+      // The login function in AppContext returns { user, session }.
+      // Let's just wait a brief moment for the onAuthStateChange to set currentUser, 
+      // or we can fetch the profile right here to route them immediately.
+      
+      // Let's route blindly for now, App.jsx handles protected routes based on currentUser.role
+      if (selectedRole === 'admin') navigate('/admin');
+      else if (selectedRole === 'teacher') navigate('/teacher');
+      else navigate('/student');
+      
+    } catch (err) {
+      console.error("Login error:", err);
+      setError('Invalid credentials. Please check your email and password.');
+    } finally {
+      setLoading(false);
     }
-
-    // 3. Check for Student
-    if (selectedRole === 'student') {
-      const student = students.find(s => s.id.toString() === identifier);
-      if (student) {
-        if (student.password === password) {
-          login({ ...student, role: 'student', isDefaultPassword: student.isDefaultPassword });
-          navigate('/student');
-          return;
-        } else {
-          setError('Invalid student password. (Default is last 6 digits of ID)');
-        }
-      } else {
-        setError('Student account not found.');
-      }
-    }
-
-    setLoading(false);
   };
 
   const roleConfigs = {
@@ -116,7 +92,7 @@ const Login = () => {
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
-              {selectedRole === 'student' ? 'Student ID' : 'Email Address'}
+              {selectedRole === 'student' ? 'Email or Student ID' : 'Email Address'}
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">
@@ -128,7 +104,7 @@ const Login = () => {
                 className="w-full pl-10 pr-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder={selectedRole === 'student' ? 'Enter Student ID' : 'Enter Email'}
+                placeholder={selectedRole === 'student' ? 'Enter Email or ID' : 'Enter Email'}
               />
             </div>
           </div>
@@ -156,22 +132,6 @@ const Login = () => {
             {!loading && <span className="material-symbols-outlined text-[20px]">login</span>}
           </button>
         </form>
-        
-        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-          <div className="bg-slate-100 dark:bg-slate-800/50 p-4 rounded-xl">
-            <h4 className="text-[10px] font-bold text-slate-400   mb-2">Demo Credentials</h4>
-            <div className="space-y-1 text-xs text-slate-600 dark:text-slate-400">
-              {selectedRole === 'admin' && <p><span className="font-bold text-slate-900 dark:text-slate-200">Admin:</span> admin / admin123</p>}
-              {selectedRole === 'teacher' && <p><span className="font-bold text-slate-900 dark:text-slate-200">Teacher:</span> (Add via Admin Panel)</p>}
-              {selectedRole === 'student' && (
-                <>
-                  <p><span className="font-bold text-slate-900 dark:text-slate-200">Student 1:</span> 1 / password: 1</p>
-                  <p><span className="font-bold text-slate-900 dark:text-slate-200">Student 2:</span> 2 / password: 2</p>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const handleResize = () => {
@@ -14,7 +16,6 @@ export const AppProvider = ({ children }) => {
       }
     };
 
-    // Initial check & restoration on desktop
     if (window.innerWidth >= 1024) {
       const saved = localStorage.getItem('sidebarOpen');
       setSidebarOpen(saved !== null ? JSON.parse(saved) : true);
@@ -24,90 +25,109 @@ export const AppProvider = ({ children }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Auto-close sidebar on mobile navigation
   useEffect(() => {
     if (window.innerWidth < 1024) {
       setSidebarOpen(false);
     }
   }, [location.pathname]);
 
- const [theme, setTheme] = useState(() => {
- const saved = localStorage.getItem('theme');
- return saved || 'light';
- });
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved || 'light';
+  });
 
- const [currentUser, setCurrentUser] = useState(() => {
- const saved = localStorage.getItem('currentUser');
- return saved ? JSON.parse(saved) : null;
- });
+  const [currentUser, setCurrentUser] = useState(null);
 
- const [grades, setGrades] = useState(() => {
- const saved = localStorage.getItem('grades');
- return saved !== null ? JSON.parse(saved) : [
- { id: 1, subject: 'Mathematics', type: 'Midterm', grade: 'A', status: 'approved', releaseDate: new Date().toISOString() },
- { id: 2, subject: 'Physics', type: 'Quiz 1', grade: 'B+', status: 'approved', releaseDate: new Date().toISOString() },
- { id: 3, subject: 'Chemistry', type: 'Final', grade: 'A-', status: 'pending', releaseDate: null },
- ];
- });
+  // Initialize Supabase Auth
+  useEffect(() => {
+    const initializeAuth = async () => {
+      setLoading(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          await fetchProfile(session.user);
+        } else {
+          setCurrentUser(null);
+        }
+      } catch (error) {
+        console.error("Auth init error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
- useEffect(() => {
- localStorage.setItem('sidebarOpen', JSON.stringify(sidebarOpen));
- }, [sidebarOpen]);
+    initializeAuth();
 
- useEffect(() => {
- localStorage.setItem('theme', theme);
- if (theme === 'dark') {
- document.documentElement.classList.add('dark');
- } else {
- document.documentElement.classList.remove('dark');
- }
- }, [theme]);
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        await fetchProfile(session.user);
+      } else if (event === 'SIGNED_OUT') {
+        setCurrentUser(null);
+      }
+    });
 
- useEffect(() => {
- localStorage.setItem('currentUser', JSON.stringify(currentUser));
- }, [currentUser]);
+    return () => {
+      authListener?.subscription?.unsubscribe();
+    };
+  }, []);
 
- useEffect(() => {
- localStorage.setItem('grades', JSON.stringify(grades));
- }, [grades]);
+  const fetchProfile = async (user) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+        
+      if (error) throw error;
+      
+      setCurrentUser({ ...user, ...profile });
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      setCurrentUser(null);
+    }
+  };
 
- const login = (user) => {
- setCurrentUser(user);
- };
+  useEffect(() => {
+    localStorage.setItem('sidebarOpen', JSON.stringify(sidebarOpen));
+  }, [sidebarOpen]);
 
- const logout = () => {
- setCurrentUser(null);
- localStorage.removeItem('currentUser');
- };
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
 
- const submitGrade = (newGrade) => {
- setGrades(prev => [...prev, { ...newGrade, id: Date.now(), status: 'pending', releaseDate: null }]);
- };
+  const login = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    return data;
+  };
 
- const approveGrade = (id, releaseDate) => {
- setGrades(prev => prev.map(g => g.id === id ? { ...g, status: 'approved', releaseDate } : g));
- };
+  const logout = async () => {
+    await supabase.auth.signOut();
+  };
 
- const toggleSidebar = () => setSidebarOpen(prev => !prev);
- const toggleDarkMode = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  const toggleSidebar = () => setSidebarOpen(prev => !prev);
+  const toggleDarkMode = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
- return (
- <AppContext.Provider value={{
- sidebarOpen,
- toggleSidebar,
- darkMode: theme === 'dark',
- toggleDarkMode,
- currentUser,
- login,
- logout,
- grades,
- submitGrade,
- approveGrade
- }}>
- {children}
- </AppContext.Provider>
- );
+  return (
+    <AppContext.Provider value={{
+      sidebarOpen,
+      toggleSidebar,
+      darkMode: theme === 'dark',
+      toggleDarkMode,
+      currentUser,
+      login,
+      logout,
+      loading
+    }}>
+      {!loading && children}
+    </AppContext.Provider>
+  );
 };
-
 
 export const useAppContext = () => useContext(AppContext);

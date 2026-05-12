@@ -39,8 +39,8 @@ function App() {
  return (
   <Router>
     <SettingsProvider>
-      <DataProvider>
-        <AppProvider>
+      <AppProvider>
+        <DataProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
             
@@ -89,8 +89,8 @@ function App() {
             {/* Default route based on auth will go here. For now, redirect to login */}
             <Route path="/" element={<Navigate to="/login" replace />} />
           </Routes>
-        </AppProvider>
-      </DataProvider>
+        </DataProvider>
+      </AppProvider>
     </SettingsProvider>
   </Router>
  );

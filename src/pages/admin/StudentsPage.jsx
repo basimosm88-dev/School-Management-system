@@ -35,8 +35,7 @@ const StudentsPage = () => {
   // Filter Logic
   const filteredStudents = useMemo(() => {
     return students.filter(student => {
-      // Primary filter by selected class
-      if (selectedClassId && Number(student.classId) !== Number(selectedClassId)) return false;
+      if (selectedClassId && String(student.classId) !== String(selectedClassId)) return false;
 
       const className = classes.find(c => String(c.id) === String(student.classId))?.name || '';
       const matchesSearch =
@@ -44,7 +43,7 @@ const StudentsPage = () => {
         (student.phone || '').includes(searchTerm) ||
         className.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesClass = !filters.classId || Number(student.classId) === Number(filters.classId);
+      const matchesClass = !filters.classId || String(student.classId) === String(filters.classId);
       const matchesGender = !filters.gender || student.gender === filters.gender;
       const matchesStatus = !filters.status || student.status === filters.status;
 
@@ -232,7 +231,7 @@ const StudentsPage = () => {
                   <span className="text-slate-400/80 cursor-pointer hover:text-primary" onClick={goBack}>{t('students')}</span>
                   <span className="material-symbols-outlined text-slate-300 text-section mx-1">chevron_right</span>
                   <span className="text-slate-900 dark:text-white truncate">
-                    {searchTerm ? `Search Results: "${searchTerm}"` : classes.find(c => c.id === parseInt(selectedClassId))?.name}
+                    {searchTerm ? `Search Results: "${searchTerm}"` : classes.find(c => String(c.id) === String(selectedClassId))?.name}
                   </span>
                 </div>
               </div>
@@ -296,7 +295,7 @@ const StudentsPage = () => {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-label text-slate-500/80 dark:text-slate-400/80">{student.id}</span>
+                            <span className="font-mono text-label text-slate-500/80 dark:text-slate-400/80">{student.systemId || student.id.split('-')[0]}</span>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -567,7 +566,7 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
                 <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Class</label>
                 <select 
                   value={formData.classId || ''} 
-                  onChange={e => handleChange('classId', e.target.value ? parseInt(e.target.value) : '')} 
+                  onChange={e => handleChange('classId', e.target.value ? e.target.value : '')} 
                   className={`form-input-custom cursor-pointer ${!formData.classId ? 'border-rose-300 bg-rose-50/30' : ''}`}
                   required
                 >
@@ -680,7 +679,7 @@ const StudentProfile = ({ student, onClose, classes, schoolSettings }) => {
               <div className="flex flex-wrap gap-3 mt-2">
                 <span className="flex items-center gap-1 text-white/80 text-label bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
                   <span className="material-symbols-outlined text-body">id_card</span>
-                  ID: {student.id}
+                  ID: {student.systemId || student.id.split('-')[0]}
                 </span>
                 <span className="flex items-center gap-1 text-white/80 text-label bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
                   <span className="material-symbols-outlined text-body">school</span>
