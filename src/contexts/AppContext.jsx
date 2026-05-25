@@ -9,6 +9,7 @@ export const AppProvider = ({ children }) => {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const isFetchingRef = useRef(null);
+  const authInitialized = useRef(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -123,12 +124,17 @@ export const AppProvider = ({ children }) => {
       } catch (error) {
         console.error("Auth init error:", error);
         if (active) setLoading(false);
+      } finally {
+        authInitialized.current = true;
       }
     };
 
     initializeAuth();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!authInitialized.current) {
+        return; // Ignore premature events during initial load
+      }
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         await handleSession(session);
       } else if (event === 'SIGNED_OUT') {
