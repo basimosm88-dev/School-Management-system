@@ -8,8 +8,8 @@ const ClassExamReportPrint = () => {
  const { students, classes, exams } = useData();
  const { schoolSettings, pdfSettings } = useSettings();
 
- const currentClass = classes.find(c => c.id === parseInt(classId));
- const classStudents = students.filter(s => s.classId === parseInt(classId));
+ const currentClass = classes.find(c => String(c.id) === String(classId));
+ const classStudents = students.filter(s => String(s.classId) === String(classId));
 
  useEffect(() => {
  const timer = setTimeout(() => {
@@ -24,7 +24,7 @@ const ClassExamReportPrint = () => {
 
  // Get all unique subjects for this class and exam type
  const classExams = exams.filter(e => 
- e.classId === parseInt(classId) && 
+ String(e.classId) === String(classId) && 
  e.examType === examType && 
  e.status === 'PUBLISHED'
  );

@@ -8,8 +8,8 @@ const ClassFullResultsPrint = () => {
  const { students, classes, exams, getReportCardData, calculateRankings } = useData();
  const { schoolSettings, pdfSettings, academicSettings } = useSettings();
 
- const currentClass = classes.find(c => c.id === parseInt(classId));
- const classStudents = students.filter(s => s.classId === parseInt(classId));
+ const currentClass = classes.find(c => String(c.id) === String(classId));
+ const classStudents = students.filter(s => String(s.classId) === String(classId));
  const rankings = useMemo(() => calculateRankings(classId), [classId, calculateRankings]);
 
  useEffect(() => {
@@ -24,7 +24,7 @@ const ClassFullResultsPrint = () => {
  }
 
  // Get all unique subjects for this class
- const classExams = exams.filter(e => e.classId === parseInt(classId) && e.status === 'PUBLISHED');
+ const classExams = exams.filter(e => String(e.classId) === String(classId) && e.status === 'PUBLISHED');
  const uniqueSubjects = [...new Set(classExams.map(e => e.subjectName))].sort();
 
  return (

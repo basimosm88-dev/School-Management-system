@@ -56,9 +56,21 @@ export const DataProvider = ({ children }) => {
         // 5. Fetch Exams & Grades
         const { data: examData } = await supabase.from('exams').select('*');
         if (examData) {
-          // Flatten exams and grades to match old structure
           const formattedExams = examData.map(e => ({ ...e.details, id: e.id, title: e.title, classId: e.class_id, subjectId: e.subject_id }));
           setExams(formattedExams);
+        }
+
+        const { data: gradeData } = await supabase.from('grades').select('*');
+        if (gradeData) {
+          setGrades(gradeData.map(g => ({
+            ...g.details,
+            id: g.id,
+            examId: g.exam_id,
+            studentId: g.student_id,
+            score: parseFloat(g.score),
+            status: g.status,
+            releaseDate: g.release_date
+          })));
         }
 
         // 6. Fetch Timetables, Events, Announcements
@@ -223,9 +235,48 @@ export const DataProvider = ({ children }) => {
   const updateExamStatus = (examType, classId, subjectId, newStatus, releaseDate = null) => {
     setExams(prev => prev.map(e => e.examType === examType ? { ...e, status: newStatus, releaseDate } : e));
   };
-  const calculateRankings = () => [];
+  const calculateRankings = (classId) => {
+    const classStudents = students.filter(s => String(s.classId) === String(classId));
+    const rankings = classStudents.map(student => {
+      const studentGrades = grades.filter(g => String(g.studentId) === String(student.id));
+      if (studentGrades.length === 0) return { studentId: student.id, name: student.name, averageScore: 0 };
+      const total = studentGrades.reduce((acc, g) => acc + g.score, 0);
+      const averageScore = total / studentGrades.length;
+      return { studentId: student.id, name: student.name, averageScore };
+    });
+    return rankings
+      .sort((a, b) => b.averageScore - a.averageScore)
+      .map((r, i) => ({ ...r, rank: i + 1 }));
+  };
+
   const calculatePromotion = () => 'Pending';
-  const getReportCardData = () => ({ results: {}, rank: '-', classId: null, promotion: 'Pending' });
+
+  const getReportCardData = (studentId, classId) => {
+    const studentGrades = grades.filter(g => String(g.studentId) === String(studentId));
+    const results = {};
+    studentGrades.forEach(g => {
+      const exam = exams.find(e => String(e.id) === String(g.examId));
+      if (!exam) return;
+      const subject = subjects.find(s => String(s.id) === String(exam.subjectId));
+      const subjectName = subject ? subject.name : 'Unknown';
+      if (!results[subjectName]) {
+        results[subjectName] = { marks: [], average: 0 };
+      }
+      results[subjectName].marks.push(g.score);
+    });
+    Object.keys(results).forEach(sub => {
+      const marks = results[sub].marks;
+      results[sub].average = Math.round(marks.reduce((a, b) => a + b, 0) / marks.length);
+    });
+    const rankings = calculateRankings(classId);
+    const myRankObj = rankings.find(r => String(r.studentId) === String(studentId));
+    return {
+      results,
+      rank: myRankObj ? myRankObj.rank : '-',
+      classId,
+      promotion: 'Pending'
+    };
+  };
 
   // --- ATTENDANCE ---
   const getAttendanceStats = (filter = {}) => {
@@ -234,7 +285,20 @@ export const DataProvider = ({ children }) => {
     const present = attendance.filter(a => a.status === 'Present').length;
     return { total, present, absent: total - present, late: 0, rate: Math.round((present / total) * 100) };
   };
-  const getStudentAttendanceSummary = (studentId) => ({ present: 0, absent: 0, late: 0, rate: 0, sessionHistory: [], dailySummary: [] });
+  const getStudentAttendanceSummary = (studentId) => {
+    const studentRecords = attendance.filter(a => String(a.studentId) === String(studentId));
+    const total = studentRecords.length;
+    if (total === 0) return { present: 0, absent: 0, late: 0, rate: 100, sessionHistory: [], dailySummary: [] };
+    const present = studentRecords.filter(r => r.status.toLowerCase() === 'present').length;
+    const late = studentRecords.filter(r => r.status.toLowerCase() === 'late').length;
+    const absent = studentRecords.filter(r => r.status.toLowerCase() === 'absent').length;
+    const rate = Math.round(((present + late) / total) * 100);
+    const dailySummary = studentRecords.map(r => ({
+      date: r.date,
+      status: r.status.charAt(0).toUpperCase() + r.status.slice(1).toLowerCase()
+    })).sort((a, b) => new Date(b.date) - new Date(a.date));
+    return { present, absent, late, rate, sessionHistory: [], dailySummary };
+  };
   const saveAttendanceRecords = async (records) => {
     setAttendance(prev => [...prev, ...records.map(r => ({ ...r, id: Date.now() }))]);
   };

@@ -24,8 +24,8 @@ const AdminAttendancePage = () => {
  // Filtered Session Logs
  const filteredAttendance = useMemo(() => {
  return attendance.filter(a => {
- const matchesClass = !filters.classId || a.classId === parseInt(filters.classId);
- const matchesStudent = !filters.studentId || a.studentId === parseInt(filters.studentId);
+ const matchesClass = !filters.classId || String(a.classId) === String(filters.classId);
+ const matchesStudent = !filters.studentId || String(a.studentId) === String(filters.studentId);
  const matchesStatus = !filters.status || a.status === filters.status;
  const matchesDate = a.date >= filters.startDate && a.date <= filters.endDate;
  return matchesClass && matchesStudent && matchesStatus && matchesDate;
@@ -53,7 +53,7 @@ const AdminAttendancePage = () => {
 
  return {
  id: key,
- studentId: parseInt(studentId),
+ studentId: studentId,
  date,
  status: dailyStatus,
  sessionCount: statuses.length

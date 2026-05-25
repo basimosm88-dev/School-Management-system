@@ -45,7 +45,7 @@ const ResultsPage = ({ role }) => {
     return classes.filter(c => String(c.id) === String(currentUser?.classId));
   }, [classes, userRole, currentUser]);
 
-  const currentClass = classes.find(c => parseInt(c.id) === parseInt(selectedClassId));
+  const currentClass = classes.find(c => String(c.id) === String(selectedClassId));
 
   // Actions
   const handleSelectClass = (classId) => {
@@ -112,23 +112,23 @@ const ResultsPage = ({ role }) => {
     const targetStudentId = viewingStudentId || currentUser?.id;
     if (!targetStudentId) return [];
 
-    const sId = parseInt(targetStudentId);
-    const student = students.find(s => parseInt(s.id) === sId);
+    const sId = targetStudentId;
+    const student = students.find(s => String(s.id) === String(sId));
     
     // Find all classes this student has published results in
-    const studentExams = exams.filter(e => parseInt(e.studentId) === sId && e.status === 'PUBLISHED');
+    const studentExams = exams.filter(e => String(e.studentId) === String(sId) && e.status === 'PUBLISHED');
     let classIds = [...new Set(studentExams.map(e => e.classId))];
     
     // Ensure current class is visible even if no results published yet
     const currentCid = student?.classId || currentUser?.classId;
-    if (currentCid && !classIds.some(id => parseInt(id) === parseInt(currentCid))) {
-      classIds.push(parseInt(currentCid));
+    if (currentCid && !classIds.some(id => String(id) === String(currentCid))) {
+      classIds.push(currentCid);
     }
     
     if (classIds.length === 0) return [];
 
     return classIds.map(cid => {
-      const classObj = classes.find(c => parseInt(c.id) === parseInt(cid));
+      const classObj = classes.find(c => String(c.id) === String(cid));
       const reportData = getReportCardData(sId, cid);
       
       // Filter subjects for teacher role
@@ -169,24 +169,24 @@ const ResultsPage = ({ role }) => {
         totalScore,
         subjectsCount: subjects.length,
         status,
-        rank: calculateRankings(cid).find(r => parseInt(r.studentId) === sId)?.rank || '-',
+        rank: calculateRankings(cid).find(r => String(r.studentId) === String(sId))?.rank || '-',
         promotion: status === 'Pass' ? 'Promoted' : 'Held Back'
       };
-    }).sort((a, b) => b.classId - a.classId);
+    }).sort((a, b) => String(b.classId).localeCompare(String(a.classId)));
   }, [viewingStudentId, currentUser, exams, classes, getReportCardData, students, calculateRankings, userRole, teacherSubjectNames]);
 
   // Admin/Teacher Student List Data
   const studentResults = useMemo(() => {
     if (!selectedClassId) return [];
     
-    const cid = parseInt(selectedClassId);
-    const classStudents = students.filter(s => parseInt(s.classId) === cid)
+    const cid = selectedClassId;
+    const classStudents = students.filter(s => String(s.classId) === String(cid))
       .filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()));
     const rankings = calculateRankings(cid);
     
     return classStudents.map(student => {
       const reportData = getReportCardData(student.id, cid);
-      const studentRank = rankings.find(r => parseInt(r.studentId) === parseInt(student.id));
+      const studentRank = rankings.find(r => String(r.studentId) === String(student.id));
       
       // Calculate averages for each exam type
       // If teacher role with a selected subject, only show that subject's scores
@@ -271,7 +271,7 @@ const ResultsPage = ({ role }) => {
                       <span className="material-symbols-outlined text-display">school</span>
                     </div>
                     <h3 className="text-section text-on-surface mb-1">{c.name}</h3>
-                    <p className="text-label text-on-surface-variant mb-6">{students.filter(s => parseInt(s.classId) === parseInt(c.id)).length} Students enrolled</p>
+                    <p className="text-label text-on-surface-variant mb-6">{students.filter(s => String(s.classId) === String(c.id)).length} Students enrolled</p>
                     
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                       <div>
@@ -494,7 +494,7 @@ const ResultsPage = ({ role }) => {
 
     if (viewMode === 'history' || viewMode === 'detail') {
       const sId = viewingStudentId || currentUser?.id;
-      const student = students.find(s => parseInt(s.id) === parseInt(sId));
+      const student = students.find(s => String(s.id) === String(sId));
       
       return (
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-300 print:hidden">
@@ -537,7 +537,7 @@ const ResultsPage = ({ role }) => {
                     <div>
                       <h2 className="text-section text-on-surface font-bold uppercase tracking-wider">{classRecord.className}</h2>
                       <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">
-                        {parseInt(classRecord.classId) === parseInt(currentUser?.classId) ? 'Current Session' : 'Archived Record'}
+                        {String(classRecord.classId) === String(currentUser?.classId) ? 'Current Session' : 'Archived Record'}
                       </p>
                     </div>
                   </div>
@@ -667,7 +667,7 @@ const ResultsPage = ({ role }) => {
       {/* 2. Full Academic Transcript (All years) */}
       {printConfig.type === 'transcript' && (
         <PrintableFullTranscript 
-          student={students.find(s => parseInt(s.id) === parseInt(viewingStudentId || currentUser?.id))}
+          student={students.find(s => String(s.id) === String(viewingStudentId || currentUser?.id))}
           history={studentAcademicHistory}
           schoolSettings={schoolSettings}
         />
@@ -696,8 +696,8 @@ const ResultsPage = ({ role }) => {
       {/* 6. Subject Results Slip (Individual Student) */}
       {printConfig.type === 'subject-student' && (
         <PrintableSubjectStudentResults 
-          student={students.find(s => parseInt(s.id) === parseInt(viewingStudentId || currentUser?.id))}
-          classRecord={studentAcademicHistory.find(h => parseInt(h.classId) === parseInt(printConfig.classId))}
+          student={students.find(s => String(s.id) === String(viewingStudentId || currentUser?.id))}
+          classRecord={studentAcademicHistory.find(h => String(h.classId) === String(printConfig.classId))}
           subjectName={printConfig.subjectName}
           schoolSettings={schoolSettings}
         />
@@ -706,8 +706,8 @@ const ResultsPage = ({ role }) => {
       {/* 7. Individual Exam Slip */}
       {printConfig.type === 'exam-slip' && (
         <PrintableExamSlip 
-          student={students.find(s => parseInt(s.id) === parseInt(viewingStudentId || currentUser?.id))}
-          classRecord={studentAcademicHistory.find(h => parseInt(h.classId) === parseInt(printConfig.classId))}
+          student={students.find(s => String(s.id) === String(viewingStudentId || currentUser?.id))}
+          classRecord={studentAcademicHistory.find(h => String(h.classId) === String(printConfig.classId))}
           examType={printConfig.examType}
           schoolSettings={schoolSettings}
         />
@@ -793,7 +793,7 @@ const PrintableClassResults = ({ className, results, schoolSettings }) => {
 
 const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings }) => {
   const record = classId 
-    ? classHistory.find(h => parseInt(h.classId) === parseInt(classId))
+    ? classHistory.find(h => String(h.classId) === String(classId))
     : classHistory[0];
 
   if (!record) return null;

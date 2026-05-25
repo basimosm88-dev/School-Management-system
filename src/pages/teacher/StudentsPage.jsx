@@ -32,7 +32,7 @@ const StudentsPage = () => {
     );
 
     if (selectedClassId) {
-      list = list.filter(s => s.classId === parseInt(selectedClassId));
+      list = list.filter(s => String(s.classId) === String(selectedClassId));
     }
 
     if (searchTerm) {

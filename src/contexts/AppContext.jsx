@@ -56,7 +56,7 @@ export const AppProvider = ({ children }) => {
       if (response.error) throw response.error;
       const profile = response.data;
       
-      setCurrentUser({ ...user, ...profile });
+      setCurrentUser({ ...user, ...profile, ...(profile?.details || {}), name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() });
     } catch (error) {
       console.error("Error fetching profile:", error);
       setCurrentUser(null);
@@ -102,7 +102,7 @@ export const AppProvider = ({ children }) => {
         const profile = response.data;
         
         if (active) {
-          setCurrentUser({ ...session.user, ...profile });
+          setCurrentUser({ ...session.user, ...profile, ...(profile?.details || {}), name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() });
         }
       } catch (error) {
         console.error("Error fetching profile in handleSession:", error);

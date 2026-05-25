@@ -18,8 +18,8 @@ const StudentDashboard = () => {
         return <Navigate to="/login" replace />;
     }
 
-    const sId = parseInt(currentUser.id);
-    const cId = parseInt(currentUser.classId);
+    const sId = currentUser.id;
+    const cId = currentUser.classId;
 
     // 1. Greet logic
     const currentHour = new Date().getHours();
@@ -36,7 +36,7 @@ const StudentDashboard = () => {
     const overallAverage = subjects.length > 0 ? (totalPoints / subjects.length).toFixed(1) : "0.0";
     
     // 4. Attendance Stats
-    const studentAttendanceRecords = attendance.filter(a => parseInt(a.studentId) === sId);
+    const studentAttendanceRecords = attendance.filter(a => String(a.studentId) === String(sId));
     const attendanceCount = studentAttendanceRecords.length;
     const presentCount = studentAttendanceRecords.filter(a => a.status === 'Present').length;
     const lateCount = studentAttendanceRecords.filter(a => a.status === 'Late').length;

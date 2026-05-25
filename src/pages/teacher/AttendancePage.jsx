@@ -26,7 +26,7 @@ const TeacherAttendancePage = () => {
   const availableSessions = useMemo(() => {
     if (!selectedClassId) return [];
     return timetables.filter(t => 
-      t.classId === parseInt(selectedClassId) && 
+      String(t.classId) === String(selectedClassId) && 
       t.day === dayName &&
       t.teacherId === currentUser?.id
     ).sort((a, b) => a.startTime.localeCompare(b.startTime));
@@ -34,14 +34,14 @@ const TeacherAttendancePage = () => {
 
   useEffect(() => {
     if (selectedClassId) {
-      const filtered = students.filter(s => s.classId === parseInt(selectedClassId));
+      const filtered = students.filter(s => String(s.classId) === String(selectedClassId));
       setClassStudents(filtered);
       
-      const session = availableSessions.find(s => s.id === parseInt(selectedSessionId));
+      const session = availableSessions.find(s => String(s.id) === String(selectedSessionId));
       
       if (session) {
         const existing = attendance.filter(a => 
-          a.classId === parseInt(selectedClassId) && 
+          String(a.classId) === String(selectedClassId) && 
           a.date === selectedDate &&
           a.startTime === session.startTime &&
           a.subjectName === session.subjectName
@@ -77,11 +77,11 @@ const TeacherAttendancePage = () => {
   const handleSave = () => {
     if (!selectedClassId || !selectedSessionId) return;
     
-    const session = availableSessions.find(s => s.id === parseInt(selectedSessionId));
+    const session = availableSessions.find(s => String(s.id) === String(selectedSessionId));
     if (!session) return;
 
     const records = classStudents.map(s => ({
-      classId: parseInt(selectedClassId),
+      classId: selectedClassId,
       studentId: s.id,
       teacherId: currentUser.id,
       date: selectedDate,

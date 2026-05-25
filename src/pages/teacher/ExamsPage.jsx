@@ -25,21 +25,21 @@ const TeacherExamsPage = () => {
 
   const classSubjects = useMemo(() => {
     if (!selectedClassId) return [];
-    const classObj = classes.find(c => c.id === parseInt(selectedClassId));
-    return (classObj?.subjects || []).filter(s => s.teacherId === currentUser?.id);
+    const classObj = classes.find(c => String(c.id) === String(selectedClassId));
+    return (classObj?.subjects || []).filter(s => String(s.teacherId) === String(currentUser?.id));
   }, [selectedClassId, classes, currentUser]);
 
   const classStudents = useMemo(() => {
     if (!selectedClassId) return [];
-    return students.filter(s => s.classId === parseInt(selectedClassId));
+    return students.filter(s => String(s.classId) === String(selectedClassId));
   }, [selectedClassId, students]);
 
   const currentExamStatus = useMemo(() => {
     if (!selectedExamType || !selectedClassId || !selectedSubjectId) return null;
     const record = exams.find(e => 
       e.examType === selectedExamType && 
-      e.classId === parseInt(selectedClassId) && 
-      (e.subjectId === parseInt(selectedSubjectId) || e.subjectName === selectedSubjectId)
+      String(e.classId) === String(selectedClassId) && 
+      (String(e.subjectId) === String(selectedSubjectId) || e.subjectName === selectedSubjectId)
     );
     return record?.status || 'DRAFT';
   }, [selectedExamType, selectedClassId, selectedSubjectId, exams]);
@@ -48,8 +48,8 @@ const TeacherExamsPage = () => {
     if (selectedExamType && selectedClassId && selectedSubjectId) {
       const existing = exams.filter(e => 
         e.examType === selectedExamType && 
-        e.classId === parseInt(selectedClassId) && 
-        (e.subjectId === parseInt(selectedSubjectId) || e.subjectName === selectedSubjectId)
+        String(e.classId) === String(selectedClassId) && 
+        (String(e.subjectId) === String(selectedSubjectId) || e.subjectName === selectedSubjectId)
       );
       
       const gradeMap = {};

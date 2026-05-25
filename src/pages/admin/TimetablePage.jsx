@@ -34,15 +34,15 @@ const AdminTimetablePage = () => {
  const afternoonHours = [13, 14, 15, 16, 17];
 
  // 1. Get filtered class timetable
- const classTimetable = useMemo(() => {
- if (!selectedClassId) return [];
- return timetables.filter(t => t.classId === parseInt(selectedClassId))
- .sort((a, b) => a.startTime.localeCompare(b.startTime));
- }, [timetables, selectedClassId]);
+  const classTimetable = useMemo(() => {
+    if (!selectedClassId) return [];
+    return timetables.filter(t => String(t.classId) === String(selectedClassId))
+      .sort((a, b) => a.startTime.localeCompare(b.startTime));
+  }, [timetables, selectedClassId]);
 
- // 2. Get subjects and teachers for the selected class
- const classObj = classes.find(c => c.id === parseInt(selectedClassId));
- const classSubjects = classObj?.subjects || [];
+  // 2. Get subjects and teachers for the selected class
+  const classObj = classes.find(c => String(c.id) === String(selectedClassId));
+  const classSubjects = classObj?.subjects || [];
 
  const handleStartTimeChange = (val) => {
  const [h, m] = val.split(':');
@@ -59,11 +59,11 @@ const AdminTimetablePage = () => {
  setError('');
  if (!selectedClassId) throw new Error("Please select a class first.");
  
- const slotData = {
- ...formData,
- classId: parseInt(selectedClassId),
- teacherId: formData.isBreak ? null : parseInt(formData.teacherId)
- };
+      const slotData = {
+        ...formData,
+        classId: selectedClassId,
+        teacherId: formData.isBreak ? null : formData.teacherId
+      };
 
  addTimetableSlot(slotData);
  setShowModal(false);
@@ -378,7 +378,7 @@ const AdminTimetablePage = () => {
         <label className="text-label text-slate-400/80 mb-2 block">Teacher</label>
         {classSubjects.some(s => s.name === formData.subjectName) ? (
           <div className="form-input-custom w-full bg-slate-100 dark:bg-slate-800/50 flex items-center text-slate-600">
-            {formData.teacherId ? teachers.find(t => t.id === parseInt(formData.teacherId))?.name : 'Auto-filled based on subject'}
+            {formData.teacherId ? teachers.find(t => String(t.id) === String(formData.teacherId))?.name : 'Auto-filled based on subject'}
           </div>
         ) : (
           <select 
