@@ -300,7 +300,7 @@ const StudentsPage = () => {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigator.clipboard.writeText(student.id.toString());
+                                navigator.clipboard.writeText((student.systemId || student.id.split('-')[0]).toString());
                                 addNotification('ID copied to clipboard', 'info');
                               }}
                               className="p-1 text-slate-400/80 hover:text-primary hover:bg-primary/5 rounded transition-all opacity-0 group-hover:opacity-100"
