@@ -19,8 +19,8 @@ const TeacherAttendancePage = () => {
   }, [selectedDate]);
 
   const assignedClasses = classes.filter(cls => 
-    (currentUser?.assignedClasses || []).includes(cls.id) || 
-    cls.teacherId === currentUser?.id
+    (currentUser?.assignedClasses || []).some(id => String(id) === String(cls.id)) || 
+    String(cls.teacherId) === String(currentUser?.id)
   );
 
   const availableSessions = useMemo(() => {

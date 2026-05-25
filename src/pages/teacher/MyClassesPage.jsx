@@ -11,8 +11,8 @@ const MyClassesPage = () => {
   const { currentUser } = useAppContext();
 
   const assignedClasses = classes.filter(cls => 
-    (currentUser?.assignedClasses || []).includes(cls.id) || 
-    cls.teacherId === currentUser?.id
+    (currentUser?.assignedClasses || []).some(id => String(id) === String(cls.id)) || 
+    String(cls.teacherId) === String(currentUser?.id)
   );
 
   return (
@@ -34,7 +34,7 @@ const MyClassesPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {assignedClasses.map(cls => {
-              const classStudents = students.filter(s => s.classId === cls.id);
+              const classStudents = students.filter(s => String(s.classId) === String(cls.id));
               const teacherSubjects = (cls.subjects || []).filter(s => s.teacherId === currentUser?.id);
 
               return (

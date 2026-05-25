@@ -20,15 +20,15 @@ const TeacherDashboard = () => {
   
   // Assigned Classes
   const myClasses = useMemo(() => 
-    classes.filter(c => (currentUser?.assignedClasses || []).includes(c.id) || c.teacherId === currentUser?.id),
+    classes.filter(c => (currentUser?.assignedClasses || []).some(id => String(id) === String(c.id)) || String(c.teacherId) === String(currentUser?.id)),
     [classes, currentUser]
   );
 
   // My Students
-  const myStudents = useMemo(() => 
-    students.filter(s => (currentUser?.assignedClasses || []).includes(s.classId)),
-    [students, currentUser]
-  );
+  const myStudents = useMemo(() => {
+    const myClassIds = myClasses.map(c => String(c.id));
+    return students.filter(s => myClassIds.includes(String(s.classId)));
+  }, [students, myClasses]);
 
   // Attendance % (Teacher's classes)
   const myAttendanceRate = useMemo(() => {

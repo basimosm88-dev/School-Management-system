@@ -104,18 +104,24 @@ const GenericModulePage = ({ role, title, primaryActionText }) => {
 
  // Filter for teachers
  if (role === 'teacher' && currentUser) {
- const assignedClasses = currentUser.assignedClasses || [];
- if (title === 'Students') {
- items = items.filter(student => assignedClasses.includes(student.classId));
- } else if (title === 'My Classes' || title === 'Classes') {
- items = items.filter(cls => assignedClasses.includes(cls.id));
- } else if (title === 'Grades' || title === 'Exams') {
- items = items.filter(item => item.teacherId === currentUser.id);
- } else if (title === 'Subjects') {
- // Show subjects teacher is specialized in or assigned to
- const teacherSubjects = currentUser.subjects || [];
- items = items.filter(sub => teacherSubjects.includes(sub.name));
- }
+   const assignedClassIds = (dataContext.classes || [])
+     .filter(cls => 
+       (currentUser.assignedClasses || []).some(id => String(id) === String(cls.id)) || 
+       String(cls.teacherId) === String(currentUser.id)
+     )
+     .map(cls => String(cls.id));
+
+   if (title === 'Students') {
+     items = items.filter(student => assignedClassIds.includes(String(student.classId)));
+   } else if (title === 'My Classes' || title === 'Classes') {
+     items = items.filter(cls => assignedClassIds.includes(String(cls.id)));
+   } else if (title === 'Grades' || title === 'Exams') {
+     items = items.filter(item => String(item.teacherId) === String(currentUser.id));
+   } else if (title === 'Subjects') {
+     // Show subjects teacher is specialized in or assigned to
+     const teacherSubjects = currentUser.subjects || [];
+     items = items.filter(sub => teacherSubjects.includes(sub.name));
+   }
  }
 
  const handleSave = () => {

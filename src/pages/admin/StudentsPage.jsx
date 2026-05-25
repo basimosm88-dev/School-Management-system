@@ -61,8 +61,11 @@ const StudentsPage = () => {
   const availableClasses = useMemo(() => {
     if (userRole === 'admin') return classes;
     if (userRole === 'teacher') {
-      const assignedIds = currentUser?.assignedClasses || [];
-      return classes.filter(c => assignedIds.includes(c.id));
+      const assignedIds = (currentUser?.assignedClasses || []).map(id => String(id));
+      return classes.filter(c => 
+        assignedIds.includes(String(c.id)) || 
+        String(c.teacherId) === String(currentUser?.id)
+      );
     }
     return classes;
   }, [classes, userRole, currentUser]);

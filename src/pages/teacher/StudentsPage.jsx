@@ -21,14 +21,15 @@ const StudentsPage = () => {
 
   // Get teacher's assigned classes
   const assignedClasses = classes.filter(cls => 
-    (currentUser?.assignedClasses || []).includes(cls.id) || 
-    cls.teacherId === currentUser?.id
+    (currentUser?.assignedClasses || []).some(id => String(id) === String(cls.id)) || 
+    String(cls.teacherId) === String(currentUser?.id)
   );
 
   // Filter students based on assigned classes and selection
   const filteredStudents = useMemo(() => {
+    const assignedClassIds = assignedClasses.map(c => String(c.id));
     let list = students.filter(s => 
-      (currentUser?.assignedClasses || []).includes(s.classId)
+      assignedClassIds.includes(String(s.classId))
     );
 
     if (selectedClassId) {
@@ -43,7 +44,7 @@ const StudentsPage = () => {
     }
 
     return list;
-  }, [students, currentUser, selectedClassId, searchTerm]);
+  }, [students, classes, currentUser, selectedClassId, searchTerm]);
 
   // Group by class
   const groupedStudents = useMemo(() => {

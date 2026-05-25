@@ -79,7 +79,7 @@ const TeacherTimetablePage = () => {
  return `${h12}:${m} ${suffix}`;
  };
  
- const classObj = classes.find(c => c.id === slot.classId);
+ const classObj = classes.find(c => String(c.id) === String(slot.classId));
  const classNameDisplay = classObj?.name.split('-')[1]?.trim() || classObj?.name || 'Class';
  
  return (
