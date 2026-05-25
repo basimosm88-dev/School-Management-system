@@ -239,10 +239,10 @@ export const DataProvider = ({ children }) => {
     const classStudents = students.filter(s => String(s.classId) === String(classId));
     const rankings = classStudents.map(student => {
       const studentGrades = grades.filter(g => String(g.studentId) === String(student.id));
-      if (studentGrades.length === 0) return { studentId: student.id, name: student.name, averageScore: 0 };
+      if (studentGrades.length === 0) return { studentId: student.id, name: student.name, averageScore: 0, totalScore: 0 };
       const total = studentGrades.reduce((acc, g) => acc + g.score, 0);
       const averageScore = total / studentGrades.length;
-      return { studentId: student.id, name: student.name, averageScore };
+      return { studentId: student.id, name: student.name, averageScore, totalScore: total };
     });
     return rankings
       .sort((a, b) => b.averageScore - a.averageScore)

@@ -55,6 +55,7 @@ const ResultsPage = ({ role }) => {
     setIsLoading(true);
     setTimeout(() => {
       setSelectedClassId(classId);
+      setSelectedSubject(null); // Reset subject state from any prior selections to prevent crashes on other classes
       if (userRole === 'teacher') {
         setViewMode('subject');
       } else {
@@ -195,13 +196,16 @@ const ResultsPage = ({ role }) => {
       // If teacher role with a selected subject, only show that subject's scores
       const subjects = userRole === 'teacher' && selectedSubject 
         ? [selectedSubject] 
-        : Object.keys(reportData.results);
+        : Object.keys(reportData?.results || {});
 
       const examTypes = ["Before Midterm", "Midterm", "After Midterm", "Final"];
       const examAverages = {};
       
       examTypes.forEach(type => {
-        const scores = subjects.map(sub => reportData.results[sub][type]).filter(s => typeof s === 'number');
+        const scores = subjects.map(sub => {
+          const subData = reportData?.results?.[sub];
+          return subData ? subData[type] : undefined;
+        }).filter(s => typeof s === 'number');
         examAverages[type] = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : "Not entered yet";
       });
 
@@ -211,20 +215,23 @@ const ResultsPage = ({ role }) => {
       const finalEntered = examAverages["Final"] !== "Not entered yet";
       
       if (midtermEntered && finalEntered) {
-        const avg = subjects.reduce((acc, sub) => acc + (parseFloat(reportData.results[sub].average) || 0), 0) / subjects.length;
-        outcome = avg >= 50 ? 'Pass' : 'Fail';
+        const validSubjects = subjects.filter(sub => reportData?.results?.[sub]);
+        if (validSubjects.length > 0) {
+          const avg = validSubjects.reduce((acc, sub) => acc + (parseFloat(reportData.results[sub].average) || 0), 0) / validSubjects.length;
+          outcome = avg >= 50 ? 'Pass' : 'Fail';
+        }
       }
 
       const displayAverage = userRole === 'teacher' && selectedSubject
-        ? parseFloat(reportData.results[selectedSubject]?.average || 0)
+        ? parseFloat(reportData?.results?.[selectedSubject]?.average || 0)
         : (studentRank ? parseFloat(studentRank.averageScore.toFixed(1)) : 0);
 
       return {
         ...student,
-        results: reportData.results,
+        results: reportData?.results || {},
         examAverages,
         displayAverage,
-        displayTotal: studentRank ? parseFloat(studentRank.totalScore.toFixed(1)) : 0,
+        displayTotal: studentRank && typeof studentRank.totalScore === 'number' ? parseFloat(studentRank.totalScore.toFixed(1)) : 0,
         rank: studentRank?.rank || '-',
         status: outcome
       };
