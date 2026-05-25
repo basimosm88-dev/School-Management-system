@@ -41,13 +41,19 @@ export const AppProvider = ({ children }) => {
 
   const fetchProfile = async (user) => {
     try {
-      const { data: profile, error } = await supabase
+      const profilePromise = supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
-        
-      if (error) throw error;
+
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 5000)
+      );
+
+      const response = await Promise.race([profilePromise, timeoutPromise]);
+      if (response.error) throw response.error;
+      const profile = response.data;
       
       setCurrentUser({ ...user, ...profile });
     } catch (error) {
@@ -77,13 +83,22 @@ export const AppProvider = ({ children }) => {
       
       try {
         if (active) setLoading(true);
-        const { data: profile, error } = await supabase
+        
+        // Race the database query against a 5-second timeout
+        const profilePromise = supabase
           .from('profiles')
           .select('*')
           .eq('id', session.user.id)
           .single();
-          
-        if (error) throw error;
+
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Profile fetch timeout')), 5000)
+        );
+
+        const response = await Promise.race([profilePromise, timeoutPromise]);
+        
+        if (response.error) throw response.error;
+        const profile = response.data;
         
         if (active) {
           setCurrentUser({ ...session.user, ...profile });
@@ -99,7 +114,11 @@ export const AppProvider = ({ children }) => {
 
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Session fetch timeout')), 5000)
+        );
+        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
         await handleSession(session);
       } catch (error) {
         console.error("Auth init error:", error);
