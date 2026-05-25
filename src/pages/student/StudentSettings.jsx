@@ -76,7 +76,7 @@ const StudentSettings = () => {
  </div>
  <div>
  <h2 className="text-section text-slate-900 dark:text-white">{currentUser?.name}</h2>
- <p className="text-label text-slate-500/80">Student ID: {currentUser?.id}</p>
+ <p className="text-label text-slate-500/80">Student ID: {currentUser?.systemId || currentUser?.id}</p>
  </div>
  </div>
 

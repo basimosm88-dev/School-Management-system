@@ -221,7 +221,7 @@ const TeacherExamsPage = () => {
                           </div>
                           <div>
                             <span className="text-slate-900 dark:text-white font-bold block leading-tight">{student.name}</span>
-                            <span className="text-[11px] text-slate-400 font-medium tracking-tight">ID: #{student.id}</span>
+                            <span className="text-[11px] text-slate-400 font-medium tracking-tight">ID: #{student.systemId || student.id}</span>
                           </div>
                         </div>
                       </td>

@@ -26,7 +26,7 @@ const ProfilePage = () => {
               <h1 className="text-display text-slate-900 dark:text-white mb-2">{currentUser.name}</h1>
               <div className="flex flex-wrap justify-center md:justify-start gap-4">
                 <span className="px-4 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-primary rounded-xl text-label uppercase tracking-wider">Student</span>
-                <span className="px-4 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500/80 rounded-xl text-label uppercase tracking-wider">ID: {currentUser.id}</span>
+                <span className="px-4 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500/80 rounded-xl text-label uppercase tracking-wider">ID: {currentUser.systemId || currentUser.id}</span>
               </div>
             </div>
           </div>

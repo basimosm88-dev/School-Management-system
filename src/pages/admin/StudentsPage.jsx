@@ -939,7 +939,7 @@ const PrintableStudentProfile = ({ student, classes, schoolSettings }) => {
             <h3 className="print-section-title">Academic Details</h3>
             <div className="print-grid">
               <PrintItem label="Assigned Class" value={classes.find(c => String(c.id) === String(student.classId))?.name} />
-              <PrintItem label="Student ID" value={`#${student.id}`} />
+              <PrintItem label="Student ID" value={`#${student.systemId || student.id}`} />
               <PrintItem label="Registration Date" value={student.registrationDate} />
               <PrintItem label="Registration Type" value={student.registrationType} />
             </div>

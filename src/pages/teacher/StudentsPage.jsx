@@ -39,7 +39,8 @@ const StudentsPage = () => {
     if (searchTerm) {
       list = list.filter(s => 
         s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.id.toString().includes(searchTerm)
+        s.id.toString().includes(searchTerm) ||
+        (s.systemId || '').toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -104,7 +105,7 @@ const StudentsPage = () => {
               </div>
               <div>
                 <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Student ID</p>
-                <p className="text-label font-mono text-slate-600 dark:text-slate-300">#{viewingStudent.id}</p>
+                <p className="text-label font-mono text-slate-600 dark:text-slate-300">#{viewingStudent.systemId || viewingStudent.id}</p>
               </div>
               <div>
                 <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Email</p>
@@ -283,7 +284,7 @@ const StudentsPage = () => {
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="font-mono text-slate-500">#{student.id}</span>
+                              <span className="font-mono text-slate-500">#{student.systemId || student.id}</span>
                             </td>
                             <td className="px-6 py-4 text-slate-500">
                               {student.phone || 'N/A'}

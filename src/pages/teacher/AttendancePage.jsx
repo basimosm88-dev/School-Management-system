@@ -222,7 +222,7 @@ const TeacherAttendancePage = () => {
                       </td>
                       <td className="px-8 py-6">
                         <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-[11px] text-slate-500 font-bold tracking-wider border border-slate-200/50 dark:border-slate-700">
-                          #{student.id}
+                          #{student.systemId || student.id}
                         </span>
                       </td>
                       <td className="px-8 py-6">

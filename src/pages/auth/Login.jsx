@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 import { useSettings } from '../../contexts/SettingsContext';
+import { supabase } from '../../lib/supabase';
 
 const Login = () => {
   const [selectedRole, setSelectedRole] = useState('student');
@@ -24,20 +25,32 @@ const Login = () => {
       
       const { user } = await login(emailToUse, password);
 
-      // We rely on AppContext's listener to fetch the profile.
-      // Wait, we need to route them based on their actual role!
-      // The login function in AppContext returns { user, session }.
-      // Let's just wait a brief moment for the onAuthStateChange to set currentUser, 
-      // or we can fetch the profile right here to route them immediately.
-      
-      // Let's route blindly for now, App.jsx handles protected routes based on currentUser.role
+      // Verify their actual role in the database before proceeding
+      const { data: profile, error: profileErr } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profileErr || !profile) {
+        await supabase.auth.signOut();
+        throw new Error('Access denied. Unable to retrieve user profile.');
+      }
+
+      if (profile.role !== selectedRole) {
+        await supabase.auth.signOut();
+        setError(`Access denied. Your account is not registered as ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}.`);
+        return;
+      }
+
+      // Let's route based on their confirmed role
       if (selectedRole === 'admin') navigate('/admin');
       else if (selectedRole === 'teacher') navigate('/teacher');
       else navigate('/student');
       
     } catch (err) {
       console.error("Login error:", err);
-      setError('Invalid credentials. Please check your email and password.');
+      setError(err.message || 'Invalid credentials. Please check your email and password.');
     } finally {
       setLoading(false);
     }

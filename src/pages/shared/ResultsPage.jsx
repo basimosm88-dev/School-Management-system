@@ -441,7 +441,7 @@ const ResultsPage = ({ role }) => {
                         </td>
                         <td className="px-6 py-4">
                           <p className="text-label text-on-surface font-bold whitespace-nowrap">{res.name}</p>
-                          <p className="text-[10px] text-on-surface-variant uppercase">ID: {res.id}</p>
+                          <p className="text-[10px] text-on-surface-variant uppercase">ID: {res.systemId || res.id}</p>
                         </td>
                         <td className="px-4 py-4 text-center">
                           <span className={`text-[10px] font-bold ${res.examAverages["Before Midterm"] === 'Not entered yet' ? 'text-slate-400 italic' : 'text-on-surface'}`}>
@@ -889,7 +889,7 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
             </div>
             <div className="text-right">
               <p className="text-[8px] uppercase font-bold text-slate-500">Student ID</p>
-              <p className="text-label font-black">{student?.id}</p>
+              <p className="text-label font-black">{student?.systemId || student?.id}</p>
             </div>
             <div>
               <p className="text-[8px] uppercase font-bold text-slate-500">Class / Grade</p>
@@ -966,7 +966,7 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
           <p className="text-label text-slate-500 uppercase tracking-widest font-bold">Cumulative Student Record</p>
         </div>
         <div className="text-right text-label uppercase font-bold text-slate-500">
-          <p>Student ID: {student?.id}</p>
+          <p>Student ID: {student?.systemId || student?.id}</p>
         </div>
       </div>
 

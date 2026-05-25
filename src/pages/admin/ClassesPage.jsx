@@ -602,7 +602,7 @@ const ClassProfile = ({
  className="form-input-custom flex-1"
  >
  <option value="">Choose a student...</option>
- {unassignedStudents.map(s => <option key={s.id} value={s.id}>{s.name} (ID: {s.id})</option>)}
+ {unassignedStudents.map(s => <option key={s.id} value={s.id}>{s.name} (ID: {s.systemId || s.id})</option>)}
  </select>
  <button 
  onClick={() => {
@@ -634,7 +634,7 @@ const ClassProfile = ({
  </div>
  <div>
  <p className="text-label text-slate-900 dark:text-slate-100">{student.name}</p>
- <p className="text-label text-slate-400/80">ID: {student.id}</p>
+ <p className="text-label text-slate-400/80">ID: {student.systemId || student.id}</p>
  </div>
  </div>
  <button 
