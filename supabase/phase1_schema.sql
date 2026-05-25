@@ -226,12 +226,19 @@ DECLARE
 BEGIN 
     FOR t IN SELECT table_name FROM information_schema.tables 
              WHERE table_schema = 'public' 
-             AND table_name NOT IN ('schools')
+             AND table_name NOT IN ('schools', 'profiles')
     LOOP
         EXECUTE format('DROP POLICY IF EXISTS "Tenant Isolation Policy" ON public.%I', t);
         EXECUTE format('CREATE POLICY "Tenant Isolation Policy" ON public.%I USING (school_id = get_my_school()) WITH CHECK (school_id = get_my_school())', t);
     END LOOP;
 END $$;
+
+-- Profiles: Allow users to access their own profile or profiles in the same school (Non-recursive)
+DROP POLICY IF EXISTS "Tenant Isolation Policy" ON public.profiles;
+CREATE POLICY "Tenant Isolation Policy" ON public.profiles
+    FOR ALL
+    USING (id = auth.uid() OR school_id = get_my_school())
+    WITH CHECK (id = auth.uid() OR school_id = get_my_school());
 
 -- ==============================================================================
 -- 8. SaaS BOOTSTRAPPING TRIGGER (For creating the first Master Admins)

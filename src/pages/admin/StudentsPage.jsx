@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 // System Version: 1.4.0 - Bulk Student Import Implementation
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
+import { useAppContext } from '../../contexts/AppContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import ImportStudentsModal from '../../components/modals/ImportStudentsModal';
 
@@ -29,7 +30,7 @@ const StudentsPage = () => {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { currentUser } = useData();
+  const { currentUser } = useAppContext();
   const userRole = currentUser?.role || 'admin';
 
   // Filter Logic
