@@ -11,8 +11,17 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { login } = useAppContext();
+  const { login, currentSchool, schoolLoading } = useAppContext();
   const { schoolSettings } = useSettings();
+
+  if (schoolLoading) {
+    return (
+      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+        <h2 className="text-xl font-black text-slate-950 dark:text-white tracking-tight animate-pulse">Loading Portal...</h2>
+      </div>
+    );
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -25,16 +34,24 @@ const Login = () => {
       
       const { user } = await login(emailToUse, password);
 
-      // Verify their actual role in the database before proceeding
+      // Verify their actual role and school in the database before proceeding
       const { data: profile, error: profileErr } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, school_id')
         .eq('id', user.id)
         .single();
 
       if (profileErr || !profile) {
         await supabase.auth.signOut();
         throw new Error('Access denied. Unable to retrieve user profile.');
+      }
+
+      // Enforce school isolation for subdomain
+      if (currentSchool && profile.school_id !== currentSchool.id) {
+        await supabase.auth.signOut();
+        setError(`Access denied. Your account is not registered under ${currentSchool.name}.`);
+        setLoading(false);
+        return;
       }
 
       if (profile.role !== selectedRole) {
@@ -67,13 +84,17 @@ const Login = () => {
       <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800 w-full max-w-md">
         <div className="flex flex-col items-center mb-6 text-center">
           <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 mb-4 transition-transform hover:scale-105 duration-300 overflow-hidden">
-            {schoolSettings.logo ? (
+            {currentSchool?.logo_url ? (
+              <img src={currentSchool.logo_url} alt="Logo" className="w-full h-full object-cover" />
+            ) : schoolSettings.logo ? (
               <img src={schoolSettings.logo} alt="Logo" className="w-full h-full object-cover" />
             ) : (
               <span className="material-symbols-outlined text-white text-[32px] animate-pulse">school</span>
             )}
           </div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{schoolSettings.name || 'EduCore Pro'}</h1>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+            {currentSchool?.name || schoolSettings.name || 'EduCore Pro'}
+          </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">{roleConfigs[selectedRole].welcome}</p>
         </div>
 

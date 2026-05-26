@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { getSubdomain } from '../utils/subdomain';
 
 const AppContext = createContext();
 
@@ -40,6 +41,38 @@ export const AppProvider = ({ children }) => {
 
   const [currentUser, setCurrentUser] = useState(null);
   const currentUserRef = useRef(null);
+
+  const [currentSchool, setCurrentSchool] = useState(null);
+  const [schoolLoading, setSchoolLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSchoolBranding = async () => {
+      try {
+        const subdomain = getSubdomain();
+        if (!subdomain) {
+          setSchoolLoading(false);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from('schools')
+          .select('id, name, logo_url, settings')
+          .eq('subdomain', subdomain)
+          .single();
+
+        if (error) throw error;
+        if (data) {
+          setCurrentSchool(data);
+        }
+      } catch (error) {
+        console.error("Error fetching school branding by subdomain:", error);
+      } finally {
+        setSchoolLoading(false);
+      }
+    };
+
+    fetchSchoolBranding();
+  }, []);
 
   const updateCurrentUser = (user) => {
     setCurrentUser(user);
@@ -192,7 +225,9 @@ export const AppProvider = ({ children }) => {
       currentUser,
       login,
       logout,
-      loading
+      loading,
+      currentSchool,
+      schoolLoading
     }}>
       {loading ? (
         <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center">
