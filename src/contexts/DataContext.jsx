@@ -206,8 +206,48 @@ export const DataProvider = ({ children }) => {
     if (student) await supabase.from('profiles').update({ details: { ...student, classId: null } }).eq('id', studentId);
   };
   const assignSubjectToClass = async (classId, subjectName, teacherId) => {
-    setClasses(prev => prev.map(c => c.id === classId ? { ...c, subjects: [...(c.subjects||[]), { name: subjectName, teacherId }] } : c));
+    try {
+      const cls = classes.find(c => c.id === classId);
+      if (!cls) return;
+
+      const updatedSubjects = [...(cls.subjects || []), { name: subjectName, teacherId }];
+      const updatedClass = { ...cls, subjects: updatedSubjects };
+
+      // Update local state
+      setClasses(prev => prev.map(c => c.id === classId ? updatedClass : c));
+
+      // Persist class details in classes table
+      const details = { ...updatedClass };
+      delete details.id;
+      delete details.name;
+      delete details.section;
+
+      const { error } = await supabase
+        .from('classes')
+        .update({ details })
+        .eq('id', classId);
+
+      if (error) throw error;
+
+      // Persist assignment in teacher_subjects table
+      const subjectObj = subjects.find(s => s.name === subjectName);
+      if (subjectObj) {
+        const { error: tsError } = await supabase
+          .from('teacher_subjects')
+          .insert({
+            teacher_id: teacherId,
+            subject_id: subjectObj.id,
+            class_id: classId,
+            school_id: currentUser.school_id,
+            details: { subjectName }
+          });
+        if (tsError) console.error("Error inserting into teacher_subjects:", tsError);
+      }
+    } catch (err) {
+      console.error("Error in assignSubjectToClass:", err);
+    }
   };
+
 
   // --- SUBJECTS ---
   const addSubject = async (subjectData) => {
@@ -306,8 +346,105 @@ export const DataProvider = ({ children }) => {
   // --- TIMETABLES, EVENTS, ANNOUNCEMENTS ---
   const getTimetableForClass = (classId) => timetables.filter(t => t.classId === classId);
   const getTimetableForTeacher = (teacherId) => timetables.filter(t => t.teacherId === teacherId);
-  const addTimetableSlot = async (slot) => setTimetables(prev => [...prev, { ...slot, id: Date.now() }]);
-  const deleteTimetableSlot = async (id) => setTimetables(prev => prev.filter(t => t.id !== id));
+  const addTimetableSlot = async (slot) => {
+    try {
+      let subjectId = slot.subjectId;
+      let teacherId = slot.teacherId;
+
+      const dayMapping = {
+        'Sunday': 1,
+        'Monday': 2,
+        'Tuesday': 3,
+        'Wednesday': 4,
+        'Thursday': 5,
+        'Friday': 6,
+        'Saturday': 7
+      };
+      const day_of_week = dayMapping[slot.day] || 1;
+
+      if (slot.isBreak) {
+        // Find or create "Break" subject for this school
+        let breakSubject = subjects.find(s => s.name === 'Break');
+        if (!breakSubject) {
+          const { data: newSub, error: subErr } = await supabase
+            .from('subjects')
+            .insert({ name: 'Break', school_id: currentUser.school_id, details: { levels: ['Primary', 'Middle', 'Secondary'] } })
+            .select()
+            .single();
+          if (subErr) throw subErr;
+          breakSubject = { id: newSub.id, name: 'Break' };
+          setSubjects(prev => [...prev, breakSubject]);
+        }
+        subjectId = breakSubject.id;
+        // Fallback: Admin acts as teacher for break session
+        teacherId = currentUser.id;
+      } else {
+        const subjectObj = subjects.find(s => s.name === slot.subjectName);
+        if (subjectObj) {
+          subjectId = subjectObj.id;
+        } else {
+          const { data: newSub, error: subErr } = await supabase
+            .from('subjects')
+            .insert({ name: slot.subjectName, school_id: currentUser.school_id, details: {} })
+            .select()
+            .single();
+          if (subErr) throw subErr;
+          subjectId = newSub.id;
+          setSubjects(prev => [...prev, { id: newSub.id, name: newSub.name }]);
+        }
+      }
+
+      if (!teacherId) {
+        teacherId = currentUser.id;
+      }
+
+      const formatTime = (tStr) => tStr.length === 5 ? `${tStr}:00` : tStr;
+
+      const dbSlot = {
+        class_id: slot.classId,
+        subject_id: subjectId,
+        teacher_id: teacherId,
+        day_of_week,
+        start_time: formatTime(slot.startTime),
+        end_time: formatTime(slot.endTime),
+        school_id: currentUser.school_id,
+        details: {
+          ...slot,
+          subjectId,
+          teacherId
+        }
+      };
+
+      const { data: newDbSlot, error: insertErr } = await supabase
+        .from('timetable')
+        .insert(dbSlot)
+        .select()
+        .single();
+
+      if (insertErr) throw insertErr;
+
+      setTimetables(prev => [...prev, {
+        ...slot,
+        id: newDbSlot.id,
+        subjectId,
+        teacherId
+      }]);
+    } catch (err) {
+      console.error("Error adding timetable slot:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to add session', type: 'error' });
+    }
+  };
+
+  const deleteTimetableSlot = async (id) => {
+    try {
+      const { error } = await supabase.from('timetable').delete().eq('id', id);
+      if (error) throw error;
+      setTimetables(prev => prev.filter(t => t.id !== id));
+    } catch (err) {
+      console.error("Error deleting timetable slot:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to delete session', type: 'error' });
+    }
+  };
   
   const addEvent = async (eventData) => {
     const { data, error } = await supabase.from('events').insert({ title: eventData.title, date: eventData.date, details: eventData, school_id: currentUser.school_id }).select().single();

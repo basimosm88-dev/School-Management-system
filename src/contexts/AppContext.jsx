@@ -39,6 +39,12 @@ export const AppProvider = ({ children }) => {
   });
 
   const [currentUser, setCurrentUser] = useState(null);
+  const currentUserRef = useRef(null);
+
+  const updateCurrentUser = (user) => {
+    setCurrentUser(user);
+    currentUserRef.current = user;
+  };
 
   const fetchProfile = async (user) => {
     try {
@@ -56,10 +62,10 @@ export const AppProvider = ({ children }) => {
       if (response.error) throw response.error;
       const profile = response.data;
       
-      setCurrentUser({ ...user, ...profile, ...(profile?.details || {}), name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() });
+      updateCurrentUser({ ...user, ...profile, ...(profile?.details || {}), name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() });
     } catch (error) {
       console.error("Error fetching profile:", error);
-      setCurrentUser(null);
+      updateCurrentUser(null);
     }
   };
 
@@ -70,7 +76,7 @@ export const AppProvider = ({ children }) => {
     const handleSession = async (session) => {
       if (!session) {
         if (active) {
-          setCurrentUser(null);
+          updateCurrentUser(null);
           setLoading(false);
         }
         return;
@@ -83,7 +89,7 @@ export const AppProvider = ({ children }) => {
       isFetchingRef.current = session.user.id;
       
       try {
-        if (active) setLoading(true);
+        if (active && !currentUserRef.current) setLoading(true);
         
         // Race the database query against a 5-second timeout
         const profilePromise = supabase
@@ -102,11 +108,11 @@ export const AppProvider = ({ children }) => {
         const profile = response.data;
         
         if (active) {
-          setCurrentUser({ ...session.user, ...profile, ...(profile?.details || {}), name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() });
+          updateCurrentUser({ ...session.user, ...profile, ...(profile?.details || {}), name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() });
         }
       } catch (error) {
         console.error("Error fetching profile in handleSession:", error);
-        if (active) setCurrentUser(null);
+        if (active) updateCurrentUser(null);
       } finally {
         if (active) setLoading(false);
         isFetchingRef.current = null;
@@ -139,7 +145,7 @@ export const AppProvider = ({ children }) => {
         await handleSession(session);
       } else if (event === 'SIGNED_OUT') {
         if (active) {
-          setCurrentUser(null);
+          updateCurrentUser(null);
           setLoading(false);
         }
       }
