@@ -47,7 +47,11 @@ export const DataProvider = ({ children }) => {
 
         // 3. Fetch Subjects
         const { data: subjectData } = await supabase.from('subjects').select('*');
-        if (subjectData) setSubjects(subjectData.map(s => ({ ...s.details, id: s.id, name: s.name })));
+        let currentSubjects = [];
+        if (subjectData) {
+          currentSubjects = subjectData.map(s => ({ ...s.details, id: s.id, name: s.name }));
+          setSubjects(currentSubjects);
+        }
 
         // 4. Fetch Attendance
         const { data: attData } = await supabase.from('attendance').select('*');
@@ -55,13 +59,9 @@ export const DataProvider = ({ children }) => {
 
         // 5. Fetch Exams & Grades
         const { data: examData } = await supabase.from('exams').select('*');
-        if (examData) {
-          const formattedExams = examData.map(e => ({ ...e.details, id: e.id, title: e.title, classId: e.class_id, subjectId: e.subject_id }));
-          setExams(formattedExams);
-        }
-
         const { data: gradeData } = await supabase.from('grades').select('*');
-        if (gradeData) {
+        
+        if (examData && gradeData) {
           setGrades(gradeData.map(g => ({
             ...g.details,
             id: g.id,
@@ -71,6 +71,31 @@ export const DataProvider = ({ children }) => {
             status: g.status,
             releaseDate: g.release_date
           })));
+
+          const mergedExams = [];
+          gradeData.forEach(g => {
+            const exam = examData.find(e => e.id === g.exam_id);
+            if (exam) {
+              const subjectObj = currentSubjects.find(s => s.id === exam.subject_id);
+              const subjectName = subjectObj ? subjectObj.name : '';
+              mergedExams.push({
+                id: g.id,
+                examId: exam.id,
+                classId: exam.class_id,
+                subjectId: exam.subject_id,
+                subjectName,
+                examType: exam.title,
+                studentId: g.student_id,
+                grade: parseFloat(g.score),
+                status: g.status === 'pending' ? 'DRAFT' : g.status.toUpperCase(),
+                releaseDate: g.release_date,
+                remarks: g.details?.remarks || '',
+                date: exam.date,
+                teacherId: g.submitted_by
+              });
+            }
+          });
+          setExams(mergedExams);
         }
 
         // 6. Fetch Timetables, Events, Announcements
@@ -265,20 +290,185 @@ export const DataProvider = ({ children }) => {
   };
 
   // --- EXAMS & GRADING ---
-  const saveExamResults = async (examType, classId, subjectId, teacherId, results, status = 'SUBMITTED') => {
-    const newExams = [...exams];
-    results.forEach(res => {
-      newExams.push({ examType, classId, subjectId, teacherId, studentId: res.studentId, grade: parseFloat(res.grade), status });
-    });
-    setExams(newExams);
+  const refreshExamData = async () => {
+    try {
+      const { data: examData } = await supabase.from('exams').select('*');
+      const { data: gradeData } = await supabase.from('grades').select('*');
+      const { data: subjectData } = await supabase.from('subjects').select('*');
+
+      if (examData && gradeData) {
+        const formattedGrades = gradeData.map(g => ({
+          ...g.details,
+          id: g.id,
+          examId: g.exam_id,
+          studentId: g.student_id,
+          score: parseFloat(g.score),
+          status: g.status,
+          releaseDate: g.release_date
+        }));
+        setGrades(formattedGrades);
+
+        const currentSubjects = subjectData ? subjectData.map(s => ({ ...s.details, id: s.id, name: s.name })) : subjects;
+
+        const mergedExams = [];
+        gradeData.forEach(g => {
+          const exam = examData.find(e => e.id === g.exam_id);
+          if (exam) {
+            const subjectObj = currentSubjects.find(s => s.id === exam.subject_id);
+            const subjectName = subjectObj ? subjectObj.name : '';
+            mergedExams.push({
+              id: g.id,
+              examId: exam.id,
+              classId: exam.class_id,
+              subjectId: exam.subject_id,
+              subjectName,
+              examType: exam.title,
+              studentId: g.student_id,
+              grade: parseFloat(g.score),
+              status: g.status === 'pending' ? 'DRAFT' : g.status.toUpperCase(),
+              releaseDate: g.release_date,
+              remarks: g.details?.remarks || '',
+              date: exam.date,
+              teacherId: g.submitted_by
+            });
+          }
+        });
+        setExams(mergedExams);
+      }
+    } catch (err) {
+      console.error("Error refreshing exam data:", err);
+    }
   };
-  const updateExamStatus = (examType, classId, subjectId, newStatus, releaseDate = null) => {
-    setExams(prev => prev.map(e => e.examType === examType ? { ...e, status: newStatus, releaseDate } : e));
+
+  const saveExamResults = async (examType, classId, subjectId, teacherId, results, status = 'SUBMITTED') => {
+    try {
+      let resolvedSubjectId = subjectId;
+      const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+      if (!uuidRegex.test(subjectId)) {
+        const subjectObj = subjects.find(s => s.name.toLowerCase() === subjectId.toLowerCase());
+        if (subjectObj) {
+          resolvedSubjectId = subjectObj.id;
+        } else {
+          const { data: newSub, error: subErr } = await supabase
+            .from('subjects')
+            .insert({ name: subjectId, school_id: currentUser.school_id, details: {} })
+            .select()
+            .single();
+          if (subErr) throw subErr;
+          resolvedSubjectId = newSub.id;
+          setSubjects(prev => [...prev, { id: newSub.id, name: newSub.name }]);
+        }
+      }
+
+      let examId;
+      const { data: existingExams, error: findErr } = await supabase
+        .from('exams')
+        .select('id')
+        .eq('class_id', classId)
+        .eq('subject_id', resolvedSubjectId)
+        .eq('title', examType);
+
+      if (findErr) throw findErr;
+
+      if (existingExams && existingExams.length > 0) {
+        examId = existingExams[0].id;
+      } else {
+        const { data: newExam, error: createErr } = await supabase
+          .from('exams')
+          .insert({
+            title: examType,
+            class_id: classId,
+            subject_id: resolvedSubjectId,
+            date: new Date().toLocaleDateString('en-CA'),
+            school_id: currentUser.school_id,
+            details: { examType }
+          })
+          .select()
+          .single();
+
+        if (createErr) throw createErr;
+        examId = newExam.id;
+      }
+
+      const dbStatus = status === 'DRAFT' ? 'pending' : (status.toLowerCase() === 'submitted' ? 'submitted' : status.toLowerCase());
+      const gradeRows = results.map(res => ({
+        exam_id: examId,
+        student_id: res.studentId,
+        score: parseFloat(res.grade) || 0,
+        status: dbStatus,
+        submitted_by: teacherId,
+        school_id: currentUser.school_id,
+        details: { remarks: res.remarks || '' }
+      }));
+
+      const { error: gradesErr } = await supabase
+        .from('grades')
+        .upsert(gradeRows, { onConflict: 'exam_id,student_id' });
+
+      if (gradesErr) throw gradesErr;
+
+      await refreshExamData();
+    } catch (err) {
+      console.error("Error saving exam results:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to save exam results', type: 'error' });
+    }
+  };
+
+  const updateExamStatus = async (examType, classId, subjectId, newStatus, releaseDate = null) => {
+    try {
+      const dbStatus = newStatus === 'APPROVED' ? 'approved' :
+                       (newStatus === 'REJECTED' ? 'pending' :
+                       (newStatus === 'PUBLISHED' ? 'published' : 'submitted'));
+
+      let query = supabase.from('exams').select('id').eq('class_id', classId).eq('title', examType);
+      if (subjectId && subjectId !== 'all') {
+        const subjectObj = subjects.find(s => s.id === subjectId || s.name.toLowerCase() === subjectId.toLowerCase());
+        if (subjectObj) {
+          query = query.eq('subject_id', subjectObj.id);
+        }
+      }
+      
+      const { data: matchedExams, error: examErr } = await query;
+      if (examErr) throw examErr;
+
+      if (matchedExams && matchedExams.length > 0) {
+        const examIds = matchedExams.map(e => e.id);
+        const updates = { status: dbStatus };
+        if (releaseDate) {
+          updates.release_date = releaseDate;
+        } else if (newStatus === 'PUBLISHED') {
+          updates.release_date = new Date().toISOString();
+        }
+
+        const { error: gradeErr } = await supabase
+          .from('grades')
+          .update(updates)
+          .in('exam_id', examIds);
+
+        if (gradeErr) throw gradeErr;
+      }
+
+      await refreshExamData();
+    } catch (err) {
+      console.error("Error in updateExamStatus:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to update status', type: 'error' });
+    }
   };
   const calculateRankings = (classId) => {
     const classStudents = students.filter(s => String(s.classId) === String(classId));
+    const isStudent = currentUser?.role === 'student';
+    
     const rankings = classStudents.map(student => {
-      const studentGrades = grades.filter(g => String(g.studentId) === String(student.id));
+      let studentGrades = grades.filter(g => String(g.studentId) === String(student.id));
+      
+      // If student is viewing, only rank based on published exam grades
+      if (isStudent) {
+        studentGrades = studentGrades.filter(g => {
+          const exam = exams.find(e => String(e.id) === String(g.id));
+          return exam && exam.status === 'PUBLISHED';
+        });
+      }
+      
       if (studentGrades.length === 0) return { studentId: student.id, name: student.name, averageScore: 0, totalScore: 0 };
       const total = studentGrades.reduce((acc, g) => acc + g.score, 0);
       const averageScore = total / studentGrades.length;
@@ -294,20 +484,41 @@ export const DataProvider = ({ children }) => {
   const getReportCardData = (studentId, classId) => {
     const studentGrades = grades.filter(g => String(g.studentId) === String(studentId));
     const results = {};
+    const isStudent = currentUser?.role === 'student';
+    
     studentGrades.forEach(g => {
-      const exam = exams.find(e => String(e.id) === String(g.examId));
+      // Find the merged exam row in the exams state by comparing grade row IDs
+      const exam = exams.find(e => String(e.id) === String(g.id));
       if (!exam) return;
+      
+      // If student is requesting report card, only show PUBLISHED results
+      if (isStudent && exam.status !== 'PUBLISHED') return;
+      
       const subject = subjects.find(s => String(s.id) === String(exam.subjectId));
       const subjectName = subject ? subject.name : 'Unknown';
+      
       if (!results[subjectName]) {
-        results[subjectName] = { marks: [], average: 0 };
+        results[subjectName] = {
+          marks: [],
+          average: 0,
+          "Before Midterm": "-",
+          "Midterm": "-",
+          "After Midterm": "-",
+          "Final": "-"
+        };
       }
+      
+      results[subjectName][exam.examType] = g.score;
       results[subjectName].marks.push(g.score);
     });
+    
     Object.keys(results).forEach(sub => {
       const marks = results[sub].marks;
-      results[sub].average = Math.round(marks.reduce((a, b) => a + b, 0) / marks.length);
+      results[sub].average = marks.length > 0
+        ? Math.round(marks.reduce((a, b) => a + b, 0) / marks.length)
+        : 0;
     });
+    
     const rankings = calculateRankings(classId);
     const myRankObj = rankings.find(r => String(r.studentId) === String(studentId));
     return {
@@ -340,7 +551,48 @@ export const DataProvider = ({ children }) => {
     return { present, absent, late, rate, sessionHistory: [], dailySummary };
   };
   const saveAttendanceRecords = async (records) => {
-    setAttendance(prev => [...prev, ...records.map(r => ({ ...r, id: Date.now() }))]);
+    try {
+      const dbRecords = records.map(r => ({
+        student_id: r.studentId,
+        class_id: r.classId,
+        date: r.date,
+        status: r.status,
+        marked_by: currentUser.id,
+        school_id: currentUser.school_id,
+        details: {
+          startTime: r.startTime,
+          endTime: r.endTime,
+          subjectName: r.subjectName,
+          teacherId: r.teacherId,
+          status: r.status
+        }
+      }));
+
+      const { data, error } = await supabase
+        .from('attendance')
+        .upsert(dbRecords, { onConflict: 'student_id,class_id,date' })
+        .select();
+
+      if (error) throw error;
+
+      setAttendance(prev => {
+        const filtered = prev.filter(p => !records.some(r => 
+          String(r.studentId) === String(p.studentId) && 
+          String(r.classId) === String(p.classId) && 
+          r.date === p.date &&
+          r.startTime === p.startTime &&
+          r.subjectName === p.subjectName
+        ));
+        
+        return [...filtered, ...records.map((r, index) => ({
+          ...r,
+          id: (data && data[index]) ? data[index].id : Date.now() + index
+        }))];
+      });
+    } catch (err) {
+      console.error("Error saving attendance:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to save attendance', type: 'error' });
+    }
   };
 
   // --- TIMETABLES, EVENTS, ANNOUNCEMENTS ---
