@@ -13,7 +13,7 @@ const DynamicForm = ({ fields, initialData = {}, onChange }) => {
  // This happens when closing/resetting the form
  setFormData({});
  }
- }, [initialData.id]); // Only sync when the record ID changes
+ }, [initialData]); // Sync when initialData object reference changes
 
  const handleChange = (e, field) => {
  const newVal = e.target.type === 'checkbox' ? e.target.checked : e.target.value;

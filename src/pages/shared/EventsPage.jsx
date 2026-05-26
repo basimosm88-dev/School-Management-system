@@ -193,9 +193,9 @@ const EventsPage = ({ role }) => {
     </div>
   </div>
 
- <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Create New Event" onSave={handleSave}>
- <DynamicForm fields={eventFields} onChange={setFormData} />
- </Modal>
+  <Modal isOpen={modalOpen} onClose={() => { setModalOpen(false); setFormData({}); }} title="Create New Event" onSave={handleSave}>
+  <DynamicForm fields={eventFields} onChange={setFormData} initialData={formData} />
+  </Modal>
  </PageLayout>
  );
 };
