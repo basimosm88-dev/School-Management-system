@@ -808,20 +808,129 @@ export const DataProvider = ({ children }) => {
   };
   
   const addEvent = async (eventData) => {
-    const { data, error } = await supabase.from('events').insert({ title: eventData.title, date: eventData.date, details: eventData, school_id: currentUser.school_id }).select().single();
-    if (error) console.error("Error adding event:", error);
-    if (data) setEvents(prev => [...prev, { ...eventData, id: data.id }]);
+    try {
+      if (!currentUser || !currentUser.school_id) {
+        throw new Error("No active school session found. Please log in again.");
+      }
+      const { data, error } = await supabase
+        .from('events')
+        .insert({
+          title: eventData.title,
+          date: eventData.date,
+          location: eventData.location || null,
+          details: eventData,
+          school_id: currentUser.school_id
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setEvents(prev => [...prev, { ...eventData, id: data.id }]);
+        triggerSmartNotification({ title: 'Success', message: 'Event added successfully.', type: 'success' });
+      }
+    } catch (err) {
+      console.error("Error adding event:", err);
+      triggerSmartNotification({ title: 'Error', message: err.message || 'Failed to add event.', type: 'error' });
+    }
   };
-  const updateEvent = async (id, updates) => setEvents(prev => prev.map(e => e.id === id ? { ...e, ...updates } : e));
-  const deleteEvent = async (id) => setEvents(prev => prev.filter(e => e.id !== id));
+
+  const updateEvent = async (id, updates) => {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .update({
+          title: updates.title,
+          date: updates.date,
+          location: updates.location || null,
+          details: updates
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+      setEvents(prev => prev.map(e => e.id === id ? { ...e, ...updates } : e));
+    } catch (err) {
+      console.error("Error updating event:", err);
+    }
+  };
+
+  const deleteEvent = async (id) => {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      setEvents(prev => prev.filter(e => e.id !== id));
+      triggerSmartNotification({ title: 'Success', message: 'Event deleted successfully.', type: 'success' });
+    } catch (err) {
+      console.error("Error deleting event:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to delete event.', type: 'error' });
+    }
+  };
 
   const addAnnouncement = async (dataObj) => {
-    const { data, error } = await supabase.from('announcements').insert({ title: dataObj.title, content: dataObj.content, details: dataObj, school_id: currentUser.school_id }).select().single();
-    if (error) console.error("Error adding announcement:", error);
-    if (data) setAnnouncements(prev => [...prev, { ...dataObj, id: data.id }]);
+    try {
+      if (!currentUser || !currentUser.school_id) {
+        throw new Error("No active school session found. Please log in again.");
+      }
+      const { data, error } = await supabase
+        .from('announcements')
+        .insert({
+          title: dataObj.title,
+          content: dataObj.content,
+          created_by: currentUser.id,
+          school_id: currentUser.school_id,
+          details: dataObj
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setAnnouncements(prev => [...prev, { ...dataObj, id: data.id }]);
+        triggerSmartNotification({ title: 'Success', message: 'Announcement added successfully.', type: 'success' });
+      }
+    } catch (err) {
+      console.error("Error adding announcement:", err);
+      triggerSmartNotification({ title: 'Error', message: err.message || 'Failed to add announcement.', type: 'error' });
+    }
   };
-  const updateAnnouncement = async (id, data) => setAnnouncements(prev => prev.map(a => a.id === id ? { ...a, ...data } : a));
-  const deleteAnnouncement = async (id) => setAnnouncements(prev => prev.filter(a => a.id !== id));
+
+  const updateAnnouncement = async (id, updates) => {
+    try {
+      const { error } = await supabase
+        .from('announcements')
+        .update({
+          title: updates.title,
+          content: updates.content,
+          details: updates
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+      setAnnouncements(prev => prev.map(a => a.id === id ? { ...a, ...updates } : a));
+    } catch (err) {
+      console.error("Error updating announcement:", err);
+    }
+  };
+
+  const deleteAnnouncement = async (id) => {
+    try {
+      const { error } = await supabase
+        .from('announcements')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      setAnnouncements(prev => prev.filter(a => a.id !== id));
+      triggerSmartNotification({ title: 'Success', message: 'Announcement deleted successfully.', type: 'success' });
+    } catch (err) {
+      console.error("Error deleting announcement:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to delete announcement.', type: 'error' });
+    }
+  };
 
   const submitGrade = () => {};
   const deleteGrade = () => {};
@@ -841,7 +950,7 @@ export const DataProvider = ({ children }) => {
     announcements, addAnnouncement, deleteAnnouncement, updateAnnouncement,
     notifications, addNotification, markNotificationRead, triggerSmartNotification, markAllNotificationsRead,
     systemLogs, resetData
-  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs]);
+  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
