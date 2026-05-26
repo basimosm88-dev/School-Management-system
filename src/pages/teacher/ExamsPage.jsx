@@ -4,7 +4,7 @@ import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
 
 const TeacherExamsPage = () => {
-  const { classes, students, exams, saveExamResults } = useData();
+  const { classes, students, exams, saveExamResults, updateExamStatus } = useData();
   const { currentUser } = useAppContext();
 
   const [selectedExamType, setSelectedExamType] = useState('Before Midterm');
@@ -82,6 +82,13 @@ const TeacherExamsPage = () => {
 
     saveExamResults(selectedExamType, selectedClassId, selectedSubjectId, currentUser.id, results, status);
     setSuccessMessage(status === 'SUBMITTED' ? 'Exams submitted for approval!' : 'Draft saved successfully.');
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  const handleRelease = () => {
+    if (!selectedExamType || !selectedClassId || !selectedSubjectId) return;
+    updateExamStatus(selectedExamType, selectedClassId, selectedSubjectId, 'PUBLISHED');
+    setSuccessMessage('Exams released to students successfully!');
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
@@ -165,6 +172,15 @@ const TeacherExamsPage = () => {
             </div>
 
             <div className="flex gap-2 w-full sm:w-auto">
+              {currentExamStatus === 'APPROVED' && ['Before Midterm', 'After Midterm'].includes(selectedExamType) && (
+                <button 
+                  onClick={handleRelease}
+                  className="flex-1 sm:flex-none px-8 py-3 bg-emerald-600 text-white text-[11px] font-bold uppercase tracking-wider rounded-xl shadow-xl shadow-emerald-600/20 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-section">publish</span>
+                  Release to Students
+                </button>
+              )}
               <button 
                 onClick={() => handleSubmit('DRAFT')}
                 disabled={!selectedSubjectId || isLocked}
