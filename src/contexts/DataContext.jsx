@@ -23,10 +23,7 @@ export const DataProvider = ({ children }) => {
   const [announcements, setAnnouncements] = useState([]);
   const [systemLogs, setSystemLogs] = useState([]);
   const [promotionSettings, setPromotionSettings] = useState({ passingGrade: 50, minSubjects: 5 });
-  const [examReleaseSettings, setExamReleaseSettings] = useState({
-    'Midterm': { date: '', time: '', isApproved: false },
-    'Final': { date: '', time: '', isApproved: false }
-  });
+
 
   // Fetch all data from Supabase on mount
   useEffect(() => {
@@ -58,10 +55,18 @@ export const DataProvider = ({ children }) => {
         if (attData) setAttendance(attData.map(a => ({ ...a.details, id: a.id, studentId: a.student_id, classId: a.class_id, date: a.date, status: a.status })));
 
         // 5. Fetch Exams & Grades
-        const { data: examData } = await supabase.from('exams').select('*');
-        const { data: gradeData } = await supabase.from('grades').select('*');
+        let { data: examData } = await supabase.from('exams').select('*');
+        let { data: gradeData } = await supabase.from('grades').select('*');
         
         if (examData && gradeData) {
+          const didRelease = await checkAndReleaseScheduledExams(examData);
+          if (didRelease) {
+            const freshExams = await supabase.from('exams').select('*');
+            const freshGrades = await supabase.from('grades').select('*');
+            examData = freshExams.data || examData;
+            gradeData = freshGrades.data || gradeData;
+          }
+
           setGrades(gradeData.map(g => ({
             ...g.details,
             id: g.id,
@@ -91,7 +96,8 @@ export const DataProvider = ({ children }) => {
                 releaseDate: g.release_date,
                 remarks: g.details?.remarks || '',
                 date: exam.date,
-                teacherId: g.submitted_by
+                teacherId: g.submitted_by,
+                details: exam.details
               });
             }
           });
@@ -290,13 +296,115 @@ export const DataProvider = ({ children }) => {
   };
 
   // --- EXAMS & GRADING ---
+  const checkAndReleaseScheduledExams = async (examRows) => {
+    const now = new Date();
+    let didRelease = false;
+
+    for (const exam of examRows) {
+      const schedule = exam.details?.releaseSchedule;
+      if (schedule && schedule.isApproved) {
+        const scheduleDateTime = new Date(`${schedule.date}T${schedule.time}`);
+        if (now >= scheduleDateTime) {
+          console.log(`Scheduled release time passed for exam ${exam.id}. Releasing now...`);
+          
+          // 1. Release in database: update all approved grades for this exam to published
+          const { error: gradeErr } = await supabase
+            .from('grades')
+            .update({ 
+              status: 'published', 
+              release_date: new Date().toISOString() 
+            })
+            .eq('exam_id', exam.id)
+            .eq('status', 'approved');
+
+          if (gradeErr) {
+            console.error(`Failed to release grades for exam ${exam.id}:`, gradeErr);
+            continue;
+          }
+
+          // 2. Disable schedule on the exam so we don't process it again
+          const updatedDetails = {
+            ...exam.details,
+            releaseSchedule: {
+              ...schedule,
+              isApproved: false
+            }
+          };
+          
+          const { error: examErr } = await supabase
+            .from('exams')
+            .update({ details: updatedDetails })
+            .eq('id', exam.id);
+
+          if (examErr) {
+            console.error(`Failed to clear schedule for exam ${exam.id}:`, examErr);
+          }
+
+          didRelease = true;
+        }
+      }
+    }
+
+    return didRelease;
+  };
+
+  const saveExamReleaseSchedule = async (examType, date, time, isApproved = true) => {
+    try {
+      const { data: matchedExams, error: fetchErr } = await supabase
+        .from('exams')
+        .select('*')
+        .eq('title', examType)
+        .eq('school_id', currentUser.school_id);
+        
+      if (fetchErr) throw fetchErr;
+      
+      if (matchedExams && matchedExams.length > 0) {
+        for (const exam of matchedExams) {
+          const updatedDetails = {
+            ...exam.details,
+            releaseSchedule: {
+              date,
+              time,
+              isApproved
+            }
+          };
+          
+          const { error: updateErr } = await supabase
+            .from('exams')
+            .update({ details: updatedDetails })
+            .eq('id', exam.id);
+
+          if (updateErr) throw updateErr;
+        }
+      }
+      
+      await refreshExamData();
+      triggerSmartNotification({ 
+        title: 'Success', 
+        message: isApproved ? `${examType} exam release scheduled.` : `${examType} exam release schedule cancelled.`, 
+        type: 'success' 
+      });
+    } catch (err) {
+      console.error("Error saving exam release schedule:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to update schedule.', type: 'error' });
+    }
+  };
+
   const refreshExamData = async () => {
     try {
-      const { data: examData } = await supabase.from('exams').select('*');
-      const { data: gradeData } = await supabase.from('grades').select('*');
+      let { data: examData } = await supabase.from('exams').select('*');
+      let { data: gradeData } = await supabase.from('grades').select('*');
       const { data: subjectData } = await supabase.from('subjects').select('*');
 
       if (examData && gradeData) {
+        const didRelease = await checkAndReleaseScheduledExams(examData);
+        if (didRelease) {
+          const freshExams = await supabase.from('exams').select('*');
+          const freshGrades = await supabase.from('grades').select('*');
+          examData = freshExams.data || examData;
+          gradeData = freshGrades.data || gradeData;
+        }
+
         const formattedGrades = gradeData.map(g => ({
           ...g.details,
           id: g.id,
@@ -329,7 +437,8 @@ export const DataProvider = ({ children }) => {
               releaseDate: g.release_date,
               remarks: g.details?.remarks || '',
               date: exam.date,
-              teacherId: g.submitted_by
+              teacherId: g.submitted_by,
+              details: exam.details
             });
           }
         });
@@ -724,7 +833,7 @@ export const DataProvider = ({ children }) => {
     teachers, addTeacher, updateTeacher, deleteTeacher, changeTeacherPassword,
     classes, addClass, updateClass, deleteClass, assignStudentToClass, removeStudentFromClass, assignSubjectToClass,
     subjects, addSubject, updateSubject, deleteSubject,
-    exams, saveExamResults, updateExamStatus, calculateRankings, calculatePromotion, getReportCardData, promotionSettings, setPromotionSettings, examReleaseSettings, setExamReleaseSettings, promotions,
+    exams, saveExamResults, updateExamStatus, calculateRankings, calculatePromotion, getReportCardData, promotionSettings, setPromotionSettings, saveExamReleaseSchedule, promotions,
     grades, submitGrade, deleteGrade, updateGrade,
     attendance, saveAttendanceRecords, getAttendanceStats, getStudentAttendanceSummary,
     timetables, addTimetableSlot, deleteTimetableSlot, getTimetableForClass, getTimetableForTeacher,
@@ -732,7 +841,7 @@ export const DataProvider = ({ children }) => {
     announcements, addAnnouncement, deleteAnnouncement, updateAnnouncement,
     notifications, addNotification, markNotificationRead, triggerSmartNotification, markAllNotificationsRead,
     systemLogs, resetData
-  }), [students, teachers, classes, subjects, exams, promotionSettings, examReleaseSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs]);
+  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };

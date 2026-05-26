@@ -1,100 +1,123 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
 
 const AdminExamsPage = () => {
- const { 
- classes, subjects, students, teachers, exams, 
- updateExamStatus, calculateRankings, calculatePromotion,
- promotionSettings, setPromotionSettings, promotions,
- examReleaseSettings, setExamReleaseSettings
- } = useData();
- const { t } = useSettings();
+  const { 
+    classes, subjects, students, teachers, exams, 
+    updateExamStatus, calculateRankings, calculatePromotion,
+    promotionSettings, setPromotionSettings, promotions,
+    saveExamReleaseSchedule
+  } = useData();
+  const { t } = useSettings();
 
- const [activeTab, setActiveTab] = useState('review');
- const [selectedClassId, setSelectedClassId] = useState('');
- const [selectedExamType, setSelectedExamType] = useState('Midterm');
- const [viewingSubmission, setViewingSubmission] = useState(null);
+  const [activeTab, setActiveTab] = useState('review');
+  const [selectedClassId, setSelectedClassId] = useState('');
+  const [selectedExamType, setSelectedExamType] = useState('Midterm');
+  const [viewingSubmission, setViewingSubmission] = useState(null);
 
- const examTypes = ['Before Midterm', 'Midterm', 'After Midterm', 'Final'];
+  const [examReleaseSettings, setExamReleaseSettings] = useState({
+    Midterm: { date: '', time: '', isApproved: false },
+    Final: { date: '', time: '', isApproved: false }
+  });
 
- // 1. Group submitted exams for review
- const pendingSubmissions = useMemo(() => {
- const grouped = [];
- const submissions = exams.filter(e => e.status === 'SUBMITTED');
- 
- submissions.forEach(e => {
- const existing = grouped.find(g => 
- g.examType === e.examType && 
- g.classId === e.classId && 
- g.subjectName === e.subjectName
- );
- 
- if (!existing) {
- grouped.push({
- examType: e.examType,
- classId: e.classId,
- subjectId: e.subjectId,
- subjectName: e.subjectName,
- teacherId: e.teacherId,
- className: classes.find(c => c.id === e.classId)?.name,
- teacherName: teachers.find(t => t.id === e.teacherId)?.name,
- count: 1
- });
- } else {
- existing.count++;
- }
- });
- return grouped;
- }, [exams, classes, teachers]);
+  useEffect(() => {
+    const midtermExam = exams.find(e => e.examType === 'Midterm');
+    const finalExam = exams.find(e => e.examType === 'Final');
 
- // 2. Approved exams ready for admin release (Midterm / Final only) - Grouped by Class
- const releasableExams = useMemo(() => {
- const grouped = [];
- const approved = exams.filter(e => e.status === 'APPROVED' && ['Midterm', 'Final'].includes(e.examType));
- 
- approved.forEach(e => {
- const existing = grouped.find(g => 
- g.examType === e.examType && 
- g.classId === e.classId
- );
- 
- if (!existing) {
- grouped.push({
- examType: e.examType,
- classId: e.classId,
- className: classes.find(c => c.id === e.classId)?.name,
- subjects: [e.subjectName]
- });
- } else if (!existing.subjects.includes(e.subjectName)) {
- existing.subjects.push(e.subjectName);
- }
- });
- return grouped;
- }, [exams, classes]);
+    const midtermSchedule = midtermExam?.details?.releaseSchedule || { date: '', time: '', isApproved: false };
+    const finalSchedule = finalExam?.details?.releaseSchedule || { date: '', time: '', isApproved: false };
 
- const handleApprove = (submission) => {
- updateExamStatus(submission.examType, submission.classId, submission.subjectId || submission.subjectName, 'APPROVED');
- };
+    setExamReleaseSettings({
+      Midterm: {
+        date: midtermSchedule.date || '',
+        time: midtermSchedule.time || '',
+        isApproved: !!midtermSchedule.isApproved
+      },
+      Final: {
+        date: finalSchedule.date || '',
+        time: finalSchedule.time || '',
+        isApproved: !!finalSchedule.isApproved
+      }
+    });
+  }, [exams]);
 
- const handleReject = (submission) => {
- updateExamStatus(submission.examType, submission.classId, submission.subjectId || submission.subjectName, 'REJECTED');
- };
+  const examTypes = ['Before Midterm', 'Midterm', 'After Midterm', 'Final'];
 
- const handleRelease = (exam) => {
- // Publish all subjects for this class and exam type
- updateExamStatus(exam.examType, exam.classId, 'all', 'PUBLISHED');
- };
+  // 1. Group submitted exams for review
+  const pendingSubmissions = useMemo(() => {
+    const grouped = [];
+    const submissions = exams.filter(e => e.status === 'SUBMITTED');
+    
+    submissions.forEach(e => {
+      const existing = grouped.find(g => 
+        g.examType === e.examType && 
+        g.classId === e.classId && 
+        g.subjectName === e.subjectName
+      );
+      
+      if (!existing) {
+        grouped.push({
+          examType: e.examType,
+          classId: e.classId,
+          subjectId: e.subjectId,
+          subjectName: e.subjectName,
+          teacherId: e.teacherId,
+          className: classes.find(c => c.id === e.classId)?.name,
+          teacherName: teachers.find(t => t.id === e.teacherId)?.name,
+          count: 1
+        });
+      } else {
+        existing.count++;
+      }
+    });
+    return grouped;
+  }, [exams, classes, teachers]);
 
- const handleScheduleRelease = (examType) => {
- const settings = examReleaseSettings[examType];
- if (!settings.date || !settings.time) return alert("Please set date and time for " + examType);
- setExamReleaseSettings(prev => ({
- ...prev,
- [examType]: { ...settings, isApproved: true }
- }));
- };
+  // 2. Approved exams ready for admin release (Midterm / Final only) - Grouped by Class
+  const releasableExams = useMemo(() => {
+    const grouped = [];
+    const approved = exams.filter(e => e.status === 'APPROVED' && ['Midterm', 'Final'].includes(e.examType));
+    
+    approved.forEach(e => {
+      const existing = grouped.find(g => 
+        g.examType === e.examType && 
+        g.classId === e.classId
+      );
+      
+      if (!existing) {
+        grouped.push({
+          examType: e.examType,
+          classId: e.classId,
+          className: classes.find(c => c.id === e.classId)?.name,
+          subjects: [e.subjectName]
+        });
+      } else if (!existing.subjects.includes(e.subjectName)) {
+        existing.subjects.push(e.subjectName);
+      }
+    });
+    return grouped;
+  }, [exams, classes]);
+
+  const handleApprove = (submission) => {
+    updateExamStatus(submission.examType, submission.classId, submission.subjectId || submission.subjectName, 'APPROVED');
+  };
+
+  const handleReject = (submission) => {
+    updateExamStatus(submission.examType, submission.classId, submission.subjectId || submission.subjectName, 'REJECTED');
+  };
+
+  const handleRelease = (exam) => {
+    // Publish all subjects for this class and exam type
+    updateExamStatus(exam.examType, exam.classId, 'all', 'PUBLISHED');
+  };
+
+  const handleScheduleRelease = (examType) => {
+    const settings = examReleaseSettings[examType];
+    if (!settings.date || !settings.time) return alert("Please set date and time for " + examType);
+    saveExamReleaseSchedule(examType, settings.date, settings.time, true);
+  };
 
  return (
  <PageLayout role="admin" title={t('exams')}>
@@ -346,10 +369,7 @@ const AdminExamsPage = () => {
  
  {examReleaseSettings[type].isApproved && (
  <button 
- onClick={() => setExamReleaseSettings(prev => ({
- ...prev,
- [type]: { ...prev[type], isApproved: false }
- }))}
+ onClick={() => saveExamReleaseSchedule(type, examReleaseSettings[type].date, examReleaseSettings[type].time, false)}
  className="w-full py-2 text-rose-500 text-label hover:underline"
  >
  Cancel or Edit Schedule
