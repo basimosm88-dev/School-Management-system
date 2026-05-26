@@ -261,7 +261,7 @@ const ClassesPage = () => {
  {/* 4. CLASS PROFILE MODAL */}
  {isProfileOpen && selectedClass && (
  <ClassProfile
- cls={selectedClass}
+ cls={classes.find(c => String(c.id) === String(selectedClass.id)) || selectedClass}
  onClose={() => setIsProfileOpen(false)}
  teachers={teachers}
  students={students}

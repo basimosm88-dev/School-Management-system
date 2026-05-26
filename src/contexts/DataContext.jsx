@@ -196,25 +196,25 @@ export const DataProvider = ({ children }) => {
     await supabase.from('classes').delete().eq('id', id);
   };
   const assignStudentToClass = async (studentId, classId) => {
-    setStudents(prev => prev.map(s => s.id === studentId ? { ...s, classId } : s));
-    const student = students.find(s => s.id === studentId);
+    setStudents(prev => prev.map(s => String(s.id) === String(studentId) ? { ...s, classId } : s));
+    const student = students.find(s => String(s.id) === String(studentId));
     if (student) await supabase.from('profiles').update({ details: { ...student, classId } }).eq('id', studentId);
   };
   const removeStudentFromClass = async (studentId, classId) => {
-    setStudents(prev => prev.map(s => s.id === studentId ? { ...s, classId: null } : s));
-    const student = students.find(s => s.id === studentId);
+    setStudents(prev => prev.map(s => String(s.id) === String(studentId) ? { ...s, classId: null } : s));
+    const student = students.find(s => String(s.id) === String(studentId));
     if (student) await supabase.from('profiles').update({ details: { ...student, classId: null } }).eq('id', studentId);
   };
   const assignSubjectToClass = async (classId, subjectName, teacherId) => {
     try {
-      const cls = classes.find(c => c.id === classId);
+      const cls = classes.find(c => String(c.id) === String(classId));
       if (!cls) return;
 
       const updatedSubjects = [...(cls.subjects || []), { name: subjectName, teacherId }];
       const updatedClass = { ...cls, subjects: updatedSubjects };
 
       // Update local state
-      setClasses(prev => prev.map(c => c.id === classId ? updatedClass : c));
+      setClasses(prev => prev.map(c => String(c.id) === String(classId) ? updatedClass : c));
 
       // Persist class details in classes table
       const details = { ...updatedClass };
@@ -238,7 +238,7 @@ export const DataProvider = ({ children }) => {
             teacher_id: teacherId,
             subject_id: subjectObj.id,
             class_id: classId,
-            school_id: currentUser.school_id,
+            school_id: currentUser?.school_id,
             details: { subjectName }
           });
         if (tsError) console.error("Error inserting into teacher_subjects:", tsError);
