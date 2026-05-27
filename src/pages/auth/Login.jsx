@@ -90,7 +90,7 @@ const Login = () => {
       style={{ backgroundImage: `url(${loginBg})` }}
     >
       <div className="bg-white/95 backdrop-blur-md p-10 rounded-[32px] shadow-2xl shadow-slate-900/10 border border-white/60 w-full max-w-md">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center justify-center gap-4 mb-8">
           <div className="w-14 h-14 bg-transparent flex items-center justify-center transition-transform hover:scale-105 duration-300 overflow-hidden shrink-0">
             {currentSchool?.logo_url ? (
               <img src={currentSchool.logo_url} alt="Logo" className="w-full h-full object-contain" />
@@ -102,7 +102,7 @@ const Login = () => {
           </div>
           <div className="text-left">
             <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
-              {currentSchool?.name || schoolSettings.name || 'EduCore Pro'}
+              {schoolSettings.name || currentSchool?.name || 'EduCore Pro'}
             </h1>
             <p className="text-xs text-slate-500 mt-1 font-medium">{roleConfigs[selectedRole].welcome}</p>
           </div>
