@@ -88,11 +88,11 @@ const Sidebar = ({ role = 'admin' }) => {
         {/* Sidebar Header */}
         <div className={`sidebar-header flex ${sidebarOpen ? 'items-center justify-between' : 'flex-col items-center gap-4'} px-2 mb-6 transition-all`}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0 squircle shadow-sm overflow-hidden">
+            <div className="w-10 h-10 bg-transparent flex items-center justify-center shrink-0 overflow-hidden">
               {schoolSettings.logo ? (
-                <img src={schoolSettings.logo} alt="Logo" className="w-full h-full object-cover" />
+                <img src={schoolSettings.logo} alt="Logo" className="w-full h-full object-contain" />
               ) : (
-                <span className="material-symbols-outlined text-white">school</span>
+                <span className="material-symbols-outlined text-primary text-[28px]">school</span>
               )}
             </div>
             <div className={`sidebar-logo-text overflow-hidden ${!sidebarOpen ? 'hidden' : 'block'}`}>

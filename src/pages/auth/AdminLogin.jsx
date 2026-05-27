@@ -76,20 +76,22 @@ const AdminLogin = () => {
       style={{ backgroundImage: `url(${loginBg})` }}
     >
       <div className="bg-white/95 backdrop-blur-md p-10 rounded-[32px] shadow-2xl shadow-slate-900/10 border border-white/60 w-full max-w-md">
-        <div className="flex flex-col items-center mb-6 text-center">
-          <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 mb-4 transition-transform hover:scale-105 duration-300 overflow-hidden">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-14 h-14 bg-transparent flex items-center justify-center transition-transform hover:scale-105 duration-300 overflow-hidden shrink-0">
             {currentSchool?.logo_url ? (
-              <img src={currentSchool.logo_url} alt="Logo" className="w-full h-full object-cover" />
+              <img src={currentSchool.logo_url} alt="Logo" className="w-full h-full object-contain" />
             ) : schoolSettings.logo ? (
               <img src={schoolSettings.logo} alt="Logo" className="w-full h-full object-cover" />
             ) : (
-              <span className="material-symbols-outlined text-white text-[32px] animate-pulse">school</span>
+              <span className="material-symbols-outlined text-primary text-[38px] animate-pulse">school</span>
             )}
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-            {currentSchool?.name || schoolSettings.name || 'EduCore Pro'}
-          </h1>
-          <p className="text-sm text-slate-500 mt-1.5 font-medium">Administrator Login</p>
+          <div className="text-left">
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
+              {currentSchool?.name || schoolSettings.name || 'EduCore Pro'}
+            </h1>
+            <p className="text-xs text-slate-500 mt-1 font-medium">Administrator Login</p>
+          </div>
         </div>
 
         {error && (
