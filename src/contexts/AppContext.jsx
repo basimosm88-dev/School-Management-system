@@ -95,7 +95,15 @@ export const AppProvider = ({ children }) => {
       if (response.error) throw response.error;
       const profile = response.data;
       
-      updateCurrentUser({ ...user, ...profile, ...(profile?.details || {}), name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() });
+      const details = profile?.details || {};
+      const isDefault = details.isDefaultPassword !== undefined ? details.isDefaultPassword : (details.password === '123456' || !details.password);
+      updateCurrentUser({ 
+        ...user, 
+        ...profile, 
+        ...details, 
+        isDefaultPassword: isDefault,
+        name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() 
+      });
     } catch (error) {
       console.error("Error fetching profile:", error);
       updateCurrentUser(null);
@@ -145,8 +153,16 @@ export const AppProvider = ({ children }) => {
         if (response.error) throw response.error;
         const profile = response.data;
         
+        const details = profile?.details || {};
+        const isDefault = details.isDefaultPassword !== undefined ? details.isDefaultPassword : (details.password === '123456' || !details.password);
         if (active) {
-          updateCurrentUser({ ...session.user, ...profile, ...(profile?.details || {}), name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() });
+          updateCurrentUser({ 
+            ...session.user, 
+            ...profile, 
+            ...details, 
+            isDefaultPassword: isDefault,
+            name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() 
+          });
         }
       } catch (error) {
         console.error("Error fetching profile in handleSession:", error);
@@ -236,7 +252,8 @@ export const AppProvider = ({ children }) => {
       logout,
       loading,
       currentSchool,
-      schoolLoading
+      schoolLoading,
+      fetchProfile
     }}>
       {loading ? (
         <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center">

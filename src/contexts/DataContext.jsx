@@ -7,7 +7,7 @@ const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const { academicSettings } = useSettings();
-  const { currentUser } = useAppContext();
+  const { currentUser, fetchProfile } = useAppContext();
 
   const [students, setStudents] = useState([]);
   const [teachers, setTeachers] = useState([]);
@@ -34,8 +34,23 @@ export const DataProvider = ({ children }) => {
         // 1. Fetch Profiles
         const { data: profiles } = await supabase.from('profiles').select('*');
         if (profiles) {
-          setStudents(profiles.filter(p => p.role === 'student').map(p => ({ ...p.details, id: p.id, name: `${p.first_name} ${p.last_name}`, role: 'student' })));
-          setTeachers(profiles.filter(p => p.role === 'teacher').map(p => ({ ...p.details, id: p.id, name: `${p.first_name} ${p.last_name}`, role: 'teacher' })));
+          setStudents(profiles.filter(p => p.role === 'student').map(p => {
+            const details = p.details || {};
+            const isDefault = details.isDefaultPassword !== undefined ? details.isDefaultPassword : (details.password === '123456' || !details.password);
+            return { 
+              ...details, 
+              id: p.id, 
+              name: `${p.first_name || ''} ${p.last_name || ''}`.trim(), 
+              role: 'student',
+              isDefaultPassword: isDefault
+            };
+          }));
+          setTeachers(profiles.filter(p => p.role === 'teacher').map(p => ({ 
+            ...(p.details || {}), 
+            id: p.id, 
+            name: `${p.first_name || ''} ${p.last_name || ''}`.trim(), 
+            role: 'teacher' 
+          })));
         }
 
         // 2. Fetch Classes
@@ -134,6 +149,7 @@ export const DataProvider = ({ children }) => {
       const parts = studentData.name.split(' ');
       const systemId = studentData.systemId || `STU${Math.floor(10000 + Math.random() * 90000)}`;
       const loginEmail = `${systemId}@educore.local`.toLowerCase();
+      const isDefault = studentData.password === '123456';
 
       const res = await supabase.functions.invoke('create-tenant-user', {
         body: {
@@ -147,10 +163,10 @@ export const DataProvider = ({ children }) => {
       if (res.error) throw res.error;
       const newId = res.data.user.id;
       
-      const finalDetails = { ...studentData, systemId };
+      const finalDetails = { ...studentData, systemId, isDefaultPassword: isDefault };
       // Update details
       await supabase.from('profiles').update({ details: finalDetails }).eq('id', newId);
-      setStudents(prev => [...prev, { ...finalDetails, id: newId, isDefaultPassword: true }]);
+      setStudents(prev => [...prev, { ...finalDetails, id: newId }]);
       triggerSmartNotification({ title: 'New Student Added', message: `${studentData.name} registered with ID ${systemId}.`, type: 'success', recipientId: 'admin' });
     } catch (err) {
       console.error(err);
@@ -167,14 +183,76 @@ export const DataProvider = ({ children }) => {
   };
 
   const updateStudent = async (id, updates) => {
-    setStudents(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
-    await supabase.from('profiles').update({ details: updates }).eq('id', id);
+    try {
+      const studentObj = students.find(s => s.id === id);
+      const isDefault = updates.password === '123456';
+      const updatedDetails = { ...updates, isDefaultPassword: isDefault };
+
+      if (updates.password && studentObj && updates.password !== studentObj.password) {
+        const res = await supabase.functions.invoke('create-tenant-user', {
+          body: {
+            id,
+            password: updates.password,
+            action: 'update'
+          }
+        });
+        if (res.error) throw res.error;
+      }
+
+      setStudents(prev => prev.map(s => s.id === id ? { ...s, ...updatedDetails } : s));
+      await supabase.from('profiles').update({ details: updatedDetails }).eq('id', id);
+    } catch (err) {
+      console.error("Error updating student:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to sync password update to Auth. Make sure Edge Function is deployed.', type: 'error' });
+      throw err;
+    }
   };
   const deleteStudent = async (id) => {
     setStudents(prev => prev.filter(s => s.id !== id));
     await supabase.from('profiles').delete().eq('id', id);
   };
-  const changeStudentPassword = (id, newPassword) => {}; // Requires Edge Function
+  const changeStudentPassword = async (id, newPassword) => {
+    try {
+      // 1. Update password in Supabase Auth
+      const { error: authError } = await supabase.auth.updateUser({ password: newPassword });
+      if (authError) throw authError;
+
+      // 2. Fetch student details to preserve other fields
+      const studentObj = students.find(s => s.id === id);
+      if (studentObj) {
+        const updatedDetails = {
+          ...studentObj,
+          password: newPassword,
+          isDefaultPassword: false
+        };
+        // Clean up internal properties before saving
+        delete updatedDetails.id;
+        delete updatedDetails.name;
+        delete updatedDetails.role;
+
+        // 3. Update profiles details column in DB
+        const { error: dbError } = await supabase
+          .from('profiles')
+          .update({ details: updatedDetails })
+          .eq('id', id);
+
+        if (dbError) throw dbError;
+
+        // 4. Update students state
+        setStudents(prev => prev.map(s => s.id === id ? { ...s, password: newPassword, isDefaultPassword: false } : s));
+
+        // 5. Update currentUser in AppContext if it is the current student
+        if (currentUser && currentUser.id === id) {
+          await fetchProfile(currentUser);
+        }
+      }
+      triggerSmartNotification({ title: 'Success', message: 'Password changed successfully.', type: 'success' });
+    } catch (err) {
+      console.error("Error changing student password:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to change password.', type: 'error' });
+      throw err;
+    }
+  };
 
   // --- TEACHERS ---
   const addTeacher = async (teacherData) => {
@@ -200,8 +278,27 @@ export const DataProvider = ({ children }) => {
     }
   };
   const updateTeacher = async (id, updates) => {
-    setTeachers(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
-    await supabase.from('profiles').update({ details: updates }).eq('id', id);
+    try {
+      const teacherObj = teachers.find(t => t.id === id);
+
+      if (updates.password && teacherObj && updates.password !== teacherObj.password) {
+        const res = await supabase.functions.invoke('create-tenant-user', {
+          body: {
+            id,
+            password: updates.password,
+            action: 'update'
+          }
+        });
+        if (res.error) throw res.error;
+      }
+
+      setTeachers(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+      await supabase.from('profiles').update({ details: updates }).eq('id', id);
+    } catch (err) {
+      console.error("Error updating teacher:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to sync password update to Auth. Make sure Edge Function is deployed.', type: 'error' });
+      throw err;
+    }
   };
   const deleteTeacher = async (id) => {
     setTeachers(prev => prev.filter(t => t.id !== id));

@@ -62,7 +62,32 @@ serve(async (req) => {
     }
 
     // 5. Parse Request Body
-    const { email, password, first_name, last_name, role } = await req.json()
+    const { id, email, password, first_name, last_name, role, action } = await req.json()
+
+    if (action === 'update' || id) {
+      if (!id || !password) {
+        throw new Error('Missing id or password for update.')
+      }
+
+      const { data: updatedUser, error: updateError } = await adminClient.auth.admin.updateUserById(id, {
+        password: password
+      })
+
+      if (updateError) {
+        throw new Error(`Failed to update user password: ${updateError.message}`)
+      }
+
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'User password updated successfully.' 
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        }
+      )
+    }
 
     if (!email || !password || !first_name || !last_name || !role) {
       throw new Error('Missing required fields.')
