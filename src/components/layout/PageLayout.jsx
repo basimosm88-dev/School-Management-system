@@ -18,9 +18,10 @@ const PageLayout = ({ role, title, primaryActionText, onPrimaryAction, children 
     );
   }
 
-  // If not logged in, redirect to login page
+  // If not logged in, redirect to login page (admins to /admin/login, others to /login)
   if (!currentUser) {
-    return <Navigate to="/login" replace />;
+    const loginPath = role === 'admin' ? '/admin/login' : '/login';
+    return <Navigate to={loginPath} replace />;
   }
 
   // If logged in but role does not match the page's required role, redirect to the correct home

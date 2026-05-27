@@ -4,8 +4,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import { supabase } from '../../lib/supabase';
 
-const Login = () => {
-  const [selectedRole, setSelectedRole] = useState('student');
+const AdminLogin = () => {
   const [identifier, setIdentifier] = useState(''); // Email
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,12 +28,10 @@ const Login = () => {
     setError(null);
 
     try {
-      // All roles log in via Supabase using email and password
-      const emailToUse = identifier.includes('@') ? identifier : `${identifier}@educore.local`.toLowerCase();
-      
-      const { user } = await login(emailToUse, password);
+      // Admins always use their email to log in
+      const { user } = await login(identifier, password);
 
-      // Verify their actual role and school in the database before proceeding
+      // Verify actual role and school in the database before proceeding
       const { data: profile, error: profileErr } = await supabase
         .from('profiles')
         .select('role, school_id')
@@ -54,21 +51,15 @@ const Login = () => {
         return;
       }
 
-      if (profile.role === 'admin') {
+      if (profile.role !== 'admin') {
         await supabase.auth.signOut();
-        setError('Access denied. Admin cannot login from student/teacher page.');
+        setError('Access denied. Only administrators can login from this page.');
+        setLoading(false);
         return;
       }
 
-      if (profile.role !== selectedRole) {
-        await supabase.auth.signOut();
-        setError(`Access denied. Your account is not registered as ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}.`);
-        return;
-      }
-
-      // Let's route based on their confirmed role
-      if (selectedRole === 'teacher') navigate('/teacher/dashboard');
-      else navigate('/student/dashboard');
+      // Successful redirect to the admin dashboard
+      navigate('/admin/dashboard');
       
     } catch (err) {
       console.error("Login error:", err);
@@ -76,11 +67,6 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const roleConfigs = {
-    teacher: { icon: 'school', label: 'Teacher', welcome: 'Welcome back, Educator' },
-    student: { icon: 'person', label: 'Student', welcome: 'Welcome back, Scholar' }
   };
 
   return (
@@ -99,25 +85,7 @@ const Login = () => {
           <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
             {currentSchool?.name || schoolSettings.name || 'EduCore Pro'}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">{roleConfigs[selectedRole].welcome}</p>
-        </div>
-
-        {/* Role Selection */}
-        <div className="grid grid-cols-2 gap-2 mb-8 bg-slate-100 dark:bg-slate-800/50 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800">
-          {Object.entries(roleConfigs).map(([role, config]) => (
-            <button
-              key={role}
-              onClick={() => setSelectedRole(role)}
-              className={`flex flex-col items-center justify-center py-2.5 rounded-lg transition-all duration-300 ${
-                selectedRole === role 
-                ? 'bg-white dark:bg-slate-700 shadow-md text-primary ring-1 ring-slate-200 dark:ring-slate-600' 
-                : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[20px] mb-1">{config.icon}</span>
-              <span className="text-[10px] font-black  tracking-tighter">{config.label}</span>
-            </button>
-          ))}
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Administrator Login</p>
         </div>
 
         {error && (
@@ -130,11 +98,11 @@ const Login = () => {
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
-              {selectedRole === 'student' ? 'Email or Student ID' : 'Email Address'}
+              Email Address
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">
-                {selectedRole === 'student' ? 'id_card' : 'mail'}
+                mail
               </span>
               <input
                 type="text"
@@ -142,7 +110,7 @@ const Login = () => {
                 className="w-full pl-10 pr-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder={selectedRole === 'student' ? 'Enter Email or ID' : 'Enter Email'}
+                placeholder="Enter Email"
               />
             </div>
           </div>
@@ -166,7 +134,7 @@ const Login = () => {
             disabled={loading}
             className="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 mt-2"
           >
-            {loading ? 'Authenticating...' : `Sign In as ${roleConfigs[selectedRole].label}`}
+            {loading ? 'Authenticating...' : 'Sign In as Admin'}
             {!loading && <span className="material-symbols-outlined text-[20px]">login</span>}
           </button>
         </form>
@@ -175,4 +143,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;

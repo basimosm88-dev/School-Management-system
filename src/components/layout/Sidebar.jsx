@@ -68,7 +68,7 @@ const Sidebar = ({ role = 'admin' }) => {
   const confirmLogout = () => {
     setShowLogoutModal(false);
     logout();
-    navigate('/login');
+    navigate(role === 'admin' ? '/admin/login' : '/login');
   };
 
   return (

@@ -5,6 +5,7 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import ProfilePage from './pages/student/ProfilePage';
 import StudentSettings from './pages/student/StudentSettings';
 import Login from './pages/auth/Login';
+import AdminLogin from './pages/auth/AdminLogin';
 import GenericModulePage from './pages/GenericModulePage';
 import SettingsPage from './pages/admin/SettingsPage';
 import { AppProvider } from './contexts/AppContext';
@@ -43,6 +44,12 @@ function App() {
         <DataProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            
+            {/* Redirects to unify dashboard paths */}
+            <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
+            <Route path="/teacher/dashboard" element={<Navigate to="/teacher" replace />} />
+            <Route path="/student/dashboard" element={<Navigate to="/student" replace />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminDashboard />} />
