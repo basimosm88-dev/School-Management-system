@@ -431,7 +431,6 @@ const StudentsPage = () => {
 const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     password: '',
     gender: 'Male',
     birthDate: '',
@@ -526,10 +525,6 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
               <div>
                 <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Phone Number</label>
                 <input type="text" value={formData.phone || ''} onChange={e => handleChange('phone', e.target.value)} className="form-input-custom" placeholder="+123..." />
-              </div>
-              <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Email Address (Gmail)</label>
-                <input type="email" value={formData.email || ''} onChange={e => handleChange('email', e.target.value)} className="form-input-custom" placeholder="student@gmail.com" />
               </div>
               <div>
                 <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Password (6 Numerical Digits)</label>
