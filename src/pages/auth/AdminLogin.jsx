@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import { supabase } from '../../lib/supabase';
+import loginBg from '../../assets/login-bg.png';
 
 const AdminLogin = () => {
   const [identifier, setIdentifier] = useState(''); // Email
@@ -70,8 +71,11 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center transition-colors duration-200">
-      <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800 w-full max-w-md">
+    <div 
+      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat p-4 transition-colors duration-200"
+      style={{ backgroundImage: `url(${loginBg})` }}
+    >
+      <div className="bg-white/95 backdrop-blur-md p-10 rounded-[32px] shadow-2xl shadow-slate-900/10 border border-white/60 w-full max-w-md">
         <div className="flex flex-col items-center mb-6 text-center">
           <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 mb-4 transition-transform hover:scale-105 duration-300 overflow-hidden">
             {currentSchool?.logo_url ? (
@@ -82,32 +86,32 @@ const AdminLogin = () => {
               <span className="material-symbols-outlined text-white text-[32px] animate-pulse">school</span>
             )}
           </div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
             {currentSchool?.name || schoolSettings.name || 'EduCore Pro'}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Administrator Login</p>
+          <p className="text-sm text-slate-500 mt-1.5 font-medium">Administrator Login</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-sm rounded-xl border border-rose-100 dark:border-rose-800 flex items-center gap-3 animate-shake">
+          <div className="mb-6 p-4 bg-rose-50 text-rose-600 text-sm rounded-2xl border border-rose-100 flex items-center gap-3 animate-shake">
             <span className="material-symbols-outlined text-[18px]">error</span>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-5">
+        <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">
               Email Address
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">
                 mail
               </span>
               <input
                 type="text"
                 required
-                className="w-full pl-10 pr-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white"
+                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 placeholder:text-slate-400"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 placeholder="Enter Email"
@@ -115,13 +119,13 @@ const AdminLogin = () => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Password</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Password</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">lock</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">lock</span>
               <input
                 type="password"
                 required
-                className="w-full pl-10 pr-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white"
+                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 placeholder:text-slate-400"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
@@ -132,7 +136,7 @@ const AdminLogin = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 mt-2"
+            className="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/95 hover:to-indigo-500 text-white font-bold py-4 rounded-2xl hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mt-4"
           >
             {loading ? 'Authenticating...' : 'Sign In as Admin'}
             {!loading && <span className="material-symbols-outlined text-[20px]">login</span>}
