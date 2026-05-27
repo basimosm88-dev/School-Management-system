@@ -115,6 +115,11 @@ export const AppProvider = ({ children }) => {
         return;
       }
       
+      // If we already have the profile loaded for this user, do not fetch it again
+      if (currentUserRef.current && currentUserRef.current.id === session.user.id) {
+        return;
+      }
+      
       // Avoid duplicate parallel fetches for the same user ID
       if (isFetchingRef.current === session.user.id) {
         return;
@@ -145,7 +150,11 @@ export const AppProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Error fetching profile in handleSession:", error);
-        if (active) updateCurrentUser(null);
+        // Only clear user and sign out if we didn't already have a valid logged in user.
+        // This prevents temporary offline/network glitches from signing the user out.
+        if (active && !currentUserRef.current) {
+          updateCurrentUser(null);
+        }
       } finally {
         if (active) setLoading(false);
         isFetchingRef.current = null;
