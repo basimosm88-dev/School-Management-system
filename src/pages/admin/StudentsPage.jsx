@@ -100,6 +100,14 @@ const StudentsPage = () => {
       addNotification('Please select an assigned class for the student.', 'error');
       return;
     }
+    if (studentData.password && !/^\d{6}$/.test(studentData.password)) {
+      addNotification('Student password must be exactly 6 numerical digits.', 'error');
+      return;
+    }
+    if (!editingStudent && !studentData.password) {
+      addNotification('Password is required for new students.', 'error');
+      return;
+    }
     if (editingStudent) {
       updateStudent(editingStudent.id, studentData);
       addNotification('Student record updated successfully', 'success');
@@ -423,6 +431,8 @@ const StudentsPage = () => {
 const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
   const [formData, setFormData] = useState({
     name: '',
+    email: '',
+    password: '',
     gender: 'Male',
     birthDate: '',
     birthPlace: '',
@@ -465,6 +475,10 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
           e.preventDefault(); 
           if (!formData.classId) {
             alert("Mandatory Field: Please select a Class for this student.");
+            return;
+          }
+          if (formData.password && !/^\d{6}$/.test(formData.password)) {
+            alert("Validation Error: Student password must be exactly 6 numerical digits.");
             return;
           }
           onSave(formData); 
@@ -512,6 +526,14 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
               <div>
                 <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Phone Number</label>
                 <input type="text" value={formData.phone || ''} onChange={e => handleChange('phone', e.target.value)} className="form-input-custom" placeholder="+123..." />
+              </div>
+              <div>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Email Address (Gmail)</label>
+                <input type="email" value={formData.email || ''} onChange={e => handleChange('email', e.target.value)} className="form-input-custom" placeholder="student@gmail.com" />
+              </div>
+              <div>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Password (6 Numerical Digits)</label>
+                <input type="text" value={formData.password || ''} onChange={e => handleChange('password', e.target.value)} className="form-input-custom" placeholder="123456" required={!student} />
               </div>
             </div>
           </section>

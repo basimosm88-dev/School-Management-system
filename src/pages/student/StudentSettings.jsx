@@ -21,7 +21,7 @@ const StudentSettings = () => {
  e.preventDefault();
  setError('');
  if (passwords.current !== currentUser.password) { setError('Current password is incorrect.'); return; }
- if (passwords.new.length < 6) { setError('New password must be at least 6 characters.'); return; }
+ if (!/^\d{6}$/.test(passwords.new)) { setError('New password must be exactly 6 numerical digits.'); return; }
  if (passwords.new !== passwords.confirm) { setError('Passwords do not match.'); return; }
  changeStudentPassword(currentUser.id, passwords.new);
  addNotification('Password updated successfully!', 'success');
@@ -116,7 +116,7 @@ const StudentSettings = () => {
  </div>
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">New Password</label>
+ <label className="text-label text-slate-500/80">New Password (6 numerical digits)</label>
  <input type="password" value={passwords.new} onChange={(e) => setPasswords({...passwords, new: e.target.value})} className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-label outline-none dark:text-white" />
  </div>
  <div className="space-y-1.5">

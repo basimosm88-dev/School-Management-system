@@ -127,48 +127,21 @@ const TeacherSettings = () => {
  </form>
  )}
 
- {/* SECURITY TAB */}
- {activeTab === 'security' && (
- <form onSubmit={handlePasswordChange} className="space-y-6">
- <h3 className="text-slate-800 dark:text-white mb-4">Security & Password</h3>
- {error && <div className="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-label rounded-xl border border-rose-100 dark:border-rose-800">{error}</div>}
- 
- <div className="space-y-4">
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Current Password</label>
- <input 
- type="password" 
- value={passwords.current}
- onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
- className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
- />
- </div>
- <div className="grid grid-cols-2 gap-4">
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">New Password</label>
- <input 
- type="password" 
- value={passwords.new}
- onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
- className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
- />
- </div>
- <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Confirm New</label>
- <input 
- type="password" 
- value={passwords.confirm}
- onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
- className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
- />
- </div>
- </div>
- </div>
- <div className="pt-4">
- <button type="submit" className="bg-primary text-white px-8 py-3 rounded-xl text-label shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all">Update Password</button>
- </div>
- </form>
- )}
+  {/* SECURITY TAB */}
+  {activeTab === 'security' && (
+    <div className="space-y-6">
+      <h3 className="text-slate-800 dark:text-white mb-4">Security & Password</h3>
+      <div className="p-6 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm rounded-2xl border border-slate-200 dark:border-slate-700/50 flex gap-4">
+        <span className="material-symbols-outlined text-[24px] text-primary shrink-0">info</span>
+        <div>
+          <p className="font-bold text-slate-900 dark:text-white mb-1">Password Management</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            You cannot change your password here. Your account credentials must be managed and updated by the administrator. Please contact your system administrator to request any changes.
+          </p>
+        </div>
+      </div>
+    </div>
+  )}
 
  {/* APPEARANCE TAB */}
  {activeTab === 'appearance' && (

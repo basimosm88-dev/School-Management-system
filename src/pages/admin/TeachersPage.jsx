@@ -80,6 +80,10 @@ const TeachersPage = () => {
   };
 
   const handleSave = (teacherData) => {
+    if (!editingTeacher && !teacherData.password) {
+      addNotification('Password is required for new teachers.', 'error');
+      return;
+    }
     if (editingTeacher) {
       updateTeacher(editingTeacher.id, teacherData);
       addNotification('Teacher updated successfully', 'success');
@@ -318,6 +322,7 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
     maritalStatus: 'Single',
     address: '',
     email: '',
+    password: '',
     phone: '',
     specialty: '',
     subjects: [],
@@ -414,11 +419,15 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 
           {/* SECTION 2 — CONTACT */}
           <section>
-            <FormSectionHeader icon="contact_mail" title="Section 2: Contact Details" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormSectionHeader icon="contact_mail" title="Section 2: Contact Details & Credentials" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Email Address (Login Username)</label>
                 <input type="email" value={formData.email || ''} onChange={e => handleChange('email', e.target.value)} className="form-input-custom" placeholder="email@school.com" required />
+              </div>
+              <div>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Password</label>
+                <input type="text" value={formData.password || ''} onChange={e => handleChange('password', e.target.value)} className="form-input-custom" placeholder="Password" required={!teacher} />
               </div>
               <div>
                 <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Phone Number</label>
