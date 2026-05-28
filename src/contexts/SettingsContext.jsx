@@ -118,6 +118,11 @@ export const SettingsProvider = ({ children }) => {
  useEffect(() => { localStorage.setItem('sms_pdfSettings', JSON.stringify(pdfSettings)); }, [pdfSettings]);
  useEffect(() => { localStorage.setItem('sms_securitySettings', JSON.stringify(securitySettings)); }, [securitySettings]);
 
+  // Reset loadedFromDB to false when currentUser changes or school starts loading to avoid race conditions
+  useEffect(() => {
+    setLoadedFromDB(false);
+  }, [currentUser?.id, schoolLoading]);
+
   // Load settings from database currentSchool on mount or when currentSchool resolves
   useEffect(() => {
     if (!schoolLoading) {
