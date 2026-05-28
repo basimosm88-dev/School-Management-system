@@ -9,11 +9,8 @@ export const getSubdomain = () => {
   const parts = hostname.split('.');
   
   // E.g. alqasimischool.coresa.app -> ['alqasimischool', 'coresa', 'app']
+  // E.g. alqasimischool.vercel.app -> ['alqasimischool', 'vercel', 'app']
   if (parts.length > 2) {
-    // Ignore default vercel domains
-    if (parts[1] === 'vercel' && parts[2] === 'app') {
-      return null;
-    }
     return parts[0].toLowerCase();
   }
   

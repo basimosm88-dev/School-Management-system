@@ -7,7 +7,7 @@ import { useAppContext } from './AppContext';
 const SettingsContext = createContext();
 
 export const SettingsProvider = ({ children }) => {
- const { currentSchool, currentUser } = useAppContext();
+ const { currentSchool, currentUser, schoolLoading } = useAppContext();
  const [loadedFromDB, setLoadedFromDB] = useState(false);
 
  const getSaved = (key, fallback) => {
@@ -120,18 +120,18 @@ export const SettingsProvider = ({ children }) => {
 
   // Load settings from database currentSchool on mount or when currentSchool resolves
   useEffect(() => {
-    if (currentSchool && currentSchool.settings) {
-      const dbSettings = currentSchool.settings;
-      if (dbSettings.schoolSettings) setSchoolSettings(dbSettings.schoolSettings);
-      if (dbSettings.academicSettings) setAcademicSettings(dbSettings.academicSettings);
-      if (dbSettings.permissions) setPermissions(dbSettings.permissions);
-      if (dbSettings.pdfSettings) setPdfSettings(dbSettings.pdfSettings);
-      if (dbSettings.securitySettings) setSecuritySettings(dbSettings.securitySettings);
-      setLoadedFromDB(true);
-    } else if (currentSchool) {
+    if (!schoolLoading) {
+      if (currentSchool && currentSchool.settings) {
+        const dbSettings = currentSchool.settings;
+        if (dbSettings.schoolSettings) setSchoolSettings(dbSettings.schoolSettings);
+        if (dbSettings.academicSettings) setAcademicSettings(dbSettings.academicSettings);
+        if (dbSettings.permissions) setPermissions(dbSettings.permissions);
+        if (dbSettings.pdfSettings) setPdfSettings(dbSettings.pdfSettings);
+        if (dbSettings.securitySettings) setSecuritySettings(dbSettings.securitySettings);
+      }
       setLoadedFromDB(true);
     }
-  }, [currentSchool]);
+  }, [currentSchool, schoolLoading]);
 
   // Debounced database sync
   useEffect(() => {
