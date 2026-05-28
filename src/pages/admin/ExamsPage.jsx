@@ -10,7 +10,7 @@ const AdminExamsPage = () => {
     promotionSettings, setPromotionSettings, promotions,
     saveExamReleaseSchedule
   } = useData();
-  const { t, academicSettings } = useSettings();
+  const { t } = useSettings();
 
   const [activeTab, setActiveTab] = useState('review');
   const [selectedClassId, setSelectedClassId] = useState('');
@@ -419,20 +419,12 @@ const AdminExamsPage = () => {
  <div className="bg-slate-100 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800">
  <h4 className="text-label text-slate-800 dark:text-slate-200 mb-4">Weightage Breakdown</h4>
  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
- {(() => {
-    const weights = academicSettings?.examWeights || {
-      beforeMidterm: 10,
-      midterm: 30,
-      afterMidterm: 10,
-      final: 50
-    };
-    return [
-      { label: 'Before Mid', val: `${weights.beforeMidterm || 10}%` },
-      { label: 'Midterm', val: `${weights.midterm || 30}%` },
-      { label: 'After Mid', val: `${weights.afterMidterm || 10}%` },
-      { label: 'Final', val: `${weights.final || 50}%` }
-    ];
-  })().map(w => (
+ {[
+ { label: 'Before Mid', val: '10%' },
+ { label: 'Midterm', val: '30%' },
+ { label: 'After Mid', val: '10%' },
+ { label: 'Final', val: '50%' }
+ ].map(w => (
  <div key={w.label} className="text-center p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm">
  <p className="text-label text-slate-400/80 mb-1">{w.label}</p>
  <p className="text-label text-primary">{w.val}</p>

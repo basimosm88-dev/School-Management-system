@@ -2,12 +2,10 @@ import React, { useState, useMemo, useEffect } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
-import { useSettings } from '../../contexts/SettingsContext';
 
 const TeacherExamsPage = () => {
   const { classes, students, exams, saveExamResults, updateExamStatus } = useData();
   const { currentUser } = useAppContext();
-  const { academicSettings } = useSettings();
 
   const [selectedExamType, setSelectedExamType] = useState('Before Midterm');
   const [selectedClassId, setSelectedClassId] = useState('');
@@ -65,56 +63,9 @@ const TeacherExamsPage = () => {
     }
   }, [selectedExamType, selectedClassId, selectedSubjectId, exams]);
 
-  const studentMaxScores = useMemo(() => {
-    const weights = academicSettings?.examWeights || {
-      beforeMidterm: 10,
-      midterm: 30,
-      afterMidterm: 10,
-      final: 50
-    };
-    
-    const map = {};
-    classStudents.forEach(student => {
-      if (selectedExamType === 'Before Midterm') {
-        map[student.id] = weights.beforeMidterm || 10;
-      } else if (selectedExamType === 'Midterm') {
-        // Find if this student has a Before Midterm grade
-        const beforeMidGrade = exams.find(e => 
-          e.examType === 'Before Midterm' && 
-          String(e.studentId) === String(student.id) && 
-          String(e.classId) === String(selectedClassId) && 
-          (String(e.subjectId) === String(selectedSubjectId) || e.subjectName === selectedSubjectId)
-        );
-        const hasBeforeMid = beforeMidGrade !== undefined && beforeMidGrade.grade !== null && beforeMidGrade.grade !== undefined && beforeMidGrade.grade !== '';
-        map[student.id] = hasBeforeMid ? (weights.midterm || 30) : ((weights.beforeMidterm || 10) + (weights.midterm || 30));
-      } else if (selectedExamType === 'After Midterm') {
-        map[student.id] = weights.afterMidterm || 10;
-      } else if (selectedExamType === 'Final') {
-        // Find if this student has an After Midterm grade
-        const afterMidGrade = exams.find(e => 
-          e.examType === 'After Midterm' && 
-          String(e.studentId) === String(student.id) && 
-          String(e.classId) === String(selectedClassId) && 
-          (String(e.subjectId) === String(selectedSubjectId) || e.subjectName === selectedSubjectId)
-        );
-        const hasAfterMid = afterMidGrade !== undefined && afterMidGrade.grade !== null && afterMidGrade.grade !== undefined && afterMidGrade.grade !== '';
-        map[student.id] = hasAfterMid ? (weights.final || 50) : ((weights.afterMidterm || 10) + (weights.final || 50));
-      } else {
-        map[student.id] = 100;
-      }
-    });
-    return map;
-  }, [selectedExamType, selectedClassId, selectedSubjectId, classStudents, exams, academicSettings]);
-
   const handleGradeChange = (studentId, grade) => {
     if (isLocked) return;
-    const numGrade = parseFloat(grade);
-    const maxScore = studentMaxScores[studentId] || 100;
-    if (!isNaN(numGrade) && numGrade > maxScore) {
-      setExamGrades(prev => ({ ...prev, [studentId]: maxScore }));
-    } else {
-      setExamGrades(prev => ({ ...prev, [studentId]: grade }));
-    }
+    setExamGrades(prev => ({ ...prev, [studentId]: grade }));
   };
 
   const handleRemarkChange = (studentId, remark) => {
@@ -292,10 +243,10 @@ const TeacherExamsPage = () => {
                       </td>
                       <td className="px-8 py-6">
                         <div className="relative group/input">
-                           <input 
+                          <input 
                             type="number"
                             min="0"
-                            max={studentMaxScores[student.id] || 100}
+                            max="100"
                             value={examGrades[student.id] || ''}
                             onChange={(e) => handleGradeChange(student.id, e.target.value)}
                             disabled={isLocked}
@@ -304,7 +255,7 @@ const TeacherExamsPage = () => {
                           />
                           {!isLocked && (
                             <div className="absolute -top-2 left-1/2 -translate-x-1/2 opacity-0 group-hover/input:opacity-100 transition-all pointer-events-none">
-                              <span className="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-bold rounded uppercase">0-{studentMaxScores[student.id] || 100} Range</span>
+                              <span className="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-bold rounded uppercase">0-100 Range</span>
                             </div>
                           )}
                         </div>
