@@ -107,11 +107,11 @@ const ReportCardPrint = () => {
  <thead>
  <tr className="bg-slate-900 text-white">
  <th className="border border-slate-900 px-4 py-4 text-label text-left uppercase">Subject</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Before Mid ({academicSettings.examWeights.beforeMidterm}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Midterm ({academicSettings.examWeights.midterm}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">After Mid ({academicSettings.examWeights.afterMidterm}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Final ({academicSettings.examWeights.final}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center bg-slate-800 w-24">Weighted Avg.</th>
+ <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Before Mid (10)</th>
+ <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Midterm (30)</th>
+ <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">After Mid (10)</th>
+ <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Final (50)</th>
+ <th className="border border-slate-900 px-2 py-4 text-label text-center bg-slate-800 w-24">Total / Avg.</th>
  </tr>
  </thead>
  <tbody>
@@ -122,7 +122,7 @@ const ReportCardPrint = () => {
  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Midterm"]}</td>
  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["After Midterm"]}</td>
  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Final"]}</td>
- <td className="border border-slate-900 px-2 py-4 text-center text-label bg-slate-100">{data.results[subject].average}%</td>
+ <td className="border border-slate-900 px-2 py-4 text-center text-label bg-slate-100">{data.results[subject].rawSum} / {data.results[subject].average}%</td>
  </tr>
  ))}
  </tbody>

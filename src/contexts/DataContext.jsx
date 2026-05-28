@@ -5,6 +5,16 @@ import { useSettings } from './SettingsContext';
 
 const DataContext = createContext();
 
+const getGradePercentage = (score, examType) => {
+  const numScore = parseFloat(score);
+  if (isNaN(numScore)) return 0;
+  if (examType === 'Before Midterm') return (numScore / 10) * 100;
+  if (examType === 'Midterm') return (numScore / 30) * 100;
+  if (examType === 'After Midterm') return (numScore / 10) * 100;
+  if (examType === 'Final') return (numScore / 50) * 100;
+  return numScore;
+};
+
 export const DataProvider = ({ children }) => {
   const { academicSettings } = useSettings();
   const { currentUser, fetchProfile } = useAppContext();
@@ -676,8 +686,15 @@ export const DataProvider = ({ children }) => {
       }
       
       if (studentGrades.length === 0) return { studentId: student.id, name: student.name, averageScore: 0, totalScore: 0 };
-      const total = studentGrades.reduce((acc, g) => acc + g.score, 0);
-      const averageScore = total / studentGrades.length;
+      
+      const percentages = studentGrades.map(g => {
+        const exam = exams.find(e => String(e.id) === String(g.id));
+        const examType = exam ? exam.examType : '';
+        return getGradePercentage(g.score, examType);
+      });
+
+      const total = percentages.reduce((acc, p) => acc + p, 0);
+      const averageScore = total / percentages.length;
       return { studentId: student.id, name: student.name, averageScore, totalScore: total };
     });
     return rankings
@@ -705,8 +722,10 @@ export const DataProvider = ({ children }) => {
       
       if (!results[subjectName]) {
         results[subjectName] = {
-          marks: [],
+          rawMarks: [],
+          percentages: [],
           average: 0,
+          rawSum: 0,
           "Before Midterm": "-",
           "Midterm": "-",
           "After Midterm": "-",
@@ -715,13 +734,20 @@ export const DataProvider = ({ children }) => {
       }
       
       results[subjectName][exam.examType] = g.score;
-      results[subjectName].marks.push(g.score);
+      results[subjectName].rawMarks.push(g.score);
+      const percent = getGradePercentage(g.score, exam.examType);
+      results[subjectName].percentages.push(percent);
     });
     
     Object.keys(results).forEach(sub => {
-      const marks = results[sub].marks;
-      results[sub].average = marks.length > 0
-        ? Math.round(marks.reduce((a, b) => a + b, 0) / marks.length)
+      const pct = results[sub].percentages;
+      results[sub].average = pct.length > 0
+        ? Math.round(pct.reduce((a, b) => a + b, 0) / pct.length)
+        : 0;
+
+      const marks = results[sub].rawMarks;
+      results[sub].rawSum = marks.length > 0
+        ? marks.reduce((a, b) => a + b, 0)
         : 0;
     });
     

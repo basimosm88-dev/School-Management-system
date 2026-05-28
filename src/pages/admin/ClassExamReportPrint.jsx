@@ -3,6 +3,24 @@ import { useParams } from 'react-router-dom';
 import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
 
+const getExamMaxScore = (type) => {
+  if (type === 'Before Midterm') return 10;
+  if (type === 'Midterm') return 30;
+  if (type === 'After Midterm') return 10;
+  if (type === 'Final') return 50;
+  return 100;
+};
+
+const getGradePercentage = (score, examType) => {
+  const numScore = parseFloat(score);
+  if (isNaN(numScore)) return 0;
+  if (examType === 'Before Midterm') return (numScore / 10) * 100;
+  if (examType === 'Midterm') return (numScore / 30) * 100;
+  if (examType === 'After Midterm') return (numScore / 10) * 100;
+  if (examType === 'Final') return (numScore / 50) * 100;
+  return numScore;
+};
+
 const ClassExamReportPrint = () => {
  const { classId, examType } = useParams();
  const { students, classes, exams } = useData();
@@ -105,13 +123,14 @@ const ClassExamReportPrint = () => {
  {sub}
  </th>
  ))}
- <th className="border border-slate-700 px-4 py-4 text-label text-center bg-slate-800">Total Avg.</th>
+ <th className="border border-slate-700 px-4 py-4 text-label text-center bg-slate-800">Total / Avg.</th>
  </tr>
  </thead>
  <tbody>
  {classStudents.map((student, sIdx) => {
  const studentExams = classExams.filter(e => e.studentId === student.id);
- let totalScore = 0;
+ let totalPercentage = 0;
+ let rawSum = 0;
  let count = 0;
 
  return (
@@ -123,17 +142,18 @@ const ClassExamReportPrint = () => {
  const exam = studentExams.find(e => e.subjectName === sub);
  const score = exam ? exam.grade : null;
  if (score !== null) {
- totalScore += score;
+ rawSum += score;
+ totalPercentage += getGradePercentage(score, examType);
  count++;
  }
  return (
  <td key={sub} className="border border-slate-300 px-2 py-4 text-center text-label">
- {score !== null ? `${score}%` : '-'}
+ {score !== null ? score : '-'}
  </td>
  );
  })}
  <td className="border border-slate-900 px-4 py-4 text-center text-label bg-slate-100">
- {count > 0 ? (totalScore / count).toFixed(1) + '%' : '0.0%'}
+ {count > 0 ? `${rawSum} / ${(totalPercentage / count).toFixed(1)}%` : '0 / 0.0%'}
  </td>
  </tr>
  );

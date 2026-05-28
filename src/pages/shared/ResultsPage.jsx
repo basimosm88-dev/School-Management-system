@@ -6,6 +6,16 @@ import { useAppContext } from '../../contexts/AppContext';
 import StatCard from '../../components/ui/StatCard';
 import EmptyState from '../../components/ui/EmptyState';
 
+const getGradePercentage = (score, examType) => {
+  const numScore = parseFloat(score);
+  if (isNaN(numScore)) return 0;
+  if (examType === 'Before Midterm') return (numScore / 10) * 100;
+  if (examType === 'Midterm') return (numScore / 30) * 100;
+  if (examType === 'After Midterm') return (numScore / 10) * 100;
+  if (examType === 'Final') return (numScore / 50) * 100;
+  return numScore;
+};
+
 const ResultsPage = ({ role }) => {
   const { 
     students, classes, exams,
@@ -148,7 +158,7 @@ const ResultsPage = ({ role }) => {
         ? (subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].average) || 0), 0) / subjects.length).toFixed(1)
         : "0.0";
       
-      const totalScore = subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].average) || 0), 0).toFixed(1);
+      const totalScore = subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].rawSum) || 0), 0);
 
       const examAverages = {};
       ["Before Midterm", "Midterm", "After Midterm", "Final"].forEach(type => {
@@ -226,12 +236,16 @@ const ResultsPage = ({ role }) => {
         ? parseFloat(reportData?.results?.[selectedSubject]?.average || 0)
         : (studentRank ? parseFloat(studentRank.averageScore.toFixed(1)) : 0);
 
+      const displayTotal = userRole === 'teacher' && selectedSubject
+        ? (reportData?.results?.[selectedSubject]?.rawSum || 0)
+        : (reportData?.results ? Object.values(reportData.results).reduce((acc, curr) => acc + (curr.rawSum || 0), 0) : 0);
+
       return {
         ...student,
         results: reportData?.results || {},
         examAverages,
         displayAverage,
-        displayTotal: studentRank && typeof studentRank.totalScore === 'number' ? parseFloat(studentRank.totalScore.toFixed(1)) : 0,
+        displayTotal,
         rank: studentRank?.rank || '-',
         status: outcome
       };
@@ -415,7 +429,7 @@ const ResultsPage = ({ role }) => {
                     <th className="px-4 py-4 text-center">Midterm</th>
                     <th className="px-4 py-4 text-center">After Mid</th>
                     <th className="px-4 py-4 text-center">Final</th>
-                    <th className="px-4 py-4 text-center">Avg Score</th>
+                    <th className="px-4 py-4 text-center">Total / Avg</th>
                     <th className="px-6 py-4 text-center">Outcome</th>
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
@@ -464,7 +478,7 @@ const ResultsPage = ({ role }) => {
                           </span>
                         </td>
                         <td className="px-4 py-4 text-center">
-                          <span className="text-label text-primary font-bold">{res.displayAverage}%</span>
+                          <span className="text-label text-primary font-bold">{res.displayTotal} / {res.displayAverage}%</span>
                         </td>
                         <td className="px-6 py-4 text-center">
                           <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
@@ -598,7 +612,7 @@ const ResultsPage = ({ role }) => {
                           <th className="px-4 py-4 text-center">Midterm</th>
                           <th className="px-4 py-4 text-center">After Mid</th>
                           <th className="px-4 py-4 text-center">Final</th>
-                          <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">Weighted Avg</th>
+                          <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">Total / Avg</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -612,7 +626,7 @@ const ResultsPage = ({ role }) => {
                             <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["After Midterm"]}</td>
                             <td className="px-4 py-4 text-center text-on-surface font-bold text-label">{classRecord.results[subject]["Final"]}</td>
                             <td className="px-6 py-4 text-right bg-slate-100/30 dark:bg-slate-800/10">
-                              <span className="text-label text-primary font-bold">{classRecord.results[subject].average}%</span>
+                              <span className="text-label text-primary font-bold">{classRecord.results[subject].rawSum} / {classRecord.results[subject].average}%</span>
                             </td>
                           </tr>
                         ))}
@@ -778,7 +792,7 @@ const PrintableClassResults = ({ className, results, schoolSettings }) => {
             <th className="p-3 text-center text-[10px] uppercase font-bold">Mid</th>
             <th className="p-3 text-center text-[10px] uppercase font-bold">A.Mid</th>
             <th className="p-3 text-center text-[10px] uppercase font-bold">Final</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">Average</th>
+            <th className="p-3 text-center text-[10px] uppercase font-bold">Total / Avg</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200">
@@ -790,7 +804,7 @@ const PrintableClassResults = ({ className, results, schoolSettings }) => {
               <td className="p-3 text-center text-xs">{res.examAverages["Midterm"]}</td>
               <td className="p-3 text-center text-xs">{res.examAverages["After Midterm"]}</td>
               <td className="p-3 text-center text-xs">{res.examAverages["Final"]}</td>
-              <td className="p-3 text-center font-bold text-blue-600">{res.displayAverage}%</td>
+              <td className="p-3 text-center font-bold text-blue-600">{res.displayTotal} / {res.displayAverage}%</td>
             </tr>
           ))}
         </tbody>
@@ -844,7 +858,7 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
             <th className="p-3 text-center text-[10px] uppercase font-bold">Mid</th>
             <th className="p-3 text-center text-[10px] uppercase font-bold">A.Mid</th>
             <th className="p-3 text-center text-[10px] uppercase font-bold">Final</th>
-            <th className="p-3 text-right text-[10px] uppercase font-bold">W.Avg</th>
+            <th className="p-3 text-right text-[10px] uppercase font-bold">Total / Avg</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200">
@@ -855,7 +869,7 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
               <td className="p-3 text-center text-xs">{record.results[subject]["Midterm"]}</td>
               <td className="p-3 text-center text-xs">{record.results[subject]["After Midterm"]}</td>
               <td className="p-3 text-center text-xs">{record.results[subject]["Final"]}</td>
-              <td className="p-3 text-right font-bold text-blue-600">{record.results[subject].average}%</td>
+              <td className="p-3 text-right font-bold text-blue-600">{record.results[subject].rawSum} / {record.results[subject].average}%</td>
             </tr>
           ))}
         </tbody>
@@ -869,7 +883,9 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
 const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) => {
   if (!classRecord) return null;
   const results = Object.values(classRecord.results).map(r => r[examType]).filter(v => typeof v === 'number');
-  const avg = results.length > 0 ? (results.reduce((a, b) => a + b, 0) / results.length).toFixed(1) : 'N/A';
+  const percentages = results.map(score => getGradePercentage(score, examType));
+  const avg = percentages.length > 0 ? (percentages.reduce((a, b) => a + b, 0) / percentages.length).toFixed(1) : 'N/A';
+  const rawSum = results.reduce((a, b) => a + b, 0);
 
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
@@ -944,9 +960,9 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
       </table>
 
       <div className="flex justify-center mb-8">
-        <div className="w-48 p-4 bg-slate-900 text-white rounded-xl text-center">
-          <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Exam Average</p>
-          <p className="text-[28px] font-black leading-none">{avg}%</p>
+        <div className="w-56 p-4 bg-slate-900 text-white rounded-xl text-center">
+          <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Total / Avg</p>
+          <p className="text-[20px] font-black leading-none">{rawSum} / {avg}%</p>
         </div>
       </div>
 
@@ -986,7 +1002,7 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
                   <th className="p-2 text-center text-[10px] uppercase">Mid</th>
                   <th className="p-2 text-center text-[10px] uppercase">A.Mid</th>
                   <th className="p-2 text-center text-[10px] uppercase">Final</th>
-                  <th className="p-2 text-right text-[10px] uppercase font-bold">Year Avg</th>
+                  <th className="p-2 text-right text-[10px] uppercase font-bold">Total / Avg</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -997,7 +1013,7 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
                     <td className="p-2 text-center text-xs">{record.results[subject]["Midterm"]}</td>
                     <td className="p-2 text-center text-xs">{record.results[subject]["After Midterm"]}</td>
                     <td className="p-2 text-center text-xs">{record.results[subject]["Final"]}</td>
-                    <td className="p-2 text-right text-xs font-bold">{record.results[subject].average}%</td>
+                    <td className="p-2 text-right text-xs font-bold">{record.results[subject].rawSum} / {record.results[subject].average}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -1049,7 +1065,7 @@ const PrintableSubjectClassResults = ({ className, subjectName, results, schoolS
             <th className="p-3 text-center text-[10px] uppercase font-black">Mid</th>
             <th className="p-3 text-center text-[10px] uppercase font-black">A.Mid</th>
             <th className="p-3 text-center text-[10px] uppercase font-black">Final</th>
-            <th className="p-3 text-right text-[10px] uppercase font-black">Subject Avg</th>
+            <th className="p-3 text-right text-[10px] uppercase font-black">Total / Avg</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200">
@@ -1063,7 +1079,7 @@ const PrintableSubjectClassResults = ({ className, subjectName, results, schoolS
                 <td className="p-3 text-center text-xs">{subjData["Midterm"]}</td>
                 <td className="p-3 text-center text-xs">{subjData["After Midterm"]}</td>
                 <td className="p-3 text-center text-xs">{subjData["Final"]}</td>
-                <td className="p-3 text-right font-bold text-blue-600">{subjData.average}%</td>
+                <td className="p-3 text-right font-bold text-blue-600">{subjData.rawSum} / {subjData.average}%</td>
               </tr>
             );
           })}
@@ -1100,7 +1116,7 @@ const PrintableSubjectStudentResults = ({ student, classRecord, subjectName, sch
           { label: 'Midterm', val: subjData["Midterm"] },
           { label: 'A.Midterm', val: subjData["After Midterm"] },
           { label: 'Final', val: subjData["Final"] },
-          { label: 'Total Avg', val: subjData.average + '%', highlight: true }
+          { label: 'Total / Avg', val: `${subjData.rawSum} / ${subjData.average}%`, highlight: true }
         ].map((item, i) => (
           <div key={i} className={`p-6 rounded-2xl border ${item.highlight ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 border-slate-200'} text-center shadow-sm`}>
             <p className={`text-[10px] uppercase font-bold mb-2 ${item.highlight ? 'text-slate-400' : 'text-slate-500'}`}>{item.label}</p>

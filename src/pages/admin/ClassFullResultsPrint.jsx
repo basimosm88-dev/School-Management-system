@@ -112,7 +112,7 @@ const ClassFullResultsPrint = () => {
  <th className="border border-slate-700 p-1 text-center">Mid</th>
  <th className="border border-slate-700 p-1 text-center">A-Mid</th>
  <th className="border border-slate-700 p-1 text-center">Final</th>
- <th className="border border-slate-700 p-1 text-center bg-slate-700">W.Avg</th>
+ <th className="border border-slate-700 p-1 text-center bg-slate-700">Tot/Avg</th>
  </React.Fragment>
  ))}
  </tr>
@@ -139,7 +139,9 @@ const ClassFullResultsPrint = () => {
  <td className="border border-slate-300 p-1 text-center">{res["Midterm"]}</td>
  <td className="border border-slate-300 p-1 text-center">{res["After Midterm"]}</td>
  <td className="border border-slate-300 p-1 text-center">{res["Final"]}</td>
- <td className="border border-slate-300 p-1 text-center bg-slate-100/50">{res.average}%</td>
+ <td className="border border-slate-300 p-1 text-center bg-slate-100/50">
+    {res.average !== "-" ? `${res.rawSum} (${res.average}%)` : "-"}
+ </td>
  </React.Fragment>
  );
  })}

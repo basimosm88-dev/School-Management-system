@@ -3,6 +3,13 @@ import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
 
+const EXAM_MAX_SCORES = {
+  'Before Midterm': 10,
+  'Midterm': 30,
+  'After Midterm': 10,
+  'Final': 50
+};
+
 const TeacherExamsPage = () => {
   const { classes, students, exams, saveExamResults, updateExamStatus } = useData();
   const { currentUser } = useAppContext();
@@ -65,7 +72,13 @@ const TeacherExamsPage = () => {
 
   const handleGradeChange = (studentId, grade) => {
     if (isLocked) return;
-    setExamGrades(prev => ({ ...prev, [studentId]: grade }));
+    const maxVal = EXAM_MAX_SCORES[selectedExamType] || 100;
+    const val = parseFloat(grade);
+    if (!isNaN(val) && val > maxVal) {
+      setExamGrades(prev => ({ ...prev, [studentId]: maxVal }));
+    } else {
+      setExamGrades(prev => ({ ...prev, [studentId]: grade }));
+    }
   };
 
   const handleRemarkChange = (studentId, remark) => {
@@ -243,10 +256,10 @@ const TeacherExamsPage = () => {
                       </td>
                       <td className="px-8 py-6">
                         <div className="relative group/input">
-                          <input 
+                           <input 
                             type="number"
                             min="0"
-                            max="100"
+                            max={EXAM_MAX_SCORES[selectedExamType] || 100}
                             value={examGrades[student.id] || ''}
                             onChange={(e) => handleGradeChange(student.id, e.target.value)}
                             disabled={isLocked}
@@ -255,7 +268,7 @@ const TeacherExamsPage = () => {
                           />
                           {!isLocked && (
                             <div className="absolute -top-2 left-1/2 -translate-x-1/2 opacity-0 group-hover/input:opacity-100 transition-all pointer-events-none">
-                              <span className="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-bold rounded uppercase">0-100 Range</span>
+                              <span className="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-bold rounded uppercase">0-{EXAM_MAX_SCORES[selectedExamType] || 100} Range</span>
                             </div>
                           )}
                         </div>
