@@ -1,21 +1,266 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
+import { useAppContext } from '../../contexts/AppContext';
+import * as XLSX from 'xlsx';
 
 const AdminExamsPage = () => {
   const { 
     classes, subjects, students, teachers, exams, 
-    updateExamStatus, calculateRankings, calculatePromotion,
+    saveExamResults, updateExamStatus, calculateRankings, calculatePromotion,
     promotionSettings, setPromotionSettings, promotions,
     saveExamReleaseSchedule
   } = useData();
   const { t } = useSettings();
+  const { currentUser } = useAppContext();
 
   const [activeTab, setActiveTab] = useState('review');
   const [selectedClassId, setSelectedClassId] = useState('');
   const [selectedExamType, setSelectedExamType] = useState('Midterm');
   const [viewingSubmission, setViewingSubmission] = useState(null);
+
+  // Excel Import States
+  const [importClassId, setImportClassId] = useState('');
+  const [importExamType, setImportExamType] = useState('Midterm');
+  const [importStatus, setImportStatus] = useState('APPROVED');
+  const [importFile, setImportFile] = useState(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [importErrors, setImportErrors] = useState([]);
+  const [importWarnings, setImportWarnings] = useState([]);
+  const [importSuccessCount, setImportSuccessCount] = useState(0);
+  const [parsedRows, setParsedRows] = useState([]);
+  const [importFinished, setImportFinished] = useState(false);
+
+  const fileInputRef = useRef(null);
+
+  const downloadTemplate = () => {
+    if (!importClassId) return alert("Please select a class first.");
+    const selectedClass = classes.find(c => String(c.id) === String(importClassId));
+    if (!selectedClass) return;
+
+    const classStudents = students.filter(s => String(s.classId) === String(importClassId));
+    const subjectsList = selectedClass.subjects || [];
+
+    const templateData = classStudents.map(student => {
+      const row = { "Student Name": student.name };
+      subjectsList.forEach(sub => {
+        row[sub.name] = "";
+      });
+      row["Total"] = "";
+      row["Average"] = "";
+      row["Status"] = "";
+      return row;
+    });
+
+    if (templateData.length === 0) {
+      const row = { "Student Name": "Ahmed Ali Hassan" };
+      subjectsList.forEach(sub => {
+        row[sub.name] = "";
+      });
+      row["Total"] = "";
+      row["Average"] = "";
+      row["Status"] = "";
+      templateData.push(row);
+    }
+
+    const ws = XLSX.utils.json_to_sheet(templateData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Exam Results Template");
+    XLSX.writeFile(wb, `${selectedClass.name}_${importExamType}_Template.xlsx`);
+  };
+
+  const parseExcel = async (file) => {
+    if (!file || !importClassId) return;
+    setIsImporting(true);
+    setImportErrors([]);
+    setImportWarnings([]);
+    setParsedRows([]);
+    setImportFinished(false);
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      const selectedClass = classes.find(c => String(c.id) === String(importClassId));
+      const classStudents = students.filter(s => String(s.classId) === String(importClassId));
+      const subjectsList = selectedClass?.subjects || [];
+      const examMaxScore = importExamType === 'Midterm' ? 40 : 60;
+
+      const validRows = [];
+      const errors = [];
+      const warnings = [];
+
+      jsonData.forEach((row, index) => {
+        const rowNumber = index + 2; // +1 for 0-index, +1 for header
+
+        // Normalize keys case-insensitively and space-insensitively
+        const normalized = {};
+        if (row && typeof row === 'object') {
+          Object.keys(row).forEach(key => {
+            const normalizedKey = key.toLowerCase().replace(/[\s_-]+/g, '');
+            normalized[normalizedKey] = row[key];
+          });
+        }
+
+        const studentNameVal = (normalized["studentname"] || normalized["name"])?.toString().trim();
+        if (!studentNameVal) {
+          errors.push({ rowNumber, error: "Missing Student Name column or student name is empty." });
+          return;
+        }
+
+        // Match student case-insensitively
+        const student = classStudents.find(s => s.name.toLowerCase().trim() === studentNameVal.toLowerCase());
+        if (!student) {
+          errors.push({ rowNumber, error: `Student "${studentNameVal}" not found in class "${selectedClass?.name}".` });
+          return;
+        }
+
+        // Parse subject scores
+        const subjectScores = {};
+        let rowHasError = false;
+        let sumCalculated = 0;
+        let subjectsWithGradesCount = 0;
+
+        subjectsList.forEach(sub => {
+          const subKey = sub.name.toLowerCase().replace(/[\s_-]+/g, '');
+          const scoreVal = normalized[subKey];
+          
+          if (scoreVal !== undefined && scoreVal !== null && scoreVal.toString().trim() !== '') {
+            const numScore = parseFloat(scoreVal);
+            if (isNaN(numScore) || numScore < 0 || numScore > examMaxScore) {
+              errors.push({ 
+                rowNumber, 
+                error: `Invalid score for "${sub.name}": Must be a number between 0 and ${examMaxScore}.` 
+              });
+              rowHasError = true;
+            } else {
+              subjectScores[sub.name] = numScore;
+              sumCalculated += numScore;
+              subjectsWithGradesCount++;
+            }
+          }
+        });
+
+        if (rowHasError) return;
+
+        // Perform calculation for comparisons
+        const totalPossible = subjectsList.length * examMaxScore;
+        const avgPercentageCalculated = totalPossible > 0 ? (sumCalculated / totalPossible) * 100 : 0;
+        
+        let statusCalculated = "Pending";
+        if (subjectsList.length > 0) {
+          statusCalculated = avgPercentageCalculated >= (promotionSettings.passingGrade || 50) ? "Success" : "Failed";
+        }
+
+        // Compare with sheet columns
+        // 1. Compare Total
+        const sheetTotalVal = normalized["total"];
+        if (sheetTotalVal !== undefined && sheetTotalVal !== null && sheetTotalVal.toString().trim() !== '') {
+          const sheetTotal = parseFloat(sheetTotalVal);
+          if (!isNaN(sheetTotal) && Math.abs(sheetTotal - sumCalculated) > 0.1) {
+            warnings.push({
+              rowNumber,
+              type: "Total Mismatch",
+              message: `Student "${studentNameVal}": Excel total is ${sheetTotal}, but calculated total is ${sumCalculated.toFixed(1)}.`
+            });
+          }
+        }
+
+        // 2. Compare Average
+        const sheetAverageVal = normalized["average"];
+        if (sheetAverageVal !== undefined && sheetAverageVal !== null && sheetAverageVal.toString().trim() !== '') {
+          const sheetAverageStr = sheetAverageVal.toString().replace('%', '').trim();
+          const sheetAverage = parseFloat(sheetAverageStr);
+          if (!isNaN(sheetAverage)) {
+            const rawAvgCalculated = subjectsList.length > 0 ? sumCalculated / subjectsList.length : 0;
+            const diffPercentage = Math.abs(sheetAverage - avgPercentageCalculated);
+            const diffRaw = Math.abs(sheetAverage - rawAvgCalculated);
+            
+            if (diffPercentage > 1.0 && diffRaw > 1.0) {
+              warnings.push({
+                rowNumber,
+                type: "Average Mismatch",
+                message: `Student "${studentNameVal}": Excel average is ${sheetAverageVal}, but calculated average is ${avgPercentageCalculated.toFixed(1)}% (raw average is ${rawAvgCalculated.toFixed(1)}).`
+              });
+            }
+          }
+        }
+
+        // 3. Compare Status
+        const sheetStatusVal = (normalized["status"] || normalized["outcome"])?.toString().trim().toLowerCase();
+        if (sheetStatusVal) {
+          const isSheetSuccess = ["success", "pass", "promoted", "passed", "succeed"].includes(sheetStatusVal);
+          const isCalculatedSuccess = statusCalculated === "Success";
+          
+          if (isSheetSuccess !== isCalculatedSuccess) {
+            warnings.push({
+              rowNumber,
+              type: "Status Mismatch",
+              message: `Student "${studentNameVal}": Excel status is "${sheetStatusVal}", but calculated status is "${statusCalculated}" (based on passing threshold of ${promotionSettings.passingGrade || 50}%).`
+            });
+          }
+        }
+
+        validRows.push({
+          studentId: student.id,
+          studentName: student.name,
+          subjectScores,
+          sumCalculated,
+          avgPercentageCalculated,
+          statusCalculated
+        });
+      });
+
+      setImportErrors(errors);
+      setImportWarnings(warnings);
+      setParsedRows(validRows);
+      setImportSuccessCount(validRows.length);
+    } catch (err) {
+      console.error("Error parsing Excel:", err);
+      setImportErrors([{ rowNumber: 0, error: "Failed to parse the file. Please check that it is a valid Excel spreadsheet." }]);
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  const handleImportSubmit = async () => {
+    if (parsedRows.length === 0 || !importClassId) return;
+    setIsImporting(true);
+
+    try {
+      const selectedClass = classes.find(c => String(c.id) === String(importClassId));
+      const subjectsList = selectedClass?.subjects || [];
+
+      for (const sub of subjectsList) {
+        const subjectGrades = parsedRows.map(row => {
+          const gradeVal = row.subjectScores[sub.name];
+          if (gradeVal === undefined) return null;
+          return {
+            studentId: row.studentId,
+            grade: gradeVal,
+            remarks: ""
+          };
+        }).filter(Boolean);
+
+        if (subjectGrades.length > 0) {
+          await saveExamResults(importExamType, importClassId, sub.name, currentUser?.id, subjectGrades, importStatus);
+        }
+      }
+
+      setImportFinished(true);
+      setParsedRows([]);
+      setImportFile(null);
+    } catch (err) {
+      console.error("Error saving imported grades:", err);
+      alert("Failed to save imported results. Please try again.");
+    } finally {
+      setIsImporting(false);
+    }
+  };
 
   const [examReleaseSettings, setExamReleaseSettings] = useState({
     Midterm: { date: '', time: '', isApproved: false },
@@ -130,7 +375,7 @@ const AdminExamsPage = () => {
 
  {/* TABS */}
  <div className="flex gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
- {['Review', 'Release', 'Settings'].map(tab => (
+ {['Review', 'Release', 'Settings', 'Import Results'].map(tab => (
  <button
  key={tab}
  onClick={() => setActiveTab(tab.toLowerCase())}
@@ -436,7 +681,252 @@ const AdminExamsPage = () => {
  </div>
  </div>
  )}
- </div>
+
+  {/* IMPORT RESULTS TAB */}
+  {activeTab === 'import results' && (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Selection Filters & Upload Form */}
+      <div className="lg:col-span-2 space-y-6">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-8">
+          <h3 className="text-section text-slate-800 dark:text-slate-200 mb-6">Import Student Results</h3>
+          <div className="p-4 bg-primary/5 rounded-xl border border-primary/20 mb-6 text-label text-primary flex items-start gap-2">
+            <span className="material-symbols-outlined text-body">info</span>
+            <p className="text-xs">
+              This import utility supports uploading midterm (max 40) and final (max 60) results for the <strong>2025-2026</strong> academic year.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div>
+              <label className="text-label text-slate-400/80 mb-2 block">Class</label>
+              <select
+                value={importClassId}
+                onChange={e => {
+                  setImportClassId(e.target.value);
+                  setImportFile(null);
+                  setImportErrors([]);
+                  setImportWarnings([]);
+                  setParsedRows([]);
+                  setImportFinished(false);
+                }}
+                className="form-input-custom w-full bg-transparent dark:bg-slate-800"
+              >
+                <option value="">Select Class</option>
+                {classes.filter(c => c.academicYear === '2025-2026').map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="text-label text-slate-400/80 mb-2 block">Exam Type</label>
+              <select
+                value={importExamType}
+                onChange={e => {
+                  setImportExamType(e.target.value);
+                  setImportFile(null);
+                  setImportErrors([]);
+                  setImportWarnings([]);
+                  setParsedRows([]);
+                  setImportFinished(false);
+                }}
+                className="form-input-custom w-full bg-transparent dark:bg-slate-800"
+              >
+                <option value="Midterm">Midterm (Max 40)</option>
+                <option value="Final">Final (Max 60)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-label text-slate-400/80 mb-2 block">Import Status</label>
+              <select
+                value={importStatus}
+                onChange={e => setImportStatus(e.target.value)}
+                className="form-input-custom w-full bg-transparent dark:bg-slate-800"
+              >
+                <option value="APPROVED">Approved (Pending Release)</option>
+                <option value="PUBLISHED">Published (Immediately Visible)</option>
+              </select>
+            </div>
+          </div>
+
+          {importClassId && (
+            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-205 dark:border-slate-800 mb-6">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-primary text-2xl">description</span>
+                <div>
+                  <p className="text-xs font-semibold text-slate-900 dark:text-white">Need a template?</p>
+                  <p className="text-[10px] text-slate-500">Download formatted sheet with student names</p>
+                </div>
+              </div>
+              <button
+                onClick={downloadTemplate}
+                className="text-primary hover:underline text-xs font-bold flex items-center gap-1"
+              >
+                <span className="material-symbols-outlined text-sm">download</span>
+                Download Template
+              </button>
+            </div>
+          )}
+
+          {importClassId && (
+            <div className="space-y-4">
+              <label className="text-label text-slate-400/80 block">Upload completed sheet</label>
+              <div
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  const droppedFile = e.dataTransfer.files[0];
+                  if (droppedFile) {
+                    setImportFile(droppedFile);
+                    parseExcel(droppedFile);
+                  }
+                }}
+                onClick={() => fileInputRef.current.click()}
+                className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center gap-3 transition-all cursor-pointer ${
+                  isDragging
+                    ? 'border-primary bg-primary/5'
+                    : 'border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                }`}
+              >
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={(e) => {
+                    const selected = e.target.files[0];
+                    if (selected) {
+                      setImportFile(selected);
+                      parseExcel(selected);
+                    }
+                  }}
+                  accept=".xlsx, .csv"
+                  className="hidden"
+                />
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                  <span className="material-symbols-outlined text-2xl">cloud_upload</span>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                    {importFile ? importFile.name : 'Click or drag and drop spreadsheet'}
+                  </p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Supports .xlsx, .csv formats</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {parsedRows.length > 0 && importErrors.length === 0 && (
+            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+              <button
+                disabled={isImporting}
+                onClick={handleImportSubmit}
+                className="w-full btn-primary h-12 rounded-xl flex items-center justify-center gap-2"
+              >
+                {isImporting ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined text-body">save_alt</span>
+                    Import {importSuccessCount} Student Records
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Warnings & Error Log Sidebar */}
+      <div className="space-y-6">
+        {/* Validation Errors Panel */}
+        {importErrors.length > 0 && (
+          <div className="bg-rose-50/50 dark:bg-rose-950/10 rounded-xl border border-rose-100 dark:border-rose-900/20 p-6">
+            <h3 className="text-sm font-bold text-rose-800 dark:text-rose-400 flex items-center gap-2 mb-4">
+              <span className="material-symbols-outlined text-body">error</span>
+              Validation Errors ({importErrors.length})
+            </h3>
+            <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2">
+              {importErrors.map((err, idx) => (
+                <div key={idx} className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-rose-100 dark:border-rose-900/30 text-xs">
+                  <span className="font-bold text-rose-600 dark:text-rose-400">Row {err.rowNumber}:</span> {err.error}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Comparison Warnings Panel */}
+        {importWarnings.length > 0 && (
+          <div className="bg-amber-50/50 dark:bg-amber-950/10 rounded-xl border border-amber-100 dark:border-amber-900/20 p-6">
+            <h3 className="text-sm font-bold text-amber-800 dark:text-amber-400 flex items-center gap-2 mb-4">
+              <span className="material-symbols-outlined text-body">warning</span>
+              Excel Mismatch Warnings ({importWarnings.length})
+            </h3>
+            <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2">
+              {importWarnings.map((warn, idx) => (
+                <div key={idx} className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-amber-100 dark:border-amber-900/30 text-xs">
+                  <div className="font-semibold text-amber-700 dark:text-amber-400 flex items-center justify-between mb-1">
+                    <span>{warn.type}</span>
+                    <span className="text-[10px] bg-amber-100 dark:bg-amber-900/50 px-1.5 py-0.5 rounded text-amber-800 dark:text-amber-300">Row {warn.rowNumber}</span>
+                  </div>
+                  <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{warn.message}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Success / Status Panel */}
+        {importFinished && (
+          <div className="bg-emerald-50 dark:bg-emerald-950/10 rounded-xl border border-emerald-100 dark:border-emerald-900/20 p-6 text-center">
+            <span className="material-symbols-outlined text-emerald-500 text-display mb-3">check_circle</span>
+            <h3 className="text-sm font-bold text-emerald-800 dark:text-emerald-400 mb-1">Import Completed Successfully</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+              Successfully imported grades for {importSuccessCount} students in {importExamType}.
+            </p>
+            <button
+              onClick={() => {
+                setImportFile(null);
+                setParsedRows([]);
+                setImportFinished(false);
+              }}
+              className="px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-lg hover:bg-emerald-600 transition-colors"
+            >
+              Start New Import
+            </button>
+          </div>
+        )}
+
+        {parsedRows.length > 0 && importErrors.length === 0 && (
+          <div className="bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-205 dark:border-slate-800 p-6">
+            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-3">Import Summary</h3>
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Students to update:</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">{parsedRows.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Exam Type:</span>
+                <span className="font-bold text-primary">{importExamType}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Upload Status:</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">{importStatus}</span>
+              </div>
+              {importWarnings.length > 0 && (
+                <div className="p-3 bg-amber-500/10 text-amber-700 dark:text-amber-400 rounded-lg mt-3 text-[11px] leading-relaxed">
+                  ⚠️ Note: There are {importWarnings.length} mismatch warnings. You can still proceed with importing, and the system will recalculate and save the correct grades to the database.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )}
+  </div>
  </PageLayout>
  );
 };
