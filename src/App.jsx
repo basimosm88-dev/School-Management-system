@@ -39,8 +39,8 @@ import ResultsPage from './pages/shared/ResultsPage';
 function App() {
  return (
   <Router>
-    <SettingsProvider>
-      <AppProvider>
+    <AppProvider>
+      <SettingsProvider>
         <DataProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
@@ -97,8 +97,8 @@ function App() {
             <Route path="/" element={<Navigate to="/login" replace />} />
           </Routes>
         </DataProvider>
-      </AppProvider>
-    </SettingsProvider>
+      </SettingsProvider>
+    </AppProvider>
   </Router>
  );
 }

@@ -1,10 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { translations } from '../lib/translations';
 import { initialData } from '../data/mockData';
+import { supabase } from '../lib/supabase';
+import { useAppContext } from './AppContext';
 
 const SettingsContext = createContext();
 
 export const SettingsProvider = ({ children }) => {
+ const { currentSchool, currentUser } = useAppContext();
+ const [loadedFromDB, setLoadedFromDB] = useState(false);
+
  const getSaved = (key, fallback) => {
  const saved = localStorage.getItem(`sms_${key}`);
  if (!saved) return fallback;
@@ -112,6 +117,51 @@ export const SettingsProvider = ({ children }) => {
  useEffect(() => { localStorage.setItem('sms_notificationSettings', JSON.stringify(notificationSettings)); }, [notificationSettings]);
  useEffect(() => { localStorage.setItem('sms_pdfSettings', JSON.stringify(pdfSettings)); }, [pdfSettings]);
  useEffect(() => { localStorage.setItem('sms_securitySettings', JSON.stringify(securitySettings)); }, [securitySettings]);
+
+  // Load settings from database currentSchool on mount or when currentSchool resolves
+  useEffect(() => {
+    if (currentSchool && currentSchool.settings) {
+      const dbSettings = currentSchool.settings;
+      if (dbSettings.schoolSettings) setSchoolSettings(dbSettings.schoolSettings);
+      if (dbSettings.academicSettings) setAcademicSettings(dbSettings.academicSettings);
+      if (dbSettings.permissions) setPermissions(dbSettings.permissions);
+      if (dbSettings.pdfSettings) setPdfSettings(dbSettings.pdfSettings);
+      if (dbSettings.securitySettings) setSecuritySettings(dbSettings.securitySettings);
+      setLoadedFromDB(true);
+    } else if (currentSchool) {
+      setLoadedFromDB(true);
+    }
+  }, [currentSchool]);
+
+  // Debounced database sync
+  useEffect(() => {
+    if (!loadedFromDB || !currentUser || currentUser.role !== 'admin' || !currentUser.school_id) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        const settingsPayload = {
+          schoolSettings,
+          academicSettings,
+          permissions,
+          pdfSettings,
+          securitySettings
+        };
+
+        await supabase
+          .from('schools')
+          .update({
+            name: schoolSettings.name,
+            logo_url: schoolSettings.logo,
+            settings: settingsPayload
+          })
+          .eq('id', currentUser.school_id);
+      } catch (err) {
+        console.error("Failed to sync settings to database:", err);
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [schoolSettings, academicSettings, permissions, pdfSettings, securitySettings, currentUser, loadedFromDB]);
 
  const t = useCallback((key) => {
  return translations[language]?.[key] || translations['en'][key] || key;
