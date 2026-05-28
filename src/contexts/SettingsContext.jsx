@@ -121,6 +121,11 @@ export const SettingsProvider = ({ children }) => {
   // Load settings from database currentSchool on mount or when currentSchool resolves
   useEffect(() => {
     if (!schoolLoading) {
+      // If a user is logged in, defer setting loadedFromDB to true until currentSchool matches the user's school
+      if (currentUser && currentUser.school_id && (!currentSchool || currentSchool.id !== currentUser.school_id)) {
+        return;
+      }
+
       if (currentSchool && currentSchool.settings) {
         const dbSettings = currentSchool.settings;
         if (dbSettings.schoolSettings) setSchoolSettings(dbSettings.schoolSettings);
@@ -131,7 +136,7 @@ export const SettingsProvider = ({ children }) => {
       }
       setLoadedFromDB(true);
     }
-  }, [currentSchool, schoolLoading]);
+  }, [currentSchool, schoolLoading, currentUser]);
 
   // Debounced database sync
   useEffect(() => {

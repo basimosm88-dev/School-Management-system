@@ -74,6 +74,38 @@ export const AppProvider = ({ children }) => {
     fetchSchoolBranding();
   }, []);
 
+  // Fetch school branding/settings when user logs in and school_id is available
+  useEffect(() => {
+    if (!currentUser || !currentUser.school_id) return;
+
+    // Skip if currentSchool is already loaded and matches
+    if (currentSchool && currentSchool.id === currentUser.school_id) {
+      return;
+    }
+
+    const fetchSchoolForLoggedInUser = async () => {
+      try {
+        setSchoolLoading(true);
+        const { data, error } = await supabase
+          .from('schools')
+          .select('id, name, logo_url, settings, subdomain')
+          .eq('id', currentUser.school_id)
+          .single();
+
+        if (error) throw error;
+        if (data) {
+          setCurrentSchool(data);
+        }
+      } catch (error) {
+        console.error("Error fetching school branding by school_id:", error);
+      } finally {
+        setSchoolLoading(false);
+      }
+    };
+
+    fetchSchoolForLoggedInUser();
+  }, [currentUser?.school_id, currentSchool]);
+
   const updateCurrentUser = (user) => {
     setCurrentUser(user);
     currentUserRef.current = user;
