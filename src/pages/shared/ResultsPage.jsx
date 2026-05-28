@@ -6,9 +6,14 @@ import { useAppContext } from '../../contexts/AppContext';
 import StatCard from '../../components/ui/StatCard';
 import EmptyState from '../../components/ui/EmptyState';
 
-const getGradePercentage = (score, examType) => {
+const getGradePercentage = (score, examType, academicYear) => {
   const numScore = parseFloat(score);
   if (isNaN(numScore)) return 0;
+  if (academicYear === '2025-2026') {
+    if (examType === 'Midterm') return (numScore / 40) * 100;
+    if (examType === 'Final') return (numScore / 60) * 100;
+    return numScore;
+  }
   if (examType === 'Before Midterm') return (numScore / 10) * 100;
   if (examType === 'Midterm') return (numScore / 30) * 100;
   if (examType === 'After Midterm') return (numScore / 10) * 100;
@@ -179,6 +184,7 @@ const ResultsPage = ({ role }) => {
         results: filteredResults,
         student,
         className: classObj?.name || `Class ${cid}`,
+        academicYear: classObj?.academicYear || '2025-2026',
         totalAverage,
         totalScore,
         subjectsCount: subjects.length,
@@ -364,6 +370,7 @@ const ResultsPage = ({ role }) => {
     }
 
     if (viewMode === 'list') {
+      const is2526 = currentClass?.academicYear === '2025-2026';
       return (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 print:hidden">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -425,10 +432,10 @@ const ResultsPage = ({ role }) => {
                   <tr className="bg-slate-100 dark:bg-slate-800/50 text-on-surface-variant text-[10px] uppercase font-bold tracking-widest">
                     <th className="px-6 py-4">Rank</th>
                     <th className="px-6 py-4">Student Name</th>
-                    <th className="px-4 py-4 text-center">Before Mid</th>
-                    <th className="px-4 py-4 text-center">Midterm</th>
-                    <th className="px-4 py-4 text-center">After Mid</th>
-                    <th className="px-4 py-4 text-center">Final</th>
+                    {!is2526 && <th className="px-4 py-4 text-center">Before Mid</th>}
+                    <th className="px-4 py-4 text-center">{is2526 ? 'Midterm (40)' : 'Midterm (30)'}</th>
+                    {!is2526 && <th className="px-4 py-4 text-center">After Mid</th>}
+                    <th className="px-4 py-4 text-center">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
                     <th className="px-4 py-4 text-center">Total / Avg</th>
                     <th className="px-6 py-4 text-center">Outcome</th>
                     <th className="px-6 py-4 text-right">Actions</th>
@@ -457,21 +464,25 @@ const ResultsPage = ({ role }) => {
                           <p className="text-label text-on-surface font-bold whitespace-nowrap">{res.name}</p>
                           <p className="text-[10px] text-on-surface-variant uppercase">ID: {res.systemId || res.id}</p>
                         </td>
-                        <td className="px-4 py-4 text-center">
-                          <span className={`text-[10px] font-bold ${res.examAverages["Before Midterm"] === 'Not entered yet' ? 'text-slate-400 italic' : 'text-on-surface'}`}>
-                            {res.examAverages["Before Midterm"]}
-                          </span>
-                        </td>
+                        {!is2526 && (
+                          <td className="px-4 py-4 text-center">
+                            <span className={`text-[10px] font-bold ${res.examAverages["Before Midterm"] === 'Not entered yet' ? 'text-slate-400 italic' : 'text-on-surface'}`}>
+                              {res.examAverages["Before Midterm"]}
+                            </span>
+                          </td>
+                        )}
                         <td className="px-4 py-4 text-center">
                           <span className={`text-[10px] font-bold ${res.examAverages["Midterm"] === 'Not entered yet' ? 'text-slate-400 italic' : 'text-on-surface'}`}>
                             {res.examAverages["Midterm"]}
                           </span>
                         </td>
-                        <td className="px-4 py-4 text-center">
-                          <span className={`text-[10px] font-bold ${res.examAverages["After Midterm"] === 'Not entered yet' ? 'text-slate-400 italic' : 'text-on-surface'}`}>
-                            {res.examAverages["After Midterm"]}
-                          </span>
-                        </td>
+                        {!is2526 && (
+                          <td className="px-4 py-4 text-center">
+                            <span className={`text-[10px] font-bold ${res.examAverages["After Midterm"] === 'Not entered yet' ? 'text-slate-400 italic' : 'text-on-surface'}`}>
+                              {res.examAverages["After Midterm"]}
+                            </span>
+                          </td>
+                        )}
                         <td className="px-4 py-4 text-center">
                           <span className={`text-[10px] font-bold ${res.examAverages["Final"] === 'Not entered yet' ? 'text-slate-400 italic' : 'text-on-surface font-black'}`}>
                             {res.examAverages["Final"]}
@@ -551,8 +562,10 @@ const ResultsPage = ({ role }) => {
           {studentAcademicHistory.length === 0 ? (
             <EmptyState icon="grading" message="No Published Results" description="Results for your enrolled subjects have not been released yet." />
           ) : (
-            studentAcademicHistory.map((classRecord) => (
-              <div key={classRecord.classId} className="flex flex-col gap-6">
+            studentAcademicHistory.map((classRecord) => {
+              const is2526 = classRecord.academicYear === '2025-2026';
+              return (
+                <div key={classRecord.classId} className="flex flex-col gap-6">
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mt-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
@@ -608,10 +621,10 @@ const ResultsPage = ({ role }) => {
                       <thead>
                         <tr className="bg-slate-100 dark:bg-slate-800/50 text-on-surface-variant text-[10px] uppercase font-bold tracking-widest">
                           <th className="px-6 py-4">Subject Name</th>
-                          <th className="px-4 py-4 text-center">Before Mid</th>
-                          <th className="px-4 py-4 text-center">Midterm</th>
-                          <th className="px-4 py-4 text-center">After Mid</th>
-                          <th className="px-4 py-4 text-center">Final</th>
+                          {!is2526 && <th className="px-4 py-4 text-center">Before Mid</th>}
+                          <th className="px-4 py-4 text-center">{is2526 ? 'Midterm (40)' : 'Midterm (30)'}</th>
+                          {!is2526 && <th className="px-4 py-4 text-center">After Mid</th>}
+                          <th className="px-4 py-4 text-center">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
                           <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">Total / Avg</th>
                         </tr>
                       </thead>
@@ -621,9 +634,9 @@ const ResultsPage = ({ role }) => {
                             <td className="px-6 py-4">
                               <p className="text-label text-on-surface font-bold">{subject}</p>
                             </td>
-                            <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["Before Midterm"]}</td>
+                            {!is2526 && <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["Before Midterm"]}</td>}
                             <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["Midterm"]}</td>
-                            <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["After Midterm"]}</td>
+                            {!is2526 && <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["After Midterm"]}</td>}
                             <td className="px-4 py-4 text-center text-on-surface font-bold text-label">{classRecord.results[subject]["Final"]}</td>
                             <td className="px-6 py-4 text-right bg-slate-100/30 dark:bg-slate-800/10">
                               <span className="text-label text-primary font-bold">{classRecord.results[subject].rawSum} / {classRecord.results[subject].average}%</span>
@@ -648,8 +661,8 @@ const ResultsPage = ({ role }) => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {["Before Midterm", "Midterm", "After Midterm", "Final"].map(type => (
+                    <div className={`grid grid-cols-2 ${is2526 ? 'md:grid-cols-2' : 'md:grid-cols-4'} gap-4`}>
+                      {(is2526 ? ["Midterm", "Final"] : ["Before Midterm", "Midterm", "After Midterm", "Final"]).map(type => (
                         <button 
                           key={type}
                           onClick={() => handlePrint(sId, { type: 'exam-slip', examType: type, classId: classRecord.classId })}
@@ -665,7 +678,8 @@ const ResultsPage = ({ role }) => {
                   </div>
                 )}
               </div>
-            ))
+              );
+            })
           )}
         </div>
       );
@@ -683,6 +697,7 @@ const ResultsPage = ({ role }) => {
       {selectedClassId && printConfig.type === 'class-list' && (
         <PrintableClassResults 
           className={currentClass?.name} 
+          is2526={currentClass?.academicYear === '2025-2026'}
           results={studentResults} 
           schoolSettings={schoolSettings} 
         />
@@ -712,6 +727,7 @@ const ResultsPage = ({ role }) => {
         <PrintableSubjectClassResults 
           className={currentClass?.name}
           subjectName={printConfig.subjectName}
+          is2526={currentClass?.academicYear === '2025-2026'}
           results={studentResults}
           schoolSettings={schoolSettings}
         />
@@ -777,7 +793,7 @@ const PrintableFooter = ({ signatureTitle }) => (
   </div>
 );
 
-const PrintableClassResults = ({ className, results, schoolSettings }) => {
+const PrintableClassResults = ({ className, results, schoolSettings, is2526 }) => {
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
       <PrintableHeader schoolSettings={schoolSettings} title="Academic Performance Division" />
@@ -788,10 +804,10 @@ const PrintableClassResults = ({ className, results, schoolSettings }) => {
           <tr className="bg-slate-100 border-b-2 border-slate-800">
             <th className="p-3 text-left text-[10px] uppercase font-bold">Rank</th>
             <th className="p-3 text-left text-[10px] uppercase font-bold">Student Name</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">B.Mid</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">Mid</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">A.Mid</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">Final</th>
+            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-bold">B.Mid</th>}
+            <th className="p-3 text-center text-[10px] uppercase font-bold">{is2526 ? 'Mid (40)' : 'Mid (30)'}</th>
+            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-bold">A.Mid</th>}
+            <th className="p-3 text-center text-[10px] uppercase font-bold">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
             <th className="p-3 text-center text-[10px] uppercase font-bold">Total / Avg</th>
           </tr>
         </thead>
@@ -800,9 +816,9 @@ const PrintableClassResults = ({ className, results, schoolSettings }) => {
             <tr key={res.id}>
               <td className="p-3 font-bold">#{res.rank}</td>
               <td className="p-3 font-bold">{res.name}</td>
-              <td className="p-3 text-center text-xs">{res.examAverages["Before Midterm"]}</td>
+              {!is2526 && <td className="p-3 text-center text-xs">{res.examAverages["Before Midterm"]}</td>}
               <td className="p-3 text-center text-xs">{res.examAverages["Midterm"]}</td>
-              <td className="p-3 text-center text-xs">{res.examAverages["After Midterm"]}</td>
+              {!is2526 && <td className="p-3 text-center text-xs">{res.examAverages["After Midterm"]}</td>}
               <td className="p-3 text-center text-xs">{res.examAverages["Final"]}</td>
               <td className="p-3 text-center font-bold text-blue-600">{res.displayTotal} / {res.displayAverage}%</td>
             </tr>
@@ -822,6 +838,7 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
 
   if (!record) return null;
   const student = record.student;
+  const is2526 = record.academicYear === '2025-2026';
 
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
@@ -834,7 +851,7 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
         </div>
         <div className="text-right">
           <p className="text-[10px] text-slate-500 uppercase font-bold">Class / Session</p>
-          <p className="text-section font-black">{record.className} (2026)</p>
+          <p className="text-section font-black">{record.className} ({record.academicYear})</p>
         </div>
       </div>
 
@@ -854,10 +871,10 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
         <thead>
           <tr className="bg-slate-100 border-b border-slate-800">
             <th className="p-3 text-left text-[10px] uppercase font-bold">Subject</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">B.Mid</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">Mid</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">A.Mid</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">Final</th>
+            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-bold">B.Mid</th>}
+            <th className="p-3 text-center text-[10px] uppercase font-bold">{is2526 ? 'Mid (40)' : 'Mid (30)'}</th>
+            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-bold">A.Mid</th>}
+            <th className="p-3 text-center text-[10px] uppercase font-bold">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
             <th className="p-3 text-right text-[10px] uppercase font-bold">Total / Avg</th>
           </tr>
         </thead>
@@ -865,9 +882,9 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
           {Object.keys(record.results).map((subject, idx) => (
             <tr key={idx}>
               <td className="p-3 font-bold">{subject}</td>
-              <td className="p-3 text-center text-xs">{record.results[subject]["Before Midterm"]}</td>
+              {!is2526 && <td className="p-3 text-center text-xs">{record.results[subject]["Before Midterm"]}</td>}
               <td className="p-3 text-center text-xs">{record.results[subject]["Midterm"]}</td>
-              <td className="p-3 text-center text-xs">{record.results[subject]["After Midterm"]}</td>
+              {!is2526 && <td className="p-3 text-center text-xs">{record.results[subject]["After Midterm"]}</td>}
               <td className="p-3 text-center text-xs">{record.results[subject]["Final"]}</td>
               <td className="p-3 text-right font-bold text-blue-600">{record.results[subject].rawSum} / {record.results[subject].average}%</td>
             </tr>
@@ -987,32 +1004,34 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
       </div>
 
       <div className="space-y-12">
-        {history.map((record) => (
-          <div key={record.classId} className="avoid-break">
-            <h3 className="text-section font-black uppercase mb-4 flex items-center gap-2">
-              <span className="w-8 h-8 bg-slate-900 text-white rounded flex items-center justify-center text-xs">Y</span>
-              {record.className} Performance
-            </h3>
-            
-            <table className="w-full border-collapse mb-4">
-              <thead>
-                <tr className="bg-slate-100 border-y border-slate-300">
-                  <th className="p-2 text-left text-[10px] uppercase">Subject</th>
-                  <th className="p-2 text-center text-[10px] uppercase">B.Mid</th>
-                  <th className="p-2 text-center text-[10px] uppercase">Mid</th>
-                  <th className="p-2 text-center text-[10px] uppercase">A.Mid</th>
-                  <th className="p-2 text-center text-[10px] uppercase">Final</th>
-                  <th className="p-2 text-right text-[10px] uppercase font-bold">Total / Avg</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {Object.keys(record.results).map((subject, idx) => (
-                  <tr key={idx}>
-                    <td className="p-2 text-xs font-bold">{subject}</td>
-                    <td className="p-2 text-center text-xs">{record.results[subject]["Before Midterm"]}</td>
-                    <td className="p-2 text-center text-xs">{record.results[subject]["Midterm"]}</td>
-                    <td className="p-2 text-center text-xs">{record.results[subject]["After Midterm"]}</td>
-                    <td className="p-2 text-center text-xs">{record.results[subject]["Final"]}</td>
+        {history.map((record) => {
+          const is2526 = record.academicYear === '2025-2026';
+          return (
+            <div key={record.classId} className="avoid-break">
+              <h3 className="text-section font-black uppercase mb-4 flex items-center gap-2">
+                <span className="w-8 h-8 bg-slate-900 text-white rounded flex items-center justify-center text-xs">Y</span>
+                {record.className} Performance
+              </h3>
+              
+              <table className="w-full border-collapse mb-4">
+                <thead>
+                  <tr className="bg-slate-100 border-y border-slate-300">
+                    <th className="p-2 text-left text-[10px] uppercase">Subject</th>
+                    {!is2526 && <th className="p-2 text-center text-[10px] uppercase">B.Mid</th>}
+                    <th className="p-2 text-center text-[10px] uppercase">{is2526 ? 'Mid (40)' : 'Mid (30)'}</th>
+                    {!is2526 && <th className="p-2 text-center text-[10px] uppercase">A.Mid</th>}
+                    <th className="p-2 text-center text-[10px] uppercase">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
+                    <th className="p-2 text-right text-[10px] uppercase font-bold">Total / Avg</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {Object.keys(record.results).map((subject, idx) => (
+                    <tr key={idx}>
+                      <td className="p-2 text-xs font-bold">{subject}</td>
+                      {!is2526 && <td className="p-2 text-center text-xs">{record.results[subject]["Before Midterm"]}</td>}
+                      <td className="p-2 text-center text-xs">{record.results[subject]["Midterm"]}</td>
+                      {!is2526 && <td className="p-2 text-center text-xs">{record.results[subject]["After Midterm"]}</td>}
+                      <td className="p-2 text-center text-xs">{record.results[subject]["Final"]}</td>
                     <td className="p-2 text-right text-xs font-bold">{record.results[subject].rawSum} / {record.results[subject].average}%</td>
                   </tr>
                 ))}
@@ -1034,7 +1053,8 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <PrintableFooter signatureTitle="Manager's Signature" />
@@ -1042,7 +1062,7 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
   );
 };
 
-const PrintableSubjectClassResults = ({ className, subjectName, results, schoolSettings }) => {
+const PrintableSubjectClassResults = ({ className, subjectName, results, schoolSettings, is2526 }) => {
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
       <PrintableHeader schoolSettings={schoolSettings} title="Subject Performance Analysis" />
@@ -1061,10 +1081,10 @@ const PrintableSubjectClassResults = ({ className, subjectName, results, schoolS
         <thead>
           <tr className="bg-slate-100 border-y border-slate-900">
             <th className="p-3 text-left text-[10px] uppercase font-black">Student Name</th>
-            <th className="p-3 text-center text-[10px] uppercase font-black">B.Mid</th>
-            <th className="p-3 text-center text-[10px] uppercase font-black">Mid</th>
-            <th className="p-3 text-center text-[10px] uppercase font-black">A.Mid</th>
-            <th className="p-3 text-center text-[10px] uppercase font-black">Final</th>
+            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-black">B.Mid</th>}
+            <th className="p-3 text-center text-[10px] uppercase font-black">{is2526 ? 'Mid (40)' : 'Mid (30)'}</th>
+            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-black">A.Mid</th>}
+            <th className="p-3 text-center text-[10px] uppercase font-black">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
             <th className="p-3 text-right text-[10px] uppercase font-black">Total / Avg</th>
           </tr>
         </thead>
@@ -1075,9 +1095,9 @@ const PrintableSubjectClassResults = ({ className, subjectName, results, schoolS
             return (
               <tr key={res.id}>
                 <td className="p-3 font-bold">{res.name}</td>
-                <td className="p-3 text-center text-xs">{subjData["Before Midterm"]}</td>
+                {!is2526 && <td className="p-3 text-center text-xs">{subjData["Before Midterm"]}</td>}
                 <td className="p-3 text-center text-xs">{subjData["Midterm"]}</td>
-                <td className="p-3 text-center text-xs">{subjData["After Midterm"]}</td>
+                {!is2526 && <td className="p-3 text-center text-xs">{subjData["After Midterm"]}</td>}
                 <td className="p-3 text-center text-xs">{subjData["Final"]}</td>
                 <td className="p-3 text-right font-bold text-blue-600">{subjData.rawSum} / {subjData.average}%</td>
               </tr>
@@ -1094,6 +1114,7 @@ const PrintableSubjectClassResults = ({ className, subjectName, results, schoolS
 const PrintableSubjectStudentResults = ({ student, classRecord, subjectName, schoolSettings }) => {
   if (!classRecord || !classRecord.results[subjectName]) return null;
   const subjData = classRecord.results[subjectName];
+  const is2526 = classRecord.academicYear === '2025-2026';
 
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
@@ -1110,14 +1131,14 @@ const PrintableSubjectStudentResults = ({ student, classRecord, subjectName, sch
         </div>
       </div>
 
-      <div className="grid grid-cols-5 gap-4 mb-12">
+      <div className={`grid ${is2526 ? 'grid-cols-3' : 'grid-cols-5'} gap-4 mb-12`}>
         {[
-          { label: 'B.Midterm', val: subjData["Before Midterm"] },
+          !is2526 && { label: 'B.Midterm', val: subjData["Before Midterm"] },
           { label: 'Midterm', val: subjData["Midterm"] },
-          { label: 'A.Midterm', val: subjData["After Midterm"] },
+          !is2526 && { label: 'A.Midterm', val: subjData["After Midterm"] },
           { label: 'Final', val: subjData["Final"] },
           { label: 'Total / Avg', val: `${subjData.rawSum} / ${subjData.average}%`, highlight: true }
-        ].map((item, i) => (
+        ].filter(Boolean).map((item, i) => (
           <div key={i} className={`p-6 rounded-2xl border ${item.highlight ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 border-slate-200'} text-center shadow-sm`}>
             <p className={`text-[10px] uppercase font-bold mb-2 ${item.highlight ? 'text-slate-400' : 'text-slate-500'}`}>{item.label}</p>
             <p className="text-2xl font-black">{item.val || '-'}</p>

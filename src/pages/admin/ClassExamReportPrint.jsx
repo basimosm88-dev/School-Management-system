@@ -3,7 +3,12 @@ import { useParams } from 'react-router-dom';
 import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
 
-const getExamMaxScore = (type) => {
+const getExamMaxScore = (type, academicYear) => {
+  if (academicYear === '2025-2026') {
+    if (type === 'Midterm') return 40;
+    if (type === 'Final') return 60;
+    return 100;
+  }
   if (type === 'Before Midterm') return 10;
   if (type === 'Midterm') return 30;
   if (type === 'After Midterm') return 10;
@@ -11,9 +16,14 @@ const getExamMaxScore = (type) => {
   return 100;
 };
 
-const getGradePercentage = (score, examType) => {
+const getGradePercentage = (score, examType, academicYear) => {
   const numScore = parseFloat(score);
   if (isNaN(numScore)) return 0;
+  if (academicYear === '2025-2026') {
+    if (examType === 'Midterm') return (numScore / 40) * 100;
+    if (examType === 'Final') return (numScore / 60) * 100;
+    return numScore;
+  }
   if (examType === 'Before Midterm') return (numScore / 10) * 100;
   if (examType === 'Midterm') return (numScore / 30) * 100;
   if (examType === 'After Midterm') return (numScore / 10) * 100;
@@ -143,7 +153,7 @@ const ClassExamReportPrint = () => {
  const score = exam ? exam.grade : null;
  if (score !== null) {
  rawSum += score;
- totalPercentage += getGradePercentage(score, examType);
+ totalPercentage += getGradePercentage(score, examType, currentClass.academicYear);
  count++;
  }
  return (

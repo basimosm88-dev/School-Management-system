@@ -13,10 +13,11 @@ const ReportCardPrint = () => {
  const data = useMemo(() => getReportCardData(studentId), [studentId, getReportCardData]);
  const isManagementView = currentUser?.role === 'admin' || currentUser?.role === 'teacher';
  const studentClass = classes.find(c => c.id === data.student?.classId);
+ const is2526 = studentClass?.academicYear === '2025-2026';
 
  if (!data.student) return <div className="p-10 text-center text-rose-500">Student record not found</div>;
 
- const academicYear = `2026 - 2027`; 
+ const academicYear = studentClass?.academicYear || `2026 - 2027`; 
 
  return (
  <div className="bg-white min-h-screen p-10 font-serif text-slate-900 print:p-0">
@@ -93,7 +94,7 @@ const ReportCardPrint = () => {
  <div className="space-y-4">
  <div className="flex border-b border-slate-200 pb-2">
  <span className="w-32 text-label text-slate-400/80 uppercase">Academic Year</span>
- <span className="flex-1 text-label">2026 - 2027</span>
+ <span className="flex-1 text-label">{academicYear}</span>
  </div>
  <div className="flex border-b border-slate-200 pb-2">
  <span className="w-32 text-label text-slate-400/80 uppercase">Report Type</span>
@@ -107,10 +108,10 @@ const ReportCardPrint = () => {
  <thead>
  <tr className="bg-slate-900 text-white">
  <th className="border border-slate-900 px-4 py-4 text-label text-left uppercase">Subject</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Before Mid (10)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Midterm (30)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">After Mid (10)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Final (50)</th>
+ {!is2526 && <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Before Mid (10)</th>}
+ <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">{is2526 ? 'Midterm (40)' : 'Midterm (30)'}</th>
+ {!is2526 && <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">After Mid (10)</th>}
+ <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
  <th className="border border-slate-900 px-2 py-4 text-label text-center bg-slate-800 w-24">Total / Avg.</th>
  </tr>
  </thead>
@@ -118,9 +119,9 @@ const ReportCardPrint = () => {
  {Object.keys(data.results).map(subject => (
  <tr key={subject} className="border-b border-slate-200">
  <td className="border border-slate-300 px-4 py-4 text-label uppercase">{subject}</td>
- <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Before Midterm"]}</td>
+ {!is2526 && <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Before Midterm"]}</td>}
  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Midterm"]}</td>
- <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["After Midterm"]}</td>
+ {!is2526 && <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["After Midterm"]}</td>}
  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Final"]}</td>
  <td className="border border-slate-900 px-2 py-4 text-center text-label bg-slate-100">{data.results[subject].rawSum} / {data.results[subject].average}%</td>
  </tr>

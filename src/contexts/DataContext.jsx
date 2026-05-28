@@ -5,9 +5,14 @@ import { useSettings } from './SettingsContext';
 
 const DataContext = createContext();
 
-const getGradePercentage = (score, examType) => {
+const getGradePercentage = (score, examType, academicYear) => {
   const numScore = parseFloat(score);
   if (isNaN(numScore)) return 0;
+  if (academicYear === '2025-2026') {
+    if (examType === 'Midterm') return (numScore / 40) * 100;
+    if (examType === 'Final') return (numScore / 60) * 100;
+    return numScore;
+  }
   if (examType === 'Before Midterm') return (numScore / 10) * 100;
   if (examType === 'Midterm') return (numScore / 30) * 100;
   if (examType === 'After Midterm') return (numScore / 10) * 100;
@@ -673,6 +678,8 @@ export const DataProvider = ({ children }) => {
   const calculateRankings = (classId) => {
     const classStudents = students.filter(s => String(s.classId) === String(classId));
     const isStudent = currentUser?.role === 'student';
+    const classObj = classes.find(c => String(c.id) === String(classId));
+    const academicYear = classObj?.academicYear || '2025-2026';
     
     const rankings = classStudents.map(student => {
       let studentGrades = grades.filter(g => String(g.studentId) === String(student.id));
@@ -690,7 +697,7 @@ export const DataProvider = ({ children }) => {
       const percentages = studentGrades.map(g => {
         const exam = exams.find(e => String(e.id) === String(g.id));
         const examType = exam ? exam.examType : '';
-        return getGradePercentage(g.score, examType);
+        return getGradePercentage(g.score, examType, academicYear);
       });
 
       const total = percentages.reduce((acc, p) => acc + p, 0);
@@ -705,6 +712,14 @@ export const DataProvider = ({ children }) => {
   const calculatePromotion = () => 'Pending';
 
   const getReportCardData = (studentId, classId) => {
+    let targetClassId = classId;
+    if (!targetClassId) {
+      const student = students.find(s => String(s.id) === String(studentId));
+      targetClassId = student?.classId;
+    }
+    const classObj = classes.find(c => String(c.id) === String(targetClassId));
+    const academicYear = classObj?.academicYear || '2025-2026';
+
     const studentGrades = grades.filter(g => String(g.studentId) === String(studentId));
     const results = {};
     const isStudent = currentUser?.role === 'student';
@@ -735,7 +750,7 @@ export const DataProvider = ({ children }) => {
       
       results[subjectName][exam.examType] = g.score;
       results[subjectName].rawMarks.push(g.score);
-      const percent = getGradePercentage(g.score, exam.examType);
+      const percent = getGradePercentage(g.score, exam.examType, academicYear);
       results[subjectName].percentages.push(percent);
     });
     

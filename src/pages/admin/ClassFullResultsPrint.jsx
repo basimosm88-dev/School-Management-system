@@ -80,7 +80,7 @@ const ClassFullResultsPrint = () => {
  <div className="text-right">
  <h3 className="text-section">Class Results Summary</h3>
  <p className="text-label text-slate-500/80 mt-1">Class: {currentClass.name}</p>
- <p className="text-label text-slate-500/80">Academic Year: 2026/2027</p>
+ <p className="text-label text-slate-500/80">Academic Year: {currentClass.academicYear || '2026/2027'}</p>
  </div>
  </div>
 
@@ -97,7 +97,7 @@ const ClassFullResultsPrint = () => {
  <tr className="bg-slate-900 text-white">
  <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-left sticky left-0 bg-slate-900 z-20 w-40">Student Name</th>
  {uniqueSubjects.map(sub => (
- <th key={sub} colSpan="5" className="border border-slate-700 px-2 py-2 text-center border-b-0">
+ <th key={sub} colSpan={currentClass?.academicYear === '2025-2026' ? 3 : 5} className="border border-slate-700 px-2 py-2 text-center border-b-0">
  {sub}
  </th>
  ))}
@@ -106,15 +106,18 @@ const ClassFullResultsPrint = () => {
  <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-12">Rank</th>
  </tr>
  <tr className="bg-slate-800 text-white text-label">
- {uniqueSubjects.map(sub => (
- <React.Fragment key={`${sub}-sub`}>
- <th className="border border-slate-700 p-1 text-center">B-Mid</th>
- <th className="border border-slate-700 p-1 text-center">Mid</th>
- <th className="border border-slate-700 p-1 text-center">A-Mid</th>
- <th className="border border-slate-700 p-1 text-center">Final</th>
- <th className="border border-slate-700 p-1 text-center bg-slate-700">Tot/Avg</th>
- </React.Fragment>
- ))}
+ {uniqueSubjects.map(sub => {
+    const is2526 = currentClass?.academicYear === '2025-2026';
+    return (
+      <React.Fragment key={`${sub}-sub`}>
+      {!is2526 && <th className="border border-slate-700 p-1 text-center">B-Mid</th>}
+      <th className="border border-slate-700 p-1 text-center">{is2526 ? 'Mid (40)' : 'Mid'}</th>
+      {!is2526 && <th className="border border-slate-700 p-1 text-center">A-Mid</th>}
+      <th className="border border-slate-700 p-1 text-center">{is2526 ? 'Final (60)' : 'Final'}</th>
+      <th className="border border-slate-700 p-1 text-center bg-slate-700">Tot/Avg</th>
+      </React.Fragment>
+    );
+  })}
  </tr>
  </thead>
  <tbody>
@@ -125,6 +128,7 @@ const ClassFullResultsPrint = () => {
  }).map((student, sIdx) => {
  const report = getReportCardData(student.id);
  const studentRank = rankings.find(r => r.studentId === student.id);
+ const is2526 = currentClass?.academicYear === '2025-2026';
  
  return (
  <tr key={student.id} className={sIdx % 2 === 0 ? 'bg-white' : 'bg-slate-100'}>
@@ -135,9 +139,9 @@ const ClassFullResultsPrint = () => {
  const res = report.results[sub] || { "Before Midterm": "-", "Midterm": "-", "After Midterm": "-", "Final": "-", average: "-" };
  return (
  <React.Fragment key={`${student.id}-${sub}`}>
- <td className="border border-slate-300 p-1 text-center">{res["Before Midterm"]}</td>
+ {!is2526 && <td className="border border-slate-300 p-1 text-center">{res["Before Midterm"]}</td>}
  <td className="border border-slate-300 p-1 text-center">{res["Midterm"]}</td>
- <td className="border border-slate-300 p-1 text-center">{res["After Midterm"]}</td>
+ {!is2526 && <td className="border border-slate-300 p-1 text-center">{res["After Midterm"]}</td>}
  <td className="border border-slate-300 p-1 text-center">{res["Final"]}</td>
  <td className="border border-slate-300 p-1 text-center bg-slate-100/50">
     {res.average !== "-" ? `${res.rawSum} (${res.average}%)` : "-"}

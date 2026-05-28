@@ -3,25 +3,46 @@ import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
 
-const EXAM_MAX_SCORES = {
-  'Before Midterm': 10,
-  'Midterm': 30,
-  'After Midterm': 10,
-  'Final': 50
+const getExamMaxScore = (examType, academicYear) => {
+  if (academicYear === '2025-2026') {
+    if (examType === 'Midterm') return 40;
+    if (examType === 'Final') return 60;
+    return 100;
+  }
+  if (examType === 'Before Midterm') return 10;
+  if (examType === 'Midterm') return 30;
+  if (examType === 'After Midterm') return 10;
+  if (examType === 'Final') return 50;
+  return 100;
 };
 
 const TeacherExamsPage = () => {
   const { classes, students, exams, saveExamResults, updateExamStatus } = useData();
   const { currentUser } = useAppContext();
 
-  const [selectedExamType, setSelectedExamType] = useState('Before Midterm');
+  const [selectedExamType, setSelectedExamType] = useState('Midterm');
   const [selectedClassId, setSelectedClassId] = useState('');
   const [selectedSubjectId, setSelectedSubjectId] = useState('');
   const [examGrades, setExamGrades] = useState({});
   const [remarks, setRemarks] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
 
-  const examTypes = ['Before Midterm', 'Midterm', 'After Midterm', 'Final'];
+  const selectedClass = useMemo(() => {
+    return classes.find(c => String(c.id) === String(selectedClassId));
+  }, [classes, selectedClassId]);
+
+  const availableExamTypes = useMemo(() => {
+    if (selectedClass?.academicYear === '2025-2026') {
+      return ['Midterm', 'Final'];
+    }
+    return ['Before Midterm', 'Midterm', 'After Midterm', 'Final'];
+  }, [selectedClass]);
+
+  useEffect(() => {
+    if (!availableExamTypes.includes(selectedExamType)) {
+      setSelectedExamType(availableExamTypes[0] || 'Midterm');
+    }
+  }, [availableExamTypes, selectedExamType]);
 
   const assignedClasses = useMemo(() => {
     return classes.filter(c => 
@@ -72,7 +93,7 @@ const TeacherExamsPage = () => {
 
   const handleGradeChange = (studentId, grade) => {
     if (isLocked) return;
-    const maxVal = EXAM_MAX_SCORES[selectedExamType] || 100;
+    const maxVal = getExamMaxScore(selectedExamType, selectedClass?.academicYear || '2025-2026');
     const val = parseFloat(grade);
     if (!isNaN(val) && val > maxVal) {
       setExamGrades(prev => ({ ...prev, [studentId]: maxVal }));
@@ -129,7 +150,7 @@ const TeacherExamsPage = () => {
                 onChange={(e) => setSelectedExamType(e.target.value)}
                 className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
               >
-                {examTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                {availableExamTypes.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div>
@@ -259,7 +280,7 @@ const TeacherExamsPage = () => {
                            <input 
                             type="number"
                             min="0"
-                            max={EXAM_MAX_SCORES[selectedExamType] || 100}
+                            max={getExamMaxScore(selectedExamType, selectedClass?.academicYear || '2025-2026')}
                             value={examGrades[student.id] || ''}
                             onChange={(e) => handleGradeChange(student.id, e.target.value)}
                             disabled={isLocked}
@@ -268,7 +289,7 @@ const TeacherExamsPage = () => {
                           />
                           {!isLocked && (
                             <div className="absolute -top-2 left-1/2 -translate-x-1/2 opacity-0 group-hover/input:opacity-100 transition-all pointer-events-none">
-                              <span className="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-bold rounded uppercase">0-{EXAM_MAX_SCORES[selectedExamType] || 100} Range</span>
+                              <span className="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-bold rounded uppercase">0-{getExamMaxScore(selectedExamType, selectedClass?.academicYear || '2025-2026')} Range</span>
                             </div>
                           )}
                         </div>
