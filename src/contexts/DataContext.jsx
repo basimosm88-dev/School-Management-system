@@ -190,11 +190,72 @@ export const DataProvider = ({ children }) => {
   };
 
   const bulkAddStudents = async (studentsList) => {
-    // Basic optimistic fallback for bulk to prevent slow UI
-    const mapped = studentsList.map((s, i) => ({ ...s, id: `temp-${Date.now()}-${i}`, isDefaultPassword: true }));
-    setStudents(prev => [...prev, ...mapped]);
-    triggerSmartNotification({ title: 'Bulk Import Started', message: `Importing ${studentsList.length} students in background.`, type: 'info', recipientId: 'admin' });
-    // In production, this should loop through Edge Function or use a dedicated bulk endpoint.
+    triggerSmartNotification({ 
+      title: 'Bulk Import Started', 
+      message: `Importing ${studentsList.length} students. Please wait...`, 
+      type: 'info', 
+      recipientId: 'admin' 
+    });
+
+    try {
+      const successfulStudents = [];
+      let failCount = 0;
+
+      for (const studentData of studentsList) {
+        try {
+          const parts = studentData.name.split(' ');
+          const systemId = studentData.systemId || `STU${Math.floor(10000 + Math.random() * 90000)}`;
+          const loginEmail = `${systemId}@educore.local`.toLowerCase();
+          const isDefault = studentData.password === '123456';
+
+          const res = await supabase.functions.invoke('create-tenant-user', {
+            body: {
+              email: loginEmail,
+              password: studentData.password || '123456',
+              first_name: parts[0] || 'Student',
+              last_name: parts.slice(1).join(' ') || '',
+              role: 'student'
+            }
+          });
+          if (res.error) throw res.error;
+          const newId = res.data.user.id;
+          
+          const finalDetails = { ...studentData, systemId, isDefaultPassword: isDefault };
+          
+          // Update details in profiles table
+          await supabase.from('profiles').update({ details: finalDetails }).eq('id', newId);
+          successfulStudents.push({ ...finalDetails, id: newId });
+        } catch (err) {
+          console.error("Failed to import student:", studentData.name, err);
+          failCount++;
+        }
+      }
+
+      if (successfulStudents.length > 0) {
+        setStudents(prev => [...prev, ...successfulStudents]);
+        triggerSmartNotification({ 
+          title: 'Bulk Import Success', 
+          message: `Successfully imported ${successfulStudents.length} students. Failed: ${failCount}`, 
+          type: 'success', 
+          recipientId: 'admin' 
+        });
+      } else {
+        triggerSmartNotification({ 
+          title: 'Bulk Import Failed', 
+          message: `Failed to import any students.`, 
+          type: 'error', 
+          recipientId: 'admin' 
+        });
+      }
+    } catch (globalErr) {
+      console.error("Bulk import global failure:", globalErr);
+      triggerSmartNotification({ 
+        title: 'Error', 
+        message: 'Bulk import failed completely.', 
+        type: 'error', 
+        recipientId: 'admin' 
+      });
+    }
   };
 
   const updateStudent = async (id, updates) => {

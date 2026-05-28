@@ -11,7 +11,7 @@ const ImportStudentsModal = ({ onClose, onImport, classes, existingStudents }) =
 
   const downloadTemplate = () => {
     const templateData = [
-      { full_name: 'Ahmed Ali Hassan', phone_number: '252615000000', class: classes[0]?.name || 'Grade 1 - A' }
+      { "Full Name": 'Ahmed Ali Hassan', "Gender": 'Male', "Password": 'Osmanabukar33+', "Class": classes[0]?.name || 'Grade 1 - A' }
     ];
     const ws = XLSX.utils.json_to_sheet(templateData);
     const wb = XLSX.utils.book_new();
@@ -63,27 +63,39 @@ const ImportStudentsModal = ({ onClose, onImport, classes, existingStudents }) =
 
       jsonData.forEach((row, index) => {
         const rowNumber = index + 2; // +1 for 0-index, +1 for header
-        const fullName = row.full_name?.toString().trim();
-        const phoneNumber = row.phone_number?.toString().trim();
-        const className = row.class?.toString().trim();
+        
+        // Normalize keys case-insensitively and ignore whitespace/underscores
+        const normalized = {};
+        if (row && typeof row === 'object') {
+          Object.keys(row).forEach(key => {
+            const normalizedKey = key.toLowerCase().replace(/[\s_-]+/g, '');
+            normalized[normalizedKey] = row[key];
+          });
+        }
+
+        const fullName = (normalized["fullname"] || normalized["name"])?.toString().trim();
+        const gender = (normalized["gender"] || 'Male')?.toString().trim();
+        const password = (normalized["password"] || '123456')?.toString().trim();
+        const className = (normalized["class"] || normalized["classname"])?.toString().trim();
 
         let rowError = null;
 
-        if (!fullName || !phoneNumber || !className) {
-          rowError = "Missing required fields (full_name, phone_number, or class)";
-        } else if (existingStudents.some(s => s.phone === phoneNumber) || validRows.some(s => s.phone === phoneNumber)) {
-          rowError = "Phone number already exists";
+        if (!fullName || !className) {
+          rowError = "Missing required fields (Full Name or Class)";
         } else {
           const targetClass = classes.find(c => c.name.toLowerCase() === className.toLowerCase());
           if (!targetClass) {
             rowError = `Class '${className}' not found`;
           } else {
+            const systemId = `STU${Math.floor(10000 + Math.random() * 90000)}`;
             validRows.push({
               name: fullName,
-              phone: phoneNumber,
+              gender: gender,
+              password: password,
               classId: targetClass.id,
+              systemId: systemId,
+              phone: '',
               status: 'Active',
-              gender: 'Male', 
               parentStatus: 'Both',
               address: { country: 'Somalia', state: '', city: '', neighborhood: '', fullAddress: '' },
               specialConditions: { disability: false, refugee: false },
