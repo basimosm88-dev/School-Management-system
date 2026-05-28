@@ -104,16 +104,16 @@ const ReportCardPrint = () => {
 
  {/* RESULTS TABLE */}
  <table className="w-full border-collapse mb-12">
- <thead>
- <tr className="bg-slate-900 text-white">
- <th className="border border-slate-900 px-4 py-4 text-label text-left uppercase">Subject</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Before Mid ({academicSettings.examWeights.beforeMidterm}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Midterm ({academicSettings.examWeights.midterm}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">After Mid ({academicSettings.examWeights.afterMidterm}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Final ({academicSettings.examWeights.final}%)</th>
- <th className="border border-slate-900 px-2 py-4 text-label text-center bg-slate-800 w-24">Weighted Avg.</th>
- </tr>
- </thead>
+  <thead>
+  <tr className="bg-slate-900 text-white">
+  <th className="border border-slate-900 px-4 py-4 text-label text-left uppercase">Subject</th>
+  <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Before Mid ({academicSettings.examWeights.beforeMidterm || 10})</th>
+  <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Midterm ({academicSettings.examWeights.midterm || 30})</th>
+  <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">After Mid ({academicSettings.examWeights.afterMidterm || 10})</th>
+  <th className="border border-slate-900 px-2 py-4 text-label text-center w-20">Final ({academicSettings.examWeights.final || 50})</th>
+  <th className="border border-slate-900 px-2 py-4 text-label text-center bg-slate-800 w-24">Final Mark</th>
+  </tr>
+  </thead>
  <tbody>
  {Object.keys(data.results).map(subject => (
  <tr key={subject} className="border-b border-slate-200">
@@ -121,21 +121,21 @@ const ReportCardPrint = () => {
  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Before Midterm"]}</td>
  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Midterm"]}</td>
  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["After Midterm"]}</td>
- <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Final"]}</td>
- <td className="border border-slate-900 px-2 py-4 text-center text-label bg-slate-100">{data.results[subject].average}%</td>
- </tr>
- ))}
- </tbody>
+  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Final"]}</td>
+  <td className="border border-slate-900 px-2 py-4 text-center text-label bg-slate-100">{data.results[subject].average}</td>
+  </tr>
+  ))}
+  </tbody>
  </table>
 
   {/* SUMMARY SECTION */}
-  <div className="grid grid-cols-2 gap-8 mb-20">
-    <div className="p-6 bg-slate-100 border border-slate-200 rounded-xl text-center">
-      <p className="text-label text-slate-400/80 mb-2 uppercase">Total Average</p>
-      <p className="text-display text-slate-900">
-        {(Object.values(data.results).reduce((acc, curr) => acc + parseFloat(curr.average), 0) / Object.keys(data.results).length || 0).toFixed(1)}%
-      </p>
-    </div>
+   <div className="grid grid-cols-2 gap-8 mb-20">
+     <div className="p-6 bg-slate-100 border border-slate-200 rounded-xl text-center">
+       <p className="text-label text-slate-400/80 mb-2 uppercase">Overall Mark</p>
+       <p className="text-display text-slate-900">
+         {(Object.values(data.results).reduce((acc, curr) => acc + parseFloat(curr.average), 0) / Object.keys(data.results).length || 0).toFixed(1)}
+       </p>
+     </div>
     <div className="p-6 bg-slate-100 border border-slate-200 rounded-xl text-center">
       <p className="text-label text-slate-400/80 mb-2 uppercase">Class Ranking</p>
       <p className="text-display text-primary">#{data.rank}</p>

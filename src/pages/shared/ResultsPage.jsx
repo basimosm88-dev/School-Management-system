@@ -415,7 +415,7 @@ const ResultsPage = ({ role }) => {
                     <th className="px-4 py-4 text-center">Midterm</th>
                     <th className="px-4 py-4 text-center">After Mid</th>
                     <th className="px-4 py-4 text-center">Final</th>
-                    <th className="px-4 py-4 text-center">Avg Score</th>
+                    <th className="px-4 py-4 text-center">Final Mark</th>
                     <th className="px-6 py-4 text-center">Outcome</th>
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
@@ -464,7 +464,7 @@ const ResultsPage = ({ role }) => {
                           </span>
                         </td>
                         <td className="px-4 py-4 text-center">
-                          <span className="text-label text-primary font-bold">{res.displayAverage}%</span>
+                          <span className="text-label text-primary font-bold">{res.displayAverage}</span>
                         </td>
                         <td className="px-6 py-4 text-center">
                           <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
@@ -556,7 +556,7 @@ const ResultsPage = ({ role }) => {
 
                 {/* Performance Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                  <StatCard title="Yearly Average" value={`${classRecord.totalAverage}%`} icon="analytics" iconColorClass="bg-blue-50 text-primary" />
+                  <StatCard title="Yearly Mark" value={`${classRecord.totalAverage}`} icon="analytics" iconColorClass="bg-blue-50 text-primary" />
                   <StatCard title="Total Points" value={classRecord.totalScore} icon="functions" iconColorClass="bg-indigo-50 text-indigo-600" />
                   <StatCard title="Class Rank" value={`#${classRecord.rank}`} icon="military_tech" iconColorClass="bg-amber-50 text-amber-600" />
                   <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-4">
@@ -598,7 +598,7 @@ const ResultsPage = ({ role }) => {
                           <th className="px-4 py-4 text-center">Midterm</th>
                           <th className="px-4 py-4 text-center">After Mid</th>
                           <th className="px-4 py-4 text-center">Final</th>
-                          <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">Weighted Avg</th>
+                          <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">Final Mark</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -612,7 +612,7 @@ const ResultsPage = ({ role }) => {
                             <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["After Midterm"]}</td>
                             <td className="px-4 py-4 text-center text-on-surface font-bold text-label">{classRecord.results[subject]["Final"]}</td>
                             <td className="px-6 py-4 text-right bg-slate-100/30 dark:bg-slate-800/10">
-                              <span className="text-label text-primary font-bold">{classRecord.results[subject].average}%</span>
+                              <span className="text-label text-primary font-bold">{classRecord.results[subject].average}</span>
                             </td>
                           </tr>
                         ))}

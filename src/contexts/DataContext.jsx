@@ -660,26 +660,70 @@ export const DataProvider = ({ children }) => {
       triggerSmartNotification({ title: 'Error', message: 'Failed to update status', type: 'error' });
     }
   };
+  const getStudentSubjectAverages = (studentId, filterPublishedOnly = false) => {
+    const studentGrades = grades.filter(g => String(g.studentId) === String(studentId));
+    const results = {};
+    
+    studentGrades.forEach(g => {
+      const exam = exams.find(e => String(e.id) === String(g.id));
+      if (!exam) return;
+      if (filterPublishedOnly && exam.status !== 'PUBLISHED') return;
+      
+      const subject = subjects.find(s => String(s.id) === String(exam.subjectId));
+      const subjectName = subject ? subject.name : 'Unknown';
+      
+      if (!results[subjectName]) {
+        results[subjectName] = {
+          "Before Midterm": "-",
+          "Midterm": "-",
+          "After Midterm": "-",
+          "Final": "-"
+        };
+      }
+      results[subjectName][exam.examType] = g.score;
+    });
+
+    const averages = {};
+    Object.keys(results).forEach(sub => {
+      const bMid = results[sub]["Before Midterm"];
+      const mid = results[sub]["Midterm"];
+      const aMid = results[sub]["After Midterm"];
+      const fnl = results[sub]["Final"];
+
+      const valBMid = typeof bMid === 'number' ? bMid : 0;
+      const valMid = typeof mid === 'number' ? mid : 0;
+      const valAMid = typeof aMid === 'number' ? aMid : 0;
+      const valFnl = typeof fnl === 'number' ? fnl : 0;
+
+      averages[sub] = valBMid + valMid + valAMid + valFnl;
+    });
+
+    return averages;
+  };
+
   const calculateRankings = (classId) => {
     const classStudents = students.filter(s => String(s.classId) === String(classId));
     const isStudent = currentUser?.role === 'student';
     
     const rankings = classStudents.map(student => {
-      let studentGrades = grades.filter(g => String(g.studentId) === String(student.id));
+      const averages = getStudentSubjectAverages(student.id, isStudent);
+      const subjectAverages = Object.values(averages);
       
-      // If student is viewing, only rank based on published exam grades
-      if (isStudent) {
-        studentGrades = studentGrades.filter(g => {
-          const exam = exams.find(e => String(e.id) === String(g.id));
-          return exam && exam.status === 'PUBLISHED';
-        });
+      if (subjectAverages.length === 0) {
+        return { studentId: student.id, name: student.name, averageScore: 0, totalScore: 0 };
       }
       
-      if (studentGrades.length === 0) return { studentId: student.id, name: student.name, averageScore: 0, totalScore: 0 };
-      const total = studentGrades.reduce((acc, g) => acc + g.score, 0);
-      const averageScore = total / studentGrades.length;
-      return { studentId: student.id, name: student.name, averageScore, totalScore: total };
+      const totalScore = subjectAverages.reduce((acc, avg) => acc + avg, 0);
+      const averageScore = totalScore / subjectAverages.length;
+      
+      return { 
+        studentId: student.id, 
+        name: student.name, 
+        averageScore, 
+        totalScore 
+      };
     });
+    
     return rankings
       .sort((a, b) => b.averageScore - a.averageScore)
       .map((r, i) => ({ ...r, rank: i + 1 }));
@@ -693,11 +737,8 @@ export const DataProvider = ({ children }) => {
     const isStudent = currentUser?.role === 'student';
     
     studentGrades.forEach(g => {
-      // Find the merged exam row in the exams state by comparing grade row IDs
       const exam = exams.find(e => String(e.id) === String(g.id));
       if (!exam) return;
-      
-      // If student is requesting report card, only show PUBLISHED results
       if (isStudent && exam.status !== 'PUBLISHED') return;
       
       const subject = subjects.find(s => String(s.id) === String(exam.subjectId));
@@ -705,7 +746,6 @@ export const DataProvider = ({ children }) => {
       
       if (!results[subjectName]) {
         results[subjectName] = {
-          marks: [],
           average: 0,
           "Before Midterm": "-",
           "Midterm": "-",
@@ -713,24 +753,24 @@ export const DataProvider = ({ children }) => {
           "Final": "-"
         };
       }
-      
       results[subjectName][exam.examType] = g.score;
-      results[subjectName].marks.push(g.score);
     });
-    
+
+    const student = students.find(s => String(s.id) === String(studentId));
+    const cid = classId || student?.classId;
+
+    const averages = getStudentSubjectAverages(studentId, isStudent);
     Object.keys(results).forEach(sub => {
-      const marks = results[sub].marks;
-      results[sub].average = marks.length > 0
-        ? Math.round(marks.reduce((a, b) => a + b, 0) / marks.length)
-        : 0;
+      results[sub].average = averages[sub] || 0;
     });
     
-    const rankings = calculateRankings(classId);
+    const rankings = calculateRankings(cid);
     const myRankObj = rankings.find(r => String(r.studentId) === String(studentId));
     return {
+      student,
       results,
       rank: myRankObj ? myRankObj.rank : '-',
-      classId,
+      classId: cid,
       promotion: 'Pending'
     };
   };

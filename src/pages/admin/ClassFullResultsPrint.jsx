@@ -102,7 +102,7 @@ const ClassFullResultsPrint = () => {
  </th>
  ))}
  <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-16">Total</th>
- <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-16">Avg %</th>
+ <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-16">Avg Mark</th>
  <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-12">Rank</th>
  </tr>
  <tr className="bg-slate-800 text-white text-label">
@@ -112,7 +112,7 @@ const ClassFullResultsPrint = () => {
  <th className="border border-slate-700 p-1 text-center">Mid</th>
  <th className="border border-slate-700 p-1 text-center">A-Mid</th>
  <th className="border border-slate-700 p-1 text-center">Final</th>
- <th className="border border-slate-700 p-1 text-center bg-slate-700">W.Avg</th>
+ <th className="border border-slate-700 p-1 text-center bg-slate-700">Mark</th>
  </React.Fragment>
  ))}
  </tr>
@@ -139,7 +139,7 @@ const ClassFullResultsPrint = () => {
  <td className="border border-slate-300 p-1 text-center">{res["Midterm"]}</td>
  <td className="border border-slate-300 p-1 text-center">{res["After Midterm"]}</td>
  <td className="border border-slate-300 p-1 text-center">{res["Final"]}</td>
- <td className="border border-slate-300 p-1 text-center bg-slate-100/50">{res.average}%</td>
+ <td className="border border-slate-300 p-1 text-center bg-slate-100/50">{res.average}</td>
  </React.Fragment>
  );
  })}
@@ -147,7 +147,7 @@ const ClassFullResultsPrint = () => {
  {studentRank && typeof studentRank.totalScore === 'number' ? studentRank.totalScore.toFixed(1) : '-'}
  </td>
  <td className="border border-slate-900 px-2 py-3 text-center bg-slate-200">
- {studentRank && typeof studentRank.averageScore === 'number' ? studentRank.averageScore.toFixed(1) + '%' : '-'}
+ {studentRank && typeof studentRank.averageScore === 'number' ? studentRank.averageScore.toFixed(1) : '-'}
  </td>
  <td className="border border-slate-900 px-2 py-3 text-center bg-slate-900 text-white">
  {studentRank ? `#${studentRank.rank}` : '-'}
