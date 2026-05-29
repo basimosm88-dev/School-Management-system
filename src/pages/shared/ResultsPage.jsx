@@ -5,6 +5,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import { useAppContext } from '../../contexts/AppContext';
 import StatCard from '../../components/ui/StatCard';
 import EmptyState from '../../components/ui/EmptyState';
+import EditStudentResultsModal from '../../components/modals/EditStudentResultsModal';
 
 const getGradePercentage = (score, examType, academicYear) => {
   const numScore = parseFloat(score);
@@ -38,6 +39,9 @@ const ResultsPage = ({ role }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [printConfig, setPrintConfig] = useState({ type: 'report-card', examType: null });
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [editingSubject, setEditingSubject] = useState(null);
+  const [activeDropdownStudentId, setActiveDropdownStudentId] = useState(null);
 
   // Helper for printing
   const handlePrint = (studentId = null, config = { type: 'report-card', examType: null }) => {
@@ -504,6 +508,54 @@ const ResultsPage = ({ role }) => {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
+                             {userRole === 'admin' && (
+                               <div className="relative inline-block">
+                                 <button 
+                                   onClick={() => setActiveDropdownStudentId(activeDropdownStudentId === res.id ? null : res.id)}
+                                   className="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                                   title="Edit Results Options"
+                                 >
+                                   <span className="material-symbols-outlined text-section">edit</span>
+                                 </button>
+                                 
+                                 {activeDropdownStudentId === res.id && (
+                                   <>
+                                     <div 
+                                       className="fixed inset-0 z-40" 
+                                       onClick={() => setActiveDropdownStudentId(null)}
+                                     />
+                                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800 py-2 z-50 text-left animate-in fade-in slide-in-from-top-2 duration-150">
+                                       <button
+                                         onClick={() => {
+                                           setEditingStudent(res);
+                                           setEditingSubject(null);
+                                           setActiveDropdownStudentId(null);
+                                         }}
+                                         className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-250 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                                       >
+                                         <span className="material-symbols-outlined text-base text-slate-400">edit_note</span>
+                                         Edit All Subjects
+                                       </button>
+                                       <div className="border-t border-slate-100 dark:border-slate-800/80 my-1.5" />
+                                       {(currentClass?.subjects || []).map((sub) => (
+                                         <button
+                                           key={sub.name}
+                                           onClick={() => {
+                                             setEditingStudent(res);
+                                             setEditingSubject(sub.name);
+                                             setActiveDropdownStudentId(null);
+                                           }}
+                                           className="w-full text-left px-4 py-2.5 text-xs font-medium text-slate-650 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                                         >
+                                           <span className="material-symbols-outlined text-base text-slate-400">auto_stories</span>
+                                           Edit {sub.name}
+                                         </button>
+                                       ))}
+                                     </div>
+                                   </>
+                                 )}
+                               </div>
+                             )}
                              {userRole !== 'teacher' && (
                                <button 
                                  onClick={() => handlePrint(res.id, { type: 'report-card' })}
@@ -626,6 +678,7 @@ const ResultsPage = ({ role }) => {
                           {!is2526 && <th className="px-4 py-4 text-center">After Mid</th>}
                           <th className="px-4 py-4 text-center">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
                           <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">Total / Avg</th>
+                          {userRole === 'admin' && <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">Actions</th>}
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -641,6 +694,21 @@ const ResultsPage = ({ role }) => {
                             <td className="px-6 py-4 text-right bg-slate-100/30 dark:bg-slate-800/10">
                               <span className="text-label text-primary font-bold">{classRecord.results[subject].rawSum} / {classRecord.results[subject].average}%</span>
                             </td>
+                            {userRole === 'admin' && (
+                              <td className="px-6 py-4 text-right bg-slate-100/30 dark:bg-slate-800/10">
+                                <button 
+                                  onClick={() => {
+                                    setEditingStudent(student);
+                                    setEditingSubject(subject);
+                                  }}
+                                  className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-all inline-flex items-center gap-1 text-xs font-semibold"
+                                  title={`Edit ${subject} scores`}
+                                >
+                                  <span className="material-symbols-outlined text-[18px]">edit</span>
+                                  Edit
+                                </button>
+                              </td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
@@ -750,6 +818,19 @@ const ResultsPage = ({ role }) => {
           classRecord={studentAcademicHistory.find(h => String(h.classId) === String(printConfig.classId))}
           examType={printConfig.examType}
           schoolSettings={schoolSettings}
+        />
+      )}
+
+      {/* Edit Student Results Modal */}
+      {editingStudent && (
+        <EditStudentResultsModal 
+          onClose={() => {
+            setEditingStudent(null);
+            setEditingSubject(null);
+          }}
+          student={editingStudent}
+          currentClass={classes.find(c => String(c.id) === String(editingStudent.classId)) || currentClass}
+          subjectName={editingSubject}
         />
       )}
     </PageLayout>

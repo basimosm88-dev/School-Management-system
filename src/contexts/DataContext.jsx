@@ -791,6 +791,192 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const updateStudentSubjectScores = async (studentId, classId, subjectName, scoreChanges) => {
+    try {
+      let resolvedSubjectId;
+      const subjectObj = subjects.find(s => s.name.toLowerCase() === subjectName.toLowerCase());
+      if (subjectObj) {
+        resolvedSubjectId = subjectObj.id;
+      } else {
+        throw new Error(`Subject "${subjectName}" not found.`);
+      }
+
+      for (const [examType, scoreVal] of Object.entries(scoreChanges)) {
+        if (scoreVal === undefined) continue;
+
+        let examId;
+        const { data: existingExams, error: findErr } = await supabase
+          .from('exams')
+          .select('id')
+          .eq('class_id', classId)
+          .eq('subject_id', resolvedSubjectId)
+          .eq('title', examType);
+
+        if (findErr) throw findErr;
+
+        if (existingExams && existingExams.length > 0) {
+          examId = existingExams[0].id;
+        } else {
+          const { data: newExam, error: createErr } = await supabase
+            .from('exams')
+            .insert({
+              title: examType,
+              class_id: classId,
+              subject_id: resolvedSubjectId,
+              date: new Date().toLocaleDateString('en-CA'),
+              school_id: currentUser.school_id,
+              details: { examType }
+            })
+            .select()
+            .single();
+
+          if (createErr) throw createErr;
+          examId = newExam.id;
+        }
+
+        const { data: existingGrade } = await supabase
+          .from('grades')
+          .select('*')
+          .eq('exam_id', examId)
+          .eq('student_id', studentId)
+          .maybeSingle();
+
+        if (scoreVal === null || scoreVal === '') {
+          if (existingGrade) {
+            const { error: deleteErr } = await supabase
+              .from('grades')
+              .delete()
+              .eq('id', existingGrade.id);
+            if (deleteErr) throw deleteErr;
+          }
+          continue;
+        }
+
+        const dbStatus = existingGrade ? existingGrade.status : 'published';
+        const gradeRow = {
+          exam_id: examId,
+          student_id: studentId,
+          score: parseFloat(scoreVal),
+          status: dbStatus,
+          submitted_by: currentUser.id,
+          school_id: currentUser.school_id,
+          details: { remarks: existingGrade?.details?.remarks || '' }
+        };
+
+        const { error: gradesErr } = await supabase
+          .from('grades')
+          .upsert(gradeRow, { onConflict: 'exam_id,student_id' });
+
+        if (gradesErr) throw gradesErr;
+      }
+
+      await refreshExamData();
+      triggerSmartNotification({ 
+        title: 'Success', 
+        message: `Updated results for ${subjectName}`, 
+        type: 'success' 
+      });
+    } catch (err) {
+      console.error("Error in updateStudentSubjectScores:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to update results', type: 'error' });
+      throw err;
+    }
+  };
+
+  const updateStudentAllScores = async (studentId, classId, allSubjectScores) => {
+    try {
+      for (const [subjectName, scoreChanges] of Object.entries(allSubjectScores)) {
+        let resolvedSubjectId;
+        const subjectObj = subjects.find(s => s.name.toLowerCase() === subjectName.toLowerCase());
+        if (subjectObj) {
+          resolvedSubjectId = subjectObj.id;
+        } else {
+          continue;
+        }
+
+        for (const [examType, scoreVal] of Object.entries(scoreChanges)) {
+          if (scoreVal === undefined) continue;
+
+          let examId;
+          const { data: existingExams, error: findErr } = await supabase
+            .from('exams')
+            .select('id')
+            .eq('class_id', classId)
+            .eq('subject_id', resolvedSubjectId)
+            .eq('title', examType);
+
+          if (findErr) throw findErr;
+
+          if (existingExams && existingExams.length > 0) {
+            examId = existingExams[0].id;
+          } else {
+            const { data: newExam, error: createErr } = await supabase
+              .from('exams')
+              .insert({
+                title: examType,
+                class_id: classId,
+                subject_id: resolvedSubjectId,
+                date: new Date().toLocaleDateString('en-CA'),
+                school_id: currentUser.school_id,
+                details: { examType }
+              })
+              .select()
+              .single();
+
+            if (createErr) throw createErr;
+            examId = newExam.id;
+          }
+
+          const { data: existingGrade } = await supabase
+            .from('grades')
+            .select('*')
+            .eq('exam_id', examId)
+            .eq('student_id', studentId)
+            .maybeSingle();
+
+          if (scoreVal === null || scoreVal === '') {
+            if (existingGrade) {
+              const { error: deleteErr } = await supabase
+                .from('grades')
+                .delete()
+                .eq('id', existingGrade.id);
+              if (deleteErr) throw deleteErr;
+            }
+            continue;
+          }
+
+          const dbStatus = existingGrade ? existingGrade.status : 'published';
+          const gradeRow = {
+            exam_id: examId,
+            student_id: studentId,
+            score: parseFloat(scoreVal),
+            status: dbStatus,
+            submitted_by: currentUser.id,
+            school_id: currentUser.school_id,
+            details: { remarks: existingGrade?.details?.remarks || '' }
+          };
+
+          const { error: gradesErr } = await supabase
+            .from('grades')
+            .upsert(gradeRow, { onConflict: 'exam_id,student_id' });
+
+          if (gradesErr) throw gradesErr;
+        }
+      }
+
+      await refreshExamData();
+      triggerSmartNotification({ 
+        title: 'Success', 
+        message: 'Updated student results successfully.', 
+        type: 'success' 
+      });
+    } catch (err) {
+      console.error("Error in updateStudentAllScores:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to save results', type: 'error' });
+      throw err;
+    }
+  };
+
   const updateExamStatus = async (examType, classId, subjectId, newStatus, releaseDate = null) => {
     try {
       const dbStatus = newStatus === 'APPROVED' ? 'approved' :
@@ -1236,7 +1422,7 @@ export const DataProvider = ({ children }) => {
     teachers, addTeacher, updateTeacher, deleteTeacher, changeTeacherPassword,
     classes, addClass, updateClass, deleteClass, assignStudentToClass, removeStudentFromClass, assignSubjectToClass, removeSubjectFromClass, updateClassSubject,
     subjects, addSubject, updateSubject, deleteSubject,
-    exams, saveExamResults, updateExamStatus, calculateRankings, calculatePromotion, getReportCardData, promotionSettings, setPromotionSettings, saveExamReleaseSchedule, promotions,
+    exams, saveExamResults, updateExamStatus, calculateRankings, calculatePromotion, getReportCardData, promotionSettings, setPromotionSettings, saveExamReleaseSchedule, promotions, updateStudentSubjectScores, updateStudentAllScores,
     grades, submitGrade, deleteGrade, updateGrade,
     attendance, saveAttendanceRecords, getAttendanceStats, getStudentAttendanceSummary,
     timetables, addTimetableSlot, deleteTimetableSlot, getTimetableForClass, getTimetableForTeacher,
@@ -1244,7 +1430,7 @@ export const DataProvider = ({ children }) => {
     announcements, addAnnouncement, deleteAnnouncement, updateAnnouncement,
     notifications, addNotification, markNotificationRead, triggerSmartNotification, markAllNotificationsRead,
     systemLogs, resetData
-  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser, removeSubjectFromClass, updateClassSubject]);
+  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser, removeSubjectFromClass, updateClassSubject, updateStudentSubjectScores, updateStudentAllScores]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
