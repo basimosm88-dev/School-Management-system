@@ -452,6 +452,101 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const removeSubjectFromClass = async (classId, subjectName) => {
+    try {
+      const cls = classes.find(c => String(c.id) === String(classId));
+      if (!cls) return;
+
+      const updatedSubjects = (cls.subjects || []).filter(sub => sub.name !== subjectName);
+      const updatedClass = { ...cls, subjects: updatedSubjects };
+
+      // Update local state
+      setClasses(prev => prev.map(c => String(c.id) === String(classId) ? updatedClass : c));
+
+      // Persist class details in classes table
+      const details = { ...updatedClass };
+      delete details.id;
+      delete details.name;
+      delete details.section;
+
+      const { error } = await supabase
+        .from('classes')
+        .update({ details })
+        .eq('id', classId);
+
+      if (error) throw error;
+
+      // Delete assignment from teacher_subjects table
+      const subjectObj = subjects.find(s => s.name === subjectName);
+      if (subjectObj) {
+        await supabase
+          .from('teacher_subjects')
+          .delete()
+          .eq('class_id', classId)
+          .eq('subject_id', subjectObj.id);
+      }
+      triggerSmartNotification({ title: 'Success', message: 'Subject removed from class successfully.', type: 'success' });
+    } catch (err) {
+      console.error("Error in removeSubjectFromClass:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to remove subject from class.', type: 'error' });
+    }
+  };
+
+  const updateClassSubject = async (classId, oldSubjectName, newSubjectName, newTeacherId) => {
+    try {
+      const cls = classes.find(c => String(c.id) === String(classId));
+      if (!cls) return;
+
+      const updatedSubjects = (cls.subjects || []).map(sub => 
+        sub.name === oldSubjectName ? { name: newSubjectName, teacherId: newTeacherId } : sub
+      );
+      const updatedClass = { ...cls, subjects: updatedSubjects };
+
+      // Update local state
+      setClasses(prev => prev.map(c => String(c.id) === String(classId) ? updatedClass : c));
+
+      // Persist class details in classes table
+      const details = { ...updatedClass };
+      delete details.id;
+      delete details.name;
+      delete details.section;
+
+      const { error } = await supabase
+        .from('classes')
+        .update({ details })
+        .eq('id', classId);
+
+      if (error) throw error;
+
+      // Update teacher_subjects table
+      const oldSubjectObj = subjects.find(s => s.name === oldSubjectName);
+      if (oldSubjectObj) {
+        await supabase
+          .from('teacher_subjects')
+          .delete()
+          .eq('class_id', classId)
+          .eq('subject_id', oldSubjectObj.id);
+      }
+
+      const newSubjectObj = subjects.find(s => s.name === newSubjectName);
+      if (newSubjectObj) {
+        const { error: tsError } = await supabase
+          .from('teacher_subjects')
+          .insert({
+            teacher_id: newTeacherId,
+            subject_id: newSubjectObj.id,
+            class_id: classId,
+            school_id: currentUser?.school_id,
+            details: { subjectName: newSubjectName }
+          });
+        if (tsError) console.error("Error inserting into teacher_subjects:", tsError);
+      }
+      triggerSmartNotification({ title: 'Success', message: 'Subject assignment updated successfully.', type: 'success' });
+    } catch (err) {
+      console.error("Error in updateClassSubject:", err);
+      triggerSmartNotification({ title: 'Error', message: 'Failed to update subject assignment.', type: 'error' });
+    }
+  };
 
   // --- SUBJECTS ---
   const addSubject = async (subjectData) => {
@@ -1139,7 +1234,7 @@ export const DataProvider = ({ children }) => {
   const value = useMemo(() => ({
     students, addStudent, bulkAddStudents, updateStudent, deleteStudent, changeStudentPassword,
     teachers, addTeacher, updateTeacher, deleteTeacher, changeTeacherPassword,
-    classes, addClass, updateClass, deleteClass, assignStudentToClass, removeStudentFromClass, assignSubjectToClass,
+    classes, addClass, updateClass, deleteClass, assignStudentToClass, removeStudentFromClass, assignSubjectToClass, removeSubjectFromClass, updateClassSubject,
     subjects, addSubject, updateSubject, deleteSubject,
     exams, saveExamResults, updateExamStatus, calculateRankings, calculatePromotion, getReportCardData, promotionSettings, setPromotionSettings, saveExamReleaseSchedule, promotions,
     grades, submitGrade, deleteGrade, updateGrade,
@@ -1149,7 +1244,7 @@ export const DataProvider = ({ children }) => {
     announcements, addAnnouncement, deleteAnnouncement, updateAnnouncement,
     notifications, addNotification, markNotificationRead, triggerSmartNotification, markAllNotificationsRead,
     systemLogs, resetData
-  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser]);
+  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser, removeSubjectFromClass, updateClassSubject]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };

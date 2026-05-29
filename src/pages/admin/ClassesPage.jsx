@@ -15,6 +15,8 @@ const ClassesPage = () => {
  assignStudentToClass,
  removeStudentFromClass,
  assignSubjectToClass,
+ removeSubjectFromClass,
+ updateClassSubject,
  addNotification 
  } = useData();
  const { t } = useSettings();
@@ -269,6 +271,8 @@ const ClassesPage = () => {
  onAssignStudent={assignStudentToClass}
  onRemoveStudent={removeStudentFromClass}
  onAssignSubject={assignSubjectToClass}
+ onRemoveSubject={removeSubjectFromClass}
+ onUpdateSubject={updateClassSubject}
  addNotification={addNotification}
  />
  )}
@@ -454,11 +458,14 @@ const ClassProfile = ({
  onAssignStudent, 
  onRemoveStudent, 
  onAssignSubject,
+ onRemoveSubject,
+ onUpdateSubject,
  addNotification
 }) => {
  const [activeTab, setActiveTab] = useState('overview');
  const [isAddingStudent, setIsAddingStudent] = useState(false);
  const [isAddingSubject, setIsAddingSubject] = useState(false);
+ const [editingSubject, setEditingSubject] = useState(null);
 
  const supervisor = teachers.find(t => String(t.id) === String(cls.teacherId));
  const classStudents = students.filter(s => s.classId == cls.id);
@@ -720,6 +727,66 @@ const ClassProfile = ({
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  {(cls.subjects || []).map((sub, idx) => {
  const teacher = teachers.find(t => t.id === sub.teacherId);
+ const isEditing = editingSubject && editingSubject.name === sub.name;
+
+ if (isEditing) {
+   return (
+     <div key={idx} className="p-6 bg-slate-50 dark:bg-slate-800/80 rounded-3xl border border-primary/25 shadow-inner flex flex-col gap-4 justify-between animate-in fade-in duration-200 col-span-full md:col-span-1">
+       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+         <div>
+           <label className="text-[10px] text-slate-400 uppercase font-semibold mb-1 block">Subject</label>
+           <select 
+             id={`edit-sub-select-${idx}`} 
+             defaultValue={sub.name}
+             className="form-input-custom w-full bg-transparent dark:bg-slate-900 text-sm"
+           >
+             {subjects
+               .filter(s => (s.levels || []).includes(cls.level) && s.status === 'Active')
+               .map(s => (
+                 <option key={s.id} value={s.name}>{s.name}</option>
+               ))
+             }
+           </select>
+         </div>
+         <div>
+           <label className="text-[10px] text-slate-400 uppercase font-semibold mb-1 block">Teacher</label>
+           <select 
+             id={`edit-teach-select-${idx}`} 
+             defaultValue={sub.teacherId}
+             className="form-input-custom w-full bg-transparent dark:bg-slate-900 text-sm"
+           >
+             {teachers.map(t => (
+               <option key={t.id} value={t.id}>{t.name}</option>
+             ))}
+           </select>
+         </div>
+       </div>
+       <div className="flex justify-end gap-2 mt-2">
+         <button 
+           onClick={() => setEditingSubject(null)} 
+           className="px-3 py-1.5 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-205"
+         >
+           Cancel
+         </button>
+         <button 
+           onClick={() => {
+             const newSubName = document.getElementById(`edit-sub-select-${idx}`).value;
+             const newTeachId = document.getElementById(`edit-teach-select-${idx}`).value;
+             if (newSubName && newTeachId) {
+               onUpdateSubject(cls.id, sub.name, newSubName, newTeachId);
+               addNotification(`Updated assignment for ${newSubName}`, 'success');
+               setEditingSubject(null);
+             }
+           }}
+           className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg"
+         >
+           Save
+         </button>
+       </div>
+     </div>
+   );
+ }
+
  return (
  <div key={idx} className="p-6 bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm flex items-center justify-between">
  <div className="flex items-center gap-4">
@@ -734,9 +801,32 @@ const ClassProfile = ({
  </div>
  </div>
  </div>
- <div className="text-right">
- <p className="text-label text-slate-400/80">Teacher ID</p>
- <p className="text-label text-slate-700 dark:text-slate-300"># {sub.teacherId}</p>
+ <div className="flex items-center gap-4">
+   <div className="text-right">
+     <p className="text-label text-slate-400/80">Teacher ID</p>
+     <p className="text-label text-slate-700 dark:text-slate-300"># {sub.teacherId}</p>
+   </div>
+   <div className="flex gap-1 border-l border-slate-100 dark:border-slate-700 pl-4 shrink-0">
+     <button 
+       onClick={() => setEditingSubject(sub)}
+       className="p-2 hover:bg-slate-50 dark:hover:bg-slate-700 text-blue-500 rounded-xl transition-all"
+       title="Edit Assignment"
+     >
+       <span className="material-symbols-outlined text-body">edit</span>
+     </button>
+     <button 
+       onClick={() => {
+         if (confirm(`Are you sure you want to remove "${sub.name}" from this class?`)) {
+           onRemoveSubject(cls.id, sub.name);
+           addNotification(`Removed ${sub.name} from class`, 'success');
+         }
+       }}
+       className="p-2 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-rose-500 rounded-xl transition-all"
+       title="Delete Assignment"
+     >
+       <span className="material-symbols-outlined text-body">delete</span>
+     </button>
+   </div>
  </div>
  </div>
  );
