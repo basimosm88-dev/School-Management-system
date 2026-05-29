@@ -189,9 +189,10 @@ const AdminExamsPage = () => {
           if (!isNaN(sheetAverage)) {
             const rawAvgCalculated = subjectsList.length > 0 ? sumCalculated / subjectsList.length : 0;
             const diffPercentage = Math.abs(sheetAverage - avgPercentageCalculated);
+            const diffPercentageScaled = Math.abs((sheetAverage * 100) - avgPercentageCalculated);
             const diffRaw = Math.abs(sheetAverage - rawAvgCalculated);
             
-            if (diffPercentage > 1.0 && diffRaw > 1.0) {
+            if (diffPercentage > 1.0 && diffPercentageScaled > 1.0 && diffRaw > 1.0) {
               warnings.push({
                 rowNumber,
                 type: "Average Mismatch",
