@@ -126,8 +126,17 @@ const AdminExamsPage = () => {
         let subjectsWithGradesCount = 0;
 
         subjectsList.forEach(sub => {
-          const subKey = sub.name.toLowerCase().replace(/[\s_-]+/g, '');
-          const scoreVal = normalized[subKey];
+          const subKey = sub.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+          // Find a key in normalized that matches or contains subKey
+          const matchedKey = Object.keys(normalized).find(k => {
+            const cleanK = k.toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (cleanK === subKey) return true;
+            // Fuzzy match: check if one contains the other, ensuring length check to avoid false positives
+            if (cleanK.includes(subKey)) return true;
+            if (cleanK.length >= 3 && subKey.includes(cleanK)) return true;
+            return false;
+          });
+          const scoreVal = matchedKey ? normalized[matchedKey] : undefined;
           
           if (scoreVal !== undefined && scoreVal !== null && scoreVal.toString().trim() !== '') {
             const numScore = parseFloat(scoreVal);
@@ -162,10 +171,12 @@ const AdminExamsPage = () => {
         if (sheetTotalVal !== undefined && sheetTotalVal !== null && sheetTotalVal.toString().trim() !== '') {
           const sheetTotal = parseFloat(sheetTotalVal);
           if (!isNaN(sheetTotal) && Math.abs(sheetTotal - sumCalculated) > 0.1) {
+            const excelKeys = Object.keys(row).filter(k => !["student name", "total", "average", "status"].includes(k.toLowerCase().trim()));
+            const expectedKeys = subjectsList.map(s => s.name);
             warnings.push({
               rowNumber,
               type: "Total Mismatch",
-              message: `Student "${studentNameVal}": Excel total is ${sheetTotal}, but calculated total is ${sumCalculated.toFixed(1)}.`
+              message: `Student "${studentNameVal}": Excel total is ${sheetTotal}, but calculated total is ${sumCalculated.toFixed(1)}. Excel columns: [${excelKeys.join(', ')}]. Expected subjects: [${expectedKeys.join(', ')}].`
             });
           }
         }
