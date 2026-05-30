@@ -124,7 +124,7 @@ const StudentsPage = () => {
       addNotification('Please select an assigned class for the student.', 'error');
       return;
     }
-    if (studentData.password && !/^\d{6}$/.test(formData.password || studentData.password)) {
+    if (studentData.password && !/^\d{6}$/.test(studentData.password)) {
       addNotification('Student password must be exactly 6 numerical digits.', 'error');
       return;
     }
