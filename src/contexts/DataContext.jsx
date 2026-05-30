@@ -685,6 +685,7 @@ export const DataProvider = ({ children }) => {
         setGrades(formattedGrades);
 
         const currentSubjects = subjectData ? subjectData.map(s => ({ ...s.details, id: s.id, name: s.name })) : subjects;
+        if (subjectData) setSubjects(currentSubjects);
 
         const mergedExams = [];
         gradeData.forEach(g => {

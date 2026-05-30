@@ -50,11 +50,11 @@ const ClassExamReportPrint = () => {
  return <div className="p-10 text-center font-serif text-rose-500">No data found for this class.</div>;
  }
 
- // Get all unique subjects for this class and exam type
+ // Get all unique subjects for this class and exam type (allow approved or published results for printing)
  const classExams = exams.filter(e => 
- String(e.classId) === String(classId) && 
- e.examType === examType && 
- e.status === 'PUBLISHED'
+   String(e.classId) === String(classId) && 
+   e.examType === examType && 
+   (e.status === 'PUBLISHED' || e.status === 'APPROVED')
  );
 
  const uniqueSubjects = [...new Set(classExams.map(e => e.subjectName))].sort();

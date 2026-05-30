@@ -23,8 +23,11 @@ const ClassFullResultsPrint = () => {
  return <div className="p-10 text-center font-serif text-rose-500">No data found for this class.</div>;
  }
 
- // Get all unique subjects for this class
- const classExams = exams.filter(e => String(e.classId) === String(classId) && e.status === 'PUBLISHED');
+ // Get all unique subjects for this class (allow approved or published results for printing)
+ const classExams = exams.filter(e => 
+   String(e.classId) === String(classId) && 
+   (e.status === 'PUBLISHED' || e.status === 'APPROVED')
+ );
  const uniqueSubjects = [...new Set(classExams.map(e => e.subjectName))].sort();
 
  return (

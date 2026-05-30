@@ -112,8 +112,49 @@ const AdminExamsPage = () => {
           return;
         }
 
-        // Match student case-insensitively
-        const student = classStudents.find(s => s.name.toLowerCase().trim() === studentNameVal.toLowerCase());
+        // Match student robustly
+        const cleanName = studentNameVal.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+        let student = classStudents.find(s => {
+          const dbClean = s.name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+          return dbClean === cleanName;
+        });
+
+        // Try substring match (e.g., sheet has "Caaisha Cabdi" but database has "Caaisha Cabdi Ibraahim")
+        if (!student) {
+          const substringMatches = classStudents.filter(s => {
+            const dbClean = s.name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+            return dbClean.includes(cleanName) || cleanName.includes(dbClean);
+          });
+          if (substringMatches.length === 1) {
+            student = substringMatches[0];
+          }
+        }
+
+        // Try word order/subset match (e.g., sheet has "Caaisha Ibraahim" but database has "Caaisha Cabdi Ibraahim")
+        if (!student) {
+          const sheetWords = cleanName.split(' ');
+          const subsetMatches = classStudents.filter(s => {
+            const dbClean = s.name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+            const dbWords = dbClean.split(' ');
+            let dbIdx = 0;
+            let matchCount = 0;
+            for (const word of sheetWords) {
+              while (dbIdx < dbWords.length) {
+                if (dbWords[dbIdx] === word) {
+                  matchCount++;
+                  dbIdx++;
+                  break;
+                }
+                dbIdx++;
+              }
+            }
+            return matchCount === sheetWords.length;
+          });
+          if (subsetMatches.length === 1) {
+            student = subsetMatches[0];
+          }
+        }
+
         if (!student) {
           errors.push({ rowNumber, error: `Student "${studentNameVal}" not found in class "${selectedClass?.name}".` });
           return;
