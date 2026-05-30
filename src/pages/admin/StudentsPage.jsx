@@ -6,8 +6,28 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import ImportStudentsModal from '../../components/modals/ImportStudentsModal';
 
+const sortClasses = (classesList) => {
+  return [...classesList].sort((a, b) => {
+    const matchA = a.name.match(/Class\s+(\d+)\s*-\s*([A-Z])/i);
+    const matchB = b.name.match(/Class\s+(\d+)\s*-\s*([A-Z])/i);
+    if (matchA && matchB) {
+      const numA = parseInt(matchA[1], 10);
+      const numB = parseInt(matchB[1], 10);
+      if (numA !== numB) {
+        return numA - numB;
+      }
+      return matchA[2].localeCompare(matchB[2]);
+    }
+    return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+  });
+};
+
 const StudentsPage = () => {
-  const { students, classes, addStudent, bulkAddStudents, updateStudent, deleteStudent, addNotification } = useData();
+  const { 
+    students, classes, addStudent, bulkAddStudents, 
+    updateStudent, deleteStudent, addNotification,
+    getReportCardData, getStudentAttendanceSummary 
+  } = useData();
   const { schoolSettings, t } = useSettings();
 
   // Search & Filter State
@@ -29,6 +49,7 @@ const StudentsPage = () => {
   // Navigation State
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
   const [selectedClassId, setSelectedClassId] = useState(null);
+  const [printingClassId, setPrintingClassId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { currentUser } = useAppContext();
   const userRole = currentUser?.role || 'admin';
@@ -59,15 +80,18 @@ const StudentsPage = () => {
   }, [students, searchTerm, filters, classes, selectedClassId]);
 
   const availableClasses = useMemo(() => {
-    if (userRole === 'admin') return classes;
-    if (userRole === 'teacher') {
+    let list = [];
+    if (userRole === 'admin') list = classes;
+    else if (userRole === 'teacher') {
       const assignedIds = (currentUser?.assignedClasses || []).map(id => String(id));
-      return classes.filter(c => 
+      list = classes.filter(c => 
         assignedIds.includes(String(c.id)) || 
         String(c.teacherId) === String(currentUser?.id)
       );
+    } else {
+      list = classes;
     }
-    return classes;
+    return sortClasses(list);
   }, [classes, userRole, currentUser]);
 
   // Handlers
@@ -100,7 +124,7 @@ const StudentsPage = () => {
       addNotification('Please select an assigned class for the student.', 'error');
       return;
     }
-    if (studentData.password && !/^\d{6}$/.test(studentData.password)) {
+    if (studentData.password && !/^\d{6}$/.test(formData.password || studentData.password)) {
       addNotification('Student password must be exactly 6 numerical digits.', 'error');
       return;
     }
@@ -125,6 +149,14 @@ const StudentsPage = () => {
       setViewMode('table');
       setIsLoading(false);
     }, 400);
+  };
+
+  const handlePrintClassList = () => {
+    setPrintingClassId(selectedClassId);
+    setTimeout(() => {
+      window.print();
+      setPrintingClassId(null);
+    }, 300);
   };
 
   const goBack = () => {
@@ -247,6 +279,16 @@ const StudentsPage = () => {
                   </span>
                 </div>
               </div>
+
+              {selectedClassId && !searchTerm && (
+                <button
+                  onClick={handlePrintClassList}
+                  className="btn-secondary py-2 px-6 flex items-center justify-center gap-2 border-primary/20 text-primary shrink-0"
+                >
+                  <span className="material-symbols-outlined text-section">print</span>
+                  Print Student List
+                </button>
+              )}
             </div>
 
             {/* TOP CONTROL BAR — Filters only (Search moved to global) */}
@@ -420,6 +462,15 @@ const StudentsPage = () => {
           schoolSettings={schoolSettings}
         />
       )}
+
+      {printingClassId && (
+        <PrintableClassStudents
+          classId={printingClassId}
+          students={students}
+          classes={classes}
+          schoolSettings={schoolSettings}
+        />
+      )}
     </PageLayout>
   );
 };
@@ -447,6 +498,7 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
     previousSchool: '',
     status: 'Active',
     notes: '',
+    photo: '',
     ...student,
     address: { country: 'Somalia', state: '', city: '', neighborhood: '', fullAddress: '', ...(student?.address || {}) },
     specialConditions: { disability: false, refugee: false, other: '', ...(student?.specialConditions || {}) },
@@ -465,6 +517,45 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
     } else {
       setFormData(prev => ({ ...prev, [path]: value }));
     }
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 300;
+        const MAX_HEIGHT = 300;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const base64String = canvas.toDataURL('image/jpeg', 0.7);
+        handleChange('photo', base64String);
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -499,6 +590,44 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
           <section>
             <FormSectionHeader icon="person" title="Section 1: Basic Information" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="col-span-full flex flex-col md:flex-row items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                <div className="w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700/50 shrink-0">
+                  {formData.photo ? (
+                    <img src={formData.photo} alt="Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="material-symbols-outlined text-display text-slate-400/80">photo_camera</span>
+                  )}
+                </div>
+                <div className="flex-1 w-full text-center md:text-left">
+                  <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1 block font-medium">Student Photograph</label>
+                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      id="student-photo-upload"
+                      className="hidden"
+                      onChange={handlePhotoChange}
+                    />
+                    <label
+                      htmlFor="student-photo-upload"
+                      className="btn-secondary py-1.5 px-4 cursor-pointer text-label inline-flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-section">upload</span>
+                      Upload Photo
+                    </label>
+                    {formData.photo && (
+                      <button
+                        type="button"
+                        onClick={() => handleChange('photo', '')}
+                        className="px-4 py-1.5 rounded-xl border border-rose-200 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-label transition-all"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-400/80 mt-1.5">Max size 300x300px. Auto-compressed for performance.</p>
+                </div>
+              </div>
               <div className="col-span-full lg:col-span-1">
                 <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Full Name (4 Names)</label>
                 <input type="text" value={formData.name || ''} onChange={e => handleChange('name', e.target.value)} className="form-input-custom" placeholder="First Second Third Surname" />
@@ -592,7 +721,7 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
                   required
                 >
                   <option value="">Select Class (Required)</option>
-                  {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  {sortClasses(classes).map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
@@ -683,6 +812,15 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
  * Structured with Sections A-H as requested.
  */
 const StudentProfile = ({ student, onClose, classes, schoolSettings }) => {
+  const { getReportCardData, getStudentAttendanceSummary } = useData();
+
+  const reportData = useMemo(() => getReportCardData(student.id, student.classId), [student, getReportCardData]);
+  const attendanceSummary = useMemo(() => getStudentAttendanceSummary(student.id), [student, getStudentAttendanceSummary]);
+  const { present, absent, late, rate } = attendanceSummary || { present: 0, absent: 0, late: 0, rate: 100 };
+
+  const studentClass = classes.find(c => String(c.id) === String(student.classId));
+  const classSubjects = studentClass?.subjects || [];
+
   const handlePrint = () => {
     window.print();
   };
@@ -692,8 +830,12 @@ const StudentProfile = ({ student, onClose, classes, schoolSettings }) => {
       <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-5xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto overflow-hidden animate-in zoom-in-95 duration-400">
         <div className="flex justify-between items-center p-8 border-b border-slate-100 dark:border-slate-800 bg-primary text-white relative">
           <div className="flex items-center gap-6 relative z-10">
-            <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-display shadow-inner">
-              {student.name ? student.name[0] : 'S'}
+            <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-display shadow-inner overflow-hidden">
+              {student.photo ? (
+                <img src={student.photo} alt={student.name} className="w-full h-full object-cover" />
+              ) : (
+                student.name ? student.name[0] : 'S'
+              )}
             </div>
             <div>
               <h3 className="text-display mb-1">{student.name}</h3>
@@ -798,25 +940,45 @@ const StudentProfile = ({ student, onClose, classes, schoolSettings }) => {
               {/* G. Grades */}
               <ProfileSection title="Academic Performance" icon="grade">
                 <div className="overflow-hidden rounded-xl border border-slate-100 dark:border-slate-800">
-                  <table className="w-full text-label">
-                    <thead className="bg-slate-100 dark:bg-slate-800/50 text-label text-slate-400/80">
+                  <table className="w-full text-label border-collapse">
+                    <thead className="bg-slate-100 dark:bg-slate-800/50 text-label text-slate-400/80 font-semibold border-b border-slate-200 dark:border-slate-850">
                       <tr>
                         <th className="px-4 py-2 text-left">Subject</th>
-                        <th className="px-4 py-2 text-center">Score</th>
-                        <th className="px-4 py-2 text-right">Grade</th>
+                        <th className="px-4 py-2 text-center">Before Mid (10)</th>
+                        <th className="px-4 py-2 text-center">Midterm (30)</th>
+                        <th className="px-4 py-2 text-center">After Mid (10)</th>
+                        <th className="px-4 py-2 text-center">Final (50)</th>
+                        <th className="px-4 py-2 text-right">Average</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                      <tr>
-                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">Mathematics</td>
-                        <td className="px-4 py-3 text-center">92</td>
-                        <td className="px-4 py-3 text-right text-emerald-500">A</td>
-                      </tr>
-                      <tr>
-                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">Physics</td>
-                        <td className="px-4 py-3 text-center">88</td>
-                        <td className="px-4 py-3 text-right text-emerald-500">A-</td>
-                      </tr>
+                      {classSubjects.map(sub => {
+                        const subName = sub.name;
+                        const subData = reportData?.results?.[subName] || {};
+                        const beforeMid = subData["Before Midterm"] !== undefined ? subData["Before Midterm"] : "-";
+                        const midterm = subData["Midterm"] !== undefined ? subData["Midterm"] : "-";
+                        const afterMid = subData["After Midterm"] !== undefined ? subData["After Midterm"] : "-";
+                        const finalScore = subData["Final"] !== undefined ? subData["Final"] : "-";
+                        const avg = subData.average !== undefined ? `${subData.average}%` : "-";
+
+                        return (
+                          <tr key={subName} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20">
+                            <td className="px-4 py-3 text-slate-700 dark:text-slate-300 font-medium">{subName}</td>
+                            <td className="px-4 py-3 text-center text-slate-600 dark:text-slate-400 font-mono">{beforeMid}</td>
+                            <td className="px-4 py-3 text-center text-slate-600 dark:text-slate-400 font-mono">{midterm}</td>
+                            <td className="px-4 py-3 text-center text-slate-600 dark:text-slate-400 font-mono">{afterMid}</td>
+                            <td className="px-4 py-3 text-center text-slate-600 dark:text-slate-400 font-mono">{finalScore}</td>
+                            <td className="px-4 py-3 text-right text-emerald-500 font-mono font-semibold">{avg}</td>
+                          </tr>
+                        );
+                      })}
+                      {classSubjects.length === 0 && (
+                        <tr>
+                          <td colSpan="6" className="px-4 py-6 text-center text-slate-400/80">
+                            No subjects assigned to this class.
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -856,23 +1018,23 @@ const StudentProfile = ({ student, onClose, classes, schoolSettings }) => {
                     <svg viewBox="0 0 36 36" className="w-full h-full rotate-[-90deg]">
                       <circle cx="18" cy="18" r="16" fill="transparent" stroke="#f1f5f9" strokeWidth="4" className="dark:stroke-slate-800" />
                       <circle cx="18" cy="18" r="16" fill="transparent" stroke="#10b981" strokeWidth="4"
-                        strokeDasharray="94 100"
+                        strokeDasharray={`${rate} 100`}
                         strokeLinecap="round"
                         className="transition-all duration-1000"
                       />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-display text-slate-900 dark:text-slate-100">94%</span>
+                      <span className="text-display text-slate-900 dark:text-slate-100">{rate}%</span>
                       <span className="text-label text-slate-400/80">Presence</span>
                     </div>
                   </div>
                   <div className="w-full grid grid-cols-2 gap-3">
                     <div className="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl text-center border border-emerald-100 dark:border-emerald-800/50">
-                      <span className="block text-section text-emerald-600 dark:text-emerald-400">182</span>
+                      <span className="block text-section text-emerald-600 dark:text-emerald-400">{present + late}</span>
                       <span className="text-label text-slate-500/80">Present</span>
                     </div>
                     <div className="bg-rose-50 dark:bg-rose-900/20 p-3 rounded-xl text-center border border-rose-100 dark:border-rose-800/50">
-                      <span className="block text-section text-rose-600 dark:text-rose-400">12</span>
+                      <span className="block text-section text-rose-600 dark:text-rose-400">{absent}</span>
                       <span className="text-label text-slate-500/80">Absent</span>
                     </div>
                   </div>
@@ -939,12 +1101,42 @@ const PrintableStudentProfile = ({ student, classes, schoolSettings }) => {
 
       {/* PDF BODY */}
       <div className="space-y-6 flex-1">
-        {/* Personal & Academic */}
+        {/* Photo & Basic Credentials Card */}
+        <div className="flex gap-6 items-start border border-slate-200 p-4 rounded-2xl bg-slate-50/50 mb-6">
+          {student.photo ? (
+            <img src={student.photo} alt="Student" className="w-32 h-32 object-cover rounded-xl border border-slate-300" />
+          ) : (
+            <div className="w-32 h-32 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-300">
+              <span className="material-symbols-outlined text-display">person</span>
+            </div>
+          )}
+          <div className="flex-1 grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-[10px] uppercase font-bold text-slate-400">Student Name</p>
+              <p className="text-base font-bold text-slate-800">{student.name}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-slate-400">Student ID</p>
+              <p className="text-base font-mono font-bold text-slate-800">#{student.systemId || student.id.split('-')[0]}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-slate-400">Assigned Class</p>
+              <p className="text-base font-bold text-slate-800">
+                {classes.find(c => String(c.id) === String(student.classId))?.name || 'Unassigned'}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-slate-400">Status</p>
+              <p className="text-base font-bold text-slate-800">{student.status || 'Active'}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Personal & Academic Details */}
         <div className="grid grid-cols-2 gap-8">
           <div className="print-section">
             <h3 className="print-section-title">Personal Information</h3>
             <div className="print-grid">
-              <PrintItem label="Full Name" value={student.name} />
               <PrintItem label="Gender" value={student.gender} />
               <PrintItem label="Birth Date" value={student.birthDate} />
               <PrintItem label="Birth Place" value={student.birthPlace} />
@@ -955,10 +1147,11 @@ const PrintableStudentProfile = ({ student, classes, schoolSettings }) => {
           <div className="print-section">
             <h3 className="print-section-title">Academic Details</h3>
             <div className="print-grid">
-              <PrintItem label="Assigned Class" value={classes.find(c => String(c.id) === String(student.classId))?.name} />
-              <PrintItem label="Student ID" value={`#${student.systemId || student.id}`} />
               <PrintItem label="Registration Date" value={student.registrationDate} />
               <PrintItem label="Registration Type" value={student.registrationType} />
+              {student.registrationType === 'Transfer from another school' && (
+                <PrintItem label="Previous School" value={student.previousSchool} />
+              )}
             </div>
           </div>
         </div>
@@ -1007,6 +1200,82 @@ const PrintableStudentProfile = ({ student, classes, schoolSettings }) => {
           <p className="text-[10px] font-black uppercase tracking-widest">Responsible Person's Signature</p>
         </div>
       </div>
+      <PrintableFooter />
+    </div>
+  );
+};
+
+const PrintableClassStudents = ({ classId, students, classes, schoolSettings }) => {
+  const { name: schoolName, logo, phone, email, address } = schoolSettings || {};
+  const currentClass = classes.find(c => String(c.id) === String(classId));
+  const classStudents = students
+    .filter(s => String(s.classId) === String(classId))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  return (
+    <div className="print-only font-sans text-slate-900 bg-white min-h-screen flex flex-col">
+      {/* PDF HEADER */}
+      <div className="print-header flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
+        <div className="flex items-center gap-4">
+          {logo ? (
+            <img src={logo} alt="Logo" className="w-16 h-16 object-contain" />
+          ) : (
+            <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center text-white">
+              <span className="material-symbols-outlined text-display">school</span>
+            </div>
+          )}
+          <div>
+            <h1 className="text-display text-slate-900">{schoolName}</h1>
+            <p className="text-label text-slate-500/80">Class Credentials List</p>
+          </div>
+        </div>
+        <div className="text-right text-label leading-relaxed text-slate-600">
+          <p>{address}</p>
+          <p>Phone: {phone}</p>
+          <p>Email: {email}</p>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-section border-l-4 border-primary pl-4">
+          Student List: {currentClass ? currentClass.name : 'Unknown Class'}
+        </h2>
+        <div className="text-right">
+          <p className="text-label text-slate-400/80">Print Date</p>
+          <p className="text-label">{new Date().toLocaleDateString()}</p>
+        </div>
+      </div>
+
+      <div className="flex-1">
+        <table className="w-full text-left border-collapse border border-slate-300 text-xs">
+          <thead>
+            <tr className="bg-slate-100 border-b border-slate-300">
+              <th className="p-3 border border-slate-300 w-12 text-center">No.</th>
+              <th className="p-3 border border-slate-300">Student Name</th>
+              <th className="p-3 border border-slate-300 w-36">Student ID</th>
+              <th className="p-3 border border-slate-300 w-36 text-center">Student Password</th>
+            </tr>
+          </thead>
+          <tbody>
+            {classStudents.map((student, idx) => (
+              <tr key={student.id} className="border-b border-slate-200">
+                <td className="p-3 border border-slate-300 text-center">{idx + 1}</td>
+                <td className="p-3 border border-slate-300 font-semibold">{student.name}</td>
+                <td className="p-3 border border-slate-300 font-mono">{student.systemId || student.id.split('-')[0]}</td>
+                <td className="p-3 border border-slate-300 font-mono text-center">{student.password || '123456'}</td>
+              </tr>
+            ))}
+            {classStudents.length === 0 && (
+              <tr>
+                <td colSpan="4" className="p-8 text-center text-slate-500 italic border border-slate-300">
+                  No students registered in this class yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
       <PrintableFooter />
     </div>
   );
