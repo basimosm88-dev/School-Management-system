@@ -184,7 +184,10 @@ export const DataProvider = ({ children }) => {
 
   const addStudent = async (studentData) => {
     try {
-      const parts = studentData.name.split(' ');
+      if (!studentData.name) {
+        throw new Error('Student name is required.');
+      }
+      const parts = studentData.name.trim().split(' ');
       const systemId = studentData.systemId || `STU${Math.floor(10000 + Math.random() * 90000)}`;
       const loginEmail = `${systemId}@educore.local`.toLowerCase();
       const isDefault = studentData.password === '123456';
@@ -194,21 +197,35 @@ export const DataProvider = ({ children }) => {
           email: loginEmail,
           password: studentData.password || '123456',
           first_name: parts[0] || 'Student',
-          last_name: parts.slice(1).join(' ') || '',
+          last_name: parts.slice(1).join(' ') || 'Student',
           role: 'student'
         }
       });
-      if (res.error) throw res.error;
+      
+      if (res.error) {
+        let errMsg = 'Edge Function error';
+        try {
+          const bodyText = await res.error.context.text();
+          const parsed = JSON.parse(bodyText);
+          if (parsed && parsed.error) errMsg = parsed.error;
+        } catch (e) {
+          errMsg = res.error.message || String(res.error);
+        }
+        throw new Error(errMsg);
+      }
+      
       const newId = res.data.user.id;
       
-      const finalDetails = { ...studentData, systemId, isDefaultPassword: isDefault };
+      const finalDetails = { ...studentData, name: studentData.name.trim(), systemId, isDefaultPassword: isDefault };
       // Update details
-      await supabase.from('profiles').update({ details: finalDetails }).eq('id', newId);
+      const { error: updateError } = await supabase.from('profiles').update({ details: finalDetails }).eq('id', newId);
+      if (updateError) throw updateError;
+      
       setStudents(prev => [...prev, { ...finalDetails, id: newId }]);
       triggerSmartNotification({ title: 'New Student Added', message: `${studentData.name} registered with ID ${systemId}.`, type: 'success', recipientId: 'admin' });
     } catch (err) {
       console.error(err);
-      triggerSmartNotification({ title: 'Error', message: 'Failed to add student', type: 'error' });
+      triggerSmartNotification({ title: 'Error', message: `Failed to add student: ${err.message || err}`, type: 'error' });
     }
   };
 
@@ -236,7 +253,7 @@ export const DataProvider = ({ children }) => {
               email: loginEmail,
               password: studentData.password || '123456',
               first_name: parts[0] || 'Student',
-              last_name: parts.slice(1).join(' ') || '',
+              last_name: parts.slice(1).join(' ') || 'Student',
               role: 'student'
             }
           });
