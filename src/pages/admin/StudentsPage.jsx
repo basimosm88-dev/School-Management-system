@@ -455,7 +455,7 @@ const StudentsPage = () => {
       )}
 
       {/* 5. HIDDEN PRINTABLE COMPONENT */}
-      {selectedStudent && (
+      {selectedStudent && !printingClassId && (
         <PrintableStudentProfile
           student={selectedStudent}
           classes={classes}
