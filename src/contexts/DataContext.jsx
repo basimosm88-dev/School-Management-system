@@ -39,6 +39,31 @@ export const DataProvider = ({ children }) => {
   const [systemLogs, setSystemLogs] = useState([]);
   const [promotionSettings, setPromotionSettings] = useState({ passingGrade: 50, minSubjects: 5 });
 
+  const fetchFullTable = async (tableName) => {
+    let allData = [];
+    let from = 0;
+    const limit = 1000;
+    let hasMore = true;
+
+    while (hasMore) {
+      const { data, error } = await supabase
+        .from(tableName)
+        .select('*')
+        .range(from, from + limit - 1);
+
+      if (error) throw error;
+      if (data && data.length > 0) {
+        allData = [...allData, ...data];
+        from += limit;
+        if (data.length < limit) {
+          hasMore = false;
+        }
+      } else {
+        hasMore = false;
+      }
+    }
+    return allData;
+  };
 
   // Fetch all data from Supabase on mount
   useEffect(() => {
@@ -47,7 +72,7 @@ export const DataProvider = ({ children }) => {
     const fetchData = async () => {
       try {
         // 1. Fetch Profiles
-        const { data: profiles } = await supabase.from('profiles').select('*');
+        const profiles = await fetchFullTable('profiles');
         if (profiles) {
           setStudents(profiles.filter(p => p.role === 'student').map(p => {
             const details = p.details || {};
@@ -69,11 +94,11 @@ export const DataProvider = ({ children }) => {
         }
 
         // 2. Fetch Classes
-        const { data: classData } = await supabase.from('classes').select('*');
+        const classData = await fetchFullTable('classes');
         if (classData) setClasses(classData.map(c => ({ ...c.details, id: c.id, name: c.name, section: c.section })));
 
         // 3. Fetch Subjects
-        const { data: subjectData } = await supabase.from('subjects').select('*');
+        const subjectData = await fetchFullTable('subjects');
         let currentSubjects = [];
         if (subjectData) {
           currentSubjects = subjectData.map(s => ({ ...s.details, id: s.id, name: s.name }));
@@ -81,20 +106,18 @@ export const DataProvider = ({ children }) => {
         }
 
         // 4. Fetch Attendance
-        const { data: attData } = await supabase.from('attendance').select('*');
+        const attData = await fetchFullTable('attendance');
         if (attData) setAttendance(attData.map(a => ({ ...a.details, id: a.id, studentId: a.student_id, classId: a.class_id, date: a.date, status: a.status })));
 
         // 5. Fetch Exams & Grades
-        let { data: examData } = await supabase.from('exams').select('*');
-        let { data: gradeData } = await supabase.from('grades').select('*');
+        let examData = await fetchFullTable('exams');
+        let gradeData = await fetchFullTable('grades');
         
         if (examData && gradeData) {
           const didRelease = await checkAndReleaseScheduledExams(examData);
           if (didRelease) {
-            const freshExams = await supabase.from('exams').select('*');
-            const freshGrades = await supabase.from('grades').select('*');
-            examData = freshExams.data || examData;
-            gradeData = freshGrades.data || gradeData;
+            examData = await fetchFullTable('exams');
+            gradeData = await fetchFullTable('grades');
           }
 
           setGrades(gradeData.map(g => ({
@@ -660,17 +683,15 @@ export const DataProvider = ({ children }) => {
 
   const refreshExamData = async () => {
     try {
-      let { data: examData } = await supabase.from('exams').select('*');
-      let { data: gradeData } = await supabase.from('grades').select('*');
-      const { data: subjectData } = await supabase.from('subjects').select('*');
+      let examData = await fetchFullTable('exams');
+      let gradeData = await fetchFullTable('grades');
+      const subjectData = await fetchFullTable('subjects');
 
       if (examData && gradeData) {
         const didRelease = await checkAndReleaseScheduledExams(examData);
         if (didRelease) {
-          const freshExams = await supabase.from('exams').select('*');
-          const freshGrades = await supabase.from('grades').select('*');
-          examData = freshExams.data || examData;
-          gradeData = freshGrades.data || gradeData;
+          examData = await fetchFullTable('exams');
+          gradeData = await fetchFullTable('grades');
         }
 
         const formattedGrades = gradeData.map(g => ({

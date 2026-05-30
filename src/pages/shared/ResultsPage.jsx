@@ -138,8 +138,11 @@ const ResultsPage = ({ role }) => {
     const sId = targetStudentId;
     const student = students.find(s => String(s.id) === String(sId));
     
-    // Find all classes this student has published results in
-    const studentExams = exams.filter(e => String(e.studentId) === String(sId) && e.status === 'PUBLISHED');
+    // Find all classes this student has results in
+    const studentExams = exams.filter(e => 
+      String(e.studentId) === String(sId) && 
+      (userRole === 'student' ? e.status === 'PUBLISHED' : (e.status === 'PUBLISHED' || e.status === 'APPROVED'))
+    );
     let classIds = [...new Set(studentExams.map(e => e.classId))];
     
     // Ensure current class is visible even if no results published yet
