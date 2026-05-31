@@ -528,27 +528,26 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 300;
-        const MAX_HEIGHT = 300;
-        let width = img.width;
-        let height = img.height;
+        canvas.width = 300;
+        canvas.height = 400;
+        const ctx = canvas.getContext('2d');
 
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
+        // Center crop the original image to a 3:4 aspect ratio
+        const targetAspect = 3 / 4;
+        const imgAspect = img.width / img.height;
+        let sx = 0, sy = 0, sw = img.width, sh = img.height;
+
+        if (imgAspect > targetAspect) {
+          // Image is wider than 3:4, crop sides
+          sw = img.height * targetAspect;
+          sx = (img.width - sw) / 2;
         } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
+          // Image is taller than 3:4, crop top/bottom
+          sh = img.width / targetAspect;
+          sy = (img.height - sh) / 2;
         }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 300, 400);
 
         const base64String = canvas.toDataURL('image/jpeg', 0.7);
         handleChange('photo', base64String);
@@ -591,7 +590,7 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
             <FormSectionHeader icon="person" title="Section 1: Basic Information" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="col-span-full flex flex-col md:flex-row items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800/80">
-                <div className="w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700/50 shrink-0">
+                <div className="w-[75px] h-[100px] rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700/50 shrink-0">
                   {formData.photo ? (
                     <img src={formData.photo} alt="Preview" className="w-full h-full object-cover" />
                   ) : (
@@ -625,7 +624,7 @@ const StudentForm = ({ student, onClose, onSave, classes, defaultClassId }) => {
                       </button>
                     )}
                   </div>
-                  <p className="text-[11px] text-slate-400/80 mt-1.5">Max size 300x300px. Auto-compressed for performance.</p>
+                  <p className="text-[11px] text-slate-400/80 mt-1.5">Max size 300x400px. Auto-compressed for performance.</p>
                 </div>
               </div>
               <div className="col-span-full lg:col-span-1">
@@ -830,7 +829,7 @@ const StudentProfile = ({ student, onClose, classes, schoolSettings }) => {
       <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-5xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto overflow-hidden animate-in zoom-in-95 duration-400">
         <div className="flex justify-between items-center p-8 border-b border-slate-100 dark:border-slate-800 bg-primary text-white relative">
           <div className="flex items-center gap-6 relative z-10">
-            <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-display shadow-inner overflow-hidden">
+            <div className="w-[75px] h-[100px] rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-display shadow-inner overflow-hidden">
               {student.photo ? (
                 <img src={student.photo} alt={student.name} className="w-full h-full object-cover" />
               ) : (
@@ -1104,9 +1103,9 @@ const PrintableStudentProfile = ({ student, classes, schoolSettings }) => {
         {/* Photo & Basic Credentials Card */}
         <div className="flex gap-6 items-start border border-slate-200 p-4 rounded-2xl bg-slate-50/50 mb-6">
           {student.photo ? (
-            <img src={student.photo} alt="Student" className="w-32 h-32 object-cover rounded-xl border border-slate-300" />
+            <img src={student.photo} alt="Student" className="w-[120px] h-[160px] object-cover rounded-xl border border-slate-300" />
           ) : (
-            <div className="w-32 h-32 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-300">
+            <div className="w-[120px] h-[160px] bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-300">
               <span className="material-symbols-outlined text-display">person</span>
             </div>
           )}
