@@ -143,12 +143,8 @@ const StudentsPage = () => {
   };
 
   const handleSelectClass = (classId) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setSelectedClassId(classId);
-      setViewMode('table');
-      setIsLoading(false);
-    }, 400);
+    setSelectedClassId(classId);
+    setViewMode('table');
   };
 
   const handlePrintClassList = () => {

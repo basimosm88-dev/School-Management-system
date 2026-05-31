@@ -105,35 +105,23 @@ const ResultsPage = ({ role }) => {
 
   // Actions
   const handleSelectClass = (classId) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setSelectedClassId(classId);
-      setSelectedSubject(null); // Reset subject state from any prior selections to prevent crashes on other classes
-      if (userRole === 'teacher') {
-        setViewMode('subject');
-      } else {
-        setViewMode('list');
-      }
-      setIsLoading(false);
-    }, 400);
+    setSelectedClassId(classId);
+    setSelectedSubject(null); // Reset subject state from any prior selections to prevent crashes on other classes
+    if (userRole === 'teacher') {
+      setViewMode('subject');
+    } else {
+      setViewMode('list');
+    }
   };
 
   const handleSelectSubject = (subjectName) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setSelectedSubject(subjectName);
-      setViewMode('list');
-      setIsLoading(false);
-    }, 400);
+    setSelectedSubject(subjectName);
+    setViewMode('list');
   };
 
   const handleSelectStudent = (studentId) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setViewingStudentId(studentId);
-      setViewMode('detail');
-      setIsLoading(false);
-    }, 400);
+    setViewingStudentId(studentId);
+    setViewMode('detail');
   };
 
   const goBack = () => {
