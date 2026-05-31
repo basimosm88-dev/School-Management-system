@@ -71,8 +71,19 @@ export const DataProvider = ({ children }) => {
 
     const fetchData = async () => {
       try {
-        // 1. Fetch Profiles
-        const profiles = await fetchFullTable('profiles');
+        // Fetch all base tables in parallel using Promise.all
+        const [profiles, classData, subjectData, attData, initialExamData, initialGradeData, ttData, eventData, annData] = await Promise.all([
+          fetchFullTable('profiles'),
+          fetchFullTable('classes'),
+          fetchFullTable('subjects'),
+          fetchFullTable('attendance'),
+          fetchFullTable('exams'),
+          fetchFullTable('grades'),
+          supabase.from('timetable').select('*').then(res => res.data),
+          supabase.from('events').select('*').then(res => res.data),
+          supabase.from('announcements').select('*').then(res => res.data)
+        ]);
+
         if (profiles) {
           setStudents(profiles.filter(p => p.role === 'student').map(p => {
             const details = p.details || {};
@@ -93,31 +104,28 @@ export const DataProvider = ({ children }) => {
           })));
         }
 
-        // 2. Fetch Classes
-        const classData = await fetchFullTable('classes');
         if (classData) setClasses(classData.map(c => ({ ...c.details, id: c.id, name: c.name, section: c.section })));
 
-        // 3. Fetch Subjects
-        const subjectData = await fetchFullTable('subjects');
         let currentSubjects = [];
         if (subjectData) {
           currentSubjects = subjectData.map(s => ({ ...s.details, id: s.id, name: s.name }));
           setSubjects(currentSubjects);
         }
 
-        // 4. Fetch Attendance
-        const attData = await fetchFullTable('attendance');
         if (attData) setAttendance(attData.map(a => ({ ...a.details, id: a.id, studentId: a.student_id, classId: a.class_id, date: a.date, status: a.status })));
 
-        // 5. Fetch Exams & Grades
-        let examData = await fetchFullTable('exams');
-        let gradeData = await fetchFullTable('grades');
+        let examData = initialExamData;
+        let gradeData = initialGradeData;
         
         if (examData && gradeData) {
           const didRelease = await checkAndReleaseScheduledExams(examData);
           if (didRelease) {
-            examData = await fetchFullTable('exams');
-            gradeData = await fetchFullTable('grades');
+            const [refetchedExams, refetchedGrades] = await Promise.all([
+              fetchFullTable('exams'),
+              fetchFullTable('grades')
+            ]);
+            examData = refetchedExams;
+            gradeData = refetchedGrades;
           }
 
           setGrades(gradeData.map(g => ({
@@ -157,14 +165,8 @@ export const DataProvider = ({ children }) => {
           setExams(mergedExams);
         }
 
-        // 6. Fetch Timetables, Events, Announcements
-        const { data: ttData } = await supabase.from('timetable').select('*');
         if (ttData) setTimetables(ttData.map(t => ({ ...t.details, id: t.id, classId: t.class_id, subjectId: t.subject_id, teacherId: t.teacher_id })));
-
-        const { data: eventData } = await supabase.from('events').select('*');
         if (eventData) setEvents(eventData.map(e => ({ ...e.details, id: e.id, title: e.title })));
-
-        const { data: annData } = await supabase.from('announcements').select('*');
         if (annData) setAnnouncements(annData.map(a => ({ ...a.details, id: a.id, title: a.title, content: a.content })));
 
       } catch (err) {
@@ -700,15 +702,24 @@ export const DataProvider = ({ children }) => {
 
   const refreshExamData = async () => {
     try {
-      let examData = await fetchFullTable('exams');
-      let gradeData = await fetchFullTable('grades');
-      const subjectData = await fetchFullTable('subjects');
+      const [initialExamData, initialGradeData, subjectData] = await Promise.all([
+        fetchFullTable('exams'),
+        fetchFullTable('grades'),
+        fetchFullTable('subjects')
+      ]);
+
+      let examData = initialExamData;
+      let gradeData = initialGradeData;
 
       if (examData && gradeData) {
         const didRelease = await checkAndReleaseScheduledExams(examData);
         if (didRelease) {
-          examData = await fetchFullTable('exams');
-          gradeData = await fetchFullTable('grades');
+          const [refetchedExams, refetchedGrades] = await Promise.all([
+            fetchFullTable('exams'),
+            fetchFullTable('grades')
+          ]);
+          examData = refetchedExams;
+          gradeData = refetchedGrades;
         }
 
         const formattedGrades = gradeData.map(g => ({
@@ -1057,6 +1068,24 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const examsMap = useMemo(() => {
+    const map = {};
+    exams.forEach(e => {
+      map[String(e.id)] = e;
+    });
+    return map;
+  }, [exams]);
+
+  const studentGradesMap = useMemo(() => {
+    const map = {};
+    grades.forEach(g => {
+      const sId = String(g.studentId);
+      if (!map[sId]) map[sId] = [];
+      map[sId].push(g);
+    });
+    return map;
+  }, [grades]);
+
   const calculateRankings = (classId) => {
     const classStudents = students.filter(s => String(s.classId) === String(classId));
     const isStudent = currentUser?.role === 'student';
@@ -1064,14 +1093,14 @@ export const DataProvider = ({ children }) => {
     const academicYear = classObj?.academicYear || '2025-2026';
     
     const rankings = classStudents.map(student => {
-      let studentGrades = grades.filter(g => String(g.studentId) === String(student.id));
+      let studentGrades = studentGradesMap[String(student.id)] || [];
       const sObj = students.find(s => String(s.id) === String(student.id));
       const withheldCycles = sObj?.withheldCycles || {};
       
       // If student is viewing, only rank based on published exam grades
       if (isStudent) {
         studentGrades = studentGrades.filter(g => {
-          const exam = exams.find(e => String(e.id) === String(g.id));
+          const exam = examsMap[String(g.id)];
           const isCycleWithheld = withheldCycles[exam?.examType]?.isWithheld;
           return exam && exam.status === 'PUBLISHED' && !isCycleWithheld;
         });
@@ -1080,7 +1109,7 @@ export const DataProvider = ({ children }) => {
       if (studentGrades.length === 0) return { studentId: student.id, name: student.name, averageScore: 0, totalScore: 0 };
       
       const percentages = studentGrades.map(g => {
-        const exam = exams.find(e => String(e.id) === String(g.id));
+        const exam = examsMap[String(g.id)];
         const examType = exam ? exam.examType : '';
         return getGradePercentage(g.score, examType, academicYear);
       });
@@ -1108,13 +1137,13 @@ export const DataProvider = ({ children }) => {
     const studentObj = students.find(s => String(s.id) === String(studentId));
     const withheldCycles = studentObj?.withheldCycles || {};
 
-    const studentGrades = grades.filter(g => String(g.studentId) === String(studentId));
+    const studentGrades = studentGradesMap[String(studentId)] || [];
     const results = {};
     const isStudent = currentUser?.role === 'student';
     
     studentGrades.forEach(g => {
       // Find the merged exam row in the exams state by comparing grade row IDs
-      const exam = exams.find(e => String(e.id) === String(g.id));
+      const exam = examsMap[String(g.id)];
       if (!exam) return;
       
       const isCycleWithheld = withheldCycles[exam.examType]?.isWithheld;
