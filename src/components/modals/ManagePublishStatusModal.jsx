@@ -11,9 +11,7 @@ const ManagePublishStatusModal = ({ onClose, student, currentClass }) => {
   const examTypes = is2526 ? ['Midterm', 'Final'] : ['Before Midterm', 'Midterm', 'After Midterm', 'Final'];
 
   // State to hold withheld status: { [examType]: { isWithheld: boolean, reason: string } }
-  const [withheldCycles, setWithheldCycles] = useState({});
-
-  useEffect(() => {
+  const [withheldCycles, setWithheldCycles] = useState(() => {
     const initialStates = {};
     const existingWithheld = student?.withheldCycles || {};
     
@@ -23,8 +21,8 @@ const ManagePublishStatusModal = ({ onClose, student, currentClass }) => {
         reason: existingWithheld[type]?.reason || ''
       };
     });
-    setWithheldCycles(initialStates);
-  }, [student, examTypes]);
+    return initialStates;
+  });
 
   const handleToggle = (type, value) => {
     setWithheldCycles(prev => ({
