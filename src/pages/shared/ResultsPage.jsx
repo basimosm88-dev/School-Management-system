@@ -971,23 +971,28 @@ const PrintableFooter = ({ signatureTitle }) => (
 );
 
 const PrintableClassResults = ({ classId, className, examType, schoolSettings, classes, students, exams, grades, calculateRankings }) => {
+  const { currentUser } = useAppContext();
   const currentClass = classes.find(c => String(c.id) === String(classId));
   const academicYear = currentClass?.academicYear || '2025-2026';
 
   // 1. Get students of this class
   const classStudents = students.filter(s => String(s.classId) === String(classId));
 
-  // 2. Get unique subjects for this class with published/approved exams
+  // 2. Get subjects for this class
+  const currentClassSubjects = currentClass?.subjects || [];
+  
+  // Filter exams by class and status (only restrict if student is viewing, otherwise include all drafts/approvals)
   const classExams = exams.filter(e => 
     String(e.classId) === String(classId) && 
-    (e.status === 'PUBLISHED' || e.status === 'APPROVED')
+    (currentUser?.role === 'student' ? e.status === 'PUBLISHED' : true)
   );
-  const classSubjects = [...new Set(classExams.map(e => e.subjectName))].sort();
+
+  const classSubjects = currentClassSubjects.length > 0
+    ? currentClassSubjects.map(s => s.name).sort()
+    : [...new Set(classExams.map(e => e.subjectName))].sort();
 
   // 3. For each student, calculate their grades for each subject in this examType
   const studentGradesList = classStudents.map(student => {
-    const studentGrades = grades.filter(g => String(g.studentId) === String(student.id));
-    
     // Map each subject to the student's score in that subject for the selected examType
     const subjectScores = {};
     let rawSum = 0;
@@ -995,19 +1000,19 @@ const PrintableClassResults = ({ classId, className, examType, schoolSettings, c
     let count = 0;
 
     classSubjects.forEach(subName => {
-      // Find the exam of this subject, class and examType
-      const exam = classExams.find(e => e.subjectName === subName && e.examType === examType);
-      if (exam) {
-        const gradeRow = studentGrades.find(g => String(g.id) === String(exam.id));
-        if (gradeRow && gradeRow.score !== undefined && gradeRow.score !== null && gradeRow.score !== '') {
-          const score = parseFloat(gradeRow.score);
-          subjectScores[subName] = score;
-          rawSum += score;
-          totalPercentage += getGradePercentage(score, examType, academicYear);
-          count++;
-        } else {
-          subjectScores[subName] = '-';
-        }
+      // Find the grade record of this student, subject and examType directly from the exams state
+      const record = classExams.find(e => 
+        String(e.studentId) === String(student.id) && 
+        e.subjectName.toLowerCase() === subName.toLowerCase() && 
+        e.examType === examType
+      );
+      
+      if (record && record.grade !== undefined && record.grade !== null && record.grade !== '') {
+        const score = parseFloat(record.grade);
+        subjectScores[subName] = score;
+        rawSum += score;
+        totalPercentage += getGradePercentage(score, examType, academicYear);
+        count++;
       } else {
         subjectScores[subName] = '-';
       }
