@@ -244,10 +244,14 @@ const ResultsPage = ({ role }) => {
     const classStudents = students.filter(s => String(s.classId) === String(cid))
       .filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()));
     const rankings = calculateRankings(cid);
+    const rankingsMap = {};
+    rankings.forEach(r => {
+      rankingsMap[String(r.studentId)] = r;
+    });
     
     return classStudents.map(student => {
       const reportData = getReportCardData(student.id, cid);
-      const studentRank = rankings.find(r => String(r.studentId) === String(student.id));
+      const studentRank = rankingsMap[String(student.id)];
       
       // Calculate averages for each exam type
       // If teacher role with a selected subject, only show that subject's scores

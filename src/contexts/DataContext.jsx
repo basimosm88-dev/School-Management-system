@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAppContext } from './AppContext';
 import { useSettings } from './SettingsContext';
@@ -138,11 +138,20 @@ export const DataProvider = ({ children }) => {
             releaseDate: g.release_date
           })));
 
+          const examMap = {};
+          examData.forEach(e => {
+            examMap[String(e.id)] = e;
+          });
+          const subjectMap = {};
+          currentSubjects.forEach(s => {
+            subjectMap[String(s.id)] = s;
+          });
+
           const mergedExams = [];
           gradeData.forEach(g => {
-            const exam = examData.find(e => e.id === g.exam_id);
+            const exam = examMap[String(g.exam_id)];
             if (exam) {
-              const subjectObj = currentSubjects.find(s => s.id === exam.subject_id);
+              const subjectObj = subjectMap[String(exam.subject_id)];
               const subjectName = subjectObj ? subjectObj.name : '';
               mergedExams.push({
                 id: g.id,
@@ -736,11 +745,20 @@ export const DataProvider = ({ children }) => {
         const currentSubjects = subjectData ? subjectData.map(s => ({ ...s.details, id: s.id, name: s.name })) : subjects;
         if (subjectData) setSubjects(currentSubjects);
 
+        const examMap = {};
+        examData.forEach(e => {
+          examMap[String(e.id)] = e;
+        });
+        const subjectMap = {};
+        currentSubjects.forEach(s => {
+          subjectMap[String(s.id)] = s;
+        });
+
         const mergedExams = [];
         gradeData.forEach(g => {
-          const exam = examData.find(e => e.id === g.exam_id);
+          const exam = examMap[String(g.exam_id)];
           if (exam) {
-            const subjectObj = currentSubjects.find(s => s.id === exam.subject_id);
+            const subjectObj = subjectMap[String(exam.subject_id)];
             const subjectName = subjectObj ? subjectObj.name : '';
             mergedExams.push({
               id: g.id,
@@ -1086,15 +1104,56 @@ export const DataProvider = ({ children }) => {
     return map;
   }, [grades]);
 
-  const calculateRankings = (classId) => {
-    const classStudents = students.filter(s => String(s.classId) === String(classId));
+  const studentsMap = useMemo(() => {
+    const map = {};
+    students.forEach(s => {
+      map[String(s.id)] = s;
+    });
+    return map;
+  }, [students]);
+
+  const subjectsMap = useMemo(() => {
+    const map = {};
+    subjects.forEach(s => {
+      map[String(s.id)] = s;
+    });
+    return map;
+  }, [subjects]);
+
+  const classesMap = useMemo(() => {
+    const map = {};
+    classes.forEach(c => {
+      map[String(c.id)] = c;
+    });
+    return map;
+  }, [classes]);
+
+  const teachersMap = useMemo(() => {
+    const map = {};
+    teachers.forEach(t => {
+      map[String(t.id)] = t;
+    });
+    return map;
+  }, [teachers]);
+
+  const rankingsCache = useMemo(() => {
+    return new Map();
+  }, [students, currentUser, classes, studentGradesMap, examsMap]);
+
+  const calculateRankings = useCallback((classId) => {
+    const key = String(classId);
+    if (rankingsCache.has(key)) {
+      return rankingsCache.get(key);
+    }
+
+    const classStudents = students.filter(s => String(s.classId) === key);
     const isStudent = currentUser?.role === 'student';
-    const classObj = classes.find(c => String(c.id) === String(classId));
+    const classObj = classesMap[key];
     const academicYear = classObj?.academicYear || '2025-2026';
     
     const rankings = classStudents.map(student => {
       let studentGrades = studentGradesMap[String(student.id)] || [];
-      const sObj = students.find(s => String(s.id) === String(student.id));
+      const sObj = studentsMap[String(student.id)];
       const withheldCycles = sObj?.withheldCycles || {};
       
       // If student is viewing, only rank based on published exam grades
@@ -1118,23 +1177,27 @@ export const DataProvider = ({ children }) => {
       const averageScore = total / percentages.length;
       return { studentId: student.id, name: student.name, averageScore, totalScore: total };
     });
-    return rankings
+
+    const sortedRankings = rankings
       .sort((a, b) => b.averageScore - a.averageScore)
       .map((r, i) => ({ ...r, rank: i + 1 }));
-  };
+
+    rankingsCache.set(key, sortedRankings);
+    return sortedRankings;
+  }, [rankingsCache, students, currentUser, classesMap, studentGradesMap, examsMap, studentsMap]);
 
   const calculatePromotion = () => 'Pending';
 
-  const getReportCardData = (studentId, classId) => {
+  const getReportCardData = useCallback((studentId, classId) => {
     let targetClassId = classId;
     if (!targetClassId) {
-      const student = students.find(s => String(s.id) === String(studentId));
+      const student = studentsMap[String(studentId)];
       targetClassId = student?.classId;
     }
-    const classObj = classes.find(c => String(c.id) === String(targetClassId));
+    const classObj = classesMap[String(targetClassId)];
     const academicYear = classObj?.academicYear || '2025-2026';
 
-    const studentObj = students.find(s => String(s.id) === String(studentId));
+    const studentObj = studentsMap[String(studentId)];
     const withheldCycles = studentObj?.withheldCycles || {};
 
     const studentGrades = studentGradesMap[String(studentId)] || [];
@@ -1150,7 +1213,7 @@ export const DataProvider = ({ children }) => {
       const withholdReason = withheldCycles[exam.examType]?.reason || 'Contact Admin';
 
       if (isCycleWithheld) {
-        const subject = subjects.find(s => String(s.id) === String(exam.subjectId));
+        const subject = subjectsMap[String(exam.subjectId)];
         const subjectName = subject ? subject.name : 'Unknown';
         
         if (!results[subjectName]) {
@@ -1196,7 +1259,7 @@ export const DataProvider = ({ children }) => {
       // If student is requesting report card, only show PUBLISHED results
       if (isStudent && exam.status !== 'PUBLISHED') return;
       
-      const subject = subjects.find(s => String(s.id) === String(exam.subjectId));
+      const subject = subjectsMap[String(exam.subjectId)];
       const subjectName = subject ? subject.name : 'Unknown';
       
       if (!results[subjectName]) {
@@ -1238,7 +1301,7 @@ export const DataProvider = ({ children }) => {
       classId,
       promotion: 'Pending'
     };
-  };
+  });
 
   // --- ATTENDANCE ---
   const getAttendanceStats = (filter = {}) => {
@@ -1552,7 +1615,7 @@ export const DataProvider = ({ children }) => {
     announcements, addAnnouncement, deleteAnnouncement, updateAnnouncement,
     notifications, addNotification, markNotificationRead, triggerSmartNotification, markAllNotificationsRead,
     systemLogs, resetData
-  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser, removeSubjectFromClass, updateClassSubject, updateStudentSubjectScores, updateStudentAllScores]);
+  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser, removeSubjectFromClass, updateClassSubject, updateStudentSubjectScores, updateStudentAllScores, calculateRankings, getReportCardData]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
