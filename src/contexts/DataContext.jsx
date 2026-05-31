@@ -1045,8 +1045,7 @@ export const DataProvider = ({ children }) => {
         const { error: gradeErr } = await supabase
           .from('grades')
           .update(updates)
-          .in('exam_id', examIds)
-          .neq('status', 'withheld');
+          .in('exam_id', examIds);
 
         if (gradeErr) throw gradeErr;
       }
@@ -1055,49 +1054,6 @@ export const DataProvider = ({ children }) => {
     } catch (err) {
       console.error("Error in updateExamStatus:", err);
       triggerSmartNotification({ title: 'Error', message: 'Failed to update status', type: 'error' });
-    }
-  };
-  const updateGradePublishStatus = async (gradeId, isWithheld, withholdReason = '') => {
-    try {
-      const status = isWithheld ? 'withheld' : 'published';
-      const grade = grades.find(g => String(g.id) === String(gradeId));
-      if (!grade) throw new Error("Grade record not found.");
-      
-      const details = { 
-        ...(grade.details || {}), 
-        remarks: grade.remarks || '',
-        withholdReason: isWithheld ? withholdReason : null 
-      };
-      
-      // Remove any internal mapped properties that don't belong to database schema details column
-      delete details.id;
-      delete details.examId;
-      delete details.studentId;
-      delete details.score;
-      delete details.status;
-      delete details.releaseDate;
-
-      const { error } = await supabase
-        .from('grades')
-        .update({ status, details })
-        .eq('id', gradeId);
-
-      if (error) throw error;
-      
-      await refreshExamData();
-      triggerSmartNotification({
-        title: 'Success',
-        message: isWithheld ? 'Grade result has been withheld.' : 'Grade result has been published.',
-        type: 'success'
-      });
-    } catch (err) {
-      console.error("Error updating grade publish status:", err);
-      triggerSmartNotification({
-        title: 'Error',
-        message: 'Failed to update publish status.',
-        type: 'error'
-      });
-      throw err;
     }
   };
 
@@ -1109,12 +1065,15 @@ export const DataProvider = ({ children }) => {
     
     const rankings = classStudents.map(student => {
       let studentGrades = grades.filter(g => String(g.studentId) === String(student.id));
+      const sObj = students.find(s => String(s.id) === String(student.id));
+      const withheldCycles = sObj?.withheldCycles || {};
       
       // If student is viewing, only rank based on published exam grades
       if (isStudent) {
         studentGrades = studentGrades.filter(g => {
           const exam = exams.find(e => String(e.id) === String(g.id));
-          return exam && exam.status === 'PUBLISHED';
+          const isCycleWithheld = withheldCycles[exam?.examType]?.isWithheld;
+          return exam && exam.status === 'PUBLISHED' && !isCycleWithheld;
         });
       }
       
@@ -1146,6 +1105,9 @@ export const DataProvider = ({ children }) => {
     const classObj = classes.find(c => String(c.id) === String(targetClassId));
     const academicYear = classObj?.academicYear || '2025-2026';
 
+    const studentObj = students.find(s => String(s.id) === String(studentId));
+    const withheldCycles = studentObj?.withheldCycles || {};
+
     const studentGrades = grades.filter(g => String(g.studentId) === String(studentId));
     const results = {};
     const isStudent = currentUser?.role === 'student';
@@ -1155,35 +1117,55 @@ export const DataProvider = ({ children }) => {
       const exam = exams.find(e => String(e.id) === String(g.id));
       if (!exam) return;
       
-      // If student is requesting report card, only show PUBLISHED or WITHHELD results
-      if (isStudent && exam.status !== 'PUBLISHED') {
-        if (exam.status === 'WITHHELD') {
-          const subject = subjects.find(s => String(s.id) === String(exam.subjectId));
-          const subjectName = subject ? subject.name : 'Unknown';
-          
-          if (!results[subjectName]) {
-            results[subjectName] = {
-              rawMarks: [],
-              percentages: [],
-              average: 0,
-              rawSum: 0,
-              "Before Midterm": "-",
-              "Midterm": "-",
-              "After Midterm": "-",
-              "Final": "-"
-            };
-          }
+      const isCycleWithheld = withheldCycles[exam.examType]?.isWithheld;
+      const withholdReason = withheldCycles[exam.examType]?.reason || 'Contact Admin';
+
+      if (isCycleWithheld) {
+        const subject = subjects.find(s => String(s.id) === String(exam.subjectId));
+        const subjectName = subject ? subject.name : 'Unknown';
+        
+        if (!results[subjectName]) {
+          results[subjectName] = {
+            rawMarks: [],
+            percentages: [],
+            average: 0,
+            rawSum: 0,
+            "Before Midterm": "-",
+            "Midterm": "-",
+            "After Midterm": "-",
+            "Final": "-"
+          };
+        }
+
+        if (isStudent) {
           results[subjectName][exam.examType] = "Withheld";
           if (!results[subjectName].withheldDetails) {
             results[subjectName].withheldDetails = {};
           }
           results[subjectName].withheldDetails[exam.examType] = {
             isWithheld: true,
-            reason: g.withholdReason || g.details?.withholdReason || 'Contact Admin'
+            reason: withholdReason
           };
+          return;
+        } else {
+          results[subjectName][exam.examType] = g.score;
+          results[subjectName].rawMarks.push(g.score);
+          const percent = getGradePercentage(g.score, exam.examType, academicYear);
+          results[subjectName].percentages.push(percent);
+
+          if (!results[subjectName].withheldDetails) {
+            results[subjectName].withheldDetails = {};
+          }
+          results[subjectName].withheldDetails[exam.examType] = {
+            isWithheld: true,
+            reason: withholdReason
+          };
+          return;
         }
-        return;
       }
+
+      // If student is requesting report card, only show PUBLISHED results
+      if (isStudent && exam.status !== 'PUBLISHED') return;
       
       const subject = subjects.find(s => String(s.id) === String(exam.subjectId));
       const subjectName = subject ? subject.name : 'Unknown';
@@ -1205,16 +1187,6 @@ export const DataProvider = ({ children }) => {
       results[subjectName].rawMarks.push(g.score);
       const percent = getGradePercentage(g.score, exam.examType, academicYear);
       results[subjectName].percentages.push(percent);
-      
-      if (g.status === 'withheld') {
-        if (!results[subjectName].withheldDetails) {
-          results[subjectName].withheldDetails = {};
-        }
-        results[subjectName].withheldDetails[exam.examType] = {
-          isWithheld: true,
-          reason: g.withholdReason || g.details?.withholdReason || 'Contact Admin'
-        };
-      }
     });
     
     Object.keys(results).forEach(sub => {
@@ -1543,7 +1515,7 @@ export const DataProvider = ({ children }) => {
     teachers, addTeacher, updateTeacher, deleteTeacher, changeTeacherPassword,
     classes, addClass, updateClass, deleteClass, assignStudentToClass, removeStudentFromClass, assignSubjectToClass, removeSubjectFromClass, updateClassSubject,
     subjects, addSubject, updateSubject, deleteSubject,
-    exams, saveExamResults, updateExamStatus, calculateRankings, calculatePromotion, getReportCardData, promotionSettings, setPromotionSettings, saveExamReleaseSchedule, promotions, updateStudentSubjectScores, updateStudentAllScores, updateGradePublishStatus,
+    exams, saveExamResults, updateExamStatus, calculateRankings, calculatePromotion, getReportCardData, promotionSettings, setPromotionSettings, saveExamReleaseSchedule, promotions, updateStudentSubjectScores, updateStudentAllScores,
     grades, submitGrade, deleteGrade, updateGrade,
     attendance, saveAttendanceRecords, getAttendanceStats, getStudentAttendanceSummary,
     timetables, addTimetableSlot, deleteTimetableSlot, getTimetableForClass, getTimetableForTeacher,
@@ -1551,7 +1523,7 @@ export const DataProvider = ({ children }) => {
     announcements, addAnnouncement, deleteAnnouncement, updateAnnouncement,
     notifications, addNotification, markNotificationRead, triggerSmartNotification, markAllNotificationsRead,
     systemLogs, resetData
-  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser, removeSubjectFromClass, updateClassSubject, updateStudentSubjectScores, updateStudentAllScores, updateGradePublishStatus]);
+  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser, removeSubjectFromClass, updateClassSubject, updateStudentSubjectScores, updateStudentAllScores]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
