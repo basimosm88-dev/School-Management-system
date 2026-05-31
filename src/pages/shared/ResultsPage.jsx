@@ -217,6 +217,8 @@ const ResultsPage = ({ role }) => {
     if (!selectedClassId) return [];
     
     const cid = selectedClassId;
+    const currentClassObj = classes.find(c => String(c.id) === String(cid));
+    const is2526 = currentClassObj?.academicYear === '2025-2026';
     const classStudents = students.filter(s => String(s.classId) === String(cid))
       .filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()));
     const rankings = calculateRankings(cid);
@@ -288,7 +290,7 @@ const ResultsPage = ({ role }) => {
       if (b.rank === '-') return -1;
       return a.rank - b.rank;
     });
-  }, [students, selectedClassId, searchTerm, getReportCardData, calculateRankings, userRole, selectedSubject]);
+  }, [students, selectedClassId, searchTerm, getReportCardData, calculateRankings, userRole, selectedSubject, classes]);
 
   if (isLoading) {
     return (
