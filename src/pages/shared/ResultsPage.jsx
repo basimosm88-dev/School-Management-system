@@ -24,7 +24,7 @@ const getGradePercentage = (score, examType, academicYear) => {
 
 const ResultsPage = ({ role }) => {
   const { 
-    students, classes, exams,
+    students, classes, exams, grades,
     getReportCardData, calculateRankings 
   } = useData();
   const { schoolSettings, t } = useSettings();
@@ -42,6 +42,7 @@ const ResultsPage = ({ role }) => {
   const [editingStudent, setEditingStudent] = useState(null);
   const [editingSubject, setEditingSubject] = useState(null);
   const [activeDropdownStudentId, setActiveDropdownStudentId] = useState(null);
+  const [showPrintOptionModal, setShowPrintOptionModal] = useState(false);
 
   // Helper for printing
   const handlePrint = (studentId = null, config = { type: 'report-card', examType: null }) => {
@@ -444,7 +445,7 @@ const ResultsPage = ({ role }) => {
               )}
               {userRole !== 'teacher' && (
                 <button 
-                  onClick={() => handlePrint(null, { type: 'class-list' })} 
+                  onClick={() => setShowPrintOptionModal(true)} 
                   className="btn-secondary flex-1 lg:flex-none py-2 border-primary/20 text-primary flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined text-section">print</span>
@@ -790,10 +791,15 @@ const ResultsPage = ({ role }) => {
       {/* 1. Class-wise summary table (Admin/Teacher) */}
       {selectedClassId && printConfig.type === 'class-list' && (
         <PrintableClassResults 
+          classId={selectedClassId}
           className={currentClass?.name} 
-          is2526={currentClass?.academicYear === '2025-2026'}
-          results={studentResults} 
-          schoolSettings={schoolSettings} 
+          examType={printConfig.examType || 'Midterm'}
+          schoolSettings={schoolSettings}
+          classes={classes}
+          students={students}
+          exams={exams}
+          grades={grades}
+          calculateRankings={calculateRankings}
         />
       )}
       
@@ -859,6 +865,70 @@ const ResultsPage = ({ role }) => {
           subjectName={editingSubject}
         />
       )}
+
+      {/* Print Class Results Option Modal */}
+      {showPrintOptionModal && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-300 flex flex-col p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">print</span>
+                Print Class Results
+              </h3>
+              <button 
+                onClick={() => setShowPrintOptionModal(false)} 
+                className="p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            
+            <p className="text-sm text-slate-500 mb-6">
+              Select the assessment cycle to generate the class results report PDF.
+            </p>
+            
+            <div className="flex flex-col gap-4">
+              <button
+                onClick={() => {
+                  setShowPrintOptionModal(false);
+                  handlePrint(null, { type: 'class-list', examType: 'Midterm' });
+                }}
+                className="w-full py-4 px-6 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-2xl text-left font-bold text-slate-850 dark:text-white transition-all flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                    <span className="material-symbols-outlined">analytics</span>
+                  </span>
+                  <div>
+                    <p className="text-sm">Midterm Assessment</p>
+                    <p className="text-[10px] text-slate-400 font-normal">Print midterm exam grades per subject</p>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined text-slate-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowPrintOptionModal(false);
+                  handlePrint(null, { type: 'class-list', examType: 'Final' });
+                }}
+                className="w-full py-4 px-6 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-2xl text-left font-bold text-slate-850 dark:text-white transition-all flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                    <span className="material-symbols-outlined">grade</span>
+                  </span>
+                  <div>
+                    <p className="text-sm">Final Assessment</p>
+                    <p className="text-[10px] text-slate-400 font-normal">Print final exam grades per subject</p>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined text-slate-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </PageLayout>
   );
 };
@@ -900,34 +970,109 @@ const PrintableFooter = ({ signatureTitle }) => (
   </div>
 );
 
-const PrintableClassResults = ({ className, results, schoolSettings, is2526 }) => {
+const PrintableClassResults = ({ classId, className, examType, schoolSettings, classes, students, exams, grades, calculateRankings }) => {
+  const currentClass = classes.find(c => String(c.id) === String(classId));
+  const academicYear = currentClass?.academicYear || '2025-2026';
+
+  // 1. Get students of this class
+  const classStudents = students.filter(s => String(s.classId) === String(classId));
+
+  // 2. Get unique subjects for this class with published/approved exams
+  const classExams = exams.filter(e => 
+    String(e.classId) === String(classId) && 
+    (e.status === 'PUBLISHED' || e.status === 'APPROVED')
+  );
+  const classSubjects = [...new Set(classExams.map(e => e.subjectName))].sort();
+
+  // 3. For each student, calculate their grades for each subject in this examType
+  const studentGradesList = classStudents.map(student => {
+    const studentGrades = grades.filter(g => String(g.studentId) === String(student.id));
+    
+    // Map each subject to the student's score in that subject for the selected examType
+    const subjectScores = {};
+    let rawSum = 0;
+    let totalPercentage = 0;
+    let count = 0;
+
+    classSubjects.forEach(subName => {
+      // Find the exam of this subject, class and examType
+      const exam = classExams.find(e => e.subjectName === subName && e.examType === examType);
+      if (exam) {
+        const gradeRow = studentGrades.find(g => String(g.id) === String(exam.id));
+        if (gradeRow && gradeRow.score !== undefined && gradeRow.score !== null && gradeRow.score !== '') {
+          const score = parseFloat(gradeRow.score);
+          subjectScores[subName] = score;
+          rawSum += score;
+          totalPercentage += getGradePercentage(score, examType, academicYear);
+          count++;
+        } else {
+          subjectScores[subName] = '-';
+        }
+      } else {
+        subjectScores[subName] = '-';
+      }
+    });
+
+    const averagePercentage = count > 0 ? totalPercentage / count : 0;
+
+    return {
+      id: student.id,
+      name: student.name,
+      subjectScores,
+      total: rawSum,
+      average: averagePercentage,
+      outcome: count > 0 ? (averagePercentage >= 50 ? 'Pass' : 'Fail') : 'Pending'
+    };
+  });
+
+  // 4. Sort students by average percentage in descending order to assign rank
+  const sortedStudents = [...studentGradesList]
+    .sort((a, b) => b.average - a.average)
+    .map((s, idx) => ({ ...s, rank: idx + 1 }));
+
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
-      <PrintableHeader schoolSettings={schoolSettings} title="Academic Performance Division" />
-      <h2 className="text-section border-l-4 border-blue-600 pl-4 mb-8">Class Results Summary Table: {className}</h2>
+      <PrintableHeader schoolSettings={schoolSettings} title={`${examType} Examination Results`} />
+      <h2 className="text-section border-l-4 border-blue-600 pl-4 mb-8">
+        Class Results Master Sheet ({examType}) — Class: {className}
+      </h2>
 
-      <table className="w-full border-collapse mb-12">
+      <table className="w-full border-collapse mb-12 border-2 border-slate-950 text-xs">
         <thead>
-          <tr className="bg-slate-100 border-b-2 border-slate-800">
-            <th className="p-3 text-left text-[10px] uppercase font-bold">Rank</th>
-            <th className="p-3 text-left text-[10px] uppercase font-bold">Student Name</th>
-            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-bold">B.Mid</th>}
-            <th className="p-3 text-center text-[10px] uppercase font-bold">{is2526 ? 'Mid (40)' : 'Mid (30)'}</th>
-            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-bold">A.Mid</th>}
-            <th className="p-3 text-center text-[10px] uppercase font-bold">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
-            <th className="p-3 text-center text-[10px] uppercase font-bold">Total / Avg</th>
+          <tr className="bg-slate-900 text-white border-b-2 border-slate-950">
+            <th className="p-3 text-left font-bold border border-slate-700">Rank</th>
+            <th className="p-3 text-left font-bold border border-slate-700">Student Name</th>
+            {classSubjects.map(sub => (
+              <th key={sub} className="p-2 text-center font-bold border border-slate-700">
+                {sub}
+              </th>
+            ))}
+            <th className="p-3 text-center font-bold border border-slate-700 bg-slate-800">Total</th>
+            <th className="p-3 text-center font-bold border border-slate-700 bg-slate-800">Average</th>
+            <th className="p-3 text-center font-bold border border-slate-700 bg-slate-800">Outcome</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200">
-          {results.map(res => (
-            <tr key={res.id}>
-              <td className="p-3 font-bold">#{res.rank}</td>
-              <td className="p-3 font-bold">{res.name}</td>
-              {!is2526 && <td className="p-3 text-center text-xs">{res.examAverages["Before Midterm"]}</td>}
-              <td className="p-3 text-center text-xs">{res.examAverages["Midterm"]}</td>
-              {!is2526 && <td className="p-3 text-center text-xs">{res.examAverages["After Midterm"]}</td>}
-              <td className="p-3 text-center text-xs">{res.examAverages["Final"]}</td>
-              <td className="p-3 text-center font-bold text-blue-600">{res.displayTotal} / {res.displayAverage}%</td>
+        <tbody className="divide-y divide-slate-350">
+          {sortedStudents.map(student => (
+            <tr key={student.id} className="hover:bg-slate-50">
+              <td className="p-3 font-bold border border-slate-350">#{student.rank}</td>
+              <td className="p-3 font-bold border border-slate-350">{student.name}</td>
+              {classSubjects.map(sub => (
+                <td key={sub} className="p-2 text-center border border-slate-350 font-mono">
+                  {student.subjectScores[sub]}
+                </td>
+              ))}
+              <td className="p-3 text-center font-bold border border-slate-350 font-mono bg-slate-50">
+                {student.total.toFixed(1)}
+              </td>
+              <td className="p-3 text-center font-bold border border-slate-350 font-mono bg-slate-50 text-blue-600">
+                {student.average.toFixed(2)}%
+              </td>
+              <td className={`p-3 text-center font-bold border border-slate-350 ${
+                student.outcome === 'Pass' ? 'text-emerald-600' : student.outcome === 'Fail' ? 'text-rose-600' : 'text-slate-500'
+              }`}>
+                {student.outcome}
+              </td>
             </tr>
           ))}
         </tbody>
