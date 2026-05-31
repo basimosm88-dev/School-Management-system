@@ -147,13 +147,13 @@ const ClassFullResultsPrint = () => {
  {!is2526 && <td className="border border-slate-300 p-1 text-center">{res["After Midterm"]}</td>}
  <td className="border border-slate-300 p-1 text-center">{res["Final"]}</td>
  <td className="border border-slate-300 p-1 text-center bg-slate-100/50">
-    {res.average !== "-" ? `${res.rawSum} (${res.average}%)` : "-"}
+     {res.average !== "-" ? `${(typeof res.rawSum === 'number' ? res.rawSum : parseFloat(res.rawSum) || 0).toFixed(1)} (${res.average}%)` : "-"}
  </td>
  </React.Fragment>
  );
  })}
  <td className="border border-slate-900 px-2 py-3 text-center bg-slate-100">
- {studentRank && typeof studentRank.totalScore === 'number' ? studentRank.totalScore.toFixed(2) : '-'}
+ {studentRank && typeof studentRank.totalScore === 'number' ? studentRank.totalScore.toFixed(1) : '-'}
  </td>
  <td className="border border-slate-900 px-2 py-3 text-center bg-slate-200">
  {studentRank && typeof studentRank.averageScore === 'number' ? studentRank.averageScore.toFixed(2) + '%' : '-'}

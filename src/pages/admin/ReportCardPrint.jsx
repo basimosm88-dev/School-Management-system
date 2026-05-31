@@ -123,7 +123,7 @@ const ReportCardPrint = () => {
  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Midterm"]}</td>
  {!is2526 && <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["After Midterm"]}</td>}
  <td className="border border-slate-300 px-2 py-4 text-center text-label">{data.results[subject]["Final"]}</td>
- <td className="border border-slate-900 px-2 py-4 text-center text-label bg-slate-100">{data.results[subject].rawSum} / {data.results[subject].average}%</td>
+ <td className="border border-slate-900 px-2 py-4 text-center text-label bg-slate-100">{(typeof data.results[subject].rawSum === 'number' ? data.results[subject].rawSum : parseFloat(data.results[subject].rawSum) || 0).toFixed(1)} / {data.results[subject].average}%</td>
  </tr>
  ))}
  </tbody>

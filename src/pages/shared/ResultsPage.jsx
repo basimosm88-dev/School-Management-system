@@ -170,7 +170,7 @@ const ResultsPage = ({ role }) => {
         ? (subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].average) || 0), 0) / subjects.length).toFixed(2)
         : "0.00";
       
-      const totalScore = subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].rawSum) || 0), 0);
+      const totalScore = subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].rawSum) || 0), 0).toFixed(1);
 
       const examAverages = {};
       ["Before Midterm", "Midterm", "After Midterm", "Final"].forEach(type => {
@@ -273,8 +273,8 @@ const ResultsPage = ({ role }) => {
         : (studentRank ? studentRank.averageScore.toFixed(2) : "0.00");
 
       const displayTotal = userRole === 'teacher' && selectedSubject
-        ? (reportData?.results?.[selectedSubject]?.rawSum || 0).toFixed(2)
-        : (reportData?.results ? Object.values(reportData.results).reduce((acc, curr) => acc + (curr.rawSum || 0), 0).toFixed(2) : "0.00");
+        ? (reportData?.results?.[selectedSubject]?.rawSum || 0).toFixed(1)
+        : (reportData?.results ? Object.values(reportData.results).reduce((acc, curr) => acc + (curr.rawSum || 0), 0).toFixed(1) : "0.0");
 
       return {
         ...student,
@@ -718,7 +718,7 @@ const ResultsPage = ({ role }) => {
                             {!is2526 && <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["After Midterm"]}</td>}
                             <td className="px-4 py-4 text-center text-on-surface font-bold text-label">{classRecord.results[subject]["Final"]}</td>
                             <td className="px-6 py-4 text-right bg-slate-100/30 dark:bg-slate-800/10">
-                              <span className="text-label text-primary font-bold">{classRecord.results[subject].rawSum} / {classRecord.results[subject].average}%</span>
+                              <span className="text-label text-primary font-bold">{(typeof classRecord.results[subject].rawSum === 'number' ? classRecord.results[subject].rawSum : parseFloat(classRecord.results[subject].rawSum) || 0).toFixed(1)} / {classRecord.results[subject].average}%</span>
                             </td>
                             {userRole === 'admin' && (
                               <td className="px-6 py-4 text-right bg-slate-100/30 dark:bg-slate-800/10">
@@ -993,7 +993,7 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
               <td className="p-3 text-center text-xs">{record.results[subject]["Midterm"]}</td>
               {!is2526 && <td className="p-3 text-center text-xs">{record.results[subject]["After Midterm"]}</td>}
               <td className="p-3 text-center text-xs">{record.results[subject]["Final"]}</td>
-              <td className="p-3 text-right font-bold text-blue-600">{record.results[subject].rawSum} / {record.results[subject].average}%</td>
+              <td className="p-3 text-right font-bold text-blue-600">{(typeof record.results[subject].rawSum === 'number' ? record.results[subject].rawSum : parseFloat(record.results[subject].rawSum) || 0).toFixed(1)} / {record.results[subject].average}%</td>
             </tr>
           ))}
         </tbody>
@@ -1086,7 +1086,7 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
       <div className="flex justify-center mb-8">
         <div className="w-56 p-4 bg-slate-900 text-white rounded-xl text-center">
           <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Total / Avg</p>
-          <p className="text-[20px] font-black leading-none">{rawSum} / {avg}%</p>
+          <p className="text-[20px] font-black leading-none">{rawSum.toFixed(1)} / {avg}%</p>
         </div>
       </div>
 
@@ -1139,7 +1139,7 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
                       <td className="p-2 text-center text-xs">{record.results[subject]["Midterm"]}</td>
                       {!is2526 && <td className="p-2 text-center text-xs">{record.results[subject]["After Midterm"]}</td>}
                       <td className="p-2 text-center text-xs">{record.results[subject]["Final"]}</td>
-                    <td className="p-2 text-right text-xs font-bold">{record.results[subject].rawSum} / {record.results[subject].average}%</td>
+                    <td className="p-2 text-right text-xs font-bold">{(typeof record.results[subject].rawSum === 'number' ? record.results[subject].rawSum : parseFloat(record.results[subject].rawSum) || 0).toFixed(1)} / {record.results[subject].average}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -1206,7 +1206,7 @@ const PrintableSubjectClassResults = ({ className, subjectName, results, schoolS
                 <td className="p-3 text-center text-xs">{subjData["Midterm"]}</td>
                 {!is2526 && <td className="p-3 text-center text-xs">{subjData["After Midterm"]}</td>}
                 <td className="p-3 text-center text-xs">{subjData["Final"]}</td>
-                <td className="p-3 text-right font-bold text-blue-600">{subjData.rawSum} / {subjData.average}%</td>
+                <td className="p-3 text-right font-bold text-blue-600">{(typeof subjData.rawSum === 'number' ? subjData.rawSum : parseFloat(subjData.rawSum) || 0).toFixed(1)} / {subjData.average}%</td>
               </tr>
             );
           })}
@@ -1244,7 +1244,7 @@ const PrintableSubjectStudentResults = ({ student, classRecord, subjectName, sch
           { label: 'Midterm', val: subjData["Midterm"] },
           !is2526 && { label: 'A.Midterm', val: subjData["After Midterm"] },
           { label: 'Final', val: subjData["Final"] },
-          { label: 'Total / Avg', val: `${subjData.rawSum} / ${subjData.average}%`, highlight: true }
+          { label: 'Total / Avg', val: `${(typeof subjData.rawSum === 'number' ? subjData.rawSum : parseFloat(subjData.rawSum) || 0).toFixed(1)} / ${subjData.average}%`, highlight: true }
         ].filter(Boolean).map((item, i) => (
           <div key={i} className={`p-6 rounded-2xl border ${item.highlight ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 border-slate-200'} text-center shadow-sm`}>
             <p className={`text-[10px] uppercase font-bold mb-2 ${item.highlight ? 'text-slate-400' : 'text-slate-500'}`}>{item.label}</p>
