@@ -1060,7 +1060,7 @@ const StudentProfile = ({ student, onClose, classes, schoolSettings }) => {
  * Only visible during window.print() via CSS .print-only
  */
 const PrintableFooter = () => (
-  <div className="mt-8 text-center">
+  <div className="mt-4 text-center">
     <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
   </div>
 );

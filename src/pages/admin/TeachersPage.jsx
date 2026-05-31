@@ -782,8 +782,8 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolSettings }) => {
 };
 
 const PrintableFooter = ({ signatureTitle }) => (
-  <div className="mt-auto pt-12 text-center">
-    <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-4">
+  <div className="mt-auto pt-4 text-center">
+    <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-2">
       <p className="text-[10px] font-black uppercase tracking-widest">{signatureTitle || "Manager's Signature"}</p>
     </div>
     <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>

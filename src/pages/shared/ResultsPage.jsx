@@ -962,8 +962,8 @@ const PrintableHeader = ({ schoolSettings, title }) => {
 };
 
 const PrintableFooter = ({ signatureTitle }) => (
-  <div className="mt-auto pt-12 text-center">
-    <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-4">
+  <div className="mt-auto pt-4 text-center">
+    <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-2">
       <p className="text-[10px] font-black uppercase tracking-widest">{signatureTitle || "Manager's Signature"}</p>
     </div>
     <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
@@ -1166,13 +1166,13 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
     <div className="print-only font-sans text-slate-900 bg-white">
       <PrintableHeader schoolSettings={schoolSettings} title="Individual Examination Performance Slip" />
       
-      <div className="flex justify-between items-stretch mb-8 border border-slate-900 overflow-hidden rounded-xl">
-        <div className="bg-slate-900 text-white p-6 flex flex-col justify-center min-w-[200px]">
+      <div className="flex justify-between items-stretch mb-4 border border-slate-900 overflow-hidden rounded-xl">
+        <div className="bg-slate-900 text-white p-4 flex flex-col justify-center min-w-[200px]">
           <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Assessment Cycle</p>
           <h2 className="text-display font-black leading-none">{examType}</h2>
-          <p className="text-[10px] mt-4 text-slate-400 font-bold uppercase tracking-[0.2em]">Session 2025/2026</p>
+          <p className="text-[10px] mt-2 text-slate-400 font-bold uppercase tracking-[0.2em]">Session 2025/2026</p>
         </div>
-        <div className="flex-1 p-6 flex flex-col justify-center bg-slate-50">
+        <div className="flex-1 p-4 flex flex-col justify-center bg-slate-50">
           <div className="grid grid-cols-2 gap-y-4">
             <div>
               <p className="text-[8px] uppercase font-bold text-slate-500">Student Name</p>
@@ -1195,7 +1195,7 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
       </div>
 
       <h3 className="text-[10px] font-black uppercase tracking-widest mb-2 border-b-2 border-slate-900 pb-1">Subject Performance Matrix</h3>
-      <table className="w-full border-collapse mb-6">
+      <table className="w-full border-collapse mb-4">
         <thead>
           <tr className="bg-slate-100 border-y border-slate-900">
             <th className="p-2 text-left text-[10px] uppercase font-black">Subject Identification</th>
@@ -1235,7 +1235,7 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
         </tbody>
       </table>
 
-      <div className="flex justify-center mb-8">
+      <div className="flex justify-center mb-4">
         <div className="w-56 p-4 bg-slate-900 text-white rounded-xl text-center">
           <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Total / Avg</p>
           <p className="text-[20px] font-black leading-none">{rawSum.toFixed(1)} / {avg}%</p>
