@@ -39,17 +39,23 @@ export const DataProvider = ({ children }) => {
   const [systemLogs, setSystemLogs] = useState([]);
   const [promotionSettings, setPromotionSettings] = useState({ passingGrade: 50, minSubjects: 5 });
 
-  const fetchFullTable = async (tableName) => {
+  const fetchFullTable = async (tableName, schoolId = null) => {
     let allData = [];
     let from = 0;
     const limit = 1000;
     let hasMore = true;
 
     while (hasMore) {
-      const { data, error } = await supabase
+      let query = supabase
         .from(tableName)
         .select('*')
         .range(from, from + limit - 1);
+
+      if (schoolId) {
+        query = query.eq('school_id', schoolId);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       if (data && data.length > 0) {
@@ -71,17 +77,18 @@ export const DataProvider = ({ children }) => {
 
     const fetchData = async () => {
       try {
+        const schoolId = currentUser.school_id;
         // Fetch all base tables in parallel using Promise.all
         const [profiles, classData, subjectData, attData, initialExamData, initialGradeData, ttData, eventData, annData] = await Promise.all([
-          fetchFullTable('profiles'),
-          fetchFullTable('classes'),
-          fetchFullTable('subjects'),
-          fetchFullTable('attendance'),
-          fetchFullTable('exams'),
-          fetchFullTable('grades'),
-          supabase.from('timetable').select('*').then(res => res.data),
-          supabase.from('events').select('*').then(res => res.data),
-          supabase.from('announcements').select('*').then(res => res.data)
+          fetchFullTable('profiles', schoolId),
+          fetchFullTable('classes', schoolId),
+          fetchFullTable('subjects', schoolId),
+          fetchFullTable('attendance', schoolId),
+          fetchFullTable('exams', schoolId),
+          fetchFullTable('grades', schoolId),
+          (schoolId ? supabase.from('timetable').select('*').eq('school_id', schoolId) : supabase.from('timetable').select('*')).then(res => res.data),
+          (schoolId ? supabase.from('events').select('*').eq('school_id', schoolId) : supabase.from('events').select('*')).then(res => res.data),
+          (schoolId ? supabase.from('announcements').select('*').eq('school_id', schoolId) : supabase.from('announcements').select('*')).then(res => res.data)
         ]);
 
         if (profiles) {
@@ -121,8 +128,8 @@ export const DataProvider = ({ children }) => {
           const didRelease = await checkAndReleaseScheduledExams(examData);
           if (didRelease) {
             const [refetchedExams, refetchedGrades] = await Promise.all([
-              fetchFullTable('exams'),
-              fetchFullTable('grades')
+              fetchFullTable('exams', schoolId),
+              fetchFullTable('grades', schoolId)
             ]);
             examData = refetchedExams;
             gradeData = refetchedGrades;
@@ -711,10 +718,11 @@ export const DataProvider = ({ children }) => {
 
   const refreshExamData = async () => {
     try {
+      const schoolId = currentUser?.school_id;
       const [initialExamData, initialGradeData, subjectData] = await Promise.all([
-        fetchFullTable('exams'),
-        fetchFullTable('grades'),
-        fetchFullTable('subjects')
+        fetchFullTable('exams', schoolId),
+        fetchFullTable('grades', schoolId),
+        fetchFullTable('subjects', schoolId)
       ]);
 
       let examData = initialExamData;
@@ -724,8 +732,8 @@ export const DataProvider = ({ children }) => {
         const didRelease = await checkAndReleaseScheduledExams(examData);
         if (didRelease) {
           const [refetchedExams, refetchedGrades] = await Promise.all([
-            fetchFullTable('exams'),
-            fetchFullTable('grades')
+            fetchFullTable('exams', schoolId),
+            fetchFullTable('grades', schoolId)
           ]);
           examData = refetchedExams;
           gradeData = refetchedGrades;
