@@ -211,7 +211,7 @@ const AdminDashboard = () => {
   <td className="py-3 text-on-surface-variant font-bold">{s.className}</td>
   <td className="py-3 text-right">
   <span className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded text-label font-bold">
-  {s.averageScore.toFixed(1)}%
+  {s.averageScore.toFixed(2)}%
   </span>
   </td>
   </tr>

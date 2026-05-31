@@ -167,15 +167,25 @@ const ResultsPage = ({ role }) => {
       subjects.forEach(s => { filteredResults[s] = reportData.results[s]; });
 
       const totalAverage = subjects.length > 0 
-        ? (subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].average) || 0), 0) / subjects.length).toFixed(1)
-        : "0.0";
+        ? (subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].average) || 0), 0) / subjects.length).toFixed(2)
+        : "0.00";
       
       const totalScore = subjects.reduce((acc, sub) => acc + (parseFloat(filteredResults[sub].rawSum) || 0), 0);
 
       const examAverages = {};
       ["Before Midterm", "Midterm", "After Midterm", "Final"].forEach(type => {
         const scores = subjects.map(sub => filteredResults[sub][type]).filter(s => typeof s === 'number');
-        examAverages[type] = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : null;
+        if (scores.length > 0) {
+          const rawAvg = scores.reduce((a, b) => a + b, 0) / scores.length;
+          const maxScore = type === 'Before Midterm' || type === 'After Midterm' ? 10 
+                         : type === 'Midterm' ? (classObj?.academicYear === '2025-2026' ? 40 : 30)
+                         : type === 'Final' ? (classObj?.academicYear === '2025-2026' ? 60 : 50)
+                         : 100;
+          const pct = (rawAvg / maxScore) * 100;
+          examAverages[type] = pct.toFixed(2) + '%';
+        } else {
+          examAverages[type] = null;
+        }
       });
 
       const midtermEntered = examAverages["Midterm"] !== null;
@@ -229,7 +239,18 @@ const ResultsPage = ({ role }) => {
           const subData = reportData?.results?.[sub];
           return subData ? subData[type] : undefined;
         }).filter(s => typeof s === 'number');
-        examAverages[type] = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : "Not entered yet";
+        
+        if (scores.length > 0) {
+          const rawAvg = scores.reduce((a, b) => a + b, 0) / scores.length;
+          const maxScore = type === 'Before Midterm' || type === 'After Midterm' ? 10 
+                         : type === 'Midterm' ? (is2526 ? 40 : 30)
+                         : type === 'Final' ? (is2526 ? 60 : 50)
+                         : 100;
+          const pct = (rawAvg / maxScore) * 100;
+          examAverages[type] = pct.toFixed(2) + '%';
+        } else {
+          examAverages[type] = "Not entered yet";
+        }
       });
 
       // Calculate Outcome
@@ -246,12 +267,12 @@ const ResultsPage = ({ role }) => {
       }
 
       const displayAverage = userRole === 'teacher' && selectedSubject
-        ? parseFloat(reportData?.results?.[selectedSubject]?.average || 0)
-        : (studentRank ? parseFloat(studentRank.averageScore.toFixed(1)) : 0);
+        ? (reportData?.results?.[selectedSubject]?.average || 0).toFixed(2)
+        : (studentRank ? studentRank.averageScore.toFixed(2) : "0.00");
 
       const displayTotal = userRole === 'teacher' && selectedSubject
-        ? (reportData?.results?.[selectedSubject]?.rawSum || 0)
-        : (reportData?.results ? Object.values(reportData.results).reduce((acc, curr) => acc + (curr.rawSum || 0), 0) : 0);
+        ? (reportData?.results?.[selectedSubject]?.rawSum || 0).toFixed(2)
+        : (reportData?.results ? Object.values(reportData.results).reduce((acc, curr) => acc + (curr.rawSum || 0), 0).toFixed(2) : "0.00");
 
       return {
         ...student,
@@ -293,8 +314,8 @@ const ResultsPage = ({ role }) => {
             {availableClasses.map(c => {
               const classRankings = calculateRankings(c.id);
               const avg = classRankings.length > 0 
-                ? (classRankings.reduce((acc, curr) => acc + curr.averageScore, 0) / classRankings.length).toFixed(1)
-                : '0.0';
+                ? (classRankings.reduce((acc, curr) => acc + curr.averageScore, 0) / classRankings.length).toFixed(2)
+                : '0.00';
               
               return (
                 <div 
@@ -985,7 +1006,7 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
   if (!classRecord) return null;
   const results = Object.values(classRecord.results).map(r => r[examType]).filter(v => typeof v === 'number');
   const percentages = results.map(score => getGradePercentage(score, examType));
-  const avg = percentages.length > 0 ? (percentages.reduce((a, b) => a + b, 0) / percentages.length).toFixed(1) : 'N/A';
+  const avg = percentages.length > 0 ? (percentages.reduce((a, b) => a + b, 0) / percentages.length).toFixed(2) : 'N/A';
   const rawSum = results.reduce((a, b) => a + b, 0);
 
   return (

@@ -153,10 +153,10 @@ const ClassFullResultsPrint = () => {
  );
  })}
  <td className="border border-slate-900 px-2 py-3 text-center bg-slate-100">
- {studentRank && typeof studentRank.totalScore === 'number' ? studentRank.totalScore.toFixed(1) : '-'}
+ {studentRank && typeof studentRank.totalScore === 'number' ? studentRank.totalScore.toFixed(2) : '-'}
  </td>
  <td className="border border-slate-900 px-2 py-3 text-center bg-slate-200">
- {studentRank && typeof studentRank.averageScore === 'number' ? studentRank.averageScore.toFixed(1) + '%' : '-'}
+ {studentRank && typeof studentRank.averageScore === 'number' ? studentRank.averageScore.toFixed(2) + '%' : '-'}
  </td>
  <td className="border border-slate-900 px-2 py-3 text-center bg-slate-900 text-white">
  {studentRank ? `#${studentRank.rank}` : '-'}

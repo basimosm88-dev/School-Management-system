@@ -33,7 +33,7 @@ const StudentDashboard = () => {
     // 3. Performance Metrics
     const subjects = Object.keys(reportData.results);
     const totalPoints = subjects.reduce((acc, sub) => acc + (parseFloat(reportData.results[sub].average) || 0), 0);
-    const overallAverage = subjects.length > 0 ? (totalPoints / subjects.length).toFixed(1) : "0.0";
+    const overallAverage = subjects.length > 0 ? (totalPoints / subjects.length).toFixed(2) : "0.00";
     
     // 4. Attendance Stats
     const studentAttendanceRecords = attendance.filter(a => String(a.studentId) === String(sId));

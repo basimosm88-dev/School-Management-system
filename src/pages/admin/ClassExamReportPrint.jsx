@@ -163,7 +163,7 @@ const ClassExamReportPrint = () => {
  );
  })}
  <td className="border border-slate-900 px-4 py-4 text-center text-label bg-slate-100">
- {count > 0 ? `${rawSum} / ${(totalPercentage / count).toFixed(1)}%` : '0 / 0.0%'}
+ {count > 0 ? `${rawSum} / ${(totalPercentage / count).toFixed(2)}%` : '0 / 0.00%'}
  </td>
  </tr>
  );

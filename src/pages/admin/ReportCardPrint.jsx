@@ -134,7 +134,7 @@ const ReportCardPrint = () => {
     <div className="p-6 bg-slate-100 border border-slate-200 rounded-xl text-center">
       <p className="text-label text-slate-400/80 mb-2 uppercase">Total Average</p>
       <p className="text-display text-slate-900">
-        {(Object.values(data.results).reduce((acc, curr) => acc + parseFloat(curr.average), 0) / Object.keys(data.results).length || 0).toFixed(1)}%
+        {(Object.values(data.results).reduce((acc, curr) => acc + parseFloat(curr.average), 0) / Object.keys(data.results).length || 0).toFixed(2)}%
       </p>
     </div>
     <div className="p-6 bg-slate-100 border border-slate-200 rounded-xl text-center">
