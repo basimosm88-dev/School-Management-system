@@ -6,6 +6,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import StatCard from '../../components/ui/StatCard';
 import EmptyState from '../../components/ui/EmptyState';
 import EditStudentResultsModal from '../../components/modals/EditStudentResultsModal';
+import ManagePublishStatusModal from '../../components/modals/ManagePublishStatusModal';
 
 const getGradePercentage = (score, examType, academicYear) => {
   const numScore = parseFloat(score);
@@ -25,7 +26,7 @@ const getGradePercentage = (score, examType, academicYear) => {
 const ResultsPage = ({ role }) => {
   const { 
     students, classes, exams, grades,
-    getReportCardData, calculateRankings 
+    getReportCardData, calculateRankings, updateGradePublishStatus 
   } = useData();
   const { schoolSettings, t } = useSettings();
   const { currentUser } = useAppContext();
@@ -43,6 +44,38 @@ const ResultsPage = ({ role }) => {
   const [editingSubject, setEditingSubject] = useState(null);
   const [activeDropdownStudentId, setActiveDropdownStudentId] = useState(null);
   const [showPrintOptionModal, setShowPrintOptionModal] = useState(false);
+  const [managingPublishStudent, setManagingPublishStudent] = useState(null);
+
+  const renderGradeCell = (val, type, subjectRecord) => {
+    const withheldInfo = subjectRecord?.withheldDetails?.[type];
+    if (withheldInfo?.isWithheld) {
+      if (userRole === 'student') {
+        return (
+          <div className="inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2.5 py-1 rounded-xl text-xs font-bold shadow-sm relative group cursor-help select-none">
+            <span className="material-symbols-outlined text-[14px]">lock</span>
+            Withheld
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white text-[10px] p-2 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 text-center font-normal shadow-xl normal-case">
+              {withheldInfo.reason || "Result withheld. Please contact administration."}
+              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+            </div>
+          </div>
+        );
+      } else {
+        // Admin/Teacher sees score + lock indicator
+        return (
+          <div className="inline-flex items-center gap-1 relative group cursor-help select-none">
+            <span className="text-on-surface font-bold">{val}</span>
+            <span className="material-symbols-outlined text-amber-500 text-sm ml-1" title={`Withheld: ${withheldInfo.reason || 'No reason specified'}`}>lock</span>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white text-[10px] p-2 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 text-center font-normal shadow-xl normal-case">
+              Withheld from student. Reason: {withheldInfo.reason || "No reason specified."}
+              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+            </div>
+          </div>
+        );
+      }
+    }
+    return <span className={typeof val === 'number' ? 'font-semibold' : 'text-slate-400 italic'}>{val}</span>;
+  };
 
   // Helper for printing
   const handlePrint = (studentId = null, config = { type: 'report-card', examType: null }) => {
@@ -545,24 +578,34 @@ const ResultsPage = ({ role }) => {
                                    <span className="material-symbols-outlined text-section">edit</span>
                                  </button>
                                  
-                                 {activeDropdownStudentId === res.id && (
-                                   <>
-                                     <div 
-                                       className="fixed inset-0 z-40" 
-                                       onClick={() => setActiveDropdownStudentId(null)}
-                                     />
-                                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800 py-2 z-50 text-left animate-in fade-in slide-in-from-top-2 duration-150">
-                                       <button
-                                         onClick={() => {
-                                           setEditingStudent(res);
-                                           setEditingSubject(null);
-                                           setActiveDropdownStudentId(null);
-                                         }}
-                                         className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-250 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
-                                       >
-                                         <span className="material-symbols-outlined text-base text-slate-400">edit_note</span>
-                                         Edit All Subjects
-                                       </button>
+                                  {activeDropdownStudentId === res.id && (
+                                    <>
+                                      <div 
+                                        className="fixed inset-0 z-40" 
+                                        onClick={() => setActiveDropdownStudentId(null)}
+                                      />
+                                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800 py-2 z-50 text-left animate-in fade-in slide-in-from-top-2 duration-150">
+                                        <button
+                                          onClick={() => {
+                                            setManagingPublishStudent(res);
+                                            setActiveDropdownStudentId(null);
+                                          }}
+                                          className="w-full text-left px-4 py-2.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-2.5 mb-1"
+                                        >
+                                          <span className="material-symbols-outlined text-base text-amber-500">visibility_off</span>
+                                          Manage Publish Status
+                                        </button>
+                                        <button
+                                          onClick={() => {
+                                            setEditingStudent(res);
+                                            setEditingSubject(null);
+                                            setActiveDropdownStudentId(null);
+                                          }}
+                                          className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-250 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                                        >
+                                          <span className="material-symbols-outlined text-base text-slate-400">edit_note</span>
+                                          Edit All Subjects
+                                        </button>
                                        <div className="border-t border-slate-100 dark:border-slate-800/80 my-1.5" />
                                        {(currentClass?.subjects || []).map((sub) => (
                                          <button
@@ -714,10 +757,10 @@ const ResultsPage = ({ role }) => {
                             <td className="px-6 py-4">
                               <p className="text-label text-on-surface font-bold">{subject}</p>
                             </td>
-                            {!is2526 && <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["Before Midterm"]}</td>}
-                            <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["Midterm"]}</td>
-                            {!is2526 && <td className="px-4 py-4 text-center text-on-surface-variant text-label">{classRecord.results[subject]["After Midterm"]}</td>}
-                            <td className="px-4 py-4 text-center text-on-surface font-bold text-label">{classRecord.results[subject]["Final"]}</td>
+                            {!is2526 && <td className="px-4 py-4 text-center text-label">{renderGradeCell(classRecord.results[subject]["Before Midterm"], "Before Midterm", classRecord.results[subject])}</td>}
+                            <td className="px-4 py-4 text-center text-label">{renderGradeCell(classRecord.results[subject]["Midterm"], "Midterm", classRecord.results[subject])}</td>
+                            {!is2526 && <td className="px-4 py-4 text-center text-label">{renderGradeCell(classRecord.results[subject]["After Midterm"], "After Midterm", classRecord.results[subject])}</td>}
+                            <td className="px-4 py-4 text-center text-label">{renderGradeCell(classRecord.results[subject]["Final"], "Final", classRecord.results[subject])}</td>
                             <td className="px-6 py-4 text-right bg-slate-100/30 dark:bg-slate-800/10">
                               <span className="text-label text-primary font-bold">{(typeof classRecord.results[subject].rawSum === 'number' ? classRecord.results[subject].rawSum : parseFloat(classRecord.results[subject].rawSum) || 0).toFixed(1)} / {classRecord.results[subject].average}%</span>
                             </td>
@@ -863,6 +906,15 @@ const ResultsPage = ({ role }) => {
           student={editingStudent}
           currentClass={classes.find(c => String(c.id) === String(editingStudent.classId)) || currentClass}
           subjectName={editingSubject}
+        />
+      )}
+
+      {/* Manage Publish Status Modal */}
+      {managingPublishStudent && (
+        <ManagePublishStatusModal 
+          onClose={() => setManagingPublishStudent(null)}
+          student={managingPublishStudent}
+          currentClass={classes.find(c => String(c.id) === String(managingPublishStudent.classId)) || currentClass}
         />
       )}
 
