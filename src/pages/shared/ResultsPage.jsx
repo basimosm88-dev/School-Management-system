@@ -1156,8 +1156,9 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
 
 const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) => {
   if (!classRecord) return null;
+  const academicYear = classRecord.academicYear || '2025-2026';
   const results = Object.values(classRecord.results).map(r => r[examType]).filter(v => typeof v === 'number');
-  const percentages = results.map(score => getGradePercentage(score, examType));
+  const percentages = results.map(score => getGradePercentage(score, examType, academicYear));
   const avg = percentages.length > 0 ? (percentages.reduce((a, b) => a + b, 0) / percentages.length).toFixed(2) : 'N/A';
   const rawSum = results.reduce((a, b) => a + b, 0);
 
@@ -1207,6 +1208,7 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
           {Object.keys(classRecord.results).map((subject, idx) => {
             const grade = classRecord.results[subject][examType];
             const isNumeric = typeof grade === 'number';
+            const pct = isNumeric ? getGradePercentage(grade, examType, academicYear) : 0;
             return (
               <tr key={idx} className="border-b border-slate-100">
                 <td className="p-2">
@@ -1217,15 +1219,15 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
                 </td>
                 <td className="p-2 text-center">
                   {isNumeric ? (
-                    <span className={`text-[10px] font-black px-2 py-0.5 rounded ${grade >= 50 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
-                      {grade >= 50 ? 'PASS' : 'FAIL'}
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded ${pct >= 50 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                      {pct >= 50 ? 'PASS' : 'FAIL'}
                     </span>
                   ) : (
                     <span className="text-[10px] text-slate-400 font-bold italic">N/A</span>
                   )}
                 </td>
                 <td className="p-2 text-right text-[10px] text-slate-500 font-bold italic">
-                  {isNumeric ? (grade >= 80 ? 'Excellent' : grade >= 60 ? 'Good' : grade >= 50 ? 'Satisfactory' : 'Needs Work') : '-'}
+                  {isNumeric ? (pct >= 80 ? 'Excellent' : pct >= 60 ? 'Good' : pct >= 50 ? 'Satisfactory' : 'Needs Work') : '-'}
                 </td>
               </tr>
             );
