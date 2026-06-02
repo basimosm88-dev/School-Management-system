@@ -1349,21 +1349,36 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
 
                 {/* Body */}
                 <div className="login-card-body">
-                  <h4 className="login-card-student-name">{student.name}</h4>
-                  
-                  <div className="login-card-info-row">
-                    <span className="login-card-info-label">{t('class')}:</span>
-                    <span className="login-card-info-value">{currentClass ? currentClass.name : ''}</span>
-                  </div>
+                  <div className="login-card-body-wrapper">
+                    {/* Left Column: Details */}
+                    <div className="login-card-left-col">
+                      <h4 className="login-card-student-name">{student.name}</h4>
+                      
+                      <div className="login-card-info-row">
+                        <span className="login-card-info-label">{t('class')}:</span>
+                        <span className="login-card-info-value">{currentClass ? currentClass.name : ''}</span>
+                      </div>
 
-                  <div className="login-card-credentials-box">
-                    <div className="login-card-cred-row">
-                      <span className="login-card-cred-label">{t('studentId')}:</span>
-                      <span className="login-card-cred-value">{studentId}</span>
+                      <div className="login-card-credentials-box">
+                        <div className="login-card-cred-row">
+                          <span className="login-card-cred-label">{t('studentId')}:</span>
+                          <span className="login-card-cred-value">{studentId}</span>
+                        </div>
+                        <div className="login-card-cred-row">
+                          <span className="login-card-cred-label">{t('password')}:</span>
+                          <span className="login-card-cred-value">{studentPassword}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="login-card-cred-row">
-                      <span className="login-card-cred-label">{t('password')}:</span>
-                      <span className="login-card-cred-value">{studentPassword}</span>
+
+                    {/* Right Column: Portal QR Code Graphic */}
+                    <div className="login-card-right-col">
+                      <div className="login-card-qr-container">
+                        <div className="login-card-qr-placeholder">
+                          <span className="material-symbols-outlined text-[48px]">qr_code_2</span>
+                        </div>
+                        <div className="login-card-qr-hint">Scan to Login</div>
+                      </div>
                     </div>
                   </div>
                 </div>
