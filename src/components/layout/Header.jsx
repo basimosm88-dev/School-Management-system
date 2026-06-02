@@ -1,19 +1,30 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useData } from '../../contexts/DataContext';
 
 const Header = () => {
-  const { sidebarOpen, toggleSidebar, darkMode, toggleDarkMode, currentUser } = useAppContext();
+  const { sidebarOpen, toggleSidebar, darkMode, toggleDarkMode, currentUser, logout } = useAppContext();
   const { language, setLanguage, t } = useSettings();
   const { notifications, markNotificationRead, students, teachers, classes, subjects } = useData();
+  const navigate = useNavigate();
 
   const [langOpen, setLangOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const unreadCount = notifications.filter(n => !n.read).length;
+  const role = currentUser?.role || 'admin';
+
+  const confirmLogout = () => {
+    setShowLogoutModal(false);
+    logout();
+    navigate(role === 'admin' ? '/admin/login' : '/login');
+  };
 
   const handleSearchClick = (path) => {
     setShowSearchDropdown(false);
@@ -44,7 +55,8 @@ const Header = () => {
   const searchResults = getSearchResults();
 
   return (
-    <header className={`fixed top-0 lg:top-4 right-0 lg:right-4 left-0 ${sidebarOpen ? 'lg:left-[312px]' : 'lg:left-[120px]'} h-16 bg-white dark:bg-slate-900 flex justify-between items-center px-4 lg:px-6 z-40 lg:rounded-2xl border-b lg:border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-all duration-300`} id="header">
+    <>
+      <header className={`fixed top-0 lg:top-4 right-0 lg:right-4 left-0 ${sidebarOpen ? 'lg:left-[312px]' : 'lg:left-[120px]'} h-16 bg-white dark:bg-slate-900 flex justify-between items-center px-4 lg:px-6 z-40 lg:rounded-2xl border-b lg:border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-all duration-300`} id="header">
       <div className="flex items-center gap-2 lg:gap-8">
         {/* Hamburger Menu - Mobile only */}
         <button 
@@ -161,15 +173,83 @@ const Header = () => {
           </button>
         </div>
         <div className="h-6 lg:h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
-        <div className="ml-1 lg:ml-2">
-          <img
-            alt="User profile avatar"
-            className="w-7 h-7 lg:w-8 lg:h-8 rounded-full border border-slate-100 dark:border-slate-700 object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8tWnO0wzkfevdY1uHYDDDPCCW21qH9FnRZwOp2n8PRTPfPvC79VVAMzq9YQc60jssVlpoWljbQQIm7AYDnpShdOfOOAeR3wmSiCXTk_VkV5swLXnBICJa54A2ZMnTWyHrPyxVwD5hHwo9AQx0YGwRVodtqoIdMyF4zRlHlV7XyyO87uEr4t1b5lVRoHi7VWnoMHbNHD25KcCFKQMqkAN4ey9Ih_tlhHncX1jiplCZT7NQNuqxuKyZ4vvdV0keDCQYasLdTICPuRw"
-          />
+        <div className="relative ml-1 lg:ml-2">
+          <button 
+            onClick={() => setProfileDropdownOpen(!profileDropdownOpen)} 
+            className="flex items-center gap-1.5 focus:outline-none group p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
+            id="profile-dropdown-button"
+          >
+            <img
+              alt="User profile avatar"
+              className="w-7 h-7 lg:w-8 lg:h-8 rounded-full border border-slate-100 dark:border-slate-700 object-cover transition-transform group-hover:scale-105"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8tWnO0wzkfevdY1uHYDDDPCCW21qH9FnRZwOp2n8PRTPfPvC79VVAMzq9YQc60jssVlpoWljbQQIm7AYDnpShdOfOOAeR3wmSiCXTk_VkV5swLXnBICJa54A2ZMnTWyHrPyxVwD5hHwo9AQx0YGwRVodtqoIdMyF4zRlHlV7XyyO87uEr4t1b5lVRoHi7VWnoMHbNHD25KcCFKQMqkAN4ey9Ih_tlhHncX1jiplCZT7NQNuqxuKyZ4vvdV0keDCQYasLdTICPuRw"
+            />
+            <span className="material-symbols-outlined text-[16px] text-slate-400 group-hover:text-slate-600 transition-colors">
+              keyboard_arrow_down
+            </span>
+          </button>
+
+          {profileDropdownOpen && (
+            <div className="absolute top-12 right-0 w-56 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-2xl rounded-2xl p-2 z-50 flex flex-col gap-1 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{currentUser?.name || 'User'}</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">{role}</p>
+              </div>
+              
+              <Link 
+                to={`/${role}/settings`}
+                onClick={() => setProfileDropdownOpen(false)}
+                className="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200 transition-all font-semibold text-xs"
+              >
+                <span className="material-symbols-outlined text-[18px]">settings</span>
+                {t('settings')}
+              </Link>
+              
+              <button
+                onClick={() => {
+                  setProfileDropdownOpen(false);
+                  setShowLogoutModal(true);
+                }}
+                className="flex items-center gap-3 px-3 py-2 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all font-semibold text-xs text-left"
+              >
+                <span className="material-symbols-outlined text-[18px]">logout</span>
+                {t('logout')}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>
+
+    {showLogoutModal && (
+      <div className="fixed inset-0 bg-slate-900/80 dark:bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-in fade-in duration-300">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-2xl w-full max-w-sm animate-in zoom-in-95 duration-300">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-20 h-20 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
+              <span className="material-symbols-outlined text-[40px]">logout</span>
+            </div>
+            <h3 className="text-2xl font-black text-on-surface dark:text-on-surface mb-2 tracking-tight">Sign out</h3>
+            <p className="text-sm font-bold text-on-surface-variant dark:text-on-surface-variant mb-8 leading-relaxed">Are you sure you want to logout? You will need to login again to access your account.</p>
+
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 px-4 py-3 rounded-xl border border-outline dark:border-outline font-bold text-on-surface-variant dark:text-on-surface-variant hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                {t('cancel')}
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="flex-1 px-4 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold transition-colors shadow-sm shadow-rose-600/20"
+              >
+                {t('confirm')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
 

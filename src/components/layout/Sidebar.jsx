@@ -40,10 +40,8 @@ const navItems = {
 };
 
 const Sidebar = ({ role = 'admin' }) => {
-  const { sidebarOpen, toggleSidebar, logout } = useAppContext();
+  const { sidebarOpen, toggleSidebar } = useAppContext();
   const { schoolSettings, permissions, t } = useSettings();
-  const navigate = useNavigate();
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const filteredItems = navItems[role]?.filter(item => {
     if (role === 'admin') return true;
@@ -61,15 +59,7 @@ const Sidebar = ({ role = 'admin' }) => {
     return true;
   }) || [];
 
-  const handleLogoutClick = () => {
-    setShowLogoutModal(true);
-  };
 
-  const confirmLogout = () => {
-    setShowLogoutModal(false);
-    logout();
-    navigate(role === 'admin' ? '/admin/login' : '/login');
-  };
 
   return (
     <>
@@ -153,61 +143,7 @@ const Sidebar = ({ role = 'admin' }) => {
           ))}
         </nav>
 
-        {/* Footer Zone */}
-        <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 space-y-1">
-          <NavLink 
-            to={`/${role}/settings`} 
-            onClick={() => {
-              if (window.innerWidth < 1024) toggleSidebar();
-            }}
-            className="sidebar-item flex items-center gap-4 px-3 py-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group"
-          >
-            <div className="w-9 h-9 border border-slate-100 dark:border-slate-700 rounded-lg flex items-center justify-center shrink-0 group-hover:border-slate-200 dark:group-hover:border-slate-600">
-              <span className="material-symbols-outlined">settings</span>
-            </div>
-            <span className="sidebar-text font-medium group-hover:text-slate-900 dark:group-hover:text-slate-200">{t('settings')}</span>
-          </NavLink>
-          <button
-            onClick={handleLogoutClick}
-            className="w-full sidebar-item flex items-center gap-4 px-3 py-2 text-slate-500 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-900/10 hover:text-rose-600 rounded-xl transition-all group"
-          >
-            <div className="w-9 h-9 flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined">logout</span>
-            </div>
-            <span className="sidebar-text font-medium">{t('logout')}</span>
-          </button>
-        </div>
-
       </aside>
-
-      {showLogoutModal && (
-        <div className="fixed inset-0 bg-slate-900/80 dark:bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-2xl w-full max-w-sm animate-in zoom-in-95 duration-300">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-20 h-20 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
-                <span className="material-symbols-outlined text-[40px]">logout</span>
-              </div>
-              <h3 className="text-2xl font-black text-on-surface dark:text-on-surface mb-2 tracking-tight">Sign out</h3>
-              <p className="text-sm font-bold text-on-surface-variant dark:text-on-surface-variant mb-8 leading-relaxed">Are you sure you want to logout? You will need to login again to access your account.</p>
-
-              <div className="flex gap-3 w-full">
-                <button
-                  onClick={() => setShowLogoutModal(false)}
-                  className="flex-1 px-4 py-3 rounded-xl border border-outline dark:border-outline font-bold text-on-surface-variant dark:text-on-surface-variant hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={confirmLogout}
-                  className="flex-1 px-4 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold transition-colors shadow-sm shadow-rose-600/20"
-                >
-                  {t('confirm')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
