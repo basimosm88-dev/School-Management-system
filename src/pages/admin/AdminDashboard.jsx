@@ -94,7 +94,7 @@ const AdminDashboard = () => {
  {/* Welcome Section */}
  <div className="mb-8 p-6 bg-gradient-to-r from-primary to-indigo-600 rounded-2xl text-white shadow-lg shadow-primary/20">
  <h1 className="text-display mb-1 text-on-primary">{t(greetingKey)}, {currentUser?.name || 'Admin'}!</h1>
- <p className="text-on-primary/80 text-label font-bold uppercase tracking-wider">Here is what is happening in your school today.</p>
+ <p className="text-on-primary/80 text-label font-bold uppercase tracking-wider">{t('welcomeSubtitle')}</p>
  </div>
 
  {/* 1. KPI CARDS (TOP SECTION) */}
@@ -140,8 +140,8 @@ const AdminDashboard = () => {
  <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-4 md:p-8 shadow-sm transition-colors relative overflow-hidden">
  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
  <div>
- <h2 className="text-section text-slate-900 dark:text-slate-100">Attendance Report</h2>
- <p className="text-label text-slate-500/80 dark:text-slate-400/80 mt-1">Daily presence vs absence tracking</p>
+ <h2 className="text-section text-slate-900 dark:text-slate-100">{t('attendanceReport')}</h2>
+ <p className="text-label text-slate-500/80 dark:text-slate-400/80 mt-1">{t('attendanceReportSubtitle')}</p>
  </div>
  
  <div className="flex items-center gap-4">
@@ -151,9 +151,9 @@ const AdminDashboard = () => {
         onChange={(e) => setAttendanceRange(e.target.value)}
         className="appearance-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 pr-10 text-label text-slate-600 dark:text-slate-300 outline-none focus:ring-4 focus:ring-primary/5 transition-all cursor-pointer shadow-sm group-hover:border-primary/30"
       >
-        <option value="weekly">Weekly View</option>
-        <option value="monthly">Monthly View</option>
-        <option value="year">Yearly View</option>
+        <option value="weekly">{t('weeklyView')}</option>
+        <option value="monthly">{t('monthlyView')}</option>
+        <option value="year">{t('yearlyView')}</option>
       </select>
       <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-primary transition-colors pointer-events-none text-[20px]">
         expand_more
@@ -192,15 +192,15 @@ const AdminDashboard = () => {
  <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">{t('topPerformers')}</h2>
  <div className="overflow-x-auto">
  {topStudents.length === 0 ? (
- <EmptyState icon="emoji_events" message="No Performers Found" description="Not enough graded data yet." />
+ <EmptyState icon="emoji_events" message={t('noPerformersFound')} description={t('noPerformersDescription')} />
  ) : (
  <table className="w-full text-left text-label">
  <thead>
  <tr className="text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
- <th className="pb-3">Rank</th>
- <th className="pb-3">Student</th>
- <th className="pb-3">Class</th>
- <th className="pb-3 text-right">Avg Score</th>
+ <th className="pb-3">{t('rank')}</th>
+ <th className="pb-3">{t('studentName')}</th>
+ <th className="pb-3">{t('class')}</th>
+ <th className="pb-3 text-right">{t('averageScore')}</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
@@ -227,7 +227,7 @@ const AdminDashboard = () => {
  <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">{t('recentActivity')}</h2>
  <div className="space-y-4">
  {(!systemLogs || systemLogs.length === 0) ? (
- <EmptyState icon="history" message="No Activity" description="No recent system activities found." />
+ <EmptyState icon="history" message={t('noLogsFound')} description={t('noLogsDescription')} />
  ) : (
  systemLogs.map((log) => (
  <div key={log.id} className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors">
@@ -250,7 +250,7 @@ const AdminDashboard = () => {
   {/* CALENDAR */}
   <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm transition-all h-[420px] flex flex-col">
     <div className="flex justify-between items-center mb-6 shrink-0">
-      <h2 className="text-headline text-on-surface">Calendar</h2>
+      <h2 className="text-headline text-on-surface">{t('calendar')}</h2>
       <div className="bg-primary/5 dark:bg-primary/10 text-primary px-3 py-1.5 rounded-xl text-label font-bold border border-primary/10">
         {monthName} {currentYear}
       </div>
@@ -293,8 +293,8 @@ const AdminDashboard = () => {
     {/* Upcoming event hint if any today */}
     <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 shrink-0">
       <div className="flex items-center justify-between text-label">
-        <span className="text-on-surface-variant">Events</span>
-        <button className="text-primary font-bold hover:underline">View All</button>
+        <span className="text-on-surface-variant">{t('events')}</span>
+        <button className="text-primary font-bold hover:underline">{t('viewAll')}</button>
       </div>
     </div>
   </section>
@@ -314,21 +314,21 @@ const AdminDashboard = () => {
  </svg>
  <div className="absolute inset-0 flex flex-col items-center justify-center">
  <span className="text-section text-on-surface">{maleCount + femaleCount}</span>
- <span className="text-label text-on-surface-variant">Total</span>
+ <span className="text-label text-on-surface-variant">{t('total')}</span>
  </div>
  </div>
  <div className="w-full space-y-2">
  <div className="flex justify-between items-center text-label">
  <div className="flex items-center gap-2">
  <span className="w-2 h-2 rounded-full bg-primary"></span>
- <span className="text-on-surface-variant">Male Students</span>
+ <span className="text-on-surface-variant">{t('maleStudents')}</span>
  </div>
  <span className="text-on-surface">{maleCount}</span>
  </div>
  <div className="flex justify-between items-center text-label">
  <div className="flex items-center gap-2">
  <span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700"></span>
- <span className="text-on-surface-variant">Female Students</span>
+ <span className="text-on-surface-variant">{t('femaleStudents')}</span>
  </div>
  <span className="text-on-surface">{femaleCount}</span>
  </div>
@@ -341,7 +341,7 @@ const AdminDashboard = () => {
  <h2 className="text-section text-on-surface mb-6">{t('upcomingEvents')}</h2>
  <div className="space-y-4">
  {(!events || events.length === 0) ? (
- <EmptyState icon="event_busy" message="No Events" description="There are no upcoming events." />
+ <EmptyState icon="event_busy" message={t('noEventsFound')} description={t('noEventsDescription')} />
  ) : (
  events.slice().sort((a,b) => new Date(a.date || 0) - new Date(b.date || 0)).slice(0, 3).map((event) => (
  <div key={event.id} className="p-3 border border-slate-100 dark:border-slate-800 rounded-xl bg-slate-100/50 dark:bg-slate-800/30">
@@ -360,7 +360,7 @@ const AdminDashboard = () => {
  <h2 className="text-section text-on-surface mb-6">{t('announcements')}</h2>
  <div className="space-y-4">
  {(!announcements || announcements.length === 0) ? (
- <EmptyState icon="campaign" message="No Announcements" description="No active announcements at this time." />
+ <EmptyState icon="campaign" message={t('noAnnouncementsFound')} description={t('noAnnouncementsDescription')} />
  ) : (
  announcements.slice().reverse().slice(0, 3).map((ann) => (
  <div key={ann.id} className={`relative pl-4 border-l-2 ${ann.priority === 'urgent' ? 'border-rose-500' : 'border-primary/30'}`}>

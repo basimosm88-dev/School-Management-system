@@ -41,9 +41,9 @@ const SubjectsPage = () => {
  };
 
  const handleDelete = (id) => {
- if (window.confirm('Are you sure you want to delete this subject? It may be linked to multiple classes.')) {
+ if (window.confirm(t('deleteSubjectConfirm'))) {
  deleteSubject(id);
- addNotification('Subject deleted successfully', 'success');
+ addNotification(t('subjectDeleted'), 'success');
  }
  };
 
@@ -51,10 +51,10 @@ const SubjectsPage = () => {
  try {
  if (editingSubject) {
  updateSubject(editingSubject.id, subjectData);
- addNotification('Subject updated successfully', 'success');
+ addNotification(t('subjectUpdated'), 'success');
  } else {
  addSubject(subjectData);
- addNotification('New subject created successfully', 'success');
+ addNotification(t('subjectAdded'), 'success');
  }
  setIsFormOpen(false);
  } catch (error) {
@@ -78,7 +78,7 @@ const SubjectsPage = () => {
  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400/80">search</span>
  <input
  type="text"
- placeholder="Search subject name..."
+ placeholder={t('searchSubjectsPlaceholder')}
  value={searchTerm}
  onChange={(e) => setSearchTerm(e.target.value)}
  className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
@@ -91,19 +91,19 @@ const SubjectsPage = () => {
  onChange={(e) => setFilters({ ...filters, level: e.target.value })}
  className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
- <option value="">All Levels</option>
- <option value="Primary">Primary</option>
- <option value="Middle">Middle</option>
- <option value="Secondary">Secondary</option>
+ <option value="">{t('allLevels')}</option>
+ <option value="Primary">{t('primary')}</option>
+ <option value="Middle">{t('middle')}</option>
+ <option value="Secondary">{t('secondary')}</option>
  </select>
  <select
  value={filters.status}
  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
  className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
- <option value="">All Status</option>
- <option value="Active">Active</option>
- <option value="Inactive">Inactive</option>
+ <option value="">{t('allStatus')}</option>
+ <option value="Active">{t('active')}</option>
+ <option value="Inactive">{t('inactive')}</option>
  </select>
  </div>
  </div>
@@ -113,7 +113,7 @@ const SubjectsPage = () => {
  className="btn-primary"
  >
  <span className="btn-icon">add_circle</span>
- Add Subject
+ {t('addSubject')}
  </button>
  </div>
 
@@ -123,11 +123,11 @@ const SubjectsPage = () => {
  <table className="w-full text-left text-label">
  <thead className="bg-slate-100/50 dark:bg-slate-800/50 text-slate-500/80 dark:text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
  <tr>
- <th className="px-6 py-4">Subject Name</th>
- <th className="px-6 py-4">Education Level(s)</th>
- <th className="px-6 py-4">Weekly Periods</th>
- <th className="px-6 py-4">Status</th>
- <th className="px-6 py-4 text-right">Actions</th>
+ <th className="px-6 py-4">{t('subjectName')}</th>
+ <th className="px-6 py-4">{t('educationLevels')}</th>
+ <th className="px-6 py-4">{t('weeklyPeriods')}</th>
+ <th className="px-6 py-4">{t('status')}</th>
+ <th className="px-6 py-4 text-right">{t('actions')}</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -145,7 +145,7 @@ const SubjectsPage = () => {
  <div className="flex flex-wrap gap-1.5">
  {(sub.levels || []).map(lvl => (
  <span key={lvl} className="px-2 py-0.5 rounded-md text-label bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50">
- {lvl}
+ {t(lvl.toLowerCase())}
  </span>
  ))}
  </div>
@@ -153,7 +153,7 @@ const SubjectsPage = () => {
  <td className="px-6 py-4">
  <div className="flex items-center gap-2">
  <span className="text-label text-slate-700 dark:text-slate-300">{sub.weeklyPeriods}</span>
- <span className="text-label text-slate-400/80">p/week</span>
+ <span className="text-label text-slate-400/80">{t('periodsPerWeekShort')}</span>
  </div>
  </td>
  <td className="px-6 py-4">
@@ -162,7 +162,7 @@ const SubjectsPage = () => {
  ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30'
  : 'bg-slate-100 text-slate-500/80 dark:bg-slate-800'
  }`}>
- {sub.status || 'Active'}
+ {t((sub.status || 'Active').toLowerCase())}
  </span>
  </td>
  <td className="px-6 py-4 text-right">
@@ -187,7 +187,7 @@ const SubjectsPage = () => {
  <tr>
  <td colSpan="5" className="px-6 py-12 text-center text-slate-400/80">
  <span className="material-symbols-outlined text-display mb-2 opacity-30">menu_book</span>
- <p>No subjects found.</p>
+ <p>{t('noSubjectsFound')}</p>
  </td>
  </tr>
  )}
@@ -202,13 +202,14 @@ const SubjectsPage = () => {
  subject={editingSubject}
  onClose={() => setIsFormOpen(false)}
  onSave={handleSave}
+ t={t}
  />
  )}
  </PageLayout>
  );
 };
 
-const SubjectForm = ({ subject, onClose, onSave }) => {
+const SubjectForm = ({ subject, onClose, onSave, t }) => {
  const [formData, setFormData] = useState(subject || {
  name: '',
  levels: [],
@@ -235,7 +236,7 @@ const SubjectForm = ({ subject, onClose, onSave }) => {
  <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50">
  <h3 className="text-slate-900 dark:text-slate-100 text-section flex items-center gap-2">
  <span className="material-symbols-outlined text-primary">auto_stories</span>
- {subject ? 'Edit Subject' : 'Create New Subject'}
+ {subject ? t('editSubject') : t('createNewSubject')}
  </h3>
  <button onClick={onClose} className="p-2 text-slate-400/80 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all">
  <span className="material-symbols-outlined">close</span>
@@ -244,10 +245,10 @@ const SubjectForm = ({ subject, onClose, onSave }) => {
 
  <div className="p-8 space-y-6">
  <div>
- <label className="text-label text-slate-500/80 mb-1.5 block">Subject Name</label>
+ <label className="text-label text-slate-500/80 mb-1.5 block">{t('subjectName')}</label>
  <input 
  type="text" 
- placeholder="e.g. Mathematics" 
+ placeholder={t('subjectName')} 
  className="form-input-custom" 
  value={formData.name}
  onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -256,7 +257,7 @@ const SubjectForm = ({ subject, onClose, onSave }) => {
  </div>
 
  <div>
- <label className="text-label text-slate-500/80 mb-3 block">Assigned Levels</label>
+ <label className="text-label text-slate-500/80 mb-3 block">{t('assignedLevels')}</label>
  <div className="flex flex-wrap gap-3">
  {['Primary', 'Middle', 'Secondary'].map(lvl => (
  <button
@@ -269,7 +270,7 @@ const SubjectForm = ({ subject, onClose, onSave }) => {
  : 'bg-slate-100 dark:bg-slate-800 text-slate-400/80 border-slate-100 dark:border-slate-700 hover:border-primary/50'
  }`}
  >
- {lvl}
+ {t(lvl.toLowerCase())}
  </button>
  ))}
  </div>
@@ -277,7 +278,7 @@ const SubjectForm = ({ subject, onClose, onSave }) => {
 
  <div className="grid grid-cols-2 gap-6">
  <div>
- <label className="text-label text-slate-500/80 mb-1.5 block">Weekly Periods</label>
+ <label className="text-label text-slate-500/80 mb-1.5 block">{t('weeklyPeriods')}</label>
  <input 
  type="number" 
  min="1"
@@ -287,23 +288,23 @@ const SubjectForm = ({ subject, onClose, onSave }) => {
  />
  </div>
  <div>
- <label className="text-label text-slate-500/80 mb-1.5 block">Status</label>
+ <label className="text-label text-slate-500/80 mb-1.5 block">{t('status')}</label>
  <select 
  className="form-input-custom"
  value={formData.status}
  onChange={e => setFormData({ ...formData, status: e.target.value })}
  >
- <option value="Active">Active</option>
- <option value="Inactive">Inactive</option>
+ <option value="Active">{t('active')}</option>
+ <option value="Inactive">{t('inactive')}</option>
  </select>
  </div>
  </div>
 
  <div>
- <label className="text-label text-slate-500/80 mb-1.5 block">Description (Optional)</label>
+ <label className="text-label text-slate-500/80 mb-1.5 block">{t('descriptionOptional')}</label>
  <textarea 
  className="form-input-custom min-h-[80px]" 
- placeholder="Course overview or prerequisites..."
+ placeholder={t('courseOverviewPlaceholder')}
  value={formData.description}
  onChange={e => setFormData({ ...formData, description: e.target.value })}
  ></textarea>
@@ -311,8 +312,8 @@ const SubjectForm = ({ subject, onClose, onSave }) => {
  </div>
 
  <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl">
- <button type="button" onClick={onClose} className="px-6 py-2.5 text-label text-slate-500/80 dark:text-slate-400/80 hover:text-slate-700 transition-all">Cancel</button>
- <button type="submit" className="px-8 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">{subject ? 'Update Subject' : 'Save Subject'}</button>
+ <button type="button" onClick={onClose} className="px-6 py-2.5 text-label text-slate-500/80 dark:text-slate-400/80 hover:text-slate-700 transition-all">{t('cancel')}</button>
+ <button type="submit" className="px-8 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">{subject ? t('updateSubject') : t('saveSubject')}</button>
  </div>
  </form>
  </div>

@@ -6,7 +6,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 const ClassFullResultsPrint = () => {
  const { classId } = useParams();
  const { students, classes, exams, getReportCardData, calculateRankings } = useData();
- const { schoolSettings, pdfSettings, academicSettings } = useSettings();
+ const { schoolSettings, pdfSettings, academicSettings, t, language } = useSettings();
 
  const currentClass = classes.find(c => String(c.id) === String(classId));
  const classStudents = students.filter(s => String(s.classId) === String(classId));
@@ -20,7 +20,7 @@ const ClassFullResultsPrint = () => {
  }, []);
 
  if (!currentClass || classStudents.length === 0) {
- return <div className="p-10 text-center font-serif text-rose-500">No data found for this class.</div>;
+ return <div className="p-10 text-center font-serif text-rose-500">{t('noDataFound')}</div>;
  }
 
  // Get all unique subjects for this class (allow approved or published results for printing)
@@ -31,7 +31,7 @@ const ClassFullResultsPrint = () => {
  const uniqueSubjects = [...new Set(classExams.map(e => e.subjectName))].sort();
 
  return (
- <div className="bg-white min-h-screen font-serif text-slate-900">
+ <div className="bg-white min-h-screen font-serif text-slate-900" dir={language === 'ar' ? 'rtl' : 'ltr'}>
  <style>
  {`
  @media print {
@@ -52,7 +52,7 @@ const ClassFullResultsPrint = () => {
  className="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl text-label hover:-translate-y-1 transition-transform flex items-center gap-2"
  >
  <span className="material-symbols-outlined text-section">print</span>
- Print Full Class Results
+ {t('printFullClassResults')}
  </button>
  </div>
 
@@ -60,7 +60,7 @@ const ClassFullResultsPrint = () => {
  
  {/* WATERMARK */}
  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none -rotate-12 whitespace-nowrap z-0">
- <h1 className="text-display">{schoolSettings.name} Official</h1>
+ <h1 className="text-display">{schoolSettings.name} {t('official')}</h1>
  </div>
 
  {/* HEADER */}
@@ -80,16 +80,16 @@ const ClassFullResultsPrint = () => {
  <p className="text-label text-slate-500/80 mt-1">{schoolSettings.address}</p>
  </div>
  </div>
- <div className="text-right">
- <h3 className="text-section">Class Results Summary</h3>
- <p className="text-label text-slate-500/80 mt-1">Class: {currentClass.name}</p>
- <p className="text-label text-slate-500/80">Academic Year: {currentClass.academicYear || '2026/2027'}</p>
+ <div className="text-end">
+ <h3 className="text-section">{t('classResultsSummary')}</h3>
+ <p className="text-label text-slate-500/80 mt-1">{t('class')}: {currentClass.name}</p>
+ <p className="text-label text-slate-500/80">{t('academicYear')}: {currentClass.academicYear || '2026/2027'}</p>
  </div>
  </div>
 
  <div className="mb-10 text-center relative z-10">
  <h1 className="text-display text-slate-900 border-y-2 border-slate-900 py-4 uppercase">
- Master Results Sheet — {currentClass.name}
+ {t('masterResultsSheet')} — {currentClass.name}
  </h1>
  </div>
 
@@ -98,26 +98,26 @@ const ClassFullResultsPrint = () => {
  <table className="w-full border-collapse border-2 border-slate-900 text-label">
  <thead>
  <tr className="bg-slate-900 text-white">
- <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-left sticky left-0 bg-slate-900 z-20 w-40">Student Name</th>
+ <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-start sticky left-0 bg-slate-900 z-20 w-40">{t('studentName')}</th>
  {uniqueSubjects.map(sub => (
  <th key={sub} colSpan={currentClass?.academicYear === '2025-2026' ? 3 : 5} className="border border-slate-700 px-2 py-2 text-center border-b-0">
  {sub}
  </th>
  ))}
- <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-16">Total</th>
- <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-16">Avg %</th>
- <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-12">Rank</th>
+ <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-16">{t('total')}</th>
+ <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-16">{t('avgPercentage')}</th>
+ <th rowSpan="2" className="border border-slate-700 px-3 py-4 text-center bg-slate-800 w-12">{t('rank')}</th>
  </tr>
  <tr className="bg-slate-800 text-white text-label">
  {uniqueSubjects.map(sub => {
     const is2526 = currentClass?.academicYear === '2025-2026';
     return (
       <React.Fragment key={`${sub}-sub`}>
-      {!is2526 && <th className="border border-slate-700 p-1 text-center">B-Mid</th>}
-      <th className="border border-slate-700 p-1 text-center">{is2526 ? 'Mid (40)' : 'Mid'}</th>
-      {!is2526 && <th className="border border-slate-700 p-1 text-center">A-Mid</th>}
-      <th className="border border-slate-700 p-1 text-center">{is2526 ? 'Final (60)' : 'Final'}</th>
-      <th className="border border-slate-700 p-1 text-center bg-slate-700">Tot/Avg</th>
+      {!is2526 && <th className="border border-slate-700 p-1 text-center">{t('beforeMidShort')}</th>}
+      <th className="border border-slate-700 p-1 text-center">{is2526 ? t('midFortyShort') : t('midtermShort')}</th>
+      {!is2526 && <th className="border border-slate-700 p-1 text-center">{t('afterMidShort')}</th>}
+      <th className="border border-slate-700 p-1 text-center">{is2526 ? t('finalSixtyShort') : t('finalShort')}</th>
+      <th className="border border-slate-700 p-1 text-center bg-slate-700">{t('totAvgShort')}</th>
       </React.Fragment>
     );
   })}
@@ -171,9 +171,9 @@ const ClassFullResultsPrint = () => {
   {/* FOOTER / SIGNATURES */}
   <div className="mt-auto pt-4 text-center relative z-10">
     <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-2">
-      <p className="text-[10px] font-black uppercase tracking-widest">Manager's Signature</p>
+      <p className="text-[10px] font-black uppercase tracking-widest">{t('managerSignature')}</p>
     </div>
-    <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
+    <p className="text-[9px] text-slate-400 italic">{t('officialSealNotice')}</p>
   </div>
 
  <div className="absolute bottom-4 left-0 right-0 text-center">

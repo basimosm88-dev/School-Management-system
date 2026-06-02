@@ -68,9 +68,9 @@ const TeachersPage = () => {
 
   const handleDelete = (id, e) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this teacher?')) {
+    if (window.confirm(t('deleteTeacherConfirm'))) {
       deleteTeacher(id);
-      addNotification('Teacher deleted successfully', 'success');
+      addNotification(t('teacherDeleted'), 'success');
     }
   };
 
@@ -81,15 +81,15 @@ const TeachersPage = () => {
 
   const handleSave = (teacherData) => {
     if (!editingTeacher && !teacherData.password) {
-      addNotification('Password is required for new teachers.', 'error');
+      addNotification(t('passwordRequired'), 'error');
       return;
     }
     if (editingTeacher) {
       updateTeacher(editingTeacher.id, teacherData);
-      addNotification('Teacher updated successfully', 'success');
+      addNotification(t('teacherUpdated'), 'success');
     } else {
       addTeacher(teacherData);
-      addNotification('Teacher added successfully', 'success');
+      addNotification(t('teacherAdded'), 'success');
     }
     setIsFormOpen(false);
   };
@@ -111,7 +111,7 @@ const TeachersPage = () => {
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400/80">search</span>
               <input
                 type="text"
-                placeholder="Search by name, email, or phone..."
+                placeholder={t('searchTeachersPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
@@ -125,46 +125,46 @@ const TeachersPage = () => {
                 onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                 className="lg:flex-none min-w-[100px] bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
               >
-                <option value="">Status</option>
-                <option value="Active">Active</option>
-                <option value="On Leave">On Leave</option>
-                <option value="Inactive">Inactive</option>
+                <option value="">{t('status')}</option>
+                <option value="Active">{t('active')}</option>
+                <option value="On Leave">{t('onLeave')}</option>
+                <option value="Inactive">{t('inactive')}</option>
               </select>
               <select
                 value={filters.educationLevel}
                 onChange={(e) => setFilters({ ...filters, educationLevel: e.target.value })}
                 className="lg:flex-none min-w-[100px] bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
               >
-                <option value="">Education</option>
-                <option value="High School">High School</option>
-                <option value="University">University</option>
+                <option value="">{t('educationLevel')}</option>
+                <option value="High School">{t('highSchool')}</option>
+                <option value="University">{t('university')}</option>
               </select>
               <select
                 value={filters.certificateLevel}
                 onChange={(e) => setFilters({ ...filters, certificateLevel: e.target.value })}
                 className="lg:flex-none min-w-[100px] bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
               >
-                <option value="">Certificate</option>
-                <option value="Bachelor">Bachelor</option>
-                <option value="Master">Master</option>
-                <option value="PhD">PhD</option>
+                <option value="">{t('lastCertificate')}</option>
+                <option value="Bachelor">{t('bachelor')}</option>
+                <option value="Master">{t('master')}</option>
+                <option value="PhD">{t('phd')}</option>
               </select>
               <select
                 value={filters.languages}
                 onChange={(e) => setFilters({ ...filters, languages: e.target.value })}
                 className="lg:flex-none min-w-[100px] bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
               >
-                <option value="">Language</option>
-                <option value="Somali">Somali</option>
-                <option value="English">English</option>
-                <option value="Arabic">Arabic</option>
+                <option value="">{t('language')}</option>
+                <option value="Somali">{t('somali')}</option>
+                <option value="English">{t('english')}</option>
+                <option value="Arabic">{t('arabic')}</option>
               </select>
               <select
                 value={filters.classId}
                 onChange={(e) => setFilters({ ...filters, classId: e.target.value })}
                 className="col-span-2 sm:col-span-1 lg:flex-none min-w-[140px] bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
               >
-                <option value="">Assigned Class</option>
+                <option value="">{t('assignedClass')}</option>
                 {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
@@ -175,7 +175,7 @@ const TeachersPage = () => {
             className="btn-primary w-full lg:w-auto justify-center"
           >
             <span className="btn-icon">person_add</span>
-            Add Teacher
+            {t('addTeacher')}
           </button>
         </div>
 
@@ -185,11 +185,11 @@ const TeachersPage = () => {
             <table className="w-full text-left">
               <thead>
                 <tr>
-                  <th>Full Name</th>
-                  <th>Contact</th>
-                  <th>Assigned Classes</th>
-                  <th>Status</th>
-                  <th className="text-right">Actions</th>
+                  <th>{t('fullName')}</th>
+                  <th>{t('phone')}</th>
+                  <th>{t('assignedClasses')}</th>
+                  <th>{t('status')}</th>
+                  <th className="text-right">{t('actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -220,11 +220,11 @@ const TeachersPage = () => {
                       <div className="flex flex-wrap gap-1 max-w-[200px]">
                         {(teacher.assignedClasses || []).map(cid => (
                           <span key={cid} className="px-1.5 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded text-label">
-                            {classes.find(c => c.id === cid)?.name || 'Class'}
+                            {classes.find(c => c.id === cid)?.name || t('class')}
                           </span>
                         ))}
                         {(!teacher.assignedClasses || teacher.assignedClasses.length === 0) && (
-                          <span className="text-slate-400/80 text-label italic">Unassigned</span>
+                          <span className="text-slate-400/80 text-label italic">{t('unassigned')}</span>
                         )}
                       </div>
                     </td>
@@ -235,7 +235,7 @@ const TeachersPage = () => {
                           ? 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400'
                           : 'bg-slate-100 text-slate-500/80 dark:bg-slate-800'
                         }`}>
-                        {teacher.status || 'Active'}
+                        {teacher.status === 'Active' ? t('active') : teacher.status === 'On Leave' ? t('onLeave') : teacher.status === 'Inactive' ? t('inactive') : (teacher.status || t('active'))}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right" onClick={e => e.stopPropagation()}>
@@ -243,21 +243,21 @@ const TeachersPage = () => {
                         <button
                           onClick={() => handleViewProfile(teacher)}
                           className="p-1.5 text-slate-400/80 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
-                          title="View Profile"
+                          title={t('viewProfile')}
                         >
                           <span className="material-symbols-outlined text-section">visibility</span>
                         </button>
                         <button
                           onClick={(e) => handleEdit(teacher, e)}
                           className="p-1.5 text-slate-400/80 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
-                          title="Edit"
+                          title={t('edit')}
                         >
                           <span className="material-symbols-outlined text-section">edit</span>
                         </button>
                         <button
                           onClick={(e) => handleDelete(teacher.id, e)}
                           className="p-1.5 text-slate-400/80 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all"
-                          title="Delete"
+                          title={t('delete')}
                         >
                           <span className="material-symbols-outlined text-section">delete</span>
                         </button>
@@ -269,7 +269,7 @@ const TeachersPage = () => {
                   <tr>
                     <td colSpan="5" className="px-6 py-12 text-center text-slate-400/80">
                       <span className="material-symbols-outlined text-display mb-2 opacity-30">person_off</span>
-                      <p>No teachers found matching your search.</p>
+                      <p>{t('noTeachersFound')}</p>
                     </td>
                   </tr>
                 )}
@@ -317,6 +317,7 @@ const TeachersPage = () => {
  * Structured into 10 Sections as requested.
  */
 const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
+  const { t } = useSettings();
   const [formData, setFormData] = useState({
     name: '',
     maritalStatus: 'Single',
@@ -386,9 +387,9 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
         <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10 rounded-t-3xl shrink-0">
           <h3 className="text-slate-900 dark:text-slate-100 text-section flex items-center gap-2">
             <span className="material-symbols-outlined text-primary">person_add</span>
-            {teacher ? 'Edit Teacher Details' : 'Register New Teacher'}
+            {teacher ? t('editTeacherDetails') : t('registerNewTeacher')}
           </h3>
-          <button onClick={onClose} className="p-2 text-slate-400/80 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all">
+          <button onClick={onClose} className="p-2 text-slate-400/80 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all text-slate-400 dark:text-slate-500">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -397,40 +398,40 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 
           {/* SECTION 1 — BASIC INFO */}
           <section>
-            <FormSectionHeader icon="person" title="Section 1: Basic Information" />
+            <FormSectionHeader icon="person" title={t('sectionBasicInfoTeacher')} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Full Name</label>
-                <input type="text" value={formData.name || ''} onChange={e => handleChange('name', e.target.value)} className="form-input-custom" placeholder="Full Name" required />
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('fullName')}</label>
+                <input type="text" value={formData.name || ''} onChange={e => handleChange('name', e.target.value)} className="form-input-custom" placeholder={t('fullName')} required />
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Marital Status</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('maritalStatus')}</label>
                 <select value={formData.maritalStatus} onChange={e => handleChange('maritalStatus', e.target.value)} className="form-input-custom cursor-pointer">
-                  <option value="Single">Single</option>
-                  <option value="Married">Married</option>
+                  <option value="Single">{t('single')}</option>
+                  <option value="Married">{t('married')}</option>
                 </select>
               </div>
               <div className="col-span-full">
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Residential Address</label>
-                <input type="text" value={formData.address || ''} onChange={e => handleChange('address', e.target.value)} className="form-input-custom" placeholder="Full Address" />
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('residentialAddressTeacher')}</label>
+                <input type="text" value={formData.address || ''} onChange={e => handleChange('address', e.target.value)} className="form-input-custom" placeholder={t('fullAddress')} />
               </div>
             </div>
           </section>
 
           {/* SECTION 2 — CONTACT */}
           <section>
-            <FormSectionHeader icon="contact_mail" title="Section 2: Contact Details & Credentials" />
+            <FormSectionHeader icon="contact_mail" title={t('sectionContactDetails')} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Email Address (Login Username)</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('emailAddressLogin')}</label>
                 <input type="email" value={formData.email || ''} onChange={e => handleChange('email', e.target.value)} className="form-input-custom" placeholder="email@school.com" required />
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Password</label>
-                <input type="text" value={formData.password || ''} onChange={e => handleChange('password', e.target.value)} className="form-input-custom" placeholder="Password" required={!teacher} />
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('password')}</label>
+                <input type="text" value={formData.password || ''} onChange={e => handleChange('password', e.target.value)} className="form-input-custom" placeholder={t('password')} required={!teacher} />
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Phone Number</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('phoneNumber')}</label>
                 <input type="text" value={formData.phone || ''} onChange={e => handleChange('phone', e.target.value)} className="form-input-custom" placeholder="+123..." required />
               </div>
             </div>
@@ -438,14 +439,14 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 
           {/* SECTION 3 — PROFESSIONAL INFO */}
           <section>
-            <FormSectionHeader icon="work" title="Section 3: Professional Info" />
+            <FormSectionHeader icon="work" title={t('sectionProfessionalInfo')} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Specialty</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('specialty')}</label>
                 <input type="text" value={formData.specialty || ''} onChange={e => handleChange('specialty', e.target.value)} className="form-input-custom" placeholder="e.g. Physics, History" />
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Subjects (Multi-select)</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('subjectsMultiSelect')}</label>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {subjects.map(s => (
                     <button
@@ -463,7 +464,7 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
                 </div>
               </div>
               <div className="col-span-full">
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Assign Classes (Multi-select)</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('assignClassesMultiSelect')}</label>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {classes.map(c => (
                     <button
@@ -481,11 +482,11 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
                 </div>
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Started Date (In Profession)</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('startedDateProfession')}</label>
                 <input type="date" value={formData.startedDate || ''} onChange={e => handleChange('startedDate', e.target.value)} className="form-input-custom" />
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Joined Date (At School)</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('joinedDateSchool')}</label>
                 <input type="date" value={formData.joinedDate || ''} onChange={e => handleChange('joinedDate', e.target.value)} className="form-input-custom" />
               </div>
             </div>
@@ -493,26 +494,26 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 
           {/* SECTION 4 — EDUCATION */}
           <section>
-            <FormSectionHeader icon="school" title="Section 4: Education History" />
+            <FormSectionHeader icon="school" title={t('sectionEducationHistory')} />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Education Level</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('educationLevel')}</label>
                 <select value={formData.educationLevel} onChange={e => handleChange('educationLevel', e.target.value)} className="form-input-custom">
-                  <option value="High School">High School</option>
-                  <option value="University">University</option>
+                  <option value="High School">{t('highSchool')}</option>
+                  <option value="University">{t('university')}</option>
                 </select>
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Last Certificate</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('lastCertificate')}</label>
                 <select value={formData.lastCertificate} onChange={e => handleChange('lastCertificate', e.target.value)} className="form-input-custom">
-                  <option value="Diploma">Diploma</option>
-                  <option value="Bachelor">Bachelor</option>
-                  <option value="Master">Master</option>
-                  <option value="PhD">PhD</option>
+                  <option value="Diploma">{t('diploma')}</option>
+                  <option value="Bachelor">{t('bachelor')}</option>
+                  <option value="Master">{t('master')}</option>
+                  <option value="PhD">{t('phd')}</option>
                 </select>
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Extra Certificates</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('extraCertificates')}</label>
                 <input type="text" value={formData.extraCertificates || ''} onChange={e => handleChange('extraCertificates', e.target.value)} className="form-input-custom" placeholder="Other certs..." />
               </div>
             </div>
@@ -520,7 +521,7 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 
           {/* SECTION 5 — TRAINING */}
           <section>
-            <FormSectionHeader icon="model_training" title="Section 5: Teacher Training" />
+            <FormSectionHeader icon="model_training" title={t('sectionTeacherTraining')} />
             <div className="space-y-4">
               <label className="flex items-center gap-3 cursor-pointer group">
                 <input
@@ -529,12 +530,12 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
                   onChange={e => handleChange('trainedAsTeacher', e.target.checked)}
                   className="w-5 h-5 text-primary rounded border-slate-300"
                 />
-                <span className="text-label text-slate-700 dark:text-slate-200">Trained as Professional Teacher?</span>
+                <span className="text-label text-slate-700 dark:text-slate-200">{t('trainedAsProfessional')}</span>
               </label>
               {formData.trainedAsTeacher && (
                 <div className="animate-in slide-in-from-top-2 duration-300">
-                  <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Where Trained?</label>
-                  <input type="text" value={formData.whereTrained || ''} onChange={e => handleChange('whereTrained', e.target.value)} className="form-input-custom md:w-1/2" placeholder="Institute Name" />
+                  <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('whereTrained')}</label>
+                  <input type="text" value={formData.whereTrained || ''} onChange={e => handleChange('whereTrained', e.target.value)} className="form-input-custom md:w-1/2" placeholder={t('instituteName')} />
                 </div>
               )}
             </div>
@@ -542,7 +543,7 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 
           {/* SECTION 6 — LANGUAGES */}
           <section>
-            <FormSectionHeader icon="translate" title="Section 6: Language Proficiency" />
+            <FormSectionHeader icon="translate" title={t('sectionLanguageProficiency')} />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {['Somali', 'English', 'Arabic'].map(lang => (
                 <label key={lang} className="flex items-center gap-3 cursor-pointer p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all">
@@ -552,11 +553,11 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
                     onChange={() => toggleLanguage(lang.toLowerCase())}
                     className="w-5 h-5 text-primary rounded border-slate-300"
                   />
-                  <span className="text-label text-slate-700 dark:text-slate-200">{lang}</span>
+                  <span className="text-label text-slate-700 dark:text-slate-200">{t(lang.toLowerCase())}</span>
                 </label>
               ))}
               <div className="col-span-full mt-2">
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Other Languages</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('otherLanguages')}</label>
                 <input type="text" value={formData.languages.other} onChange={e => handleChange('languages.other', e.target.value)} className="form-input-custom" placeholder="e.g. French, Turkish" />
               </div>
             </div>
@@ -564,26 +565,26 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 
           {/* SECTION 7 — RELATED PERSON */}
           <section>
-            <FormSectionHeader icon="family_restroom" title="Section 7: Related Person" />
+            <FormSectionHeader icon="family_restroom" title={t('sectionRelatedPerson')} />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Full Name</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('fullName')}</label>
                 <input type="text" value={formData.relatedPerson.name} onChange={e => handleChange('relatedPerson.name', e.target.value)} className="form-input-custom" />
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Relation Type</label>
-                <input type="text" value={formData.relatedPerson.relation} onChange={e => handleChange('relatedPerson.relation', e.target.value)} className="form-input-custom" placeholder="e.g. Spouse, Parent" />
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('relationType')}</label>
+                <input type="text" value={formData.relatedPerson.relation} onChange={e => handleChange('relatedPerson.relation', e.target.value)} className="form-input-custom" placeholder={t('relationPlaceholder')} />
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Phone Number</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('phoneNumber')}</label>
                 <input type="text" value={formData.relatedPerson.phone} onChange={e => handleChange('relatedPerson.phone', e.target.value)} className="form-input-custom" />
               </div>
               <div className="lg:col-span-2">
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Address</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('residentialAddressTeacher')}</label>
                 <input type="text" value={formData.relatedPerson.address} onChange={e => handleChange('relatedPerson.address', e.target.value)} className="form-input-custom" />
               </div>
               <div>
-                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">Email (Optional)</label>
+                <label className="text-label text-slate-500/80 dark:text-slate-400/80 mb-1.5 block">{t('email')}</label>
                 <input type="email" value={formData.relatedPerson.email} onChange={e => handleChange('relatedPerson.email', e.target.value)} className="form-input-custom" />
               </div>
             </div>
@@ -591,12 +592,12 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 
           {/* SECTION 8 — REGISTRATION */}
           <section>
-            <FormSectionHeader icon="app_registration" title="Section 8: Registration Type" />
+            <FormSectionHeader icon="app_registration" title={t('sectionRegistrationTypeTeacher')} />
             <div className="flex gap-8">
-              {['Exam', 'Other'].map(t => (
-                <label key={t} className="flex items-center gap-3 cursor-pointer group">
-                  <input type="radio" name="regType" value={t} checked={formData.registrationType === t} onChange={e => handleChange('registrationType', e.target.value)} className="w-5 h-5 text-primary focus:ring-primary/20" />
-                  <span className="text-label text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{t}</span>
+              {['Exam', 'Other'].map(typeVal => (
+                <label key={typeVal} className="flex items-center gap-3 cursor-pointer group">
+                  <input type="radio" name="regType" value={typeVal} checked={formData.registrationType === typeVal} onChange={e => handleChange('registrationType', e.target.value)} className="w-5 h-5 text-primary focus:ring-primary/20" />
+                  <span className="text-label text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{typeVal === 'Exam' ? t('byExam') : t('other')}</span>
                 </label>
               ))}
             </div>
@@ -604,12 +605,12 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 
           {/* SECTION 9 — EMPLOYMENT */}
           <section>
-            <FormSectionHeader icon="badge" title="Section 9: Employment Status" />
+            <FormSectionHeader icon="badge" title={t('sectionEmploymentStatus')} />
             <div className="flex gap-8">
               {['Active', 'On Leave', 'Inactive'].map(s => (
                 <label key={s} className="flex items-center gap-3 cursor-pointer group">
                   <input type="radio" name="empStatus" value={s} checked={formData.status === s} onChange={e => handleChange('status', e.target.value)} className="w-5 h-5 text-primary focus:ring-primary/20" />
-                  <span className="text-label text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{s}</span>
+                  <span className="text-label text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{s === 'Active' ? t('active') : s === 'On Leave' ? t('onLeave') : t('inactive')}</span>
                 </label>
               ))}
             </div>
@@ -617,14 +618,14 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 
           {/* SECTION 10 — NOTES */}
           <section>
-            <FormSectionHeader icon="notes" title="Section 10: Additional Notes" />
-            <textarea rows="4" value={formData.notes || ''} onChange={e => handleChange('notes', e.target.value)} className="form-input-custom" placeholder="Details about performance, history, etc."></textarea>
+            <FormSectionHeader icon="notes" title={t('sectionNotes')} />
+            <textarea rows="4" value={formData.notes || ''} onChange={e => handleChange('notes', e.target.value)} className="form-input-custom" placeholder={t('notesPlaceholder')}></textarea>
           </section>
         </div>
 
         <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl shrink-0">
-          <button type="button" onClick={onClose} className="px-6 py-2.5 text-label text-slate-500/80 dark:text-slate-400/80 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all">Cancel</button>
-          <button type="submit" className="px-8 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save teacher record</button>
+          <button type="button" onClick={onClose} className="px-6 py-2.5 text-label text-slate-500/80 dark:text-slate-400/80 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all">{t('cancel')}</button>
+          <button type="submit" className="px-8 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">{t('saveTeacherRecord')}</button>
         </div>
       </form>
     </div>
@@ -632,6 +633,7 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
 };
 
 const TeacherProfile = ({ teacher, onClose, classes, schoolSettings }) => {
+  const { t } = useSettings();
   const handlePrint = () => {
     window.print();
   };
@@ -668,7 +670,7 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolSettings }) => {
               className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all text-label"
             >
               <span className="material-symbols-outlined text-display">print</span>
-              Print Profile
+              {t('printProfile')}
             </button>
             <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all">
               <span className="material-symbols-outlined text-white">close</span>
@@ -681,13 +683,13 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolSettings }) => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
 
-              <ProfileSection title="Professional Information" icon="work">
+              <ProfileSection title={t('professionalInformation')} icon="work">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-                  <InfoItem label="Specialty" value={teacher.specialty} />
-                  <InfoItem label="Joined Date" value={teacher.joinedDate} />
-                  <InfoItem label="Professional Start" value={teacher.startedDate} />
+                  <InfoItem label={t('specialty')} value={teacher.specialty} />
+                  <InfoItem label={t('joinedDateSchool')} value={teacher.joinedDate} />
+                  <InfoItem label={t('professionalStart')} value={teacher.startedDate} />
                   <div className="col-span-full">
-                    <p className="text-label text-slate-400/80 mb-3">Subjects Taught</p>
+                    <p className="text-label text-slate-400/80 mb-3">{t('subjectsTaught')}</p>
                     <div className="flex flex-wrap gap-2">
                       {teacher.subjects?.map(s => (
                         <span key={s} className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-label border border-indigo-100 dark:border-indigo-800">
@@ -699,42 +701,42 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolSettings }) => {
                 </div>
               </ProfileSection>
 
-              <ProfileSection title="Education & Training" icon="school">
+              <ProfileSection title={t('educationTraining')} icon="school">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-                  <InfoItem label="Education Level" value={teacher.educationLevel} />
-                  <InfoItem label="Last Certificate" value={teacher.lastCertificate} />
-                  <InfoItem label="Extra Certificates" value={teacher.extraCertificates} />
+                  <InfoItem label={t('educationLevel')} value={t(teacher.educationLevel === 'High School' ? 'highSchool' : teacher.educationLevel === 'University' ? 'university' : teacher.educationLevel)} />
+                  <InfoItem label={t('lastCertificate')} value={t(teacher.lastCertificate?.toLowerCase())} />
+                  <InfoItem label={t('extraCertificates')} value={teacher.extraCertificates} />
                   <div className="col-span-full pt-4 border-t border-slate-100 dark:border-slate-800/50">
-                    <InfoItem label="Professional Training" value={teacher.trainedAsTeacher ? `Yes - Trained at ${teacher.whereTrained}` : 'No Formal Training'} />
+                    <InfoItem label={t('professionalTraining')} value={teacher.trainedAsTeacher ? `${t('yes')} - ${t('whereTrained')} ${teacher.whereTrained}` : t('noFormalTraining')} />
                   </div>
                 </div>
               </ProfileSection>
 
-              <ProfileSection title="Languages" icon="translate">
+              <ProfileSection title={t('language')} icon="translate">
                 <div className="flex flex-wrap gap-4">
                   {Object.entries(teacher.languages || {}).map(([lang, proficient]) => {
                     if (lang === 'other' && proficient) return <ProfileBadge key={lang} label={proficient} color="amber" icon="language" />;
-                    if (proficient && lang !== 'other') return <ProfileBadge key={lang} label={lang.charAt(0).toUpperCase() + lang.slice(1)} color="slate" icon="check_circle" />;
+                    if (proficient && lang !== 'other') return <ProfileBadge key={lang} label={t(lang)} color="slate" icon="check_circle" />;
                     return null;
                   })}
                 </div>
               </ProfileSection>
 
-              <ProfileSection title="Related Person" icon="family_restroom">
+              <ProfileSection title={t('relatedPerson')} icon="family_restroom">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-                  <InfoItem label="Full Name" value={teacher.relatedPerson?.name} />
-                  <InfoItem label="Relation" value={teacher.relatedPerson?.relation} />
-                  <InfoItem label="Phone" value={teacher.relatedPerson?.phone} />
-                  <InfoItem label="Email" value={teacher.relatedPerson?.email} />
+                  <InfoItem label={t('fullName')} value={teacher.relatedPerson?.name} />
+                  <InfoItem label={t('relation')} value={teacher.relatedPerson?.relation} />
+                  <InfoItem label={t('phone')} value={teacher.relatedPerson?.phone} />
+                  <InfoItem label={t('email')} value={teacher.relatedPerson?.email} />
                   <div className="col-span-full">
-                    <InfoItem label="Address" value={teacher.relatedPerson?.address} />
+                    <InfoItem label={t('residentialAddress')} value={teacher.relatedPerson?.address} />
                   </div>
                 </div>
               </ProfileSection>
             </div>
 
             <div className="space-y-8">
-              <ProfileSection title="Assigned Classes" icon="groups">
+              <ProfileSection title={t('assignedClasses')} icon="groups">
                 <div className="space-y-3">
                   {(teacher.assignedClasses || []).map(cid => {
                     const cls = classes.find(c => c.id === cid);
@@ -745,7 +747,7 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolSettings }) => {
                         </div>
                         <div>
                           <p className="text-label text-slate-800 dark:text-slate-100">{cls?.name}</p>
-                          <p className="text-label text-slate-400/80">Active Class</p>
+                          <p className="text-label text-slate-400/80">{t('activeClass')}</p>
                         </div>
                       </div>
                     );
@@ -753,24 +755,23 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolSettings }) => {
                 </div>
               </ProfileSection>
 
-              <ProfileSection title="Employment Status" icon="badge">
+              <ProfileSection title={t('sectionEmploymentStatus')} icon="badge">
                 <div className="flex flex-col gap-4">
                   <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                    <InfoItem label="Current Status" value={teacher.status} />
+                    <InfoItem label={t('currentStatus')} value={t(teacher.status === 'Active' ? 'active' : teacher.status === 'On Leave' ? 'onLeave' : 'inactive')} />
                     <div className="mt-2">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-label  ${teacher.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'
-                        }`}>
-                        Official
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-label bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
+                        {t('official')}
                       </span>
                     </div>
                   </div>
-                  <InfoItem label="Registration Type" value={teacher.registrationType} />
+                  <InfoItem label={t('sectionRegistrationTypeTeacher')} value={teacher.registrationType === 'Exam' ? t('byExam') : t('other')} />
                 </div>
               </ProfileSection>
 
-              <ProfileSection title="Notes" icon="notes">
+              <ProfileSection title={t('sectionNotes')} icon="notes">
                 <p className="text-label text-slate-600 dark:text-slate-400/80 italic leading-relaxed">
-                  {teacher.notes || "No administrative notes provided."}
+                  {teacher.notes || t('noNotesProvided')}
                 </p>
               </ProfileSection>
             </div>
@@ -781,17 +782,21 @@ const TeacherProfile = ({ teacher, onClose, classes, schoolSettings }) => {
   );
 };
 
-const PrintableFooter = ({ signatureTitle }) => (
-  <div className="mt-auto pt-4 text-center">
-    <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-2">
-      <p className="text-[10px] font-black uppercase tracking-widest">{signatureTitle || "Manager's Signature"}</p>
+const PrintableFooter = ({ signatureTitle }) => {
+  const { t } = useSettings();
+  return (
+    <div className="mt-auto pt-4 text-center">
+      <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-2">
+        <p className="text-[10px] font-black uppercase tracking-widest">{signatureTitle || t('managerSignature')}</p>
+      </div>
+      <p className="text-[9px] text-slate-400 italic">{t('officialSealNotice')}</p>
     </div>
-    <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
-  </div>
-);
+  );
+};
 
 const PrintableTeacherProfile = ({ teacher, classes, schoolSettings }) => {
   const { name: schoolName, logo, phone, email, address } = schoolSettings || {};
+  const { t } = useSettings();
   return (
     <div className="print-only font-sans text-slate-900 bg-white min-h-screen flex flex-col">
       <div className="print-header flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
@@ -805,20 +810,20 @@ const PrintableTeacherProfile = ({ teacher, classes, schoolSettings }) => {
           )}
           <div>
             <h1 className="text-display">{schoolName}</h1>
-            <p className="text-label text-slate-500/80">Official Teacher Record</p>
+            <p className="text-label text-slate-500/80">{t('officialTeacherRecord')}</p>
           </div>
         </div>
         <div className="text-right text-label leading-relaxed text-slate-600">
           <p>{address}</p>
-          <p>Phone: {phone}</p>
-          <p>Email: {email}</p>
+          <p>{t('phone')}: {phone}</p>
+          <p>{t('email')}: {email}</p>
         </div>
       </div>
 
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-section border-l-4 border-indigo-600 pl-4">Teacher Performance & Profile Record</h2>
+        <h2 className="text-section border-l-4 border-indigo-600 pl-4">{t('teacherPerformanceRecord')}</h2>
         <div className="text-right">
-          <p className="text-label text-slate-400/80">Issue Date</p>
+          <p className="text-label text-slate-400/80">{t('issueDate')}</p>
           <p className="text-label">{new Date().toLocaleDateString()}</p>
         </div>
       </div>
@@ -826,48 +831,48 @@ const PrintableTeacherProfile = ({ teacher, classes, schoolSettings }) => {
       <div className="space-y-8 flex-1">
         <div className="grid grid-cols-2 gap-8">
           <div className="print-section">
-            <h3 className="print-section-title">Personal & Contact Info</h3>
+            <h3 className="print-section-title">{t('personalContactInfo')}</h3>
             <div className="print-grid">
-              <PrintItem label="Full Name" value={teacher.name} />
-              <PrintItem label="Marital Status" value={teacher.maritalStatus} />
-              <PrintItem label="Email" value={teacher.email} />
-              <PrintItem label="Phone" value={teacher.phone} />
+              <PrintItem label={t('fullName')} value={teacher.name} />
+              <PrintItem label={t('maritalStatus')} value={teacher.maritalStatus === 'Single' ? t('single') : teacher.maritalStatus === 'Married' ? t('married') : teacher.maritalStatus} />
+              <PrintItem label={t('email')} value={teacher.email} />
+              <PrintItem label={t('phone')} value={teacher.phone} />
               <div className="col-span-full">
-                <PrintItem label="Residential Address" value={teacher.address} />
+                <PrintItem label={t('residentialAddress')} value={teacher.address} />
               </div>
             </div>
           </div>
           <div className="print-section">
-            <h3 className="print-section-title">Professional Details</h3>
+            <h3 className="print-section-title">{t('professionalDetails')}</h3>
             <div className="print-grid">
-              <PrintItem label="Specialty" value={teacher.specialty} />
-              <PrintItem label="Subjects" value={teacher.subjects?.join(', ')} />
-              <PrintItem label="Joined Date" value={teacher.joinedDate} />
-              <PrintItem label="Status" value={teacher.status} />
+              <PrintItem label={t('specialty')} value={teacher.specialty} />
+              <PrintItem label={t('subjectsTaught')} value={teacher.subjects?.join(', ')} />
+              <PrintItem label={t('joinedDateSchool')} value={teacher.joinedDate} />
+              <PrintItem label={t('status')} value={t(teacher.status === 'Active' ? 'active' : teacher.status === 'On Leave' ? 'onLeave' : 'inactive')} />
             </div>
           </div>
         </div>
 
         <div className="print-section">
-          <h3 className="print-section-title">Education & Training</h3>
+          <h3 className="print-section-title">{t('educationTraining')}</h3>
           <div className="print-grid grid-cols-3">
-            <PrintItem label="Education Level" value={teacher.educationLevel} />
-            <PrintItem label="Last Certificate" value={teacher.lastCertificate} />
-            <PrintItem label="Professional Training" value={teacher.trainedAsTeacher ? `Yes - ${teacher.whereTrained}` : 'No'} />
+            <PrintItem label={t('educationLevel')} value={t(teacher.educationLevel === 'High School' ? 'highSchool' : teacher.educationLevel === 'University' ? 'university' : teacher.educationLevel)} />
+            <PrintItem label={t('lastCertificate')} value={t(teacher.lastCertificate?.toLowerCase())} />
+            <PrintItem label={t('professionalTraining')} value={teacher.trainedAsTeacher ? `${t('yes')} - ${teacher.whereTrained}` : t('no')} />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-8">
           <div className="print-section">
-            <h3 className="print-section-title">Related Person (Emergency)</h3>
+            <h3 className="print-section-title">{t('emergencyContact')}</h3>
             <div className="print-grid">
-              <PrintItem label="Name" value={teacher.relatedPerson?.name} />
-              <PrintItem label="Relation" value={teacher.relatedPerson?.relation} />
-              <PrintItem label="Phone" value={teacher.relatedPerson?.phone} />
+              <PrintItem label={t('fullName')} value={teacher.relatedPerson?.name} />
+              <PrintItem label={t('relation')} value={teacher.relatedPerson?.relation} />
+              <PrintItem label={t('phone')} value={teacher.relatedPerson?.phone} />
             </div>
           </div>
           <div className="print-section">
-            <h3 className="print-section-title">Assigned Classes</h3>
+            <h3 className="print-section-title">{t('assignedClasses')}</h3>
             <div className="flex flex-wrap gap-2 mt-2">
               {(teacher.assignedClasses || []).map(cid => (
                 <span key={cid} className="px-2 py-1 bg-slate-100 rounded text-label border border-slate-200">
@@ -879,12 +884,11 @@ const PrintableTeacherProfile = ({ teacher, classes, schoolSettings }) => {
         </div>
       </div>
 
-      <PrintableFooter signatureTitle="Manager's Signature" />
+      <PrintableFooter signatureTitle={t('managerSignature')} />
     </div>
   );
 };
 
-// Helper Components
 const FormSectionHeader = ({ icon, title }) => (
   <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100 dark:border-slate-800">
     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">

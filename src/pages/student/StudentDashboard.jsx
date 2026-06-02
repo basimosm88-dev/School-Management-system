@@ -10,7 +10,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 const StudentDashboard = () => {
     const { classes, attendance, announcements, events, getReportCardData } = useData();
     const { currentUser } = useAppContext();
-    const { t } = useSettings();
+    const { t, language } = useSettings();
     const navigate = useNavigate();
 
     // 0. Safety Checks & Redirects
@@ -52,18 +52,18 @@ const StudentDashboard = () => {
                 <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
                         <div className="flex items-center gap-3 mb-4">
-                            <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/10">Academic Session</span>
+                            <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/10">{t('academicSession')}</span>
                         </div>
                         <h1 className="text-[32px] md:text-[40px] leading-tight font-black mb-2">{t(greetingKey)}, {currentUser.name}!</h1>
-                        <p className="text-slate-400 text-label font-bold uppercase tracking-[0.2em]">Class: {classes.find(c => c.id === cId)?.name || 'N/A'}</p>
+                        <p className="text-slate-400 text-label font-bold uppercase tracking-[0.2em]">{t('class')}: {classes.find(c => c.id === cId)?.name || 'N/A'}</p>
                     </div>
                     
                     {currentUser.isDefaultPassword && (
                         <div className="flex items-center gap-3 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl backdrop-blur-sm">
                             <span className="material-symbols-outlined text-rose-500">lock_reset</span>
                             <div className="text-[10px]">
-                                <p className="font-bold text-rose-100">Security Alert</p>
-                                <p className="text-rose-100/70">Update your password</p>
+                                <p className="font-bold text-rose-100">{t('securityAlert')}</p>
+                                <p className="text-rose-100/70">{t('updateYourPassword')}</p>
                             </div>
                         </div>
                     )}
@@ -72,10 +72,10 @@ const StudentDashboard = () => {
 
             {/* Dashboard KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <StatCard title="Attendance" value={`${attendanceRate}%`} icon="event_available" iconColorClass="bg-emerald-50 text-emerald-600" trend="Real-time" trendUp={true} />
-                <StatCard title="Average" value={`${overallAverage}%`} icon="grade" iconColorClass="bg-blue-50 text-primary" />
-                <StatCard title="Subjects" value={subjects.length} icon="auto_stories" iconColorClass="bg-indigo-50 text-indigo-600" />
-                <StatCard title="Session" value="2026" icon="schedule" iconColorClass="bg-amber-50 text-amber-600" />
+                <StatCard title={t('attendance')} value={`${attendanceRate}%`} icon="event_available" iconColorClass="bg-emerald-50 text-emerald-600" trend={t('realTime')} trendUp={true} />
+                <StatCard title={t('average')} value={`${overallAverage}%`} icon="grade" iconColorClass="bg-blue-50 text-primary" />
+                <StatCard title={t('subjects')} value={subjects.length} icon="auto_stories" iconColorClass="bg-indigo-50 text-indigo-600" />
+                <StatCard title={t('session')} value="2026" icon="schedule" iconColorClass="bg-amber-50 text-amber-600" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -86,15 +86,15 @@ const StudentDashboard = () => {
                     <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
                         <div className="flex items-center justify-between mb-8">
                             <div>
-                                <h2 className="text-section text-on-surface font-black tracking-tight">Attendance Tracking</h2>
-                                <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest mt-0.5">Last 7 days activity</p>
+                                <h2 className="text-section text-on-surface font-black tracking-tight">{t('attendanceTracking')}</h2>
+                                <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest mt-0.5">{t('lastSevenDaysActivity')}</p>
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-1.5 text-[10px] font-bold text-on-surface-variant">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Present
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span> {t('present')}
                                 </div>
                                 <div className="flex items-center gap-1.5 text-[10px] font-bold text-on-surface-variant">
-                                    <span className="w-2 h-2 rounded-full bg-rose-500"></span> Absent
+                                    <span className="w-2 h-2 rounded-full bg-rose-500"></span> {t('absent')}
                                 </div>
                             </div>
                         </div>
@@ -122,7 +122,7 @@ const StudentDashboard = () => {
                                                 <span className="text-[10px] text-slate-300 font-black">---</span>
                                             )}
                                         </div>
-                                        <span className="text-[10px] text-on-surface-variant font-black uppercase tracking-tighter">{date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                                        <span className="text-[10px] text-on-surface-variant font-black uppercase tracking-tighter">{date.toLocaleDateString(language, { weekday: 'short' })}</span>
                                     </div>
                                 );
                             })}
@@ -138,8 +138,8 @@ const StudentDashboard = () => {
                             <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-all">
                                 <span className="material-symbols-outlined text-display">bar_chart</span>
                             </div>
-                            <h3 className="text-section font-black text-on-surface">Academic Results</h3>
-                            <p className="text-label text-on-surface-variant mt-1">View your full marksheet and performance analytics.</p>
+                            <h3 className="text-section font-black text-on-surface">{t('academicResults')}</h3>
+                            <p className="text-label text-on-surface-variant mt-1">{t('viewFullMarksheetDesc')}</p>
                         </div>
                         <div 
                             onClick={() => navigate('/student/timetable')}
@@ -148,8 +148,8 @@ const StudentDashboard = () => {
                             <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                                 <span className="material-symbols-outlined text-display">calendar_view_day</span>
                             </div>
-                            <h3 className="text-section font-black text-on-surface">Class Schedule</h3>
-                            <p className="text-label text-on-surface-variant mt-1">Check your daily lesson plan and room assignments.</p>
+                            <h3 className="text-section font-black text-on-surface">{t('classSchedule')}</h3>
+                            <p className="text-label text-on-surface-variant mt-1">{t('checkDailyScheduleDesc')}</p>
                         </div>
                     </div>
                 </div>
@@ -159,12 +159,12 @@ const StudentDashboard = () => {
                     <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
                         <h3 className="text-section font-black uppercase tracking-widest text-on-surface-variant mb-6 flex items-center gap-2">
                             <span className="material-symbols-outlined text-primary">campaign</span>
-                            Notices
+                            {t('notices')}
                         </h3>
                         
                         <div className="space-y-4">
                             {(!announcements || announcements.filter(a => a.audience === 'all' || a.audience === 'students' || a.audience === `class_${cId}`).length === 0) ? (
-                                <EmptyState icon="campaign" message="All Caught Up" description="No new notices today." />
+                                <EmptyState icon="campaign" message={t('allCaughtUp')} description={t('noNewNoticesToday')} />
                             ) : (
                                 announcements.filter(a => a.audience === 'all' || a.audience === 'students' || a.audience === `class_${cId}`).slice(0, 3).map(ann => (
                                     <div key={ann.id} className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800">
@@ -177,22 +177,22 @@ const StudentDashboard = () => {
 
                         <h3 className="text-section font-black uppercase tracking-widest text-on-surface-variant mb-6 mt-10 flex items-center gap-2">
                             <span className="material-symbols-outlined text-primary">event</span>
-                            Events
+                            {t('events')}
                         </h3>
                         
                         <div className="space-y-4">
                             {(!events || events.filter(e => e.audience === 'all' || e.audience === 'students' || e.audience === `class_${cId}`).length === 0) ? (
-                                <EmptyState icon="event_busy" message="Empty Calendar" description="No upcoming events." />
+                                <EmptyState icon="event_busy" message={t('emptyCalendar')} description={t('noUpcomingEvents')} />
                             ) : (
                                 events.filter(e => e.audience === 'all' || e.audience === 'students' || e.audience === `class_${cId}`).slice(0, 3).map(event => (
                                     <div key={event.id} className="flex gap-4 p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm">
                                         <div className="flex flex-col items-center justify-center w-12 h-12 bg-primary/5 rounded-xl border border-primary/10">
-                                            <span className="text-[8px] text-primary font-black uppercase">{event.date ? new Date(event.date).toLocaleString('default', { month: 'short' }) : 'N/A'}</span>
+                                            <span className="text-[8px] text-primary font-black uppercase">{event.date ? new Date(event.date).toLocaleString(language, { month: 'short' }) : 'N/A'}</span>
                                             <span className="text-section text-primary font-black">{event.date ? new Date(event.date).getDate() : '-'}</span>
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <h4 className="text-label text-on-surface font-black truncate">{event.title}</h4>
-                                            <p className="text-[10px] text-on-surface-variant truncate">{event.location || 'Campus'}</p>
+                                            <p className="text-[10px] text-on-surface-variant truncate">{event.location || t('campus')}</p>
                                         </div>
                                     </div>
                                 ))

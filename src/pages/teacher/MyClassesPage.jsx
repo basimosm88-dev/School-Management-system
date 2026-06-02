@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
+import { useSettings } from '../../contexts/SettingsContext';
 import EmptyState from '../../components/ui/EmptyState';
 
 const MyClassesPage = () => {
   const navigate = useNavigate();
   const { classes, students } = useData();
   const { currentUser } = useAppContext();
+  const { t } = useSettings();
 
   const assignedClasses = classes.filter(cls => 
     (currentUser?.assignedClasses || []).some(id => String(id) === String(cls.id)) || 
@@ -16,20 +18,20 @@ const MyClassesPage = () => {
   );
 
   return (
-    <PageLayout role="teacher" title="My Classes">
+    <PageLayout role="teacher" title={t('myClasses')}>
       <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
-          <h2 className="text-heading text-slate-900 dark:text-white">Assigned Classes</h2>
+          <h2 className="text-heading text-slate-900 dark:text-white">{t('assignedClasses')}</h2>
           <p className="text-label text-slate-500 dark:text-slate-400 mt-1">
-            Manage attendance, exams, and students for your assigned classes.
+            {t('assignedClassesSubtitle')}
           </p>
         </div>
 
         {assignedClasses.length === 0 ? (
           <EmptyState 
             icon="school" 
-            message="No Assigned Classes" 
-            description="You are not currently assigned to any classes. Please contact the administrator." 
+            message={t('noAssignedClasses')} 
+            description={t('noAssignedClassesDesc')} 
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -52,15 +54,15 @@ const MyClassesPage = () => {
                     <h3 className="text-section text-slate-900 dark:text-white mb-1">{cls.name}</h3>
                     <div className="flex items-center gap-2 mb-6">
                       <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold uppercase tracking-wider text-slate-500 rounded-md">
-                        {classStudents.length} Students
+                        {classStudents.length} {t('students')}
                       </span>
                       <span className="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-[10px] font-bold uppercase tracking-wider text-blue-600 rounded-md">
-                        {teacherSubjects.length} Subjects
+                        {teacherSubjects.length} {t('subjects')}
                       </span>
                     </div>
 
                     <div className="space-y-3 mb-6">
-                      <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">My Subjects</p>
+                      <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">{t('mySubjects')}</p>
                       <div className="flex flex-wrap gap-2">
                         {teacherSubjects.length > 0 ? (
                           teacherSubjects.map((sub, idx) => (
@@ -69,7 +71,7 @@ const MyClassesPage = () => {
                             </span>
                           ))
                         ) : (
-                          <span className="text-label text-slate-400 italic">No specific subjects assigned</span>
+                          <span className="text-label text-slate-400 italic">{t('noSubjectsAssignedDesc')}</span>
                         )}
                       </div>
                     </div>
@@ -80,7 +82,7 @@ const MyClassesPage = () => {
                         className="w-full py-2.5 text-label font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all flex items-center justify-center gap-2"
                       >
                         <span className="material-symbols-outlined text-section">person</span>
-                        View Students
+                        {t('viewStudents')}
                       </button>
                       <div className="grid grid-cols-2 gap-2">
                         <button 
@@ -88,14 +90,14 @@ const MyClassesPage = () => {
                           className="py-2.5 text-label font-bold text-primary hover:bg-primary/5 rounded-xl transition-all border border-primary/10 flex items-center justify-center gap-2"
                         >
                           <span className="material-symbols-outlined text-section">fact_check</span>
-                          Attendance
+                          {t('attendance')}
                         </button>
                         <button 
                           onClick={() => navigate(`/teacher/exams?classId=${cls.id}`)}
                           className="py-2.5 text-label font-bold text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/10 rounded-xl transition-all border border-amber-200 dark:border-amber-900/30 flex items-center justify-center gap-2"
                         >
                           <span className="material-symbols-outlined text-section">edit_document</span>
-                          Exams
+                          {t('exams')}
                         </button>
                       </div>
                     </div>

@@ -2,10 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
+import { useSettings } from '../../contexts/SettingsContext';
 
 const TeacherAttendancePage = () => {
   const { classes, students, saveAttendanceRecords, attendance, addNotification, timetables } = useData();
   const { currentUser } = useAppContext();
+  const { t } = useSettings();
 
   const [selectedClassId, setSelectedClassId] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString('en-CA'));
@@ -15,7 +17,8 @@ const TeacherAttendancePage = () => {
 
   const dayName = useMemo(() => {
     const d = new Date(selectedDate);
-    return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getDay()];
+    const englishDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return englishDays[d.getDay()];
   }, [selectedDate]);
 
   const assignedClasses = classes.filter(cls => 
@@ -92,11 +95,11 @@ const TeacherAttendancePage = () => {
     }));
 
     saveAttendanceRecords(records);
-    addNotification('Attendance saved successfully', 'success');
+    addNotification(t('attendanceSavedSuccess'), 'success');
   };
 
-  const formatTime = (t) => {
-    const [h, m] = t.split(':');
+  const formatTime = (tString) => {
+    const [h, m] = tString.split(':');
     const hNum = parseInt(h);
     const suffix = hNum >= 12 ? 'PM' : 'AM';
     const h12 = hNum > 12 ? hNum - 12 : (hNum === 0 ? 12 : hNum);
@@ -104,13 +107,13 @@ const TeacherAttendancePage = () => {
   };
 
   return (
-    <PageLayout role="teacher" title="Daily Attendance">
+    <PageLayout role="teacher" title={t('attendance')}>
       <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         
         {/* PAGE HEADER */}
         <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
-          <h2 className="text-heading text-slate-900 dark:text-white">Attendance</h2>
-          <p className="text-label text-slate-500/80 mt-1">Record and manage student daily attendance for your assigned classes.</p>
+          <h2 className="text-heading text-slate-900 dark:text-white">{t('attendance')}</h2>
+          <p className="text-label text-slate-500/80 mt-1">{t('attendanceSubtitle')}</p>
         </div>
         
         {/* ENHANCED CONTROL BAR */}
@@ -119,7 +122,7 @@ const TeacherAttendancePage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end relative z-10">
             <div>
-              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">Class Section</label>
+              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">{t('class')}</label>
               <select 
                 value={selectedClassId}
                 onChange={(e) => {
@@ -128,14 +131,14 @@ const TeacherAttendancePage = () => {
                 }}
                 className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
               >
-                <option value="">Choose class...</option>
+                <option value="">{t('chooseClass')}</option>
                 {assignedClasses.map(cls => (
                   <option key={cls.id} value={cls.id}>{cls.name}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">Session Date</label>
+              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">{t('sessionDate')}</label>
               <input 
                 type="date" 
                 value={selectedDate}
@@ -147,7 +150,7 @@ const TeacherAttendancePage = () => {
               />
             </div>
             <div>
-              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">Scheduled Session</label>
+              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">{t('scheduledSession')}</label>
               <select 
                 value={selectedSessionId}
                 onChange={(e) => setSelectedSessionId(e.target.value)}
@@ -155,7 +158,7 @@ const TeacherAttendancePage = () => {
                 className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <option value="">
-                  {availableSessions.length === 0 ? (selectedClassId ? 'No sessions today' : 'Select class first') : 'Choose session...'}
+                  {availableSessions.length === 0 ? (selectedClassId ? t('noSessionsToday') : t('selectClassFirst')) : t('chooseSession')}
                 </option>
                 {availableSessions.map(s => (
                   <option key={s.id} value={s.id}>
@@ -171,7 +174,7 @@ const TeacherAttendancePage = () => {
                 className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-label font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <span className="material-symbols-outlined text-section">done_all</span>
-                Mark All Present
+                {t('markAllPresent')}
               </button>
             </div>
           </div>
@@ -180,7 +183,7 @@ const TeacherAttendancePage = () => {
             <div className="mt-4 p-3 bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/20 rounded-xl flex items-center gap-2 animate-in slide-in-from-top-2">
               <span className="material-symbols-outlined text-rose-500 text-section">info</span>
               <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">
-                No sessions scheduled for this class on {dayName} ({selectedDate})
+                {t('noSessionsScheduledForClass').replace('{day}', t(dayName.toLowerCase())).replace('{date}', selectedDate)}
               </p>
             </div>
           )}
@@ -193,17 +196,17 @@ const TeacherAttendancePage = () => {
               <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800/50 rounded-3xl flex items-center justify-center mb-6 border-2 border-dashed border-slate-200 dark:border-slate-700">
                 <span className="material-symbols-outlined text-[40px] opacity-20">fact_check</span>
               </div>
-              <h3 className="text-section font-bold uppercase tracking-widest opacity-40">Ready to Record</h3>
-              <p className="text-label opacity-40 mt-1">Select class and session parameters above to start.</p>
+              <h3 className="text-section font-bold uppercase tracking-widest opacity-40">{t('readyToRecord')}</h3>
+              <p className="text-label opacity-40 mt-1">{t('attendanceStartInstructions')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-label">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-slate-800/30 text-slate-400 uppercase text-[10px] font-black tracking-widest border-b border-slate-100 dark:border-slate-800">
-                    <th className="px-8 py-5">Student Information</th>
-                    <th className="px-8 py-5">Identifier</th>
-                    <th className="px-8 py-5 text-center">Attendance Status</th>
+                    <th className="px-8 py-5">{t('studentInformation')}</th>
+                    <th className="px-8 py-5">{t('identifier')}</th>
+                    <th className="px-8 py-5 text-center">{t('attendanceStatus')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
@@ -241,7 +244,7 @@ const TeacherAttendancePage = () => {
                                   : 'bg-white dark:bg-slate-900 text-slate-400 border-slate-100 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                               }`}
                             >
-                              {status.id}
+                              {t(status.id.toLowerCase())}
                             </button>
                           ))}
                         </div>
@@ -262,7 +265,7 @@ const TeacherAttendancePage = () => {
               className="px-10 py-4 bg-primary text-white text-label font-black uppercase tracking-widest rounded-2xl shadow-2xl shadow-primary/30 hover:bg-blue-700 transition-all active:scale-95 flex items-center gap-3"
             >
               <span className="material-symbols-outlined text-section">verified</span>
-              Submit Session Records
+              {t('submitSessionRecords')}
             </button>
           </div>
         )}

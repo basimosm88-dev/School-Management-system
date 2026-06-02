@@ -2,10 +2,12 @@ import React, { useMemo, useState } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
+import { useSettings } from '../../contexts/SettingsContext';
 
 const StudentAttendancePage = () => {
  const { getStudentAttendanceSummary, classes } = useData();
  const { currentUser } = useAppContext();
+ const { t, language } = useSettings();
 
  const [activeTab, setActiveTab] = useState('daily'); // 'daily' or 'session'
 
@@ -24,7 +26,7 @@ const StudentAttendancePage = () => {
  };
 
  return (
- <PageLayout role="student" title="My Attendance Tracker">
+ <PageLayout role="student" title={t('myAttendanceTracker')}>
  <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
  
  {/* SUMMARY CARDS */}
@@ -43,12 +45,12 @@ const StudentAttendancePage = () => {
  <span className="text-section text-slate-900 dark:text-slate-100">{summary.rate}%</span>
  </div>
  </div>
- <p className="text-label text-slate-400/80">Attendance Rate</p>
+ <p className="text-label text-slate-400/80">{t('attendanceRate')}</p>
  </div>
 
- <SummaryStat label="Present Marks" value={summary.present} color="emerald" icon="check_circle" />
- <SummaryStat label="Late Counts" value={summary.late} color="amber" icon="schedule" />
- <SummaryStat label="Absent Marks" value={summary.absent} color="rose" icon="cancel" />
+ <SummaryStat label={t('presentMarks')} value={summary.present} color="emerald" icon="check_circle" />
+ <SummaryStat label={t('lateCounts')} value={summary.late} color="amber" icon="schedule" />
+ <SummaryStat label={t('absentMarks')} value={summary.absent} color="rose" icon="cancel" />
  </div>
 
  {/* TABS & LISTS */}
@@ -58,15 +60,15 @@ const StudentAttendancePage = () => {
  <button 
  onClick={() => setActiveTab('daily')}
  className={`px-8 py-3 rounded-lg text-label  transition-all ${activeTab === 'daily' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
- >Daily Summaries</button>
+ >{t('dailySummaries')}</button>
  <button 
  onClick={() => setActiveTab('session')}
  className={`px-8 py-3 rounded-lg text-label  transition-all ${activeTab === 'session' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
- >Session Breakdown</button>
+ >{t('sessionBreakdown')}</button>
  </div>
  <div className="flex items-center gap-3">
  <span className="w-3 h-3 rounded-full bg-primary animate-pulse"></span>
- <span className="text-label text-slate-400/80">Real-time Performance Data</span>
+ <span className="text-label text-slate-400/80">{t('realtimePerformanceData')}</span>
  </div>
  </div>
 
@@ -75,16 +77,16 @@ const StudentAttendancePage = () => {
  <thead className="bg-white dark:bg-slate-900 text-label text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
  {activeTab === 'daily' ? (
  <tr>
- <th className="px-10 py-6">Calendar Date</th>
- <th className="px-10 py-6 text-center">Status</th>
- <th className="px-10 py-6 text-right">Academic Standing</th>
+ <th className="px-10 py-6">{t('calendarDate')}</th>
+ <th className="px-10 py-6 text-center">{t('status')}</th>
+ <th className="px-10 py-6 text-right">{t('academicStanding')}</th>
  </tr>
  ) : (
  <tr>
- <th className="px-10 py-6">Subject</th>
- <th className="px-10 py-6">Session Time</th>
- <th className="px-10 py-6">Date</th>
- <th className="px-10 py-6 text-right">Attendance</th>
+ <th className="px-10 py-6">{t('subject')}</th>
+ <th className="px-10 py-6">{t('sessionTime')}</th>
+ <th className="px-10 py-6">{t('date')}</th>
+ <th className="px-10 py-6 text-right">{t('attendance')}</th>
  </tr>
  )}
  </thead>
@@ -95,12 +97,12 @@ const StudentAttendancePage = () => {
  <td className="px-10 py-6">
  <div className="flex items-center gap-4">
  <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center border border-slate-200/50 dark:border-slate-700/50">
- <span className="text-label text-slate-400/80">{new Date(day.date).toLocaleString('default', { month: 'short' })}</span>
+ <span className="text-label text-slate-400/80">{new Date(day.date).toLocaleString(language, { month: 'short' })}</span>
  <span className="text-body text-slate-900 dark:text-slate-100">{new Date(day.date).getDate()}</span>
  </div>
  <div>
  <span className="text-slate-800 dark:text-slate-200 block leading-tight">
- {new Date(day.date).toLocaleDateString('default', { weekday: 'long' })}
+ {new Date(day.date).toLocaleDateString(language, { weekday: 'long' })}
  </span>
  <span className="text-label text-slate-400/80">{day.date}</span>
  </div>
@@ -113,14 +115,14 @@ const StudentAttendancePage = () => {
  day.status === 'Late' ? 'bg-amber-500 text-white border-amber-500 shadow-amber-500/10' :
  'bg-sky-500 text-white border-sky-500 shadow-sky-500/10'
  }`}>
- {day.status}
+ {t(day.status.toLowerCase())}
  </span>
  </td>
  <td className="px-10 py-6 text-right">
  <span className="text-label text-slate-400/80 italic">
- {day.status === 'Present' ? 'Full Day Attended' : 
- day.status === 'Partial' ? 'Mixed Participation' : 
- day.status === 'Late' ? 'Late Arrivals' : 'Not Present'}
+ {day.status === 'Present' ? t('fullDayAttended') : 
+ day.status === 'Partial' ? t('mixedParticipation') : 
+ day.status === 'Late' ? t('lateArrivals') : t('notPresent')}
  </span>
  </td>
  </tr>
@@ -146,7 +148,7 @@ const StudentAttendancePage = () => {
  session.status === 'Absent' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
  'bg-amber-50 text-amber-600 border border-amber-100'
  }`}>
- {session.status}
+ {t(session.status.toLowerCase())}
  </span>
  </td>
  </tr>
@@ -157,7 +159,7 @@ const StudentAttendancePage = () => {
  <td colSpan="4" className="px-10 py-32 text-center text-slate-300">
  <div className="flex flex-col items-center opacity-20">
  <span className="material-symbols-outlined text-display mb-4">history_toggle_off</span>
- <p className="text-label">No records available for display</p>
+ <p className="text-label">{t('noRecordsAvailable')}</p>
  </div>
  </td>
  </tr>

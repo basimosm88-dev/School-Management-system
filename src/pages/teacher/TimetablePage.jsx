@@ -2,10 +2,12 @@ import React, { useMemo } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
+import { useSettings } from '../../contexts/SettingsContext';
 
 const TeacherTimetablePage = () => {
  const { timetables, classes } = useData();
  const { currentUser } = useAppContext();
+ const { t } = useSettings();
  const [activePeriod, setActivePeriod] = React.useState('morning');
 
  const days = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday'];
@@ -32,7 +34,7 @@ const TeacherTimetablePage = () => {
  <div className="p-4"></div>
  {days.map(day => (
  <div key={day} className="p-4 text-center text-slate-600 dark:text-slate-300 border-l border-slate-100 dark:border-slate-800 text-label">
- {day}
+ {t(day.toLowerCase())}
  </div>
  ))}
  </div>
@@ -65,7 +67,7 @@ const TeacherTimetablePage = () => {
  'bg-emerald-50 text-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-100 border-emerald-100 dark:border-emerald-800/50'
  ];
  let hash = 0;
- const str = slot.subjectName || 'Break';
+ const str = slot.subjectName || t('break');
  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
  const colorClass = slot.isBreak 
  ? 'bg-slate-100 text-slate-500/80 dark:bg-slate-800/50 dark:text-slate-400/80 border-slate-100 dark:border-slate-700/50' 
@@ -80,7 +82,7 @@ const TeacherTimetablePage = () => {
  };
  
  const classObj = classes.find(c => String(c.id) === String(slot.classId));
- const classNameDisplay = classObj?.name.split('-')[1]?.trim() || classObj?.name || 'Class';
+ const classNameDisplay = classObj?.name.split('-')[1]?.trim() || classObj?.name || t('class');
  
  return (
  <div key={slot.id} className={`w-full rounded-xl p-4 relative group transition-all border shadow-sm ${colorClass}`}>
@@ -89,7 +91,7 @@ const TeacherTimetablePage = () => {
  </div>
  
  <div className="text-label leading-relaxed">
- {classNameDisplay} - {slot.subjectName}
+ {slot.isBreak ? t('breakSession') : `${classNameDisplay} - ${slot.subjectName}`}
  </div>
  </div>
  );
@@ -106,7 +108,7 @@ const TeacherTimetablePage = () => {
  );
 
  return (
- <PageLayout role="teacher" title="My Teaching Schedule">
+ <PageLayout role="teacher" title={t('myTeachingSchedule')}>
  <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
  
  {/* SUMMARY BAR */}
@@ -116,13 +118,13 @@ const TeacherTimetablePage = () => {
  <span className="material-symbols-outlined text-display">schedule</span>
  </div>
  <div>
- <h3 className="text-slate-900 dark:text-slate-100 text-section">Weekly Planner</h3>
- <p className="text-label text-slate-500/80 mt-1 opacity-60">Synchronized with Academic Administration</p>
+ <h3 className="text-slate-900 dark:text-slate-100 text-section">{t('weeklyPlanner')}</h3>
+ <p className="text-label text-slate-500/80 mt-1 opacity-60">{t('syncAcademicAdmin')}</p>
  </div>
  </div>
  <div className="flex gap-4">
  <div className="px-8 py-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 text-center shadow-sm">
- <p className="text-label text-slate-400/80 mb-1">Total Periods</p>
+ <p className="text-label text-slate-400/80 mb-1">{t('totalPeriods')}</p>
  <p className="text-display text-primary">{teacherSchedule.length}</p>
  </div>
  </div>
@@ -140,7 +142,7 @@ const TeacherTimetablePage = () => {
  }`}
  >
  <span className="material-symbols-outlined text-section">wb_sunny</span>
- Morning Period
+ {t('morningPeriod')}
  </button>
  <button
  onClick={() => setActivePeriod('afternoon')}
@@ -151,7 +153,7 @@ const TeacherTimetablePage = () => {
  }`}
  >
  <span className="material-symbols-outlined text-section">dark_mode</span>
- Afternoon Period
+ {t('afternoonPeriod')}
  </button>
  </div>
  </div>
@@ -159,9 +161,9 @@ const TeacherTimetablePage = () => {
  {/* WEEKLY GRID */}
  <div className="animate-in fade-in zoom-in-95 duration-500">
  {activePeriod === 'morning' ? (
- renderGridBlock("Morning Sessions (7:00 AM - 12:30 PM)", morningHours)
+ renderGridBlock(t('morningPeriodRange'), morningHours)
  ) : (
- renderGridBlock("Afternoon Sessions (1:00 PM - 5:30 PM)", afternoonHours)
+ renderGridBlock(t('afternoonPeriodRange'), afternoonHours)
  )}
  </div>
  </div>

@@ -65,9 +65,9 @@ const ClassesPage = () => {
 
  const handleDelete = (id, e) => {
  e.stopPropagation();
- if (window.confirm('Are you sure you want to delete this class section? This cannot be undone.')) {
+ if (window.confirm(t('deleteClassConfirm'))) {
  deleteClass(id);
- addNotification('Class section deleted successfully', 'success');
+ addNotification(t('classDeleted'), 'success');
  }
  };
 
@@ -79,10 +79,10 @@ const ClassesPage = () => {
  const handleSave = (classData) => {
  if (editingClass) {
  updateClass(editingClass.id, classData);
- addNotification('Class updated successfully', 'success');
+ addNotification(t('classUpdated'), 'success');
  } else {
  addClass(classData);
- addNotification('New class section created successfully', 'success');
+ addNotification(t('classAdded'), 'success');
  }
  setIsFormOpen(false);
  };
@@ -103,7 +103,7 @@ const ClassesPage = () => {
  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400/80">search</span>
  <input
  type="text"
- placeholder="Search by grade or section..."
+ placeholder={t('searchGradeSectionPlaceholder')}
  value={searchTerm}
  onChange={(e) => setSearchTerm(e.target.value)}
  className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label focus:ring-2 focus:ring-primary/20 transition-all outline-none text-slate-700 dark:text-slate-200"
@@ -116,20 +116,20 @@ const ClassesPage = () => {
  onChange={(e) => setFilters({ ...filters, level: e.target.value })}
  className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
- <option value="">Level</option>
- <option value="Primary">Primary</option>
- <option value="Middle">Middle</option>
- <option value="Secondary">Secondary</option>
+ <option value="">{t('level')}</option>
+ <option value="Primary">{t('primary')}</option>
+ <option value="Middle">{t('middle')}</option>
+ <option value="Secondary">{t('secondary')}</option>
  </select>
  <select
  value={filters.status}
  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
  className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-label px-3 py-2 outline-none focus:ring-2 focus:ring-primary/20 text-slate-600 dark:text-slate-400/80 cursor-pointer"
  >
- <option value="">Status</option>
- <option value="Active">Active</option>
- <option value="Completed">Completed</option>
- <option value="Archived">Archived</option>
+ <option value="">{t('status')}</option>
+ <option value="Active">{t('active')}</option>
+ <option value="Completed">{t('completed')}</option>
+ <option value="Archived">{t('archived')}</option>
  </select>
  </div>
  </div>
@@ -139,7 +139,7 @@ const ClassesPage = () => {
  className="btn-primary"
  >
  <span className="btn-icon">add_box</span>
- Add Class Section
+ {t('addClassSection')}
  </button>
  </div>
 
@@ -149,13 +149,13 @@ const ClassesPage = () => {
  <table className="w-full text-left text-label">
  <thead className="bg-slate-100/50 dark:bg-slate-800/50 text-slate-500/80 dark:text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
  <tr>
- <th className="px-6 py-4">Class Name</th>
- <th className="px-6 py-4">Level</th>
- <th className="px-6 py-4">Students</th>
- <th className="px-6 py-4">Capacity</th>
- <th className="px-6 py-4">Supervisor</th>
- <th className="px-6 py-4">Status</th>
- <th className="px-6 py-4 text-right">Actions</th>
+ <th className="px-6 py-4">{t('className')}</th>
+ <th className="px-6 py-4">{t('level')}</th>
+ <th className="px-6 py-4">{t('students')}</th>
+ <th className="px-6 py-4">{t('capacity')}</th>
+ <th className="px-6 py-4">{t('supervisor')}</th>
+ <th className="px-6 py-4">{t('status')}</th>
+ <th className="px-6 py-4 text-right">{t('actions')}</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -175,7 +175,7 @@ const ClassesPage = () => {
  </div>
  </td>
  <td className="px-6 py-4 text-slate-600 dark:text-slate-400/80">
- {cls.level}
+ {t(cls.level.toLowerCase())}
  </td>
  <td className="px-6 py-4">
  <div className="flex items-center gap-2">
@@ -201,7 +201,7 @@ const ClassesPage = () => {
  {supervisor?.name?.[0] || '?'}
  </div>
  <span className="text-slate-700 dark:text-slate-300">
- {supervisor?.name || 'Unassigned'}
+ {supervisor?.name || t('unassigned')}
  </span>
  </div>
  </td>
@@ -213,7 +213,7 @@ const ClassesPage = () => {
  ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30'
  : 'bg-slate-100 text-slate-500/80 dark:bg-slate-800'
  }`}>
- {cls.status}
+ {t(cls.status.toLowerCase())}
  </span>
  </td>
  <td className="px-6 py-4 text-right" onClick={e => e.stopPropagation()}>
@@ -221,21 +221,21 @@ const ClassesPage = () => {
  <button
  onClick={() => handleViewProfile(cls)}
  className="p-1.5 text-slate-400/80 hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
- title="View Class"
+ title={t('viewClass')}
  >
  <span className="material-symbols-outlined text-section">visibility</span>
  </button>
  <button
  onClick={(e) => handleEdit(cls, e)}
  className="p-1.5 text-slate-400/80 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all"
- title="Edit"
+ title={t('edit')}
  >
  <span className="material-symbols-outlined text-section">edit</span>
  </button>
  <button
  onClick={(e) => handleDelete(cls.id, e)}
  className="p-1.5 text-slate-400/80 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all"
- title="Delete"
+ title={t('delete')}
  >
  <span className="material-symbols-outlined text-section">delete</span>
  </button>
@@ -281,585 +281,589 @@ const ClassesPage = () => {
 };
 
 const ClassForm = ({ cls, teachers, onClose, onSave }) => {
- const [formData, setFormData] = useState({
- gradeName: '',
- section: '',
- level: 'Secondary',
- capacity: 30,
- teacherId: '',
- assistantTeacher: '',
- academicYear: '2025-2026',
- status: 'Active',
- notes: '',
- ...cls
- });
+  const { t } = useSettings();
+  const [formData, setFormData] = useState({
+    gradeName: '',
+    section: '',
+    level: 'Secondary',
+    capacity: 30,
+    teacherId: '',
+    assistantTeacher: '',
+    academicYear: '2025-2026',
+    status: 'Active',
+    notes: '',
+    ...cls
+  });
 
- const handleChange = (field, value) => {
- setFormData(prev => ({ ...prev, [field]: value }));
- };
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
- return (
- <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-4 bg-slate-900/80 dark:bg-black/80 backdrop-blur-md overflow-y-auto animate-in fade-in duration-300">
- <form 
- onSubmit={(e) => { e.preventDefault(); onSave(formData); }}
- className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto animate-in zoom-in-95 duration-300 flex flex-col"
- >
- <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 rounded-t-3xl">
- <h3 className="text-slate-900 dark:text-slate-100 text-section flex items-center gap-2">
- <span className="material-symbols-outlined text-primary">add_box</span>
- {cls ? 'Edit Class Section' : 'Create New Class Section'}
- </h3>
- <button onClick={onClose} className="p-2 text-slate-400/80 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all">
- <span className="material-symbols-outlined">close</span>
- </button>
- </div>
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-4 bg-slate-900/80 dark:bg-black/80 backdrop-blur-md overflow-y-auto animate-in fade-in duration-300">
+      <form 
+        onSubmit={(e) => { e.preventDefault(); onSave(formData); }}
+        className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto animate-in zoom-in-95 duration-300 flex flex-col"
+      >
+        <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 rounded-t-3xl">
+          <h3 className="text-slate-900 dark:text-slate-100 text-section flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary">add_box</span>
+            {cls ? t('editClassSection') : t('createNewClassSection')}
+          </h3>
+          <button type="button" onClick={onClose} className="p-2 text-slate-400/80 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
 
- <div className="p-4 md:p-8 space-y-8 max-h-[70vh] overflow-y-auto">
- {/* Section 1: Basic Info */}
- <div>
- <h4 className="text-label text-slate-400/80 mb-4">Basic Information</h4>
- <div className="grid grid-cols-2 gap-6">
- <div>
- <label className="text-label text-slate-500/80 mb-1.5 block">Grade Name</label>
- <input 
- type="text" 
- placeholder="e.g. Grade 10" 
- className="form-input-custom" 
- value={formData.gradeName || ''}
- onChange={e => handleChange('gradeName', e.target.value)}
- required
- />
- </div>
- <div>
- <label className="text-label text-slate-500/80 mb-1.5 block">Section</label>
- <input 
- type="text" 
- placeholder="e.g. A" 
- className="form-input-custom" 
- value={formData.section || ''}
- onChange={e => handleChange('section', e.target.value)}
- required
- />
- </div>
- <div className="col-span-full">
- <label className="text-label text-slate-500/80 mb-1.5 block">Education Level</label>
- <select 
- className="form-input-custom"
- value={formData.level}
- onChange={e => handleChange('level', e.target.value)}
- >
- <option value="Primary">Primary</option>
- <option value="Middle">Middle</option>
- <option value="Secondary">Secondary</option>
- </select>
- </div>
- </div>
- </div>
+        <div className="p-4 md:p-8 space-y-8 max-h-[70vh] overflow-y-auto">
+          {/* Section 1: Basic Info */}
+          <div>
+            <h4 className="text-label text-slate-400/80 mb-4">{t('basicInformation')}</h4>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="text-label text-slate-500/80 mb-1.5 block">{t('gradeName')}</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. Grade 10" 
+                  className="form-input-custom" 
+                  value={formData.gradeName || ''}
+                  onChange={e => handleChange('gradeName', e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-label text-slate-500/80 mb-1.5 block">{t('section')}</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. A" 
+                  className="form-input-custom" 
+                  value={formData.section || ''}
+                  onChange={e => handleChange('section', e.target.value)}
+                  required
+                />
+              </div>
+              <div className="col-span-full">
+                <label className="text-label text-slate-500/80 mb-1.5 block">{t('educationLevel')}</label>
+                <select 
+                  className="form-input-custom"
+                  value={formData.level}
+                  onChange={e => handleChange('level', e.target.value)}
+                >
+                  <option value="Primary">{t('primary')}</option>
+                  <option value="Middle">{t('middle')}</option>
+                  <option value="Secondary">{t('secondary')}</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
- {/* Section 2: Capacity & Academic */}
- <div className="grid grid-cols-2 gap-8 pt-4 border-t border-slate-50 dark:border-slate-800">
- <div>
- <h4 className="text-label text-slate-400/80 mb-4">Capacity</h4>
- <label className="text-label text-slate-500/80 mb-1.5 block">Maximum Students</label>
- <input 
- type="number" 
- className="form-input-custom" 
- value={formData.capacity || ''}
- onChange={e => handleChange('capacity', parseInt(e.target.value))}
- />
- </div>
- <div>
- <h4 className="text-label text-slate-400/80 mb-4">Academic Year</h4>
- <label className="text-label text-slate-500/80 mb-1.5 block">Year</label>
- <input 
- type="text" 
- className="form-input-custom" 
- value={formData.academicYear || ''}
- onChange={e => handleChange('academicYear', e.target.value)}
- />
- </div>
- </div>
+          {/* Section 2: Capacity & Academic */}
+          <div className="grid grid-cols-2 gap-8 pt-4 border-t border-slate-50 dark:border-slate-800">
+            <div>
+              <h4 className="text-label text-slate-400/80 mb-4">{t('capacity')}</h4>
+              <label className="text-label text-slate-500/80 mb-1.5 block">{t('maximumStudents')}</label>
+              <input 
+                type="number" 
+                className="form-input-custom" 
+                value={formData.capacity || ''}
+                onChange={e => handleChange('capacity', parseInt(e.target.value))}
+              />
+            </div>
+            <div>
+              <h4 className="text-label text-slate-400/80 mb-4">{t('academicYear')}</h4>
+              <label className="text-label text-slate-500/80 mb-1.5 block">{t('year')}</label>
+              <input 
+                type="text" 
+                className="form-input-custom" 
+                value={formData.academicYear || ''}
+                onChange={e => handleChange('academicYear', e.target.value)}
+              />
+            </div>
+          </div>
 
- {/* Section 3: Supervision */}
- <div className="pt-4 border-t border-slate-50 dark:border-slate-800">
- <h4 className="text-label text-slate-400/80 mb-4">Supervision</h4>
- <div className="grid grid-cols-2 gap-6">
- <div>
- <label className="text-label text-slate-500/80 mb-1.5 block">Class Supervisor</label>
- <select 
- className="form-input-custom"
- value={formData.teacherId}
- onChange={e => handleChange('teacherId', e.target.value)}
- >
- <option value="">Select Teacher</option>
- {teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
- </select>
- </div>
- <div>
- <label className="text-label text-slate-500/80 mb-1.5 block">Assistant Teacher (Optional)</label>
- <input 
- type="text" 
- className="form-input-custom" 
- value={formData.assistantTeacher || ''}
- onChange={e => handleChange('assistantTeacher', e.target.value)}
- />
- </div>
- </div>
- </div>
+          {/* Section 3: Supervision */}
+          <div className="pt-4 border-t border-slate-50 dark:border-slate-800">
+            <h4 className="text-label text-slate-400/80 mb-4">{t('supervision')}</h4>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="text-label text-slate-500/80 mb-1.5 block">{t('classSupervisor')}</label>
+                <select 
+                  className="form-input-custom"
+                  value={formData.teacherId}
+                  onChange={e => handleChange('teacherId', e.target.value)}
+                >
+                  <option value="">{t('selectTeacher')}</option>
+                  {teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-label text-slate-500/80 mb-1.5 block">{t('assistantTeacherOptional')}</label>
+                <input 
+                  type="text" 
+                  className="form-input-custom" 
+                  value={formData.assistantTeacher || ''}
+                  onChange={e => handleChange('assistantTeacher', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
 
- {/* Section 4: Status & Notes */}
- <div className="pt-4 border-t border-slate-50 dark:border-slate-800">
- <div className="grid grid-cols-2 gap-6 mb-6">
- <div>
- <label className="text-label text-slate-500/80 mb-1.5 block">Status</label>
- <div className="flex gap-4">
- {['Active', 'Completed', 'Archived'].map(s => (
- <label key={s} className="flex items-center gap-2 cursor-pointer">
- <input 
- type="radio" 
- name="status" 
- value={s} 
- checked={formData.status === s}
- onChange={e => handleChange('status', e.target.value)}
- className="text-primary focus:ring-primary"
- />
- <span className="text-label text-slate-600 dark:text-slate-400/80">{s}</span>
- </label>
- ))}
- </div>
- </div>
- </div>
- <div>
- <label className="text-label text-slate-500/80 mb-1.5 block">Notes</label>
- <textarea 
- className="form-input-custom min-h-[100px]" 
- value={formData.notes || ''}
- onChange={e => handleChange('notes', e.target.value)}
- ></textarea>
- </div>
- </div>
- </div>
+          {/* Section 4: Status & Notes */}
+          <div className="pt-4 border-t border-slate-50 dark:border-slate-800">
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="text-label text-slate-500/80 mb-1.5 block">{t('status')}</label>
+                <div className="flex gap-4">
+                  {['Active', 'Completed', 'Archived'].map(s => (
+                    <label key={s} className="flex items-center gap-2 cursor-pointer">
+                      <input 
+                        type="radio" 
+                        name="status" 
+                        value={s} 
+                        checked={formData.status === s}
+                        onChange={e => handleChange('status', e.target.value)}
+                        className="text-primary focus:ring-primary"
+                      />
+                      <span className="text-label text-slate-600 dark:text-slate-400/80">{t(s.toLowerCase())}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div>
+              <label className="text-label text-slate-500/80 mb-1.5 block">{t('notes')}</label>
+              <textarea 
+                className="form-input-custom min-h-[100px]" 
+                value={formData.notes || ''}
+                onChange={e => handleChange('notes', e.target.value)}
+              ></textarea>
+            </div>
+          </div>
+        </div>
 
- <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl">
- <button type="button" onClick={onClose} className="px-6 py-2.5 text-label text-slate-500/80 dark:text-slate-400/80 hover:text-slate-700 transition-all">Cancel</button>
- <button type="submit" className="px-8 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">Save class details</button>
- </div>
- </form>
- </div>
- );
+        <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl">
+          <button type="button" onClick={onClose} className="px-6 py-2.5 text-label text-slate-500/80 dark:text-slate-400/80 hover:text-slate-700 transition-all">{t('cancel')}</button>
+          <button type="submit" className="px-8 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">{t('saveClassDetails')}</button>
+        </div>
+      </form>
+    </div>
+  );
 };
 
 const ClassProfile = ({ 
- cls, 
- onClose, 
- teachers, 
- students, 
- subjects, 
- onAssignStudent, 
- onRemoveStudent, 
- onAssignSubject,
- onRemoveSubject,
- onUpdateSubject,
- addNotification
+  cls, 
+  onClose, 
+  teachers, 
+  students, 
+  subjects, 
+  onAssignStudent, 
+  onRemoveStudent, 
+  onAssignSubject,
+  onRemoveSubject,
+  onUpdateSubject,
+  addNotification
 }) => {
- const [activeTab, setActiveTab] = useState('overview');
- const [isAddingStudent, setIsAddingStudent] = useState(false);
- const [isAddingSubject, setIsAddingSubject] = useState(false);
- const [editingSubject, setEditingSubject] = useState(null);
+  const { t } = useSettings();
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isAddingStudent, setIsAddingStudent] = useState(false);
+  const [isAddingSubject, setIsAddingSubject] = useState(false);
+  const [editingSubject, setEditingSubject] = useState(null);
 
- const supervisor = teachers.find(t => String(t.id) === String(cls.teacherId));
- const classStudents = students.filter(s => s.classId == cls.id);
- const unassignedStudents = students.filter(s => !s.classId);
+  const supervisor = teachers.find(t => String(t.id) === String(cls.teacherId));
+  const classStudents = students.filter(s => s.classId == cls.id);
+  const unassignedStudents = students.filter(s => !s.classId);
 
- return (
- <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-6 bg-slate-900/80 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-300 overflow-hidden">
- <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-6xl shadow-2xl border border-slate-200 dark:border-slate-700/50 animate-in zoom-in-95 duration-300 overflow-hidden flex flex-col max-h-[95vh]">
- 
- {/* Header Section */}
- <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-950/20 relative">
- <div className="flex justify-between items-start">
- <div className="flex gap-6 items-center">
- <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20">
- <span className="material-symbols-outlined text-display">class</span>
- </div>
- <div>
- <h3 className="text-display text-slate-900 dark:text-slate-100">{cls.name}</h3>
- <div className="flex gap-4 mt-2">
- <span className="flex items-center gap-1.5 text-label text-slate-500/80 dark:text-slate-400/80">
- <span className="material-symbols-outlined text-section">school</span>
- {cls.level} Level
- </span>
- <span className="flex items-center gap-1.5 text-label text-slate-500/80 dark:text-slate-400/80">
- <span className="material-symbols-outlined text-section">calendar_today</span>
- {cls.academicYear}
- </span>
- <span className={`px-2 py-0.5 rounded text-label   ${
- cls.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'
- }`}>
- {cls.status}
- </span>
- </div>
- </div>
- </div>
- <button onClick={onClose} className="p-2 text-slate-400/80 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm">
- <span className="material-symbols-outlined">close</span>
- </button>
- </div>
- 
- {/* Tabs */}
- <div className="flex gap-8 mt-10">
- {['Overview', 'Students', 'Subjects & Teachers'].map(tab => (
- <button
- key={tab}
- onClick={() => setActiveTab(tab.toLowerCase())}
- className={`pb-4 text-label  transition-all relative ${
- activeTab === tab.toLowerCase() 
- ? 'text-primary' 
- : 'text-slate-400/80 hover:text-slate-600 dark:hover:text-slate-300'
- }`}
- >
- {tab}
- {activeTab === tab.toLowerCase() && (
- <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full animate-in slide-in-from-bottom-1 duration-300"></div>
- )}
- </button>
- ))}
- </div>
- </div>
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-6 bg-slate-900/80 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-300 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-6xl shadow-2xl border border-slate-200 dark:border-slate-700/50 animate-in zoom-in-95 duration-300 overflow-hidden flex flex-col max-h-[95vh]">
+        
+        {/* Header Section */}
+        <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-950/20 relative">
+          <div className="flex justify-between items-start">
+            <div className="flex gap-6 items-center">
+              <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20">
+                <span className="material-symbols-outlined text-display">class</span>
+              </div>
+              <div>
+                <h3 className="text-display text-slate-900 dark:text-slate-100">{cls.name}</h3>
+                <div className="flex gap-4 mt-2">
+                  <span className="flex items-center gap-1.5 text-label text-slate-500/80 dark:text-slate-400/80">
+                    <span className="material-symbols-outlined text-section">school</span>
+                    {t('levelLevel', { level: t(cls.level.toLowerCase()) })}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-label text-slate-500/80 dark:text-slate-400/80">
+                    <span className="material-symbols-outlined text-section">calendar_today</span>
+                    {cls.academicYear}
+                  </span>
+                  <span className={`px-2 py-0.5 rounded text-label   ${
+                    cls.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'
+                  }`}>
+                    {t(cls.status.toLowerCase())}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <button onClick={onClose} className="p-2 text-slate-400/80 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm">
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          
+          {/* Tabs */}
+          <div className="flex gap-8 mt-10">
+            {['Overview', 'Students', 'Subjects & Teachers'].map(tab => {
+              const tabKey = tab === 'Subjects & Teachers' ? 'subjectsTeachers' : tab.toLowerCase();
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab.toLowerCase())}
+                  className={`pb-4 text-label  transition-all relative ${
+                    activeTab === tab.toLowerCase() 
+                      ? 'text-primary' 
+                      : 'text-slate-400/80 hover:text-slate-600 dark:hover:text-slate-300'
+                  }`}
+                >
+                  {t(tabKey)}
+                  {activeTab === tab.toLowerCase() && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full animate-in slide-in-from-bottom-1 duration-300"></div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
- {/* Content Area */}
- <div className="p-8 max-h-[60vh] overflow-y-auto bg-white dark:bg-slate-900">
- 
- {activeTab === 'overview' && (
- <div className="space-y-8">
- {/* Stats Grid */}
- <div className="space-y-8">
- <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
- <div className="stat-pill">
- <p className="stat-label">Students</p>
- <p className="stat-value">{classStudents.length}</p>
- </div>
- <div className="stat-pill">
- <p className="stat-label">Capacity</p>
- <p className="stat-value">{cls.capacity}</p>
- </div>
- <div className="stat-pill">
- <p className="stat-label">Subjects</p>
- <p className="stat-value">{cls.subjects?.length || 0}</p>
- </div>
- <div className="stat-pill">
- <p className="stat-label">Usage</p>
- <p className="stat-value">{Math.round((classStudents.length / cls.capacity) * 100)}%</p>
- </div>
- </div>
+        {/* Content Area */}
+        <div className="p-8 max-h-[60vh] overflow-y-auto bg-white dark:bg-slate-900">
+          
+          {activeTab === 'overview' && (
+            <div className="space-y-8">
+              {/* Stats Grid */}
+              <div className="space-y-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div className="stat-pill">
+                    <p className="stat-label">{t('students')}</p>
+                    <p className="stat-value">{classStudents.length}</p>
+                  </div>
+                  <div className="stat-pill">
+                    <p className="stat-label">{t('capacity')}</p>
+                    <p className="stat-value">{cls.capacity}</p>
+                  </div>
+                  <div className="stat-pill">
+                    <p className="stat-label">{t('subjects')}</p>
+                    <p className="stat-value">{cls.subjects?.length || 0}</p>
+                  </div>
+                  <div className="stat-pill">
+                    <p className="stat-label">{t('usage')}</p>
+                    <p className="stat-value">{Math.round((classStudents.length / cls.capacity) * 100)}%</p>
+                  </div>
+                </div>
 
- <div className="grid grid-cols-1 gap-8">
- <div className="bg-slate-100/50 dark:bg-slate-950/20 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
- <h4 className="text-label text-slate-800 dark:text-slate-200 mb-6">Class Supervision</h4>
- <div className="flex flex-col sm:flex-row gap-6">
- <div className="flex-1 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
- <p className="text-label text-primary mb-2">Lead Supervisor</p>
- <div className="flex items-center gap-3">
- <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary">
- {supervisor?.name?.[0] || 'T'}
- </div>
- <div>
- <p className="text-slate-900 dark:text-slate-100">{supervisor?.name || 'Unassigned'}</p>
- <p className="text-label text-slate-500/80">{supervisor?.specialty || 'General'}</p>
- </div>
- </div>
- </div>
- <div className="flex-1 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
- <p className="text-label text-slate-400/80 mb-2">Assistant Teacher</p>
- <p className="text-slate-700 dark:text-slate-300">{cls.assistantTeacher || 'No Assistant'}</p>
- </div>
- </div>
- </div>
+                <div className="grid grid-cols-1 gap-8">
+                  <div className="bg-slate-100/50 dark:bg-slate-950/20 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
+                    <h4 className="text-label text-slate-800 dark:text-slate-200 mb-6">{t('classSupervision')}</h4>
+                    <div className="flex flex-col sm:flex-row gap-6">
+                      <div className="flex-1 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <p className="text-label text-primary mb-2">{t('leadSupervisor')}</p>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary">
+                            {supervisor?.name?.[0] || 'T'}
+                          </div>
+                          <div>
+                            <p className="text-slate-900 dark:text-slate-100">{supervisor?.name || t('unassigned')}</p>
+                            <p className="text-label text-slate-500/80">{supervisor?.specialty || t('general')}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex-1 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <p className="text-label text-slate-400/80 mb-2">{t('assistantTeacher')}</p>
+                        <p className="text-slate-700 dark:text-slate-300">{cls.assistantTeacher || t('noAssistant')}</p>
+                      </div>
+                    </div>
+                  </div>
 
- <div className="bg-slate-100/50 dark:bg-slate-950/20 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
- <h4 className="text-label text-slate-800 dark:text-slate-200 mb-4">Description / Notes</h4>
- <p className="text-label text-slate-600 dark:text-slate-400/80 italic leading-relaxed">
- {cls.notes || "No detailed notes provided for this class section."}
- </p>
- </div>
- </div>
- </div>
- </div>
- )}
+                  <div className="bg-slate-100/50 dark:bg-slate-950/20 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
+                    <h4 className="text-label text-slate-800 dark:text-slate-200 mb-4">{t('descriptionNotes')}</h4>
+                    <p className="text-label text-slate-600 dark:text-slate-400/80 italic leading-relaxed">
+                      {cls.notes || t('noDetailedNotes')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
- {activeTab === 'students' && (
- <div className="space-y-6">
- <div className="flex justify-between items-center">
- <h4 className="text-label text-slate-800 dark:text-slate-200">Enrolled Students ({classStudents.length})</h4>
- <button 
- onClick={() => setIsAddingStudent(!isAddingStudent)}
- className="bg-primary text-white px-4 py-2 rounded-xl text-label hover:bg-blue-700 transition-all flex items-center gap-2"
- >
- <span className="material-symbols-outlined text-section">person_add</span>
- Add Student
- </button>
- </div>
+          {activeTab === 'students' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h4 className="text-label text-slate-800 dark:text-slate-200">{t('enrolledStudentsCount', { count: classStudents.length })}</h4>
+                <button 
+                  onClick={() => setIsAddingStudent(!isAddingStudent)}
+                  className="bg-primary text-white px-4 py-2 rounded-xl text-label hover:bg-blue-700 transition-all flex items-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-section">person_add</span>
+                  {t('addStudent')}
+                </button>
+              </div>
 
- {isAddingStudent && (
- <div className="p-6 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2">
- <p className="text-label text-slate-400/80 mb-4">Select Unassigned Student</p>
- <div className="flex gap-4">
- <select 
- id="student-select"
- className="form-input-custom flex-1"
- >
- <option value="">Choose a student...</option>
- {unassignedStudents.map(s => <option key={s.id} value={s.id}>{s.name} (ID: {s.systemId || s.id})</option>)}
- </select>
- <button 
- onClick={() => {
- const sid = document.getElementById('student-select').value;
- if (sid) {
- if (classStudents.length >= cls.capacity) {
- addNotification('Cannot add student: Class capacity reached!', 'error');
- return;
- }
- onAssignStudent(sid, cls.id);
- addNotification('Student assigned to class successfully', 'success');
- setIsAddingStudent(false);
- }
- }}
- className="px-6 bg-primary text-white text-label rounded-xl"
- >
- Assign
- </button>
- </div>
- </div>
- )}
+              {isAddingStudent && (
+                <div className="p-6 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2">
+                  <p className="text-label text-slate-400/80 mb-4">{t('selectUnassignedStudent')}</p>
+                  <div className="flex gap-4">
+                    <select 
+                      id="student-select"
+                      className="form-input-custom flex-1"
+                    >
+                      <option value="">{t('chooseStudent')}</option>
+                      {unassignedStudents.map(s => <option key={s.id} value={s.id}>{s.name} (ID: {s.systemId || s.id})</option>)}
+                    </select>
+                    <button 
+                      onClick={() => {
+                        const sid = document.getElementById('student-select').value;
+                        if (sid) {
+                          if (classStudents.length >= cls.capacity) {
+                            addNotification(t('classCapacityReached'), 'error');
+                            return;
+                          }
+                          onAssignStudent(sid, cls.id);
+                          addNotification(t('studentAssignedSuccess'), 'success');
+                          setIsAddingStudent(false);
+                        }
+                      }}
+                      className="px-6 bg-primary text-white text-label rounded-xl"
+                    >
+                      {t('assign')}
+                    </button>
+                  </div>
+                </div>
+              )}
 
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
- {classStudents.map(student => (
- <div key={student.id} className="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 flex justify-between items-center group">
- <div className="flex items-center gap-3">
- <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-label text-slate-500/80">
- {student.name[0]}
- </div>
- <div>
- <p className="text-label text-slate-900 dark:text-slate-100">{student.name}</p>
- <p className="text-label text-slate-400/80">ID: {student.systemId || student.id}</p>
- </div>
- </div>
- <button 
- onClick={() => {
- if (confirm(`Remove ${student.name} from this class?`)) {
- onRemoveStudent(student.id, cls.id);
- addNotification('Student removed from class', 'info');
- }
- }}
- className="p-2 text-rose-400 hover:bg-rose-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
- >
- <span className="material-symbols-outlined text-section">person_remove</span>
- </button>
- </div>
- ))}
- {classStudents.length === 0 && (
- <div className="col-span-full py-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl">
- <span className="material-symbols-outlined text-display text-slate-200 mb-2">group_off</span>
- <p className="text-slate-400/80">No students enrolled in this section.</p>
- </div>
- )}
- </div>
- </div>
- )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {classStudents.map(student => (
+                  <div key={student.id} className="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 flex justify-between items-center group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-label text-slate-500/80">
+                        {student.name[0]}
+                      </div>
+                      <div>
+                        <p className="text-label text-slate-900 dark:text-slate-100">{student.name}</p>
+                        <p className="text-label text-slate-400/80">ID: {student.systemId || student.id}</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        if (confirm(t('removeStudentConfirm').replace('{name}', student.name))) {
+                          onRemoveStudent(student.id, cls.id);
+                          addNotification(t('studentRemovedSuccess'), 'info');
+                        }
+                      }}
+                      className="p-2 text-rose-400 hover:bg-rose-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                    >
+                      <span className="material-symbols-outlined text-section">person_remove</span>
+                    </button>
+                  </div>
+                ))}
+                {classStudents.length === 0 && (
+                  <div className="col-span-full py-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl">
+                    <span className="material-symbols-outlined text-display text-slate-200 mb-2">group_off</span>
+                    <p className="text-slate-400/80">{t('noStudentsEnrolled')}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
- {activeTab === 'subjects & teachers' && (
- <div className="space-y-6">
- <div className="flex justify-between items-center">
- <h4 className="text-label text-slate-800 dark:text-slate-200">Academic Mapping</h4>
- <button 
- onClick={() => setIsAddingSubject(!isAddingSubject)}
- className="bg-primary text-white px-4 py-2 rounded-xl text-label hover:bg-blue-700 transition-all flex items-center gap-2"
- >
- <span className="material-symbols-outlined text-section">assignment_add</span>
- Assign Subject
- </button>
- </div>
+          {activeTab === 'subjects & teachers' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h4 className="text-label text-slate-800 dark:text-slate-200">{t('academicMapping')}</h4>
+                <button 
+                  onClick={() => setIsAddingSubject(!isAddingSubject)}
+                  className="bg-primary text-white px-4 py-2 rounded-xl text-label hover:bg-blue-700 transition-all flex items-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-section">assignment_add</span>
+                  {t('assignSubject')}
+                </button>
+              </div>
 
- {isAddingSubject && (
- <div className="p-6 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2">
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
- <div>
- <label className="text-label text-slate-400/80 mb-2 block">Select Subject</label>
- <select id="sub-select" className="form-input-custom w-full">
- <option value="">Choose subject...</option>
- {subjects
- .filter(s => (s.levels || []).includes(cls.level) && s.status === 'Active')
- .map(s => (
- <option key={s.id} value={s.name}>
- {s.name} ({s.weeklyPeriods} periods/week)
- </option>
- ))}
- </select>
- </div>
- <div>
- <label className="text-label text-slate-400/80 mb-2 block">Assign Teacher</label>
- <select id="teach-select" className="form-input-custom w-full">
- <option value="">Choose teacher...</option>
- {teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
- </select>
- </div>
- </div>
- <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
- <button onClick={() => setIsAddingSubject(false)} className="px-4 py-2 text-label text-slate-400/80">Cancel</button>
- <button 
- onClick={() => {
- const subName = document.getElementById('sub-select').value;
- const teachId = document.getElementById('teach-select').value;
- if (subName && teachId) {
- onAssignSubject(cls.id, subName, teachId);
- addNotification(`${subName} assigned to class`, 'success');
- setIsAddingSubject(false);
- }
- }}
- className="px-8 py-2 bg-primary text-white text-label rounded-xl"
- >
- Confirm Assignment
- </button>
- </div>
- </div>
- )}
+              {isAddingSubject && (
+                <div className="p-6 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-label text-slate-400/80 mb-2 block">{t('selectSubject')}</label>
+                      <select id="sub-select" className="form-input-custom w-full">
+                        <option value="">{t('chooseSubject')}</option>
+                        {subjects
+                          .filter(s => (s.levels || []).includes(cls.level) && s.status === 'Active')
+                          .map(s => (
+                            <option key={s.id} value={s.name}>
+                              {s.name} ({s.weeklyPeriods} {t('periodsPerWeekShort')})
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-label text-slate-400/80 mb-2 block">{t('assignTeacher')}</label>
+                      <select id="teach-select" className="form-input-custom w-full">
+                        <option value="">{t('chooseTeacher')}</option>
+                        {teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+                    <button onClick={() => setIsAddingSubject(false)} className="px-4 py-2 text-label text-slate-400/80">{t('cancel')}</button>
+                    <button 
+                      onClick={() => {
+                        const subName = document.getElementById('sub-select').value;
+                        const teachId = document.getElementById('teach-select').value;
+                        if (subName && teachId) {
+                          onAssignSubject(cls.id, subName, teachId);
+                          addNotification(t('subjectAssignedSuccess'), 'success');
+                          setIsAddingSubject(false);
+                        }
+                      }}
+                      className="px-8 py-2 bg-primary text-white text-label rounded-xl"
+                    >
+                      {t('confirmAssignment')}
+                    </button>
+                  </div>
+                </div>
+              )}
 
- <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
- {(cls.subjects || []).map((sub, idx) => {
- const teacher = teachers.find(t => t.id === sub.teacherId);
- const isEditing = editingSubject && editingSubject.name === sub.name;
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {(cls.subjects || []).map((sub, idx) => {
+                  const teacher = teachers.find(t => t.id === sub.teacherId);
+                  const isEditing = editingSubject && editingSubject.name === sub.name;
 
- if (isEditing) {
-   return (
-     <div key={idx} className="p-6 bg-slate-50 dark:bg-slate-800/80 rounded-3xl border border-primary/25 shadow-inner flex flex-col gap-4 justify-between animate-in fade-in duration-200 col-span-full md:col-span-1">
-       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-         <div>
-           <label className="text-[10px] text-slate-400 uppercase font-semibold mb-1 block">Subject</label>
-           <select 
-             id={`edit-sub-select-${idx}`} 
-             defaultValue={sub.name}
-             className="form-input-custom w-full bg-transparent dark:bg-slate-900 text-sm"
-           >
-             {subjects
-               .filter(s => (s.levels || []).includes(cls.level) && s.status === 'Active')
-               .map(s => (
-                 <option key={s.id} value={s.name}>{s.name}</option>
-               ))
-             }
-           </select>
-         </div>
-         <div>
-           <label className="text-[10px] text-slate-400 uppercase font-semibold mb-1 block">Teacher</label>
-           <select 
-             id={`edit-teach-select-${idx}`} 
-             defaultValue={sub.teacherId}
-             className="form-input-custom w-full bg-transparent dark:bg-slate-900 text-sm"
-           >
-             {teachers.map(t => (
-               <option key={t.id} value={t.id}>{t.name}</option>
-             ))}
-           </select>
-         </div>
-       </div>
-       <div className="flex justify-end gap-2 mt-2">
-         <button 
-           onClick={() => setEditingSubject(null)} 
-           className="px-3 py-1.5 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-205"
-         >
-           Cancel
-         </button>
-         <button 
-           onClick={() => {
-             const newSubName = document.getElementById(`edit-sub-select-${idx}`).value;
-             const newTeachId = document.getElementById(`edit-teach-select-${idx}`).value;
-             if (newSubName && newTeachId) {
-               onUpdateSubject(cls.id, sub.name, newSubName, newTeachId);
-               addNotification(`Updated assignment for ${newSubName}`, 'success');
-               setEditingSubject(null);
-             }
-           }}
-           className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg"
-         >
-           Save
-         </button>
-       </div>
-     </div>
-   );
- }
+                  if (isEditing) {
+                    return (
+                      <div key={idx} className="p-6 bg-slate-50 dark:bg-slate-800/80 rounded-3xl border border-primary/25 shadow-inner flex flex-col gap-4 justify-between animate-in fade-in duration-200 col-span-full md:col-span-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-[10px] text-slate-400 uppercase font-semibold mb-1 block">{t('subject')}</label>
+                            <select 
+                              id={`edit-sub-select-${idx}`} 
+                              defaultValue={sub.name}
+                              className="form-input-custom w-full bg-transparent dark:bg-slate-900 text-sm"
+                            >
+                              {subjects
+                                .filter(s => (s.levels || []).includes(cls.level) && s.status === 'Active')
+                                .map(s => (
+                                  <option key={s.id} value={s.name}>{s.name}</option>
+                                ))
+                              }
+                            </select>
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-slate-400 uppercase font-semibold mb-1 block">{t('teacher')}</label>
+                            <select 
+                              id={`edit-teach-select-${idx}`} 
+                              defaultValue={sub.teacherId}
+                              className="form-input-custom w-full bg-transparent dark:bg-slate-900 text-sm"
+                            >
+                              {teachers.map(t => (
+                                <option key={t.id} value={t.id}>{t.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-2 mt-2">
+                          <button 
+                            onClick={() => setEditingSubject(null)} 
+                            className="px-3 py-1.5 text-xs text-slate-400 hover:text-slate-600"
+                          >
+                            {t('cancel')}
+                          </button>
+                          <button 
+                            onClick={() => {
+                              const newSubName = document.getElementById(`edit-sub-select-${idx}`).value;
+                              const newTeachId = document.getElementById(`edit-teach-select-${idx}`).value;
+                              if (newSubName && newTeachId) {
+                                onUpdateSubject(cls.id, sub.name, newSubName, newTeachId);
+                                addNotification(t('updatedAssignmentSuccess'), 'success');
+                                setEditingSubject(null);
+                              }
+                            }}
+                            className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg"
+                          >
+                            {t('save')}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }
 
- return (
- <div key={idx} className="p-6 bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm flex items-center justify-between">
- <div className="flex items-center gap-4">
- <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center">
- <span className="material-symbols-outlined text-slate-400/80">auto_stories</span>
- </div>
- <div>
- <h5 className="text-slate-900 dark:text-slate-100">{sub.name}</h5>
- <div className="flex items-center gap-2 mt-1">
- <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
- <span className="text-label text-slate-500/80">{teacher?.name || 'Unknown Teacher'}</span>
- </div>
- </div>
- </div>
- <div className="flex items-center gap-4">
-   <div className="text-right">
-     <p className="text-label text-slate-400/80">Teacher ID</p>
-     <p className="text-label text-slate-700 dark:text-slate-300"># {sub.teacherId}</p>
-   </div>
-   <div className="flex gap-1 border-l border-slate-100 dark:border-slate-700 pl-4 shrink-0">
-     <button 
-       onClick={() => setEditingSubject(sub)}
-       className="p-2 hover:bg-slate-50 dark:hover:bg-slate-700 text-blue-500 rounded-xl transition-all"
-       title="Edit Assignment"
-     >
-       <span className="material-symbols-outlined text-body">edit</span>
-     </button>
-     <button 
-       onClick={() => {
-         if (confirm(`Are you sure you want to remove "${sub.name}" from this class?`)) {
-           onRemoveSubject(cls.id, sub.name);
-           addNotification(`Removed ${sub.name} from class`, 'success');
-         }
-       }}
-       className="p-2 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-rose-500 rounded-xl transition-all"
-       title="Delete Assignment"
-     >
-       <span className="material-symbols-outlined text-body">delete</span>
-     </button>
-   </div>
- </div>
- </div>
- );
- })}
- {(cls.subjects || []).length === 0 && (
- <div className="col-span-full py-16 text-center bg-slate-100/50 dark:bg-slate-950/20 rounded-3xl border-2 border-dashed border-slate-100 dark:border-slate-800">
- <span className="material-symbols-outlined text-display text-slate-200 mb-2">menu_book</span>
- <p className="text-slate-400/80">No subjects assigned to this section yet.</p>
- </div>
- )}
- </div>
- </div>
- )}
+                  return (
+                    <div key={idx} className="p-6 bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center">
+                          <span className="material-symbols-outlined text-slate-400/80">auto_stories</span>
+                        </div>
+                        <div>
+                          <h5 className="text-slate-900 dark:text-slate-100">{sub.name}</h5>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span className="text-label text-slate-500/80">{teacher?.name || t('unknownTeacher')}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="text-label text-slate-400/80">{t('teacherId')}</p>
+                          <p className="text-label text-slate-700 dark:text-slate-300"># {sub.teacherId}</p>
+                        </div>
+                        <div className="flex gap-1 border-l border-slate-100 dark:border-slate-700 pl-4 shrink-0">
+                          <button 
+                            onClick={() => setEditingSubject(sub)}
+                            className="p-2 hover:bg-slate-50 dark:hover:bg-slate-700 text-blue-500 rounded-xl transition-all"
+                            title={t('editAssignment')}
+                          >
+                            <span className="material-symbols-outlined text-body">edit</span>
+                          </button>
+                          <button 
+                            onClick={() => {
+                              if (confirm(t('removeSubjectConfirm'))) {
+                                onRemoveSubject(cls.id, sub.name);
+                                addNotification(t('subjectRemovedSuccess'), 'success');
+                              }
+                            }}
+                            className="p-2 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-rose-500 rounded-xl transition-all"
+                            title={t('delete')}
+                          >
+                            <span className="material-symbols-outlined text-body">delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                {(cls.subjects || []).length === 0 && (
+                  <div className="col-span-full py-16 text-center bg-slate-100/50 dark:bg-slate-950/20 rounded-3xl border-2 border-dashed border-slate-100 dark:border-slate-800">
+                    <span className="material-symbols-outlined text-display text-slate-200 mb-2">menu_book</span>
+                    <p className="text-slate-400/80">{t('noSubjectsAssignedYet')}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
- </div>
+        </div>
 
- {/* Footer */}
- <div className="p-8 bg-slate-100/50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
- <div className="flex gap-4">
- <div className="flex items-center gap-2">
- <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
- <span className="text-label text-slate-600 dark:text-slate-400/80">System Sync: OK</span>
- </div>
- <div className="flex items-center gap-2">
- <span className="w-3 h-3 rounded-full bg-blue-400"></span>
- <span className="text-label text-slate-600 dark:text-slate-400/80">Academic Year: {cls.academicYear}</span>
- </div>
- </div>
- {/* Export Class Report button removed by user request */}
- </div>
- </div>
- </div>
- );
+        {/* Footer */}
+        <div className="p-8 bg-slate-100/50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+          <div className="flex gap-4">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
+              <span className="text-label text-slate-600 dark:text-slate-400/80">{t('systemSyncOk')}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-blue-400"></span>
+              <span className="text-label text-slate-600 dark:text-slate-400/80">{t('academicYearPill', { year: cls.academicYear })}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ClassesPage;

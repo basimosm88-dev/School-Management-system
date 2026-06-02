@@ -12,13 +12,13 @@ const AdminLogin = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { login, currentSchool, schoolLoading } = useAppContext();
-  const { schoolSettings } = useSettings();
+  const { schoolSettings, t } = useSettings();
 
   if (schoolLoading) {
     return (
       <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center">
         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-        <h2 className="text-xl font-black text-slate-950 dark:text-white tracking-tight animate-pulse">Loading Portal...</h2>
+        <h2 className="text-xl font-black text-slate-950 dark:text-white tracking-tight animate-pulse">{t('loadingPortal')}</h2>
       </div>
     );
   }
@@ -41,20 +41,20 @@ const AdminLogin = () => {
 
       if (profileErr || !profile) {
         await supabase.auth.signOut();
-        throw new Error('Access denied. Unable to retrieve user profile.');
+        throw new Error(t('accessDeniedProfile'));
       }
 
       // Enforce school isolation for subdomain
       if (currentSchool && profile.school_id !== currentSchool.id) {
         await supabase.auth.signOut();
-        setError(`Access denied. Your account is not registered under ${currentSchool.name}.`);
+        setError(t('accessDeniedSchool') + ` (${currentSchool.name})`);
         setLoading(false);
         return;
       }
 
       if (profile.role !== 'admin') {
         await supabase.auth.signOut();
-        setError('Access denied. Only administrators can login from this page.');
+        setError(t('accessDeniedOnlyAdmin'));
         setLoading(false);
         return;
       }
@@ -64,7 +64,7 @@ const AdminLogin = () => {
       
     } catch (err) {
       console.error("Login error:", err);
-      setError(err.message || 'Invalid credentials. Please check your email and password.');
+      setError(err.message || t('invalidCredentials'));
     } finally {
       setLoading(false);
     }
@@ -90,7 +90,7 @@ const AdminLogin = () => {
             <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
               {schoolSettings.name || currentSchool?.name || 'EduCore Pro'}
             </h1>
-            <p className="text-xs text-slate-500 mt-1 font-medium">Administrator Login</p>
+            <p className="text-xs text-slate-500 mt-1 font-medium">{t('administratorLogin')}</p>
           </div>
         </div>
 
@@ -104,7 +104,7 @@ const AdminLogin = () => {
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">
-              Email Address
+              {t('emailAddress')}
             </label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">
@@ -116,12 +116,12 @@ const AdminLogin = () => {
                 className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 placeholder:text-slate-400"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="Enter Email"
+                placeholder={t('enterEmail')}
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Password</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">{t('password')}</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">lock</span>
               <input
@@ -140,7 +140,7 @@ const AdminLogin = () => {
             disabled={loading}
             className="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/95 hover:to-indigo-500 text-white font-bold py-4 rounded-2xl hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mt-4"
           >
-            {loading ? 'Authenticating...' : 'Sign In as Admin'}
+            {loading ? t('authenticating') : t('signInAsAdmin')}
             {!loading && <span className="material-symbols-outlined text-[20px]">login</span>}
           </button>
         </form>

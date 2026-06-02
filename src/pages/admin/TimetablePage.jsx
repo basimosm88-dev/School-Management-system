@@ -54,10 +54,10 @@ const AdminTimetablePage = () => {
  setFormData({ ...formData, startTime: val, endTime: `${endH}:${endM}` });
  };
 
- const handleAddSlot = () => {
- try {
- setError('');
- if (!selectedClassId) throw new Error("Please select a class first.");
+  const handleAddSlot = () => {
+    try {
+      setError('');
+      if (!selectedClassId) throw new Error(t('selectClassFirst'));
  
       const slotData = {
         ...formData,
@@ -69,7 +69,7 @@ const AdminTimetablePage = () => {
  setShowModal(false);
  // Reset form
  setFormData({
- day: 'Sunday',
+ day: 'Saturday',
  startTime: '08:00',
  endTime: '08:40',
  isBreak: false,
@@ -104,14 +104,14 @@ const AdminTimetablePage = () => {
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden overflow-x-auto transition-colors">
  <div className="min-w-[900px]">
  {/* Header Row */}
- <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/20">
- <div className="p-4"></div>
- {days.map(day => (
- <div key={day} className="p-4 text-center text-slate-600 dark:text-slate-300 border-l border-slate-100 dark:border-slate-800 text-label">
- {day}
- </div>
- ))}
- </div>
+        <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] border-b border-slate-100 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/20">
+          <div className="p-4"></div>
+          {days.map(day => (
+            <div key={day} className="p-4 text-center text-slate-600 dark:text-slate-300 border-l border-slate-100 dark:border-slate-800 text-label">
+              {t(day.toLowerCase())}
+            </div>
+          ))}
+        </div>
  
  {/* Time Rows */}
  {hoursRange.map(hour => {
@@ -173,9 +173,9 @@ const AdminTimetablePage = () => {
  {formatSlotTime(slot.startTime)} - {formatSlotTime(slot.endTime)}
  </div>
  
- {slot.isBreak ? (
- <p className="text-label opacity-70">Break Session</p>
- ) : (
+                  {slot.isBreak ? (
+                    <p className="text-label opacity-70">{t('breakSession')}</p>
+                  ) : (
  <div className="text-label leading-relaxed">
  {classNameDisplay} - {slot.subjectName}
  </div>
@@ -203,20 +203,20 @@ const AdminTimetablePage = () => {
  <p className="text-label text-slate-500/80 mt-1">{t('timetableSubtitle')}</p>
  </div>
 
- {/* CLASS SELECTION BUTTONS */}
- <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors">
- <div className="flex flex-col gap-4">
- <div className="flex items-center justify-between">
- <label className="text-label text-slate-400/80 block">Select Class to Manage</label>
- <button 
- disabled={!selectedClassId}
- onClick={() => setShowModal(true)}
- className="btn-primary"
- >
- <span className="btn-icon">add_circle</span>
- Add Session
- </button>
- </div>
+  {/* CLASS SELECTION BUTTONS */}
+  <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors">
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <label className="text-label text-slate-400/80 block">{t('chooseClassToManage')}</label>
+        <button 
+          disabled={!selectedClassId}
+          onClick={() => setShowModal(true)}
+          className="btn-primary"
+        >
+          <span className="btn-icon">add_circle</span>
+          {t('addSession')}
+        </button>
+      </div>
  
  <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 custom-scrollbar">
  {classes.map(c => (
@@ -236,181 +236,181 @@ const AdminTimetablePage = () => {
  </div>
  </div>
 
- {/* PERIOD TOGGLE */}
- {selectedClassId && (
- <div className="flex justify-center">
- <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl flex gap-2 w-full max-w-md">
- <button
- onClick={() => setActivePeriod('morning')}
- className={`flex-1 py-3 rounded-lg text-label  transition-all flex items-center justify-center gap-2 ${
- activePeriod === 'morning' 
- ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-400/80'
- }`}
- >
- <span className="material-symbols-outlined text-section">wb_sunny</span>
- Morning Period
- </button>
- <button
- onClick={() => setActivePeriod('afternoon')}
- className={`flex-1 py-3 rounded-lg text-label  transition-all flex items-center justify-center gap-2 ${
- activePeriod === 'afternoon' 
- ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-400/80'
- }`}
- >
- <span className="material-symbols-outlined text-section">dark_mode</span>
- Afternoon Period
- </button>
- </div>
- </div>
- )}
-
- {/* WEEKLY GRID */}
- {!selectedClassId ? (
- <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 h-[400px] flex flex-col items-center justify-center text-slate-300 transition-colors">
- <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
- <span className="material-symbols-outlined text-display">event_note</span>
- </div>
- <p className="text-label opacity-60">Choose a class to manage its schedule</p>
- </div>
- ) : (
- <div className="animate-in fade-in zoom-in-95 duration-500">
- {activePeriod === 'morning' ? (
- renderGridBlock("Morning Period (7:00 AM - 12:30 PM)", morningHours)
- ) : (
- renderGridBlock("Afternoon Period (1:00 PM - 5:30 PM)", afternoonHours)
- )}
- </div>
- )}
-
- {/* ADD MODAL */}
- {showModal && (
- <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
- <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
- <div className="px-8 py-8 bg-slate-100 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
- <h3 className="text-label text-slate-800 dark:text-slate-200">New Session Slot</h3>
- <button onClick={() => setShowModal(false)} className="text-slate-400/80 hover:text-slate-600 transition-colors">
- <span className="material-symbols-outlined">close</span>
- </button>
- </div>
-
- <div className="p-8 space-y-6">
- {error && (
- <div className="p-4 bg-rose-50 text-rose-600 text-label rounded-2xl border border-rose-100 flex items-center gap-3 animate-shake">
- <span className="material-symbols-outlined text-section">error</span>
- {error}
- </div>
- )}
-
- <div className="grid grid-cols-2 gap-4">
- <div>
- <label className="text-label text-slate-400/80 mb-2 block">Select Day</label>
- <select 
- value={formData.day}
- onChange={e => setFormData({...formData, day: e.target.value})}
- className="form-input-custom w-full"
- >
- {days.map(d => <option key={d} value={d}>{d}</option>)}
- </select>
- </div>
- <div>
- <label className="text-label text-slate-400/80 mb-2 block">Type</label>
- <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
- <button 
- onClick={() => handleTypeChange(false)}
- className={`flex-1 py-2 rounded-lg text-label  transition-all ${!formData.isBreak ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
- >Subject</button>
- <button 
- onClick={() => handleTypeChange(true)}
- className={`flex-1 py-2 rounded-lg text-label  transition-all ${formData.isBreak ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
- >Break</button>
- </div>
- </div>
- </div>
-
- <div className="grid grid-cols-2 gap-4">
- <div>
- <label className="text-label text-slate-400/80 mb-2 block">Start Time</label>
- <input 
- type="time" 
- value={formData.startTime}
- onChange={e => handleStartTimeChange(e.target.value)}
- className="form-input-custom w-full"
- />
- </div>
- <div>
- <label className="text-label text-slate-400/80 mb-2 block">End Time</label>
- <input 
- type="time" 
- value={formData.endTime}
- onChange={e => setFormData({...formData, endTime: e.target.value})}
- className="form-input-custom w-full"
- />
- <p className="text-label text-primary mt-1">* Manual Override Allowed</p>
- </div>
- </div>
-
-  {!formData.isBreak && (
-    <>
-      <div>
-        <label className="text-label text-slate-400/80 mb-2 block">Subject</label>
-        <select 
-          value={formData.subjectName}
-          onChange={e => handleSubjectChange(e.target.value)}
-          className="form-input-custom w-full"
+  {/* PERIOD TOGGLE */}
+  {selectedClassId && (
+    <div className="flex justify-center">
+      <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl flex gap-2 w-full max-w-md">
+        <button
+          onClick={() => setActivePeriod('morning')}
+          className={`flex-1 py-3 rounded-lg text-label  transition-all flex items-center justify-center gap-2 ${
+            activePeriod === 'morning' 
+              ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
+              : 'text-slate-400/80'
+          }`}
         >
-          <option value="">Select subject...</option>
-          {classSubjects.length > 0 && (
-            <optgroup label="Class Subjects">
-              {classSubjects.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
-            </optgroup>
-          )}
-          <optgroup label="Other Subjects">
-            {subjects
-              .filter(s => !classSubjects.some(cs => cs.name === s.name))
-              .map(s => <option key={s.id} value={s.name}>{s.name}</option>)
-            }
-          </optgroup>
-        </select>
+          <span className="material-symbols-outlined text-section">wb_sunny</span>
+          {t('morningPeriod')}
+        </button>
+        <button
+          onClick={() => setActivePeriod('afternoon')}
+          className={`flex-1 py-3 rounded-lg text-label  transition-all flex items-center justify-center gap-2 ${
+            activePeriod === 'afternoon' 
+              ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
+              : 'text-slate-400/80'
+          }`}
+        >
+          <span className="material-symbols-outlined text-section">dark_mode</span>
+          {t('afternoonPeriod')}
+        </button>
       </div>
-      <div>
-        <label className="text-label text-slate-400/80 mb-2 block">Teacher</label>
-        {classSubjects.some(s => s.name === formData.subjectName) ? (
-          <div className="form-input-custom w-full bg-slate-100 dark:bg-slate-800/50 flex items-center text-slate-600">
-            {formData.teacherId ? teachers.find(t => String(t.id) === String(formData.teacherId))?.name : 'Auto-filled based on subject'}
-          </div>
-        ) : (
-          <select 
-            value={formData.teacherId}
-            onChange={e => setFormData({...formData, teacherId: e.target.value})}
-            className="form-input-custom w-full"
-            required={!formData.isBreak}
-          >
-            <option value="">Select Teacher...</option>
-            {teachers.map(t => <option key={t.id} value={t.id.toString()}>{t.name}</option>)}
-          </select>
-        )}
-        {!classSubjects.some(s => s.name === formData.subjectName) && formData.subjectName && (
-          <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1 font-bold">
-            Note: This subject is not assigned to this class. Manual teacher selection required.
-          </p>
-        )}
-      </div>
-    </>
+    </div>
   )}
 
- <button 
- onClick={handleAddSlot}
- className="w-full py-4 bg-primary text-white text-label rounded-2xl shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all active:scale-[0.98]"
- >
- Create Session
- </button>
- </div>
- </div>
- </div>
- )}
- </div>
+  {/* WEEKLY GRID */}
+  {!selectedClassId ? (
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 h-[400px] flex flex-col items-center justify-center text-slate-300 transition-colors">
+      <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 opacity-40">
+        <span className="material-symbols-outlined text-display">event_note</span>
+      </div>
+      <p className="text-label opacity-60">{t('chooseClassToManage')}</p>
+    </div>
+  ) : (
+    <div className="animate-in fade-in zoom-in-95 duration-500">
+      {activePeriod === 'morning' ? (
+        renderGridBlock(t('morningPeriodRange'), morningHours)
+      ) : (
+        renderGridBlock(t('afternoonPeriodRange'), afternoonHours)
+      )}
+    </div>
+  )}
+
+  {/* ADD MODAL */}
+  {showModal && (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="px-8 py-8 bg-slate-100 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+          <h3 className="text-label text-slate-800 dark:text-slate-200">{t('newSessionSlot')}</h3>
+          <button onClick={() => setShowModal(false)} className="text-slate-400/80 hover:text-slate-600 transition-colors">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div className="p-8 space-y-6">
+          {error && (
+            <div className="p-4 bg-rose-50 text-rose-600 text-label rounded-2xl border border-rose-100 flex items-center gap-3 animate-shake">
+              <span className="material-symbols-outlined text-section">error</span>
+              {error}
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-label text-slate-400/80 mb-2 block">{t('selectDay')}</label>
+              <select 
+                value={formData.day}
+                onChange={e => setFormData({...formData, day: e.target.value})}
+                className="form-input-custom w-full"
+              >
+                {days.map(d => <option key={d} value={d}>{t(d.toLowerCase())}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-label text-slate-400/80 mb-2 block">{t('type')}</label>
+              <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                <button 
+                  onClick={() => handleTypeChange(false)}
+                  className={`flex-1 py-2 rounded-lg text-label  transition-all ${!formData.isBreak ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
+                >{t('subject')}</button>
+                <button 
+                  onClick={() => handleTypeChange(true)}
+                  className={`flex-1 py-2 rounded-lg text-label  transition-all ${formData.isBreak ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
+                >{t('break')}</button>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-label text-slate-400/80 mb-2 block">{t('startTime')}</label>
+              <input 
+                type="time" 
+                value={formData.startTime}
+                onChange={e => handleStartTimeChange(e.target.value)}
+                className="form-input-custom w-full"
+              />
+            </div>
+            <div>
+              <label className="text-label text-slate-400/80 mb-2 block">{t('endTime')}</label>
+              <input 
+                type="time" 
+                value={formData.endTime}
+                onChange={e => setFormData({...formData, endTime: e.target.value})}
+                className="form-input-custom w-full"
+              />
+              <p className="text-label text-primary mt-1">{t('manualOverrideAllowed')}</p>
+            </div>
+          </div>
+
+          {!formData.isBreak && (
+            <>
+              <div>
+                <label className="text-label text-slate-400/80 mb-2 block">{t('subject')}</label>
+                <select 
+                  value={formData.subjectName}
+                  onChange={e => handleSubjectChange(e.target.value)}
+                  className="form-input-custom w-full"
+                >
+                  <option value="">{t('selectSubjectEllipsis')}</option>
+                  {classSubjects.length > 0 && (
+                    <optgroup label={t('classSubjects')}>
+                      {classSubjects.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                    </optgroup>
+                  )}
+                  <optgroup label={t('otherSubjects')}>
+                    {subjects
+                      .filter(s => !classSubjects.some(cs => cs.name === s.name))
+                      .map(s => <option key={s.id} value={s.name}>{s.name}</option>)
+                    }
+                  </optgroup>
+                </select>
+              </div>
+              <div>
+                <label className="text-label text-slate-400/80 mb-2 block">{t('teacher')}</label>
+                {classSubjects.some(s => s.name === formData.subjectName) ? (
+                  <div className="form-input-custom w-full bg-slate-100 dark:bg-slate-800/50 flex items-center text-slate-600">
+                    {formData.teacherId ? teachers.find(t => String(t.id) === String(formData.teacherId))?.name : t('autoFilledBasedOnSubject')}
+                  </div>
+                ) : (
+                  <select 
+                    value={formData.teacherId}
+                    onChange={e => setFormData({...formData, teacherId: e.target.value})}
+                    className="form-input-custom w-full"
+                    required={!formData.isBreak}
+                  >
+                    <option value="">{t('selectTeacherEllipsis')}</option>
+                    {teachers.map(t => <option key={t.id} value={t.id.toString()}>{t.name}</option>)}
+                  </select>
+                )}
+                {!classSubjects.some(s => s.name === formData.subjectName) && formData.subjectName && (
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1 font-bold">
+                    {t('subjectNotAssignedWarning')}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
+
+          <button 
+            onClick={handleAddSlot}
+            className="w-full py-4 bg-primary text-white text-label rounded-2xl shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all active:scale-[0.98]"
+          >
+            {t('createSession')}
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
  </PageLayout>
  );
 };

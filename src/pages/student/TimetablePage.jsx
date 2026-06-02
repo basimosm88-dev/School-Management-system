@@ -2,10 +2,12 @@ import React, { useMemo } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
+import { useSettings } from '../../contexts/SettingsContext';
 
 const StudentTimetablePage = () => {
  const { timetables, teachers, classes } = useData();
  const { currentUser } = useAppContext();
+ const { t } = useSettings();
  const [activePeriod, setActivePeriod] = React.useState('morning');
 
  const days = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday'];
@@ -37,7 +39,7 @@ const StudentTimetablePage = () => {
  <div className="p-4"></div>
  {days.map(day => (
  <div key={day} className="p-4 text-center text-slate-600 dark:text-slate-300 border-l border-slate-100 dark:border-slate-800 text-label">
- {day}
+ {t(day.toLowerCase())}
  </div>
  ))}
  </div>
@@ -70,7 +72,7 @@ const StudentTimetablePage = () => {
  'bg-emerald-50 text-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-100 border-emerald-100 dark:border-emerald-800/50'
  ];
  let hash = 0;
- const str = slot.subjectName || 'Break';
+ const str = slot.subjectName || t('break');
  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
  const colorClass = slot.isBreak 
  ? 'bg-slate-100 text-slate-500/80 dark:bg-slate-800/50 dark:text-slate-400/80 border-slate-100 dark:border-slate-700/50' 
@@ -84,7 +86,7 @@ const StudentTimetablePage = () => {
  return `${h12}:${m} ${suffix}`;
  };
  
- const classNameDisplay = studentClass?.name.split('-')[1]?.trim() || studentClass?.name || 'Class';
+ const classNameDisplay = studentClass?.name.split('-')[1]?.trim() || studentClass?.name || t('class');
  
  return (
  <div key={slot.id} className={`w-full rounded-xl p-4 relative group transition-all border shadow-sm ${colorClass}`}>
@@ -93,7 +95,7 @@ const StudentTimetablePage = () => {
  </div>
  
  {slot.isBreak ? (
- <p className="text-label opacity-70 mt-2">Break Session</p>
+ <p className="text-label opacity-70 mt-2">{t('breakSession')}</p>
  ) : (
  <div>
  <div className="text-label leading-relaxed mb-2">
@@ -122,7 +124,7 @@ const StudentTimetablePage = () => {
  );
 
  return (
- <PageLayout role="student" title="My Class Schedule">
+ <PageLayout role="student" title={t('classSchedule')}>
  <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
  
  {/* INFO BAR */}
@@ -132,13 +134,13 @@ const StudentTimetablePage = () => {
  <span className="material-symbols-outlined text-display">menu_book</span>
  </div>
  <div>
- <p className="text-label text-slate-400/80 mb-1 block">Assigned Schedule</p>
- <h3 className="text-slate-900 dark:text-slate-100 text-display">{studentClass?.name || 'Unassigned'}</h3>
+ <p className="text-label text-slate-400/80 mb-1 block">{t('assignedSchedule')}</p>
+ <h3 className="text-slate-900 dark:text-slate-100 text-display">{studentClass?.name || t('unassigned')}</h3>
  </div>
  </div>
  <div className="flex gap-4">
  <div className="px-8 py-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 text-center shadow-sm">
- <p className="text-label text-slate-400/80 mb-1">Weekly Periods</p>
+ <p className="text-label text-slate-400/80 mb-1">{t('weeklyPeriods')}</p>
  <p className="text-display text-primary">{classSchedule.length}</p>
  </div>
  </div>
@@ -157,7 +159,7 @@ const StudentTimetablePage = () => {
  }`}
  >
  <span className="material-symbols-outlined text-section">wb_sunny</span>
- Morning Period
+ {t('morningPeriod')}
  </button>
  <button
  onClick={() => setActivePeriod('afternoon')}
@@ -168,7 +170,7 @@ const StudentTimetablePage = () => {
  }`}
  >
  <span className="material-symbols-outlined text-section">dark_mode</span>
- Afternoon Period
+ {t('afternoonPeriod')}
  </button>
  </div>
  </div>
@@ -178,15 +180,15 @@ const StudentTimetablePage = () => {
  {!studentClass ? (
  <div className="p-12 bg-rose-50 dark:bg-rose-900/10 rounded-xl border border-rose-100 dark:border-rose-900/20 text-center">
  <span className="material-symbols-outlined text-rose-500 text-display mb-6">error_outline</span>
- <h3 className="text-section text-rose-900 dark:text-rose-100 mb-2">Unassigned Record</h3>
- <p className="text-label text-rose-600/70">Contact administration to update your class records</p>
+ <h3 className="text-section text-rose-900 dark:text-rose-100 mb-2">{t('unassignedRecord')}</h3>
+ <p className="text-label text-rose-600/70">{t('unassignedRecordDesc')}</p>
  </div>
  ) : (
  <div className="animate-in fade-in zoom-in-95 duration-500">
  {activePeriod === 'morning' ? (
- renderGridBlock("Morning Sessions (7:00 AM - 12:30 PM)", morningHours)
+ renderGridBlock(t('morningPeriodRange'), morningHours)
  ) : (
- renderGridBlock("Afternoon Sessions (1:00 PM - 5:30 PM)", afternoonHours)
+ renderGridBlock(t('afternoonPeriodRange'), afternoonHours)
  )}
  </div>
  )}

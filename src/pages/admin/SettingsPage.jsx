@@ -57,7 +57,7 @@ const SettingsPage = () => {
     document.body.removeChild(link);
     
     navigator.clipboard.writeText(JSON.stringify(fullData));
-    alert('System data has been exported and copied to your clipboard!');
+    alert(t('systemExportedAlert'));
   };
 
   const sections = [
@@ -66,8 +66,8 @@ const SettingsPage = () => {
     { id: 'permissions', label: t('permissions'), icon: 'lock_person' },
     { id: 'pdf', label: t('pdf_config'), icon: 'picture_as_pdf' },
     { id: 'security', label: t('security'), icon: 'shield' },
-    { id: 'appearance', label: 'Appearance', icon: 'palette' },
-    { id: 'data', label: 'Data Management', icon: 'database' }
+    { id: 'appearance', label: t('appearance'), icon: 'palette' },
+    { id: 'data', label: t('dataManagement'), icon: 'database' }
   ];
 
   return (
@@ -98,7 +98,7 @@ const SettingsPage = () => {
             className="flex items-center gap-2 px-6 py-3 rounded-lg text-label text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all ml-4"
           >
             <span className="material-symbols-outlined text-section">factory</span>
-            Factory Reset
+            {t('factoryReset')}
           </button>
         </div>
 
@@ -122,13 +122,13 @@ const SettingsPage = () => {
                       )}
                     </div>
                     <label className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 rounded-2xl cursor-pointer transition-opacity">
-                      <span className="text-white text-label">Change</span>
+                      <span className="text-white text-label">{t('change')}</span>
                       <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
                     </label>
                   </div>
                   <div className="space-y-1">
                     <h3 className="text-slate-800 dark:text-white">{t('logo')}</h3>
-                    <p className="text-label text-slate-500/80 dark:text-slate-400/80">Upload your official school logo. This will appear on all dashboards and PDF reports.</p>
+                    <p className="text-label text-slate-500/80 dark:text-slate-400/80">{t('logoUploadDescription')}</p>
                   </div>
                 </div>
 
@@ -143,7 +143,7 @@ const SettingsPage = () => {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-label text-slate-500/80">Official Email</label>
+                    <label className="text-label text-slate-500/80">{t('officialEmail')}</label>
                     <input 
                       type="email" 
                       value={schoolSettings.email}
@@ -152,7 +152,7 @@ const SettingsPage = () => {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-label text-slate-500/80">Contact Phone</label>
+                    <label className="text-label text-slate-500/80">{t('contactPhone')}</label>
                     <input 
                       type="text" 
                       value={schoolSettings.phone}
@@ -161,7 +161,7 @@ const SettingsPage = () => {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-label text-slate-500/80">Website URL</label>
+                    <label className="text-label text-slate-500/80">{t('websiteUrl')}</label>
                     <input 
                       type="text" 
                       value={schoolSettings.website}
@@ -170,7 +170,7 @@ const SettingsPage = () => {
                     />
                   </div>
                   <div className="col-span-2 space-y-1.5">
-                    <label className="text-label text-slate-500/80">Physical Address</label>
+                    <label className="text-label text-slate-500/80">{t('physicalAddress')}</label>
                     <textarea 
                       rows="2"
                       value={schoolSettings.address}
@@ -190,9 +190,9 @@ const SettingsPage = () => {
                 </h2>
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-4">
-                    <h3 className="text-slate-800 dark:text-white text-label">Grading System</h3>
+                    <h3 className="text-slate-800 dark:text-white text-label">{t('gradingSystem')}</h3>
                     <div className="space-y-1.5">
-                      <label className="text-label text-slate-500/80">Global Passing Grade (%)</label>
+                      <label className="text-label text-slate-500/80">{t('globalPassingGrade')}</label>
                       <input 
                         type="number" 
                         value={academicSettings.passingGrade}
@@ -201,7 +201,7 @@ const SettingsPage = () => {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-label text-slate-500/80">Min. Subjects for Promotion</label>
+                      <label className="text-label text-slate-500/80">{t('minSubjectsPromotion')}</label>
                       <input 
                         type="number" 
                         value={academicSettings.minSubjects}
@@ -211,10 +211,10 @@ const SettingsPage = () => {
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-slate-800 dark:text-white text-label">Exam Weights</h3>
+                    <h3 className="text-slate-800 dark:text-white text-label">{t('examWeights')}</h3>
                     {Object.entries(academicSettings.examWeights).map(([key, value]) => (
                       <div key={key} className="flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                        <span className="text-label text-slate-600 dark:text-slate-400/80 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                        <span className="text-label text-slate-600 dark:text-slate-400/80 capitalize">{t(key)}</span>
                         <div className="flex items-center gap-2">
                           <input 
                             type="number" 
@@ -242,11 +242,11 @@ const SettingsPage = () => {
                 </h2>
                 <div className="space-y-6">
                   <div className="space-y-4">
-                    <h3 className="text-label text-slate-400/80">Teacher Permissions</h3>
+                    <h3 className="text-label text-slate-400/80">{t('teacherPermissions')}</h3>
                     <div className="grid grid-cols-2 gap-4">
                       {Object.entries(permissions.teachers).map(([key, value]) => (
                         <label key={key} className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
-                          <span className="text-label text-slate-700 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                          <span className="text-label text-slate-700 dark:text-slate-300">{t(key)}</span>
                           <input 
                             type="checkbox" 
                             checked={value}
@@ -261,11 +261,11 @@ const SettingsPage = () => {
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-label text-slate-400/80">Student Permissions</h3>
+                    <h3 className="text-label text-slate-400/80">{t('studentPermissions')}</h3>
                     <div className="grid grid-cols-2 gap-4">
                       {Object.entries(permissions.students).map(([key, value]) => (
                         <label key={key} className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
-                          <span className="text-label text-slate-700 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                          <span className="text-label text-slate-700 dark:text-slate-300">{t(key)}</span>
                           <input 
                             type="checkbox" 
                             checked={value}
@@ -292,21 +292,21 @@ const SettingsPage = () => {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <label className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer">
-                      <span className="text-label text-slate-700 dark:text-slate-300">Show Logo on Reports</span>
+                      <span className="text-label text-slate-700 dark:text-slate-300">{t('showLogoReports')}</span>
                       <input type="checkbox" checked={pdfSettings.showLogo} onChange={(e) => setPdfSettings({ ...pdfSettings, showLogo: e.target.checked })} />
                     </label>
                     <label className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer">
-                      <span className="text-label text-slate-700 dark:text-slate-300">Show Signature Labels</span>
+                      <span className="text-label text-slate-700 dark:text-slate-300">{t('showSignatureLabels')}</span>
                       <input type="checkbox" checked={pdfSettings.showSignatureLabels} onChange={(e) => setPdfSettings({ ...pdfSettings, showSignatureLabels: e.target.checked })} />
                     </label>
                   </div>
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-label text-slate-500/80">Principal Signature Label</label>
+                      <label className="text-label text-slate-500/80">{t('principalSignatureLabel')}</label>
                       <input type="text" value={pdfSettings.principalTitle} onChange={(e) => setPdfSettings({ ...pdfSettings, principalTitle: e.target.value })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-label text-slate-500/80">Manager Signature</label>
+                      <label className="text-label text-slate-500/80">{t('managerSignature')}</label>
                       <input type="text" value={schoolSettings.managerSignature || ''} onChange={(e) => setSchoolSettings({ ...schoolSettings, managerSignature: e.target.value })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
                     </div>
                   </div>
@@ -322,11 +322,11 @@ const SettingsPage = () => {
                 </h2>
                 <div className="max-w-md space-y-6">
                   <div className="space-y-1.5">
-                    <label className="text-label text-slate-500/80">Minimum Password Length</label>
+                    <label className="text-label text-slate-500/80">{t('minPasswordLength')}</label>
                     <input type="number" value={securitySettings.minPasswordLength} onChange={(e) => setSecuritySettings({ ...securitySettings, minPasswordLength: parseInt(e.target.value) })} className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none" />
                   </div>
                   <label className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer">
-                    <span className="text-label text-slate-700 dark:text-slate-300">Require Special Characters</span>
+                    <span className="text-label text-slate-700 dark:text-slate-300">{t('requireSpecialChars')}</span>
                     <input type="checkbox" checked={securitySettings.requireSpecialChars} onChange={(e) => setSecuritySettings({ ...securitySettings, requireSpecialChars: e.target.checked })} />
                   </label>
                 </div>
@@ -337,11 +337,11 @@ const SettingsPage = () => {
               <div className="space-y-6">
                 <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
                   <span className="material-symbols-outlined text-primary">palette</span>
-                  Appearance & Localization
+                  {t('appearanceLocalization')}
                 </h2>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <h3 className="text-label text-slate-400/80">System Language</h3>
+                    <h3 className="text-label text-slate-400/80">{t('systemLanguage')}</h3>
                     <select 
                       value={language}
                       onChange={(e) => setLanguage(e.target.value)}
@@ -353,10 +353,10 @@ const SettingsPage = () => {
                     </select>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-label text-slate-400/80">System Theme</h3>
+                    <h3 className="text-label text-slate-400/80">{t('systemTheme')}</h3>
                     <div className="flex gap-4">
-                      <button onClick={() => { if (darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2 text-label transition-all ${!darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>Light</button>
-                      <button onClick={() => { if (!darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2 text-label transition-all ${darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>Dark</button>
+                      <button onClick={() => { if (darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2 text-label transition-all ${!darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>{t('light')}</button>
+                      <button onClick={() => { if (!darkMode) toggleDarkMode(); }} className={`flex-1 py-3 rounded-xl border-2 text-label transition-all ${darkMode ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>{t('dark')}</button>
                     </div>
                   </div>
                 </div>
@@ -367,7 +367,7 @@ const SettingsPage = () => {
               <div className="space-y-6">
                 <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
                   <span className="material-symbols-outlined text-primary">database</span>
-                  Data Management & Migration
+                  {t('dataManagementMigration')}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="p-6 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
@@ -375,14 +375,13 @@ const SettingsPage = () => {
                       <span className="material-symbols-outlined text-display">cloud_upload</span>
                     </div>
                     <div>
-                      <h3 className="text-label font-black text-on-surface uppercase">Export Local Data</h3>
+                      <h3 className="text-label font-black text-on-surface uppercase">{t('exportLocalData')}</h3>
                       <p className="text-[10px] text-on-surface-variant mt-1 leading-relaxed">
-                        Bundle all your locally added students, teachers, and records into a JSON package. 
-                        Use this to migrate your local testing data to the live GitHub repository.
+                        {t('exportLocalDataDesc')}
                       </p>
                     </div>
                     <button onClick={handleExportData} className="w-full btn-primary py-3">
-                      Export System State
+                      {t('exportSystemState')}
                     </button>
                   </div>
                   <div className="p-6 bg-rose-50/30 dark:bg-rose-900/10 rounded-2xl border border-rose-100 dark:border-rose-900/30 space-y-4">
@@ -390,13 +389,13 @@ const SettingsPage = () => {
                       <span className="material-symbols-outlined text-display">dangerous</span>
                     </div>
                     <div>
-                      <h3 className="text-label font-black text-rose-600 uppercase">System Reset</h3>
+                      <h3 className="text-label font-black text-rose-600 uppercase">{t('systemReset')}</h3>
                       <p className="text-[10px] text-rose-600/70 mt-1 leading-relaxed">
-                        Wipe all local changes and restore the system to its initial state.
+                        {t('systemResetDesc')}
                       </p>
                     </div>
                     <button onClick={resetData} className="w-full px-6 py-3 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-600/20">
-                      Factory Reset
+                      {t('factoryReset')}
                     </button>
                   </div>
                 </div>

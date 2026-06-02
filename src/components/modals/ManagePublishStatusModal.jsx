@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useData } from '../../contexts/DataContext';
+import { useSettings } from '../../contexts/SettingsContext';
+
+const getExamTypeTranslation = (type, t) => {
+  if (type === 'Before Midterm') return t('beforeMidterm');
+  if (type === 'Midterm') return t('midterm');
+  if (type === 'After Midterm') return t('afterMidterm');
+  if (type === 'Final') return t('final');
+  return type;
+};
 
 const ManagePublishStatusModal = ({ onClose, student, currentClass }) => {
   const { updateStudent } = useData();
+  const { t, language } = useSettings();
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -66,24 +76,24 @@ const ManagePublishStatusModal = ({ onClose, student, currentClass }) => {
       onClose();
     } catch (err) {
       console.error(err);
-      setErrorMsg('Failed to update publishing options. Please try again.');
+      setErrorMsg(t('failedToUpdatePublishing'));
     } finally {
       setIsSaving(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-300" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 shrink-0">
           <div>
             <h3 className="text-xl font-semibold text-slate-900 dark:text-white flex items-center gap-2">
               <span className="material-symbols-outlined text-primary">visibility_off</span>
-              Manage Result Publishing
+              {t('managePublishStatus')}
             </h3>
             <p className="text-sm text-slate-500 mt-1">
-              Student: <span className="font-bold text-slate-700 dark:text-slate-350">{student?.name}</span> | Class: <span className="font-bold text-slate-700 dark:text-slate-350">{currentClass?.name}</span>
+              {t('student')}: <span className="font-bold text-slate-700 dark:text-slate-350">{student?.name}</span> | {t('class')}: <span className="font-bold text-slate-700 dark:text-slate-350">{currentClass?.name}</span>
             </p>
           </div>
           <button 
@@ -104,7 +114,7 @@ const ManagePublishStatusModal = ({ onClose, student, currentClass }) => {
           )}
 
           <p className="text-xs text-slate-500 mb-2">
-            Configure which examination results are visible to the student. If an exam is withheld, its scores will be hidden from the student and excluded from their averages/rankings.
+            {t('withheldInstructions')}
           </p>
 
           <div className="space-y-6">
@@ -117,7 +127,7 @@ const ManagePublishStatusModal = ({ onClose, student, currentClass }) => {
                   className="p-5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/50 dark:border-slate-800 flex flex-col gap-4"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-label text-slate-900 dark:text-white font-bold">{type} Assessment</span>
+                    <span className="text-label text-slate-900 dark:text-white font-bold">{getExamTypeTranslation(type, t)} {t('assessment')}</span>
                     
                     {/* Toggle Switch Button */}
                     <button
@@ -139,12 +149,12 @@ const ManagePublishStatusModal = ({ onClose, student, currentClass }) => {
                     {state.isWithheld ? (
                       <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
                         <span className="material-symbols-outlined text-sm">lock</span>
-                        Withheld from Student
+                        {t('withheldFromStudent')}
                       </span>
                     ) : (
                       <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-450">
                         <span className="material-symbols-outlined text-sm">visibility</span>
-                        Published to Student
+                        {t('publishedToStudent')}
                       </span>
                     )}
                   </div>
@@ -153,11 +163,11 @@ const ManagePublishStatusModal = ({ onClose, student, currentClass }) => {
                   {state.isWithheld && (
                     <div className="flex flex-col gap-1.5">
                       <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
-                        Reason for Withholding
+                        {t('reasonForWithholding')}
                       </label>
                       <input
                         type="text"
-                        placeholder="e.g. Unpaid tuition fees, library fines"
+                        placeholder={t('withheldReasonPlaceholder')}
                         value={state.reason}
                         onChange={(e) => handleReasonChange(type, e.target.value)}
                         disabled={isSaving}
@@ -178,7 +188,7 @@ const ManagePublishStatusModal = ({ onClose, student, currentClass }) => {
             className="btn-secondary py-2.5 px-6"
             disabled={isSaving}
           >
-            Cancel
+            {t('cancel')}
           </button>
           <button 
             onClick={handleSave}
@@ -190,7 +200,7 @@ const ManagePublishStatusModal = ({ onClose, student, currentClass }) => {
             ) : (
               <>
                 <span className="material-symbols-outlined text-section">save</span>
-                Save Changes
+                {t('save')}
               </>
             )}
           </button>

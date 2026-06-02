@@ -53,9 +53,9 @@ const ResultsPage = ({ role }) => {
         return (
           <div className="inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2.5 py-1 rounded-xl text-xs font-bold shadow-sm relative group cursor-help select-none">
             <span className="material-symbols-outlined text-[14px]">lock</span>
-            Withheld
+            {t('withheld')}
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white text-[10px] p-2 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 text-center font-normal shadow-xl normal-case">
-              {withheldInfo.reason || "Result withheld. Please contact administration."}
+              {withheldInfo.reason || t('withheldDescription')}
               <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
             </div>
           </div>
@@ -65,9 +65,9 @@ const ResultsPage = ({ role }) => {
         return (
           <div className="inline-flex items-center gap-1 relative group cursor-help select-none">
             <span className="text-on-surface font-bold">{val}</span>
-            <span className="material-symbols-outlined text-amber-500 text-sm ml-1" title={`Withheld: ${withheldInfo.reason || 'No reason specified'}`}>lock</span>
+            <span className="material-symbols-outlined text-amber-500 text-sm ml-1" title={`${t('withheld')}: ${withheldInfo.reason || t('noReasonSpecified')}`}>lock</span>
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white text-[10px] p-2 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 text-center font-normal shadow-xl normal-case">
-              Withheld from student. Reason: {withheldInfo.reason || "No reason specified."}
+              {t('withheldReasonAdmin')}{withheldInfo.reason || t('noReasonSpecified')}
               <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
             </div>
           </div>
@@ -412,14 +412,14 @@ const ResultsPage = ({ role }) => {
                   </div>
                   <div>
                     <h3 className="text-section font-black text-on-surface">{sub.name}</h3>
-                    <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest mt-1">Select to view results</p>
+                    <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest mt-1">{t('selectToViewResults')}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
           {classSubjects.length === 0 && (
-            <EmptyState icon="auto_stories" message="No Subjects Found" description="You are not assigned to any subjects in this class." />
+            <EmptyState icon="auto_stories" message={t('noSubjectsFound')} description={t('noSubjectsDescription')} />
           )}
         </div>
       );
@@ -436,7 +436,7 @@ const ResultsPage = ({ role }) => {
               </button>
               <div className="flex items-center text-label truncate">
                 <span className="text-on-surface-variant cursor-pointer hover:text-primary" onClick={goBack}>
-                  {userRole === 'teacher' ? 'Subjects' : 'Classes'}
+                  {userRole === 'teacher' ? t('subjects') : t('classes')}
                 </span>
                 <span className="material-symbols-outlined text-on-surface-variant/30 text-section mx-1">chevron_right</span>
                 <span className="text-on-surface truncate font-bold">
@@ -450,7 +450,7 @@ const ResultsPage = ({ role }) => {
               <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant text-section">search</span>
               <input 
                 type="text"
-                placeholder="Find student..."
+                placeholder={t('findStudent')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label outline-none focus:ring-2 focus:ring-primary/20 transition-all w-full lg:w-48"
@@ -465,7 +465,7 @@ const ResultsPage = ({ role }) => {
                   className="btn-primary flex-1 lg:flex-none py-2 px-6 flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
                 >
                   <span className="material-symbols-outlined text-section">print</span>
-                  Print Full Class Results
+                  {t('printFullClassResults')}
                 </button>
               )}
               {userRole !== 'teacher' && (
@@ -474,7 +474,7 @@ const ResultsPage = ({ role }) => {
                   className="btn-secondary flex-1 lg:flex-none py-2 border-primary/20 text-primary flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined text-section">print</span>
-                  Print Class Results
+                  {t('printClassResults')}
                 </button>
               )}
             </div>
@@ -486,22 +486,22 @@ const ResultsPage = ({ role }) => {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-slate-100 dark:bg-slate-800/50 text-on-surface-variant text-[10px] uppercase font-bold tracking-widest">
-                    <th className="px-6 py-4">Rank</th>
-                    <th className="px-6 py-4">Student Name</th>
-                    {!is2526 && <th className="px-4 py-4 text-center">Before Mid</th>}
-                    <th className="px-4 py-4 text-center">{is2526 ? 'Midterm (40)' : 'Midterm (30)'}</th>
-                    {!is2526 && <th className="px-4 py-4 text-center">After Mid</th>}
-                    <th className="px-4 py-4 text-center">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
-                    <th className="px-4 py-4 text-center">Total / Avg</th>
-                    <th className="px-6 py-4 text-center">Outcome</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
+                    <th className="px-6 py-4">{t('rank')}</th>
+                    <th className="px-6 py-4">{t('studentName')}</th>
+                    {!is2526 && <th className="px-4 py-4 text-center">{t('beforeMidterm')}</th>}
+                    <th className="px-4 py-4 text-center">{is2526 ? `${t('midterm')} (40)` : `${t('midterm')} (30)`}</th>
+                    {!is2526 && <th className="px-4 py-4 text-center">{t('afterMidterm')}</th>}
+                    <th className="px-4 py-4 text-center">{is2526 ? `${t('final')} (60)` : `${t('final')} (50)`}</th>
+                    <th className="px-4 py-4 text-center">{t('total')} / {t('average')}</th>
+                    <th className="px-6 py-4 text-center">{t('outcome')}</th>
+                    <th className="px-6 py-4 text-right">{t('action')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {studentResults.length === 0 ? (
                     <tr>
                       <td colSpan="9" className="py-20 text-center">
-                        <EmptyState icon="person_search" message="No results found" description="Adjust your search or wait for data publication." />
+                        <EmptyState icon="person_search" message={t('noResultsFound')} description={t('noResultsDescription')} />
                       </td>
                     </tr>
                   ) : (
@@ -555,7 +555,7 @@ const ResultsPage = ({ role }) => {
                             ? 'bg-rose-50 text-rose-600 dark:bg-rose-900/30'
                             : 'bg-slate-100 text-slate-500/80 dark:bg-slate-800'
                           }`}>
-                            {res.status}
+                            {res.status === 'Pass' ? t('pass') : res.status === 'Fail' ? t('fail') : res.status}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
@@ -585,7 +585,7 @@ const ResultsPage = ({ role }) => {
                                           className="w-full text-left px-4 py-2.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-2.5 mb-1"
                                         >
                                           <span className="material-symbols-outlined text-base text-amber-500">visibility_off</span>
-                                          Manage Publish Status
+                                          {t('managePublishStatus')}
                                         </button>
                                         <button
                                           onClick={() => {
@@ -596,7 +596,7 @@ const ResultsPage = ({ role }) => {
                                           className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-250 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
                                         >
                                           <span className="material-symbols-outlined text-base text-slate-400">edit_note</span>
-                                          Edit All Subjects
+                                          {t('editAllSubjects')}
                                         </button>
                                        <div className="border-t border-slate-100 dark:border-slate-800/80 my-1.5" />
                                        {(currentClass?.subjects || []).map((sub) => (
@@ -610,7 +610,7 @@ const ResultsPage = ({ role }) => {
                                            className="w-full text-left px-4 py-2.5 text-xs font-medium text-slate-650 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
                                          >
                                            <span className="material-symbols-outlined text-base text-slate-400">auto_stories</span>
-                                           Edit {sub.name}
+                                           {t('edit')} {sub.name}
                                          </button>
                                        ))}
                                      </div>
@@ -622,12 +622,12 @@ const ResultsPage = ({ role }) => {
                                <button 
                                  onClick={() => handlePrint(res.id, { type: 'report-card' })}
                                  className="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
-                                 title="Quick Print Report Card"
+                                 title={t('quickPrintReportCard')}
                                >
                                  <span className="material-symbols-outlined text-section">print</span>
                                </button>
                              )}
-                            <button onClick={() => handleSelectStudent(res.id)} className="btn-secondary py-1.5 px-4">Full Details</button>
+                            <button onClick={() => handleSelectStudent(res.id)} className="btn-secondary py-1.5 px-4">{t('fullDetails')}</button>
                           </div>
                         </td>
                       </tr>
@@ -656,9 +656,9 @@ const ResultsPage = ({ role }) => {
                     <span className="material-symbols-outlined">arrow_back</span>
                   </button>
                 )}
-                <h1 className="text-display text-on-surface font-bold">{userRole === 'student' ? 'My Academic Journey' : student?.name}</h1>
+                 <h1 className="text-display text-on-surface font-bold">{userRole === 'student' ? t('myAcademicJourney') : student?.name}</h1>
               </div>
-              <p className="text-label text-on-surface-variant">Official academic transcript and historical examination data.</p>
+              <p className="text-label text-on-surface-variant">{t('officialTranscriptSubtitle')}</p>
             </div>
             
             {userRole !== 'teacher' && (
@@ -667,14 +667,14 @@ const ResultsPage = ({ role }) => {
                 className="btn-primary"
               >
                 <span className="material-symbols-outlined text-section">print_connect</span>
-                Print Full Transcript
+                {t('printFullTranscript')}
               </button>
             )}
           </div>
 
           {/* History Sections */}
           {studentAcademicHistory.length === 0 ? (
-            <EmptyState icon="grading" message="No Published Results" description="Results for your enrolled subjects have not been released yet." />
+            <EmptyState icon="grading" message={t('noPublishedResults')} description={t('noPublishedResultsDesc')} />
           ) : (
             studentAcademicHistory.map((classRecord) => {
               const is2526 = classRecord.academicYear === '2025-2026';
@@ -688,7 +688,7 @@ const ResultsPage = ({ role }) => {
                     <div>
                       <h2 className="text-section text-on-surface font-bold uppercase tracking-wider">{classRecord.className}</h2>
                       <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">
-                        {String(classRecord.classId) === String(currentUser?.classId) ? 'Current Session' : 'Archived Record'}
+                        {String(classRecord.classId) === String(currentUser?.classId) ? t('currentSession') : t('archivedRecord')}
                       </p>
                     </div>
                   </div>
@@ -697,9 +697,9 @@ const ResultsPage = ({ role }) => {
 
                 {/* Performance Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                  <StatCard title="Yearly Average" value={`${classRecord.totalAverage}%`} icon="analytics" iconColorClass="bg-blue-50 text-primary" />
-                  <StatCard title="Total Points" value={classRecord.totalScore} icon="functions" iconColorClass="bg-indigo-50 text-indigo-600" />
-                  <StatCard title="Class Rank" value={`#${classRecord.rank}`} icon="military_tech" iconColorClass="bg-amber-50 text-amber-600" />
+                  <StatCard title={t('yearlyAverage')} value={`${classRecord.totalAverage}%`} icon="analytics" iconColorClass="bg-blue-50 text-primary" />
+                  <StatCard title={t('totalPoints')} value={classRecord.totalScore} icon="functions" iconColorClass="bg-indigo-50 text-indigo-600" />
+                  <StatCard title={t('classRank')} value={`#${classRecord.rank}`} icon="military_tech" iconColorClass="bg-amber-50 text-amber-600" />
                   <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                       classRecord.status === 'Pass' ? 'bg-emerald-50 text-emerald-600' : 
@@ -709,12 +709,12 @@ const ResultsPage = ({ role }) => {
                       <span className="material-symbols-outlined">check_circle</span>
                     </div>
                     <div>
-                      <p className="text-[10px] text-on-surface-variant uppercase font-bold">Verdict</p>
+                      <p className="text-[10px] text-on-surface-variant uppercase font-bold">{t('verdict')}</p>
                       <p className={`text-label font-bold uppercase ${
                         classRecord.status === 'Pass' ? 'text-emerald-600' : 
                         classRecord.status === 'Fail' ? 'text-rose-600' : 
                         'text-slate-500'
-                      }`}>{classRecord.status}</p>
+                      }`}>{classRecord.status === 'Pass' ? t('pass') : classRecord.status === 'Fail' ? t('fail') : classRecord.status}</p>
                     </div>
                   </div>
                   <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-4">
@@ -722,8 +722,8 @@ const ResultsPage = ({ role }) => {
                       <span className="material-symbols-outlined">trending_up</span>
                     </div>
                     <div>
-                      <p className="text-[10px] text-on-surface-variant uppercase font-bold">Status</p>
-                      <p className="text-label font-bold uppercase">{classRecord.promotion}</p>
+                      <p className="text-[10px] text-on-surface-variant uppercase font-bold">{t('status')}</p>
+                      <p className="text-label font-bold uppercase">{classRecord.promotion === 'Promoted' ? t('promoted') : classRecord.promotion === 'Demoted' ? t('demoted') : classRecord.promotion === 'Retained' ? t('retained') : classRecord.promotion}</p>
                     </div>
                   </div>
                 </div>
@@ -734,13 +734,13 @@ const ResultsPage = ({ role }) => {
                     <table className="w-full text-left">
                       <thead>
                         <tr className="bg-slate-100 dark:bg-slate-800/50 text-on-surface-variant text-[10px] uppercase font-bold tracking-widest">
-                          <th className="px-6 py-4">Subject Name</th>
-                          {!is2526 && <th className="px-4 py-4 text-center">Before Mid</th>}
-                          <th className="px-4 py-4 text-center">{is2526 ? 'Midterm (40)' : 'Midterm (30)'}</th>
-                          {!is2526 && <th className="px-4 py-4 text-center">After Mid</th>}
-                          <th className="px-4 py-4 text-center">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
-                          <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">Total / Avg</th>
-                          {userRole === 'admin' && <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">Actions</th>}
+                          <th className="px-6 py-4">{t('subjectName')}</th>
+                          {!is2526 && <th className="px-4 py-4 text-center">{t('beforeMidterm')}</th>}
+                          <th className="px-4 py-4 text-center">{is2526 ? `${t('midterm')} (40)` : `${t('midterm')} (30)`}</th>
+                          {!is2526 && <th className="px-4 py-4 text-center">{t('afterMidterm')}</th>}
+                          <th className="px-4 py-4 text-center">{is2526 ? `${t('final')} (60)` : `${t('final')} (50)`}</th>
+                          <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">{t('total')} / {t('average')}</th>
+                          {userRole === 'admin' && <th className="px-6 py-4 text-right bg-slate-100/50 dark:bg-slate-800/50">{t('action')}</th>}
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -754,7 +754,7 @@ const ResultsPage = ({ role }) => {
                             {!is2526 && <td className="px-4 py-4 text-center text-label">{renderGradeCell(classRecord.results[subject]["After Midterm"], "After Midterm", classRecord.results[subject])}</td>}
                             <td className="px-4 py-4 text-center text-label">{renderGradeCell(classRecord.results[subject]["Final"], "Final", classRecord.results[subject])}</td>
                             <td className="px-6 py-4 text-right bg-slate-100/30 dark:bg-slate-800/10">
-                              <span className="text-label text-primary font-bold">{(typeof classRecord.results[subject].rawSum === 'number' ? classRecord.results[subject].rawSum : parseFloat(classRecord.results[subject].rawSum) || 0).toFixed(1)} / {classRecord.results[subject].average}%</span>
+                              <span className="text-label text-primary font-bold">{(typeof classRecord.results[subject.name || subject].rawSum === 'number' ? classRecord.results[subject.name || subject].rawSum : parseFloat(classRecord.results[subject.name || subject].rawSum) || 0).toFixed(1)} / {classRecord.results[subject.name || subject].average}%</span>
                             </td>
                             {userRole === 'admin' && (
                               <td className="px-6 py-4 text-right bg-slate-100/30 dark:bg-slate-800/10">
@@ -764,10 +764,10 @@ const ResultsPage = ({ role }) => {
                                     setEditingSubject(subject);
                                   }}
                                   className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-all inline-flex items-center gap-1 text-xs font-semibold"
-                                  title={`Edit ${subject} scores`}
+                                  title={`${t('edit')} ${subject} ${t('grades')}`}
                                 >
                                   <span className="material-symbols-outlined text-[18px]">edit</span>
-                                  Edit
+                                  {t('edit')}
                                 </button>
                               </td>
                             )}
@@ -786,8 +786,8 @@ const ResultsPage = ({ role }) => {
                         <span className="material-symbols-outlined">print</span>
                       </div>
                       <div>
-                        <h3 className="text-label font-black text-on-surface uppercase tracking-tight">Exam Slip Print Center</h3>
-                        <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Select an individual exam type to generate a printable slip</p>
+                        <h3 className="text-label font-black text-on-surface uppercase tracking-tight">{t('examSlipPrintCenter')}</h3>
+                        <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">{t('examSlipPrintCenterSubtitle')}</p>
                       </div>
                     </div>
 
@@ -801,7 +801,9 @@ const ResultsPage = ({ role }) => {
                           <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:bg-primary group-hover:text-white rounded-lg flex items-center justify-center mb-2 transition-colors">
                             <span className="material-symbols-outlined text-section">description</span>
                           </div>
-                          <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant group-hover:text-primary transition-colors text-center">{type}</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant group-hover:text-primary transition-colors text-center">
+                            {t(type === 'Before Midterm' ? 'beforeMidterm' : type === 'After Midterm' ? 'afterMidterm' : type.toLowerCase())}
+                          </span>
                         </button>
                       ))}
                     </div>
@@ -917,7 +919,7 @@ const ResultsPage = ({ role }) => {
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">print</span>
-                Print Class Results
+                {t('printClassResults')}
               </h3>
               <button 
                 onClick={() => setShowPrintOptionModal(false)} 
@@ -928,7 +930,7 @@ const ResultsPage = ({ role }) => {
             </div>
             
             <p className="text-sm text-slate-500 mb-6">
-              Select the assessment cycle to generate the class results report PDF.
+              {t('printClassResultsDesc')}
             </p>
             
             <div className="flex flex-col gap-4">
@@ -944,8 +946,8 @@ const ResultsPage = ({ role }) => {
                     <span className="material-symbols-outlined">analytics</span>
                   </span>
                   <div>
-                    <p className="text-sm">Midterm Assessment</p>
-                    <p className="text-[10px] text-slate-400 font-normal">Print midterm exam grades per subject</p>
+                    <p className="text-sm">{t('midtermAssessment')}</p>
+                    <p className="text-[10px] text-slate-400 font-normal">{t('midtermAssessmentDesc')}</p>
                   </div>
                 </div>
                 <span className="material-symbols-outlined text-slate-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
@@ -963,8 +965,8 @@ const ResultsPage = ({ role }) => {
                     <span className="material-symbols-outlined">grade</span>
                   </span>
                   <div>
-                    <p className="text-sm">Final Assessment</p>
-                    <p className="text-[10px] text-slate-400 font-normal">Print final exam grades per subject</p>
+                    <p className="text-sm">{t('finalAssessment')}</p>
+                    <p className="text-[10px] text-slate-400 font-normal">{t('finalAssessmentDesc')}</p>
                   </div>
                 </div>
                 <span className="material-symbols-outlined text-slate-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
@@ -980,6 +982,7 @@ const ResultsPage = ({ role }) => {
 // --- PRINTABLE COMPONENTS ---
 
 const PrintableHeader = ({ schoolSettings, title }) => {
+  const { t } = useSettings();
   const { name: schoolName, logo, phone, email, address } = schoolSettings || {};
   return (
     <div className="print-header flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
@@ -998,24 +1001,28 @@ const PrintableHeader = ({ schoolSettings, title }) => {
       </div>
       <div className="text-right text-label leading-relaxed text-slate-600">
         <p>{address}</p>
-        <p>Phone: {phone}</p>
-        <p>Email: {email}</p>
+        <p>{t('phone')}: {phone}</p>
+        <p>{t('email')}: {email}</p>
       </div>
     </div>
   );
 };
 
-const PrintableFooter = ({ signatureTitle }) => (
-  <div className="mt-auto pt-4 text-center">
-    <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-2">
-      <p className="text-[10px] font-black uppercase tracking-widest">{signatureTitle || "Manager's Signature"}</p>
+const PrintableFooter = ({ signatureTitle }) => {
+  const { t } = useSettings();
+  return (
+    <div className="mt-auto pt-4 text-center">
+      <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-2">
+        <p className="text-[10px] font-black uppercase tracking-widest">{signatureTitle || t('managerSignature')}</p>
+      </div>
+      <p className="text-[9px] text-slate-400 italic">{t('officialSealNotice')}</p>
     </div>
-    <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
-  </div>
-);
+  );
+};
 
 const PrintableClassResults = ({ classId, className, examType, schoolSettings, classes, students, exams, grades, calculateRankings }) => {
   const { currentUser } = useAppContext();
+  const { t } = useSettings();
   const currentClass = classes.find(c => String(c.id) === String(classId));
   const academicYear = currentClass?.academicYear || '2025-2026';
 
@@ -1081,24 +1088,24 @@ const PrintableClassResults = ({ classId, className, examType, schoolSettings, c
 
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
-      <PrintableHeader schoolSettings={schoolSettings} title={`${examType} Examination Results`} />
+      <PrintableHeader schoolSettings={schoolSettings} title={`${t(examType === 'Before Midterm' ? 'beforeMidterm' : examType === 'After Midterm' ? 'afterMidterm' : examType.toLowerCase())} ${t('exams')} ${t('results')}`} />
       <h2 className="text-section border-l-4 border-blue-600 pl-4 mb-8">
-        Class Results Master Sheet ({examType}) — Class: {className}
+        {t('classResultsMasterSheet')} ({t(examType === 'Before Midterm' ? 'beforeMidterm' : examType === 'After Midterm' ? 'afterMidterm' : examType.toLowerCase())}) — {t('class')}: {className}
       </h2>
 
       <table className="w-full border-collapse mb-12 border-2 border-slate-950 text-xs">
         <thead>
           <tr className="bg-slate-900 text-white border-b-2 border-slate-950">
-            <th className="p-3 text-left font-bold border border-slate-700">Rank</th>
-            <th className="p-3 text-left font-bold border border-slate-700">Student Name</th>
+            <th className="p-3 text-left font-bold border border-slate-700">{t('rank')}</th>
+            <th className="p-3 text-left font-bold border border-slate-700">{t('studentName')}</th>
             {classSubjects.map(sub => (
               <th key={sub} className="p-2 text-center font-bold border border-slate-700">
                 {sub}
               </th>
             ))}
-            <th className="p-3 text-center font-bold border border-slate-700 bg-slate-800">Total</th>
-            <th className="p-3 text-center font-bold border border-slate-700 bg-slate-800">Average</th>
-            <th className="p-3 text-center font-bold border border-slate-700 bg-slate-800">Outcome</th>
+            <th className="p-3 text-center font-bold border border-slate-700 bg-slate-800">{t('total')}</th>
+            <th className="p-3 text-center font-bold border border-slate-700 bg-slate-800">{t('average')}</th>
+            <th className="p-3 text-center font-bold border border-slate-700 bg-slate-800">{t('outcome')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-350">
@@ -1120,19 +1127,20 @@ const PrintableClassResults = ({ classId, className, examType, schoolSettings, c
               <td className={`p-3 text-center font-bold border border-slate-350 ${
                 student.outcome === 'Pass' ? 'text-emerald-600' : student.outcome === 'Fail' ? 'text-rose-600' : 'text-slate-500'
               }`}>
-                {student.outcome}
+                {student.outcome === 'Pass' ? t('pass') : student.outcome === 'Fail' ? t('fail') : student.outcome}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <PrintableFooter signatureTitle="Manager's Signature" />
+      <PrintableFooter signatureTitle={t('managerSignature')} />
     </div>
   );
 };
 
 const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings }) => {
+  const { t } = useSettings();
   const record = classId 
     ? classHistory.find(h => String(h.classId) === String(classId))
     : classHistory[0];
@@ -1143,40 +1151,40 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
 
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
-      <PrintableHeader schoolSettings={schoolSettings} title="Annual Progress Report" />
+      <PrintableHeader schoolSettings={schoolSettings} title={t('annualProgressReport')} />
       
       <div className="mb-8 p-4 bg-slate-50 border-y border-slate-200 flex justify-between items-center">
         <div>
-          <p className="text-[10px] text-slate-500 uppercase font-bold">Student Name</p>
+          <p className="text-[10px] text-slate-500 uppercase font-bold">{t('studentName')}</p>
           <p className="text-section font-black">{student?.name}</p>
         </div>
         <div className="text-right">
-          <p className="text-[10px] text-slate-500 uppercase font-bold">Class / Session</p>
+          <p className="text-[10px] text-slate-500 uppercase font-bold">{t('class')} / {t('session')}</p>
           <p className="text-section font-black">{record.className} ({record.academicYear})</p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-10">
         <div className="border border-slate-200 p-4 rounded-xl text-center bg-white shadow-sm">
-          <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Yearly Average</p>
+          <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">{t('yearlyAverage')}</p>
           <p className="text-xl font-black text-blue-600">{record.totalAverage}%</p>
         </div>
         <div className="border border-slate-200 p-4 rounded-xl text-center bg-white shadow-sm">
-          <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Rank</p>
+          <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">{t('rank')}</p>
           <p className="text-xl font-black text-slate-900">#{record.rank}</p>
         </div>
       </div>
 
-      <h3 className="text-label uppercase font-bold tracking-widest mb-4 border-b pb-2">Subject Performance Matrix</h3>
+      <h3 className="text-label uppercase font-bold tracking-widest mb-4 border-b pb-2">{t('subjectPerformanceMatrix')}</h3>
       <table className="w-full border-collapse mb-12">
         <thead>
           <tr className="bg-slate-100 border-b border-slate-800">
-            <th className="p-3 text-left text-[10px] uppercase font-bold">Subject</th>
-            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-bold">B.Mid</th>}
-            <th className="p-3 text-center text-[10px] uppercase font-bold">{is2526 ? 'Mid (40)' : 'Mid (30)'}</th>
-            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-bold">A.Mid</th>}
-            <th className="p-3 text-center text-[10px] uppercase font-bold">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
-            <th className="p-3 text-right text-[10px] uppercase font-bold">Total / Avg</th>
+            <th className="p-3 text-left text-[10px] uppercase font-bold">{t('subject')}</th>
+            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-bold">{t('beforeMidterm')}</th>}
+            <th className="p-3 text-center text-[10px] uppercase font-bold">{is2526 ? `${t('midterm')} (40)` : `${t('midterm')} (30)`}</th>
+            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-bold">{t('afterMidterm')}</th>}
+            <th className="p-3 text-center text-[10px] uppercase font-bold">{is2526 ? `${t('final')} (60)` : `${t('final')} (50)`}</th>
+            <th className="p-3 text-right text-[10px] uppercase font-bold">{t('total')} / {t('average')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200">
@@ -1193,12 +1201,13 @@ const PrintableReportCard = ({ studentId, classHistory, classId, schoolSettings 
         </tbody>
       </table>
 
-      <PrintableFooter signatureTitle="Manager's Signature" />
+      <PrintableFooter signatureTitle={t('managerSignature')} />
     </div>
   );
 };
 
 const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) => {
+  const { t } = useSettings();
   if (!classRecord) return null;
   const academicYear = classRecord.academicYear || '2025-2026';
   const results = Object.values(classRecord.results).map(r => r[examType]).filter(v => typeof v === 'number');
@@ -1208,44 +1217,44 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
 
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
-      <PrintableHeader schoolSettings={schoolSettings} title="Individual Examination Performance Slip" />
+      <PrintableHeader schoolSettings={schoolSettings} title={t('individualExamSlip')} />
       
       <div className="flex justify-between items-stretch mb-4 border border-slate-900 overflow-hidden rounded-xl">
         <div className="bg-slate-900 text-white p-4 flex flex-col justify-center min-w-[200px]">
-          <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Assessment Cycle</p>
-          <h2 className="text-display font-black leading-none">{examType}</h2>
-          <p className="text-[10px] mt-2 text-slate-400 font-bold uppercase tracking-[0.2em]">Session 2025/2026</p>
+          <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">{t('assessmentCycle')}</p>
+          <h2 className="text-display font-black leading-none">{t(examType === 'Before Midterm' ? 'beforeMidterm' : examType === 'After Midterm' ? 'afterMidterm' : examType.toLowerCase())}</h2>
+          <p className="text-[10px] mt-2 text-slate-400 font-bold uppercase tracking-[0.2em]">{t('session')} 2025/2026</p>
         </div>
         <div className="flex-1 p-4 flex flex-col justify-center bg-slate-50">
           <div className="grid grid-cols-2 gap-y-4">
             <div>
-              <p className="text-[8px] uppercase font-bold text-slate-500">Student Name</p>
+              <p className="text-[8px] uppercase font-bold text-slate-500">{t('studentName')}</p>
               <p className="text-label font-black">{student?.name}</p>
             </div>
             <div className="text-right">
-              <p className="text-[8px] uppercase font-bold text-slate-500">Student ID</p>
+              <p className="text-[8px] uppercase font-bold text-slate-500">{t('studentId')}</p>
               <p className="text-label font-black">{student?.systemId || student?.id}</p>
             </div>
             <div>
-              <p className="text-[8px] uppercase font-bold text-slate-500">Class / Grade</p>
+              <p className="text-[8px] uppercase font-bold text-slate-500">{t('class')} / {t('grade')}</p>
               <p className="text-label font-black">{classRecord.className}</p>
             </div>
             <div className="text-right">
-              <p className="text-[8px] uppercase font-bold text-slate-500">Print Date</p>
+              <p className="text-[8px] uppercase font-bold text-slate-500">{t('printDate')}</p>
               <p className="text-label font-black">{new Date().toLocaleDateString()}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <h3 className="text-[10px] font-black uppercase tracking-widest mb-2 border-b-2 border-slate-900 pb-1">Subject Performance Matrix</h3>
+      <h3 className="text-[10px] font-black uppercase tracking-widest mb-2 border-b-2 border-slate-900 pb-1">{t('subjectPerformanceMatrix')}</h3>
       <table className="w-full border-collapse mb-4">
         <thead>
           <tr className="bg-slate-100 border-y border-slate-900">
-            <th className="p-2 text-left text-[10px] uppercase font-black">Subject Identification</th>
-            <th className="p-2 text-center text-[10px] uppercase font-black">Marks Obtained</th>
-            <th className="p-2 text-center text-[10px] uppercase font-black">Status</th>
-            <th className="p-2 text-right text-[10px] uppercase font-black">Remarks</th>
+            <th className="p-2 text-left text-[10px] uppercase font-black">{t('subjectIdentification')}</th>
+            <th className="p-2 text-center text-[10px] uppercase font-black">{t('marksObtained')}</th>
+            <th className="p-2 text-center text-[10px] uppercase font-black">{t('status')}</th>
+            <th className="p-2 text-right text-[10px] uppercase font-black">{t('remarks')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200">
@@ -1264,14 +1273,14 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
                 <td className="p-2 text-center">
                   {isNumeric ? (
                     <span className={`text-[10px] font-black px-2 py-0.5 rounded ${pct >= 50 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
-                      {pct >= 50 ? 'PASS' : 'FAIL'}
+                      {pct >= 50 ? t('pass').toUpperCase() : t('fail').toUpperCase()}
                     </span>
                   ) : (
                     <span className="text-[10px] text-slate-400 font-bold italic">N/A</span>
                   )}
                 </td>
                 <td className="p-2 text-right text-[10px] text-slate-500 font-bold italic">
-                  {isNumeric ? (pct >= 80 ? 'Excellent' : pct >= 60 ? 'Good' : pct >= 50 ? 'Satisfactory' : 'Needs Work') : '-'}
+                  {isNumeric ? (pct >= 80 ? t('exceptional') : pct >= 60 ? t('good') : pct >= 50 ? t('satisfactory') : t('needsWork')) : '-'}
                 </td>
               </tr>
             );
@@ -1281,28 +1290,29 @@ const PrintableExamSlip = ({ student, classRecord, examType, schoolSettings }) =
 
       <div className="flex justify-center mb-4">
         <div className="w-56 p-4 bg-slate-900 text-white rounded-xl text-center">
-          <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Total / Avg</p>
+          <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">{t('total')} / {t('average')}</p>
           <p className="text-[20px] font-black leading-none">{rawSum.toFixed(1)} / {avg}%</p>
         </div>
       </div>
 
-      <PrintableFooter signatureTitle="Manager's Signature" />
+      <PrintableFooter signatureTitle={t('managerSignature')} />
     </div>
   );
 };
 
 const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
+  const { t } = useSettings();
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
-      <PrintableHeader schoolSettings={schoolSettings} title="Official Academic Transcript" />
+      <PrintableHeader schoolSettings={schoolSettings} title={t('officialTranscript')} />
       
       <div className="mb-12 flex justify-between border-b-4 border-slate-900 pb-6">
         <div>
           <h2 className="text-display font-black">{student?.name}</h2>
-          <p className="text-label text-slate-500 uppercase tracking-widest font-bold">Cumulative Student Record</p>
+          <p className="text-label text-slate-500 uppercase tracking-widest font-bold">{t('cumulativeStudentRecord')}</p>
         </div>
         <div className="text-right text-label uppercase font-bold text-slate-500">
-          <p>Student ID: {student?.systemId || student?.id}</p>
+          <p>{t('studentId')}: {student?.systemId || student?.id}</p>
         </div>
       </div>
 
@@ -1313,18 +1323,18 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
             <div key={record.classId} className="avoid-break">
               <h3 className="text-section font-black uppercase mb-4 flex items-center gap-2">
                 <span className="w-8 h-8 bg-slate-900 text-white rounded flex items-center justify-center text-xs">Y</span>
-                {record.className} Performance
+                {record.className} {t('outcome')}
               </h3>
               
               <table className="w-full border-collapse mb-4">
                 <thead>
                   <tr className="bg-slate-100 border-y border-slate-300">
-                    <th className="p-2 text-left text-[10px] uppercase">Subject</th>
-                    {!is2526 && <th className="p-2 text-center text-[10px] uppercase">B.Mid</th>}
-                    <th className="p-2 text-center text-[10px] uppercase">{is2526 ? 'Mid (40)' : 'Mid (30)'}</th>
-                    {!is2526 && <th className="p-2 text-center text-[10px] uppercase">A.Mid</th>}
-                    <th className="p-2 text-center text-[10px] uppercase">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
-                    <th className="p-2 text-right text-[10px] uppercase font-bold">Total / Avg</th>
+                    <th className="p-2 text-left text-[10px] uppercase">{t('subject')}</th>
+                    {!is2526 && <th className="p-2 text-center text-[10px] uppercase">{t('beforeMidterm')}</th>}
+                    <th className="p-2 text-center text-[10px] uppercase">{is2526 ? `${t('midterm')} (40)` : `${t('midterm')} (30)`}</th>
+                    {!is2526 && <th className="p-2 text-center text-[10px] uppercase">{t('afterMidterm')}</th>}
+                    <th className="p-2 text-center text-[10px] uppercase">{is2526 ? `${t('final')} (60)` : `${t('final')} (50)`}</th>
+                    <th className="p-2 text-right text-[10px] uppercase font-bold">{t('total')} / {t('average')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -1335,23 +1345,23 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
                       <td className="p-2 text-center text-xs">{record.results[subject]["Midterm"]}</td>
                       {!is2526 && <td className="p-2 text-center text-xs">{record.results[subject]["After Midterm"]}</td>}
                       <td className="p-2 text-center text-xs">{record.results[subject]["Final"]}</td>
-                    <td className="p-2 text-right text-xs font-bold">{(typeof record.results[subject].rawSum === 'number' ? record.results[subject].rawSum : parseFloat(record.results[subject].rawSum) || 0).toFixed(1)} / {record.results[subject].average}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      <td className="p-2 text-right text-xs font-bold">{(typeof record.results[subject].rawSum === 'number' ? record.results[subject].rawSum : parseFloat(record.results[subject].rawSum) || 0).toFixed(1)} / {record.results[subject].average}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             
             <div className="grid grid-cols-3 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
               <div>
-                <p className="text-[8px] uppercase font-bold text-slate-400">Yearly Average</p>
+                <p className="text-[8px] uppercase font-bold text-slate-400">{t('yearlyAverage')}</p>
                 <p className="text-label font-black text-blue-700">{record.totalAverage}%</p>
               </div>
               <div>
-                <p className="text-[8px] uppercase font-bold text-slate-400">Class Rank</p>
+                <p className="text-[8px] uppercase font-bold text-slate-400">{t('classRank')}</p>
                 <p className="text-label font-black">#{record.rank}</p>
               </div>
               <div>
-                <p className="text-[8px] uppercase font-bold text-slate-400">Total Points</p>
+                <p className="text-[8px] uppercase font-bold text-slate-400">{t('totalPoints')}</p>
                 <p className="text-label font-black">{record.totalScore}</p>
               </div>
             </div>
@@ -1360,22 +1370,23 @@ const PrintableFullTranscript = ({ student, history, schoolSettings }) => {
         })}
       </div>
 
-      <PrintableFooter signatureTitle="Manager's Signature" />
+      <PrintableFooter signatureTitle={t('managerSignature')} />
     </div>
   );
 };
 
 const PrintableSubjectClassResults = ({ className, subjectName, results, schoolSettings, is2526 }) => {
+  const { t } = useSettings();
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
-      <PrintableHeader schoolSettings={schoolSettings} title="Subject Performance Analysis" />
+      <PrintableHeader schoolSettings={schoolSettings} title={t('subjectPerformanceAnalysis')} />
       <div className="mb-8 border-b-4 border-slate-900 pb-4 flex justify-between items-end">
         <div>
           <h2 className="text-display font-black">{subjectName}</h2>
-          <p className="text-label text-slate-500 uppercase tracking-widest font-bold">Class: {className}</p>
+          <p className="text-label text-slate-500 uppercase tracking-widest font-bold">{t('class')}: {className}</p>
         </div>
         <div className="text-right">
-          <p className="text-[10px] font-black uppercase text-slate-400">Academic Year</p>
+          <p className="text-[10px] font-black uppercase text-slate-400">{t('academicYear')}</p>
           <p className="text-section font-black">2025 / 2026</p>
         </div>
       </div>
@@ -1383,12 +1394,12 @@ const PrintableSubjectClassResults = ({ className, subjectName, results, schoolS
       <table className="w-full border-collapse mb-12">
         <thead>
           <tr className="bg-slate-100 border-y border-slate-900">
-            <th className="p-3 text-left text-[10px] uppercase font-black">Student Name</th>
-            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-black">B.Mid</th>}
-            <th className="p-3 text-center text-[10px] uppercase font-black">{is2526 ? 'Mid (40)' : 'Mid (30)'}</th>
-            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-black">A.Mid</th>}
-            <th className="p-3 text-center text-[10px] uppercase font-black">{is2526 ? 'Final (60)' : 'Final (50)'}</th>
-            <th className="p-3 text-right text-[10px] uppercase font-black">Total / Avg</th>
+            <th className="p-3 text-left text-[10px] uppercase font-black">{t('studentName')}</th>
+            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-black">{t('beforeMidterm')}</th>}
+            <th className="p-3 text-center text-[10px] uppercase font-black">{is2526 ? `${t('midterm')} (40)` : `${t('midterm')} (30)`}</th>
+            {!is2526 && <th className="p-3 text-center text-[10px] uppercase font-black">{t('afterMidterm')}</th>}
+            <th className="p-3 text-center text-[10px] uppercase font-black">{is2526 ? `${t('final')} (60)` : `${t('final')} (50)`}</th>
+            <th className="p-3 text-right text-[10px] uppercase font-black">{t('total')} / {t('average')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200">
@@ -1409,38 +1420,39 @@ const PrintableSubjectClassResults = ({ className, subjectName, results, schoolS
         </tbody>
       </table>
 
-      <PrintableFooter signatureTitle="Subject Teacher's Signature" />
+      <PrintableFooter signatureTitle={t('subjectTeacherSignature')} />
     </div>
   );
 };
 
 const PrintableSubjectStudentResults = ({ student, classRecord, subjectName, schoolSettings }) => {
+  const { t } = useSettings();
   if (!classRecord || !classRecord.results[subjectName]) return null;
   const subjData = classRecord.results[subjectName];
   const is2526 = classRecord.academicYear === '2025-2026';
 
   return (
     <div className="print-only font-sans text-slate-900 bg-white">
-      <PrintableHeader schoolSettings={schoolSettings} title="Individual Subject Performance" />
+      <PrintableHeader schoolSettings={schoolSettings} title={t('individualSubjectPerformance')} />
       
       <div className="mb-12 flex justify-between border-b-4 border-slate-900 pb-6">
         <div>
           <h2 className="text-display font-black">{student?.name}</h2>
-          <p className="text-label text-slate-500 uppercase tracking-widest font-bold">Subject: {subjectName}</p>
+          <p className="text-label text-slate-500 uppercase tracking-widest font-bold">{t('subject')}: {subjectName}</p>
         </div>
         <div className="text-right">
-          <p className="text-[10px] font-black uppercase text-slate-400">Class Section</p>
+          <p className="text-[10px] font-black uppercase text-slate-400">{t('class')}</p>
           <p className="text-section font-black">{classRecord.className}</p>
         </div>
       </div>
 
       <div className={`grid ${is2526 ? 'grid-cols-3' : 'grid-cols-5'} gap-4 mb-12`}>
         {[
-          !is2526 && { label: 'B.Midterm', val: subjData["Before Midterm"] },
-          { label: 'Midterm', val: subjData["Midterm"] },
-          !is2526 && { label: 'A.Midterm', val: subjData["After Midterm"] },
-          { label: 'Final', val: subjData["Final"] },
-          { label: 'Total / Avg', val: `${(typeof subjData.rawSum === 'number' ? subjData.rawSum : parseFloat(subjData.rawSum) || 0).toFixed(1)} / ${subjData.average}%`, highlight: true }
+          !is2526 && { label: t('beforeMidterm'), val: subjData["Before Midterm"] },
+          { label: t('midterm'), val: subjData["Midterm"] },
+          !is2526 && { label: t('afterMidterm'), val: subjData["After Midterm"] },
+          { label: t('final'), val: subjData["Final"] },
+          { label: `${t('total')} / ${t('average')}`, val: `${(typeof subjData.rawSum === 'number' ? subjData.rawSum : parseFloat(subjData.rawSum) || 0).toFixed(1)} / ${subjData.average}%`, highlight: true }
         ].filter(Boolean).map((item, i) => (
           <div key={i} className={`p-6 rounded-2xl border ${item.highlight ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 border-slate-200'} text-center shadow-sm`}>
             <p className={`text-[10px] uppercase font-bold mb-2 ${item.highlight ? 'text-slate-400' : 'text-slate-500'}`}>{item.label}</p>
@@ -1450,13 +1462,13 @@ const PrintableSubjectStudentResults = ({ student, classRecord, subjectName, sch
       </div>
 
       <div className="p-8 bg-blue-50 border-2 border-blue-100 rounded-3xl mb-12">
-        <h3 className="text-label font-black uppercase tracking-widest text-blue-700 mb-2">Teacher Assessment</h3>
+        <h3 className="text-label font-black uppercase tracking-widest text-blue-700 mb-2">{t('teacherAssessment')}</h3>
         <p className="text-label text-slate-600 leading-relaxed italic">
-          "The student has shown {parseFloat(subjData.average) >= 80 ? 'exceptional' : parseFloat(subjData.average) >= 50 ? 'consistent' : 'room for improvement'} performance in {subjectName} during this academic cycle. Continued focus on core concepts is recommended."
+          "{t('teacherRemarkTemplate').replace('{status}', t(parseFloat(subjData.average) >= 80 ? 'exceptional' : parseFloat(subjData.average) >= 50 ? 'consistent' : 'roomForImprovement')).replace('{subjectName}', subjectName)}"
         </p>
       </div>
 
-      <PrintableFooter signatureTitle="Manager's Signature" />
+      <PrintableFooter signatureTitle={t('managerSignature')} />
     </div>
   );
 };

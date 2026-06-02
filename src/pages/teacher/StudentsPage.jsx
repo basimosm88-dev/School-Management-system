@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
+import { useSettings } from '../../contexts/SettingsContext';
 import EmptyState from '../../components/ui/EmptyState';
 import Modal from '../../components/ui/Modal';
 
@@ -13,6 +14,7 @@ const StudentsPage = () => {
 
   const { classes, students, attendance, exams } = useData();
   const { currentUser } = useAppContext();
+  const { t } = useSettings();
   
   const [selectedClassId, setSelectedClassId] = useState(initialClassId || '');
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,12 +53,12 @@ const StudentsPage = () => {
   const groupedStudents = useMemo(() => {
     const groups = {};
     filteredStudents.forEach(s => {
-      const className = classes.find(c => c.id === s.classId)?.name || 'Unknown Class';
+      const className = classes.find(c => c.id === s.classId)?.name || t('unknown');
       if (!groups[className]) groups[className] = [];
       groups[className].push(s);
     });
     return groups;
-  }, [filteredStudents, classes]);
+  }, [filteredStudents, classes, t]);
 
   const handleViewStudent = (student) => {
     setViewingStudent(student);
@@ -88,7 +90,7 @@ const StudentsPage = () => {
                 activeTab === tab ? 'text-primary' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
-              {tab}
+              {t(tab)}
               {activeTab === tab && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"></div>
               )}
@@ -100,23 +102,23 @@ const StudentsPage = () => {
           {activeTab === 'profile' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-2">
               <div>
-                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Full Name</p>
+                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">{t('fullName')}</p>
                 <p className="text-label text-slate-900 dark:text-white font-bold">{viewingStudent.name}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Student ID</p>
+                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">{t('studentId')}</p>
                 <p className="text-label font-mono text-slate-600 dark:text-slate-300">#{viewingStudent.systemId || viewingStudent.id}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Email</p>
+                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">{t('email')}</p>
                 <p className="text-label text-slate-600 dark:text-slate-300">{viewingStudent.email}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Phone</p>
+                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">{t('phone')}</p>
                 <p className="text-label text-slate-600 dark:text-slate-300">{viewingStudent.phone || 'N/A'}</p>
               </div>
               <div className="md:col-span-2">
-                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Class</p>
+                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">{t('class')}</p>
                 <p className="text-label text-slate-900 dark:text-white font-bold">
                   {classes.find(c => c.id === viewingStudent.classId)?.name || 'N/A'}
                 </p>
@@ -126,17 +128,17 @@ const StudentsPage = () => {
 
           {activeTab === 'attendance' && (
             <div className="space-y-4">
-              <h4 className="text-label font-bold text-slate-900 dark:text-white">Recent Sessions with You</h4>
+              <h4 className="text-label font-bold text-slate-900 dark:text-white">{t('recentSessionsWithYou')}</h4>
               {studentAttendance.length === 0 ? (
-                <p className="text-label text-slate-400 italic">No attendance records found for your sessions.</p>
+                <p className="text-label text-slate-400 italic">{t('noAttendanceSessionsDesc')}</p>
               ) : (
                 <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800">
                   <table className="w-full text-left text-label">
                     <thead className="bg-slate-50 dark:bg-slate-800/50">
                       <tr>
-                        <th className="px-4 py-3">Date</th>
-                        <th className="px-4 py-3">Subject</th>
-                        <th className="px-4 py-3">Status</th>
+                        <th className="px-4 py-3">{t('date')}</th>
+                        <th className="px-4 py-3">{t('subject')}</th>
+                        <th className="px-4 py-3">{t('status')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -163,18 +165,18 @@ const StudentsPage = () => {
 
           {activeTab === 'grades' && (
             <div className="space-y-4">
-              <h4 className="text-label font-bold text-slate-900 dark:text-white">Academic Performance</h4>
+              <h4 className="text-label font-bold text-slate-900 dark:text-white">{t('academicPerformance')}</h4>
               {studentGrades.length === 0 ? (
-                <p className="text-label text-slate-400 italic">No grades found for your subjects.</p>
+                <p className="text-label text-slate-400 italic">{t('noGradesForSubjectsDesc')}</p>
               ) : (
                 <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800">
                   <table className="w-full text-left text-label">
                     <thead className="bg-slate-50 dark:bg-slate-800/50">
                       <tr>
-                        <th className="px-4 py-3">Exam Type</th>
-                        <th className="px-4 py-3">Subject</th>
-                        <th className="px-4 py-3 text-center">Grade</th>
-                        <th className="px-4 py-3">Status</th>
+                        <th className="px-4 py-3">{t('examType')}</th>
+                        <th className="px-4 py-3">{t('subject')}</th>
+                        <th className="px-4 py-3 text-center">{t('grade')}</th>
+                        <th className="px-4 py-3">{t('status')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -206,13 +208,13 @@ const StudentsPage = () => {
   };
 
   return (
-    <PageLayout role="teacher" title="Students">
+    <PageLayout role="teacher" title={t('students')}>
       <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         
         {/* PAGE HEADER */}
         <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
-          <h2 className="text-heading text-slate-900 dark:text-white">Students</h2>
-          <p className="text-label text-slate-500/80 mt-1">View student profiles, track their performance, and monitor attendance records.</p>
+          <h2 className="text-heading text-slate-900 dark:text-white">{t('students')}</h2>
+          <p className="text-label text-slate-500/80 mt-1">{t('studentsSubtitle')}</p>
         </div>
         {/* Header Control Bar */}
         <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-4 items-center">
@@ -220,7 +222,7 @@ const StudentsPage = () => {
             <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">search</span>
             <input 
               type="text" 
-              placeholder="Search by name or ID..."
+              placeholder={t('searchByNameOrIdPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all"
@@ -232,7 +234,7 @@ const StudentsPage = () => {
               onChange={(e) => setSelectedClassId(e.target.value)}
               className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all"
             >
-              <option value="">All My Classes</option>
+              <option value="">{t('allMyClasses')}</option>
               {assignedClasses.map(c => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
@@ -243,8 +245,8 @@ const StudentsPage = () => {
         {Object.keys(groupedStudents).length === 0 ? (
           <EmptyState 
             icon="group_off" 
-            message="No Students Found" 
-            description="Adjust your search or filter to find students." 
+            message={t('noStudentsFound')} 
+            description={t('noResultsDescription')} 
           />
         ) : (
           <div className="space-y-12">
@@ -256,7 +258,7 @@ const StudentsPage = () => {
                     {className}
                   </h2>
                   <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-black rounded-md">
-                    {groupedStudents[className].length} Students
+                    {groupedStudents[className].length} {t('students')}
                   </span>
                 </div>
 
@@ -265,11 +267,11 @@ const StudentsPage = () => {
                     <table className="w-full text-left text-label">
                       <thead className="bg-slate-50 dark:bg-slate-800/30 text-slate-400 uppercase text-[10px] font-black tracking-widest border-b border-slate-100 dark:border-slate-800">
                         <tr>
-                          <th className="px-6 py-4">Full Name</th>
-                          <th className="px-6 py-4">Student ID</th>
-                          <th className="px-6 py-4">Phone</th>
-                          <th className="px-6 py-4">Status</th>
-                          <th className="px-6 py-4 text-right">Actions</th>
+                          <th className="px-6 py-4">{t('fullName')}</th>
+                          <th className="px-6 py-4">{t('studentId')}</th>
+                          <th className="px-6 py-4">{t('phone')}</th>
+                          <th className="px-6 py-4">{t('status')}</th>
+                          <th className="px-6 py-4 text-right">{t('actions')}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -291,7 +293,7 @@ const StudentsPage = () => {
                             </td>
                             <td className="px-6 py-4">
                               <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold uppercase rounded-full">
-                                Active
+                                {t('active')}
                               </span>
                             </td>
                             <td className="px-6 py-4 text-right">
@@ -299,7 +301,7 @@ const StudentsPage = () => {
                                 onClick={() => handleViewStudent(student)}
                                 className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"
                               >
-                                View Details
+                                {t('viewDetails')}
                               </button>
                             </td>
                           </tr>
@@ -317,7 +319,7 @@ const StudentsPage = () => {
       <Modal 
         isOpen={!!viewingStudent} 
         onClose={() => setViewingStudent(null)} 
-        title="Student Insight"
+        title={t('studentInsight')}
         showFooter={false}
       >
         {renderStudentModalContent()}

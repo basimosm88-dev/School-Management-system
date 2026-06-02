@@ -99,10 +99,10 @@ const AdminAttendancePage = () => {
 
  {/* STATS OVERVIEW */}
  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
- <StatCard label="Overall Rate" value={`${stats.rate}%`} icon="analytics" color="blue" />
- <StatCard label="Present" value={stats.present} icon="check_circle" color="emerald" />
- <StatCard label="Late Sessions" value={stats.late} icon="schedule" color="amber" />
- <StatCard label="Absent Sessions" value={stats.absent} icon="cancel" color="rose" />
+ <StatCard label={t('overallRate')} value={`${stats.rate}%`} icon="analytics" color="blue" />
+ <StatCard label={t('present')} value={stats.present} icon="check_circle" color="emerald" />
+ <StatCard label={t('lateSessions')} value={stats.late} icon="schedule" color="amber" />
+ <StatCard label={t('absentSessions')} value={stats.absent} icon="cancel" color="rose" />
  </div>
 
  {/* FILTERS & TOGGLE */}
@@ -112,11 +112,11 @@ const AdminAttendancePage = () => {
  <button 
  onClick={() => setViewType('session')}
  className={`flex-1 md:w-48 py-3 rounded-lg text-label  transition-all ${viewType === 'session' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
- >Session Details</button>
+ >{t('sessionDetails')}</button>
  <button 
  onClick={() => setViewType('daily')}
  className={`flex-1 md:w-48 py-3 rounded-lg text-label  transition-all ${viewType === 'daily' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400/80'}`}
- >Daily Summaries</button>
+ >{t('dailySummaries')}</button>
  </div>
  
  <div className="flex gap-2 w-full md:w-auto">
@@ -129,24 +129,24 @@ const AdminAttendancePage = () => {
  status: ''
  })}
  className="btn-secondary"
- >Reset Filters</button>
+ >{t('resetFilters')}</button>
  </div>
  </div>
 
  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
  <div>
- <label className="text-label text-slate-400/80 mb-2 block">Class Filter</label>
+ <label className="text-label text-slate-400/80 mb-2 block">{t('classFilter')}</label>
  <select 
  value={filters.classId}
  onChange={e => setFilters({...filters, classId: e.target.value})}
  className="form-input-custom w-full"
  >
- <option value="">All Classes</option>
+ <option value="">{t('allClasses')}</option>
  {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
  </select>
  </div>
  <div>
- <label className="text-label text-slate-400/80 mb-2 block">Start Date</label>
+ <label className="text-label text-slate-400/80 mb-2 block">{t('startDate')}</label>
  <input 
  type="date"
  value={filters.startDate}
@@ -155,7 +155,7 @@ const AdminAttendancePage = () => {
  />
  </div>
  <div>
- <label className="text-label text-slate-400/80 mb-2 block">End Date</label>
+ <label className="text-label text-slate-400/80 mb-2 block">{t('endDate')}</label>
  <input 
  type="date"
  value={filters.endDate}
@@ -164,16 +164,16 @@ const AdminAttendancePage = () => {
  />
  </div>
  <div>
- <label className="text-label text-slate-400/80 mb-2 block">Session Status</label>
+ <label className="text-label text-slate-400/80 mb-2 block">{t('sessionStatus')}</label>
  <select 
  value={filters.status}
  onChange={e => setFilters({...filters, status: e.target.value})}
  className="form-input-custom w-full"
  >
- <option value="">Any Status</option>
- <option value="Present">Present</option>
- <option value="Absent">Absent</option>
- <option value="Late">Late</option>
+ <option value="">{t('anyStatus')}</option>
+ <option value="Present">{t('present')}</option>
+ <option value="Absent">{t('absent')}</option>
+ <option value="Late">{t('late')}</option>
  </select>
  </div>
  </div>
@@ -184,10 +184,10 @@ const AdminAttendancePage = () => {
  <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm overflow-hidden transition-colors">
  <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-100/30 dark:bg-slate-800/20">
  <h4 className="text-label text-slate-800 dark:text-slate-200">
- {viewType === 'session' ? 'Subject Session Logs' : 'Auto-Calculated Daily Summaries'}
+ {viewType === 'session' ? t('subjectSessionLogs') : t('autoCalculatedDailySummaries')}
  </h4>
  <span className="text-label text-primary bg-primary/10 px-3 py-1 rounded-full">
- {viewType === 'session' ? filteredAttendance.length : dailySummaries.length} Records
+ {viewType === 'session' ? filteredAttendance.length : dailySummaries.length} {t('records')}
  </span>
  </div>
  <div className="overflow-x-auto max-h-[600px]">
@@ -195,18 +195,18 @@ const AdminAttendancePage = () => {
  <thead className="bg-slate-100/50 dark:bg-slate-800/50 text-label text-slate-400/80 border-b border-slate-100 dark:border-slate-800">
  {viewType === 'session' ? (
  <tr>
- <th className="px-8 py-4">Student</th>
- <th className="px-8 py-4">Subject & Time</th>
- <th className="px-8 py-4">Date</th>
- <th className="px-8 py-4">Status</th>
- <th className="px-8 py-4">Teacher</th>
+ <th className="px-8 py-4">{t('student')}</th>
+ <th className="px-8 py-4">{t('subjectTime')}</th>
+ <th className="px-8 py-4">{t('date')}</th>
+ <th className="px-8 py-4">{t('status')}</th>
+ <th className="px-8 py-4">{t('teacher')}</th>
  </tr>
  ) : (
  <tr>
- <th className="px-8 py-4">Student Name</th>
- <th className="px-8 py-4 text-center">Sessions</th>
- <th className="px-8 py-4">Date</th>
- <th className="px-8 py-4">Daily Summary</th>
+ <th className="px-8 py-4">{t('studentName')}</th>
+ <th className="px-8 py-4 text-center">{t('sessions')}</th>
+ <th className="px-8 py-4">{t('date')}</th>
+ <th className="px-8 py-4">{t('dailySummary')}</th>
  </tr>
  )}
  </thead>
@@ -216,7 +216,7 @@ const AdminAttendancePage = () => {
  <tr key={a.id} className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
  <td className="px-8 py-5">
  <span className="text-slate-700 dark:text-slate-200 block truncate max-w-[150px]">
- {students.find(s => s.id === a.studentId)?.name || 'Unknown'}
+ {students.find(s => s.id === a.studentId)?.name || t('unknown')}
  </span>
  </td>
  <td className="px-8 py-5">
@@ -232,11 +232,11 @@ const AdminAttendancePage = () => {
  a.status === 'Absent' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
  'bg-amber-50 text-amber-600 border border-amber-100'
  }`}>
- {a.status}
+ {t(a.status.toLowerCase())}
  </span>
  </td>
  <td className="px-8 py-5 text-label text-slate-400/80 truncate max-w-[120px]">
- {teachers.find(t => t.id === a.teacherId)?.name || 'Admin'}
+ {teachers.find(t => t.id === a.teacherId)?.name || t('admin')}
  </td>
  </tr>
  ))
@@ -245,7 +245,7 @@ const AdminAttendancePage = () => {
  <tr key={s.id} className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
  <td className="px-8 py-5">
  <span className="text-slate-700 dark:text-slate-200">
- {students.find(std => std.id === s.studentId)?.name || 'Unknown'}
+ {students.find(std => std.id === s.studentId)?.name || t('unknown')}
  </span>
  </td>
  <td className="px-8 py-5 text-center">
@@ -259,7 +259,7 @@ const AdminAttendancePage = () => {
  s.status === 'Late' ? 'bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-500/20' :
  'bg-sky-500 text-white border-sky-500 shadow-lg shadow-sky-500/20'
  }`}>
- {s.status}
+ {t(s.status.toLowerCase())}
  </span>
  </td>
  </tr>
@@ -270,7 +270,7 @@ const AdminAttendancePage = () => {
  <td colSpan="5" className="px-8 py-24 text-center">
  <div className="flex flex-col items-center opacity-20">
  <span className="material-symbols-outlined text-display mb-4">search_off</span>
- <p className="text-label">No records matching filters</p>
+ <p className="text-label">{t('noRecordsMatchingFilters')}</p>
  </div>
  </td>
  </tr>
@@ -288,8 +288,8 @@ const AdminAttendancePage = () => {
  <span className="material-symbols-outlined text-display">stars</span>
  </div>
  <div>
- <h4 className="text-label text-slate-800 dark:text-slate-200">Attendance Rankings</h4>
- <p className="text-label text-slate-400/80">Based on daily averages</p>
+ <h4 className="text-label text-slate-800 dark:text-slate-200">{t('attendanceRankings')}</h4>
+ <p className="text-label text-slate-400/80">{t('basedOnDailyAverages')}</p>
  </div>
  </div>
  
@@ -317,7 +317,7 @@ const AdminAttendancePage = () => {
  </div>
  </div>
  <span className={`text-label  ${s.rate > 90 ? 'text-emerald-500' : s.rate < 75 ? 'text-rose-500' : 'text-amber-500'}`}>
- {s.rate > 90 ? 'EXCELLENT' : s.rate < 75 ? 'POOR' : 'GOOD'}
+ {s.rate > 90 ? t('excellent') : s.rate < 75 ? t('poor') : t('good')}
  </span>
  </div>
  </div>

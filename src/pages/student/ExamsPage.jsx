@@ -2,10 +2,12 @@ import React, { useMemo } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
+import { useSettings } from '../../contexts/SettingsContext';
 
 const StudentExamsPage = () => {
   const { exams } = useData();
   const { currentUser } = useAppContext();
+  const { t } = useSettings();
 
   // Filter exams for this student
   const studentExams = useMemo(() => {
@@ -18,12 +20,12 @@ const StudentExamsPage = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    if (examDate < today) return 'Completed';
-    return 'Upcoming';
+    if (examDate < today) return 'completed';
+    return 'upcoming';
   };
 
   return (
-    <PageLayout role="student" title="Exam Schedule">
+    <PageLayout role="student" title={t('examSchedule')}>
       <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
         
         {/* Info Header */}
@@ -33,8 +35,8 @@ const StudentExamsPage = () => {
               <span className="material-symbols-outlined text-display">event_note</span>
             </div>
             <div>
-              <h1 className="text-display text-slate-900 dark:text-white">Academic Calendar</h1>
-              <p className="text-label text-slate-500/80 mt-1">Review your upcoming and completed exam dates. Results are available in the Results module.</p>
+              <h1 className="text-display text-slate-900 dark:text-white">{t('academicCalendar')}</h1>
+              <p className="text-label text-slate-500/80 mt-1">{t('academicCalendarDesc')}</p>
             </div>
           </div>
         </div>
@@ -45,10 +47,10 @@ const StudentExamsPage = () => {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-slate-100 dark:bg-slate-800/50 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
-                  <th className="px-8 py-5">Subject</th>
-                  <th className="px-8 py-5">Exam Type</th>
-                  <th className="px-8 py-5">Date</th>
-                  <th className="px-8 py-5 text-right">Status</th>
+                  <th className="px-8 py-5">{t('subject')}</th>
+                  <th className="px-8 py-5">{t('examType')}</th>
+                  <th className="px-8 py-5">{t('date')}</th>
+                  <th className="px-8 py-5 text-right">{t('status')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -57,7 +59,7 @@ const StudentExamsPage = () => {
                     <td colSpan="4" className="py-20 text-center">
                       <div className="flex flex-col items-center opacity-20">
                         <span className="material-symbols-outlined text-display mb-4">calendar_today</span>
-                        <p className="text-label">No exams scheduled at this time</p>
+                        <p className="text-label">{t('noExamsScheduled')}</p>
                       </div>
                     </td>
                   </tr>
@@ -80,11 +82,11 @@ const StudentExamsPage = () => {
                         </td>
                         <td className="px-8 py-6 text-right">
                           <span className={`px-4 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider border ${
-                            status === 'Upcoming' 
+                            status === 'upcoming' 
                               ? 'bg-blue-50 text-primary border-blue-100 dark:bg-primary/10 dark:border-primary/20' 
                               : 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:border-slate-700'
                           }`}>
-                            {status}
+                            {t(status)}
                           </span>
                         </td>
                       </tr>
@@ -102,10 +104,9 @@ const StudentExamsPage = () => {
             <span className="material-symbols-outlined">verified_user</span>
           </div>
           <div>
-            <h5 className="text-indigo-900 dark:text-indigo-100 text-label font-bold uppercase mb-1">Schedule Policy</h5>
+            <h5 className="text-indigo-900 dark:text-indigo-100 text-label font-bold uppercase mb-1">{t('schedulePolicy')}</h5>
             <p className="text-label text-indigo-800/70 dark:text-indigo-200/70 leading-relaxed max-w-2xl">
-              Exam dates are subject to change by the administration. Please ensure you arrive at the designated location at least 15 minutes before the start time. 
-              Results will only be displayed in the <strong>Results</strong> module after official release.
+              {t('schedulePolicyDesc')}
             </p>
           </div>
         </div>

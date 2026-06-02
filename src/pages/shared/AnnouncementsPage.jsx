@@ -23,19 +23,19 @@ const AnnouncementsPage = ({ role }) => {
   });
 
   const announcementFields = [
-    { name: 'title', label: 'Announcement Title', placeholder: 'Important: Schedule Change' },
-    { name: 'priority', label: 'Priority', type: 'select', options: [
-      { value: 'normal', label: 'Normal' },
-      { value: 'important', label: 'Important' },
-      { value: 'urgent', label: 'Urgent' }
+    { name: 'title', label: t('announcementTitle'), placeholder: t('announcementPlaceholder') },
+    { name: 'priority', label: t('priority'), type: 'select', options: [
+      { value: 'normal', label: t('normal') },
+      { value: 'important', label: t('important') },
+      { value: 'urgent', label: t('urgent') }
     ]},
-    { name: 'audience', label: 'Audience', type: 'select', options: [
-      { value: 'all', label: 'All' },
-      { value: 'teachers', label: 'Teachers Only' },
-      { value: 'students', label: 'Students Only' },
-      ...classes.map(c => ({ value: `class_${c.id}`, label: `Class: ${c.name}` }))
+    { name: 'audience', label: t('audience'), type: 'select', options: [
+      { value: 'all', label: t('all') },
+      { value: 'teachers', label: t('teachersOnly') },
+      { value: 'students', label: t('studentsOnly') },
+      ...classes.map(c => ({ value: `class_${c.id}`, label: `${t('class')}: ${c.name}` }))
     ]},
-    { name: 'content', label: 'Content', type: 'textarea', placeholder: 'Write details here...' }
+    { name: 'content', label: t('content'), type: 'textarea', placeholder: t('writeDetailsHere') }
   ];
 
   const handleSave = () => {
@@ -71,7 +71,7 @@ const AnnouncementsPage = ({ role }) => {
             className="btn-primary"
           >
             <span className="btn-icon">campaign</span>
-            New Announcement
+            {t('newAnnouncement')}
           </button>
         )}
       </div>
@@ -80,7 +80,7 @@ const AnnouncementsPage = ({ role }) => {
         {filteredAnnouncements.length === 0 ? (
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 text-center border border-slate-100 dark:border-slate-800">
             <span className="material-symbols-outlined text-display text-slate-200 mb-4">notifications_off</span>
-            <p className="text-slate-500/80">No announcements found.</p>
+            <p className="text-slate-500/80">{t('noAnnouncementsFound')}</p>
           </div>
         ) : (
           filteredAnnouncements.sort((a,b) => new Date(b.date) - new Date(a.date)).map(ann => (
@@ -99,7 +99,7 @@ const AnnouncementsPage = ({ role }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`px-3 py-1 rounded-full text-label  bg-slate-100 dark:bg-slate-800 text-slate-500/80 border border-slate-200 dark:border-slate-700`}>
-                    To: {(ann.audience || 'all').replace('_', ' ')}
+                    {t('to')} {ann.audience === 'all' || !ann.audience ? t('all') : ann.audience === 'teachers' ? t('teachers') : ann.audience === 'students' ? t('students') : ann.audience.replace('class_', `${t('class')} `)}
                   </span>
                   {role === 'admin' && (
                     <button onClick={() => deleteAnnouncement(ann.id)} className="p-2 text-slate-400/80 hover:text-rose-500 transition-colors">
@@ -117,7 +117,7 @@ const AnnouncementsPage = ({ role }) => {
                 <div className="mt-4 flex items-center gap-2 p-3 bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 w-fit">
                   <span className="material-symbols-outlined text-display text-primary">attachment</span>
                   <span className="text-label text-slate-700 dark:text-slate-300">{ann.attachment}</span>
-                  <button className="text-label text-primary ml-4 hover:underline">Download</button>
+                  <button className="text-label text-primary ml-4 hover:underline">{t('download')}</button>
                 </div>
               )}
             </div>
@@ -125,7 +125,7 @@ const AnnouncementsPage = ({ role }) => {
         )}
       </div>
 
-      <Modal isOpen={modalOpen} onClose={() => { setModalOpen(false); setFormData({}); }} title="Create Announcement" onSave={handleSave}>
+      <Modal isOpen={modalOpen} onClose={() => { setModalOpen(false); setFormData({}); }} title={t('createAnnouncement')} onSave={handleSave}>
         <DynamicForm fields={announcementFields} onChange={setFormData} initialData={formData} />
       </Modal>
     </PageLayout>

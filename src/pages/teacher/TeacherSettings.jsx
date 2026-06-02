@@ -26,7 +26,7 @@ const TeacherSettings = () => {
  const handleProfileUpdate = (e) => {
  e.preventDefault();
  updateTeacher(currentUser.id, profileData);
- addNotification('Profile updated successfully!', 'success');
+ addNotification(t('profileUpdatedSuccess'), 'success');
  };
 
  const handlePasswordChange = (e) => {
@@ -48,14 +48,14 @@ const TeacherSettings = () => {
  };
 
  const tabs = [
- { id: 'profile', label: 'Profile', icon: 'person' },
- { id: 'security', label: 'Security', icon: 'lock' },
- { id: 'appearance', label: 'Appearance', icon: 'palette' },
- { id: 'notifications', label: 'Notifications', icon: 'notifications' }
+ { id: 'profile', label: t('profile'), icon: 'person' },
+ { id: 'security', label: t('security'), icon: 'lock' },
+ { id: 'appearance', label: t('appearance'), icon: 'palette' },
+ { id: 'notifications', label: t('notifications'), icon: 'notifications' }
  ];
 
  return (
- <PageLayout role="teacher" title="Settings">
+ <PageLayout role="teacher" title={t('settings')}>
   <div className="max-w-4xl mx-auto flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
   {/* Settings Sidebar - Top on Mobile */}
   <div className="w-full lg:w-64 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 shrink-0 scrollbar-hide">
@@ -88,13 +88,13 @@ const TeacherSettings = () => {
  </div>
  <div>
  <h2 className="text-section text-slate-900 dark:text-white">{currentUser?.name}</h2>
- <p className="text-label text-slate-500/80 dark:text-slate-400/80">Teacher ID: {currentUser?.id}</p>
+ <p className="text-label text-slate-500/80 dark:text-slate-400/80">{t('teacherIdLabel')} {currentUser?.id}</p>
  </div>
  </div>
 
  <div className="grid grid-cols-1 gap-6">
  <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Full Name</label>
+ <label className="text-label text-slate-500/80">{t('fullName')}</label>
  <input 
  type="text" 
  value={profileData.name}
@@ -103,7 +103,7 @@ const TeacherSettings = () => {
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Email Address</label>
+ <label className="text-label text-slate-500/80">{t('emailAddress')}</label>
  <input 
  type="email" 
  value={profileData.email}
@@ -112,7 +112,7 @@ const TeacherSettings = () => {
  />
  </div>
  <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Phone Number</label>
+ <label className="text-label text-slate-500/80">{t('phoneNumber')}</label>
  <input 
  type="text" 
  value={profileData.phone}
@@ -122,7 +122,7 @@ const TeacherSettings = () => {
  </div>
  </div>
  <div className="pt-4">
- <button type="submit" className="bg-primary text-white px-8 py-3 rounded-xl text-label shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all">Save Profile Changes</button>
+ <button type="submit" className="bg-primary text-white px-8 py-3 rounded-xl text-label shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all">{t('saveProfileChanges')}</button>
  </div>
  </form>
  )}
@@ -130,13 +130,13 @@ const TeacherSettings = () => {
   {/* SECURITY TAB */}
   {activeTab === 'security' && (
     <div className="space-y-6">
-      <h3 className="text-slate-800 dark:text-white mb-4">Security & Password</h3>
+      <h3 className="text-slate-800 dark:text-white mb-4">{t('securityAndPassword')}</h3>
       <div className="p-6 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm rounded-2xl border border-slate-200 dark:border-slate-700/50 flex gap-4">
         <span className="material-symbols-outlined text-[24px] text-primary shrink-0">info</span>
         <div>
-          <p className="font-bold text-slate-900 dark:text-white mb-1">Password Management</p>
+          <p className="font-bold text-slate-900 dark:text-white mb-1">{t('passwordManagement')}</p>
           <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            You cannot change your password here. Your account credentials must be managed and updated by the administrator. Please contact your system administrator to request any changes.
+            {t('passwordManagementDesc')}
           </p>
         </div>
       </div>
@@ -147,7 +147,7 @@ const TeacherSettings = () => {
  {activeTab === 'appearance' && (
  <div className="space-y-8">
  <div className="space-y-4">
- <h3 className="text-slate-800 dark:text-white text-label">System Language</h3>
+ <h3 className="text-slate-800 dark:text-white text-label">{t('systemLanguage')}</h3>
  <div className="grid grid-cols-3 gap-3">
  {['en', 'ar', 'so'].map(lang => (
  <button
@@ -166,21 +166,21 @@ const TeacherSettings = () => {
  </div>
 
  <div className="space-y-4">
- <h3 className="text-slate-800 dark:text-white text-label">Theme Mode</h3>
+ <h3 className="text-slate-800 dark:text-white text-label">{t('themeMode')}</h3>
  <div className="flex gap-4">
  <button 
  onClick={() => setTheme('light')}
  className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl border-2 transition-all ${theme === 'light' ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}
  >
  <span className="material-symbols-outlined">light_mode</span>
- <span className="text-label">Light Mode</span>
+ <span className="text-label">{t('lightMode')}</span>
  </button>
  <button 
  onClick={() => setTheme('dark')}
  className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl border-2 transition-all ${theme === 'dark' ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}
  >
  <span className="material-symbols-outlined">dark_mode</span>
- <span className="text-label">Dark Mode</span>
+ <span className="text-label">{t('darkMode')}</span>
  </button>
  </div>
  </div>
@@ -190,7 +190,7 @@ const TeacherSettings = () => {
  {/* NOTIFICATIONS TAB */}
  {activeTab === 'notifications' && (
  <div className="space-y-6">
- <h3 className="text-slate-800 dark:text-white mb-4">Notification Preferences</h3>
+ <h3 className="text-slate-800 dark:text-white mb-4">{t('notificationPreferences')}</h3>
  <div className="space-y-3">
  {Object.entries(notificationSettings.types).map(([key, value]) => (
  <label key={key} className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
@@ -201,8 +201,8 @@ const TeacherSettings = () => {
  </span>
  </div>
  <div>
- <p className="text-label text-slate-700 dark:text-slate-200 capitalize">{key}</p>
- <p className="text-label text-slate-400/80">Receive alerts for new {key}</p>
+ <p className="text-label text-slate-700 dark:text-slate-200 capitalize">{t(key)}</p>
+ <p className="text-label text-slate-400/80">{t('receiveAlertsForNew').replace('{type}', t(key))}</p>
  </div>
  </div>
  <div 

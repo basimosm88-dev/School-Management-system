@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
+import { useSettings } from '../../contexts/SettingsContext';
 
 const getExamMaxScore = (examType, academicYear) => {
   if (academicYear === '2025-2026') {
@@ -19,6 +20,7 @@ const getExamMaxScore = (examType, academicYear) => {
 const TeacherExamsPage = () => {
   const { classes, students, exams, saveExamResults, updateExamStatus } = useData();
   const { currentUser } = useAppContext();
+  const { t } = useSettings();
 
   const [selectedExamType, setSelectedExamType] = useState('Midterm');
   const [selectedClassId, setSelectedClassId] = useState('');
@@ -115,27 +117,33 @@ const TeacherExamsPage = () => {
     }));
 
     saveExamResults(selectedExamType, selectedClassId, selectedSubjectId, currentUser.id, results, status);
-    setSuccessMessage(status === 'SUBMITTED' ? 'Exams submitted for approval!' : 'Draft saved successfully.');
+    setSuccessMessage(status === 'SUBMITTED' ? t('examsSubmittedForApproval') : t('draftSavedSuccess'));
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
   const handleRelease = () => {
     if (!selectedExamType || !selectedClassId || !selectedSubjectId) return;
     updateExamStatus(selectedExamType, selectedClassId, selectedSubjectId, 'PUBLISHED');
-    setSuccessMessage('Exams released to students successfully!');
+    setSuccessMessage(t('examsReleasedSuccess'));
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
   const isLocked = currentExamStatus === 'SUBMITTED' || currentExamStatus === 'APPROVED' || currentExamStatus === 'PUBLISHED';
 
+  const getTranslationKey = (type) => {
+    if (type === 'Before Midterm') return 'beforeMidterm';
+    if (type === 'After Midterm') return 'afterMidterm';
+    return type.toLowerCase();
+  };
+
   return (
-    <PageLayout role="teacher" title="Academic Assessment">
+    <PageLayout role="teacher" title={t('exams')}>
       <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         
         {/* PAGE HEADER */}
         <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
-          <h2 className="text-heading text-slate-900 dark:text-white">Exams</h2>
-          <p className="text-label text-slate-500/80 mt-1">Submit and manage examination results for your students across assessment cycles.</p>
+          <h2 className="text-heading text-slate-900 dark:text-white">{t('exams')}</h2>
+          <p className="text-label text-slate-500/80 mt-1">{t('examsSubtitle')}</p>
         </div>
         
         {/* HEADER CONTROL BAR */}
@@ -144,17 +152,17 @@ const TeacherExamsPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end relative z-10">
             <div>
-              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">Assessment Cycle</label>
+              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">{t('assessmentCycle')}</label>
               <select 
                 value={selectedExamType}
                 onChange={(e) => setSelectedExamType(e.target.value)}
                 className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
               >
-                {availableExamTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                {availableExamTypes.map(tVal => <option key={tVal} value={tVal}>{t(getTranslationKey(tVal))}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">Class Section</label>
+              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">{t('class')}</label>
               <select 
                 value={selectedClassId}
                 onChange={(e) => {
@@ -163,21 +171,21 @@ const TeacherExamsPage = () => {
                 }}
                 className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
               >
-                <option value="">Choose class...</option>
+                <option value="">{t('chooseClass')}</option>
                 {assignedClasses.map(cls => (
                   <option key={cls.id} value={cls.id}>{cls.name}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">Academic Subject</label>
+              <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2 block px-1">{t('academicSubject')}</label>
               <select 
                 value={selectedSubjectId}
                 onChange={(e) => setSelectedSubjectId(e.target.value)}
                 disabled={!selectedClassId}
                 className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-label focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
               >
-                <option value="">{selectedClassId ? 'Choose subject...' : 'Select class first'}</option>
+                <option value="">{selectedClassId ? t('chooseSubject') : t('selectClassFirst')}</option>
                 {classSubjects.map(s => (
                   <option key={s.name} value={s.id || s.name}>{s.name}</option>
                 ))}
@@ -187,7 +195,7 @@ const TeacherExamsPage = () => {
 
           <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-slate-100 dark:border-slate-800 pt-6 relative z-10">
             <div className="flex items-center gap-3">
-              <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Workflow State:</span>
+              <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{t('workflowState')}</span>
               <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border-2 transition-all ${
                 currentExamStatus === 'PUBLISHED' ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/20' :
                 currentExamStatus === 'APPROVED' ? 'bg-sky-500 text-white border-sky-500 shadow-lg shadow-sky-500/20' :
@@ -195,12 +203,12 @@ const TeacherExamsPage = () => {
                 currentExamStatus === 'REJECTED' ? 'bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20' :
                 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700'
               }`}>
-                {currentExamStatus || 'DRAFT'}
+                {t(currentExamStatus?.toLowerCase() || 'draft')}
               </span>
               {isLocked && (
                 <div className="flex items-center gap-1.5 text-rose-500">
                   <span className="material-symbols-outlined text-[16px]">lock</span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Read Only</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest">{t('readOnly')}</span>
                 </div>
               )}
             </div>
@@ -212,7 +220,7 @@ const TeacherExamsPage = () => {
                   className="flex-1 sm:flex-none px-8 py-3 bg-emerald-600 text-white text-[11px] font-bold uppercase tracking-wider rounded-xl shadow-xl shadow-emerald-600/20 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined text-section">publish</span>
-                  Release to Students
+                  {t('releaseToStudents')}
                 </button>
               )}
               <button 
@@ -220,7 +228,7 @@ const TeacherExamsPage = () => {
                 disabled={!selectedSubjectId || isLocked}
                 className="flex-1 sm:flex-none px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all disabled:opacity-30"
               >
-                Save as Draft
+                {t('saveAsDraft')}
               </button>
               <button 
                 onClick={() => handleSubmit('SUBMITTED')}
@@ -228,7 +236,7 @@ const TeacherExamsPage = () => {
                 className="flex-1 sm:flex-none px-8 py-3 bg-primary text-white text-[11px] font-bold uppercase tracking-wider rounded-xl shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all disabled:opacity-30 flex items-center justify-center gap-2"
               >
                 <span className="material-symbols-outlined text-section">send</span>
-                Submit for Approval
+                {t('submitForApproval')}
               </button>
             </div>
           </div>
@@ -248,17 +256,17 @@ const TeacherExamsPage = () => {
               <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800/50 rounded-3xl flex items-center justify-center mb-6 border-2 border-dashed border-slate-200 dark:border-slate-700">
                 <span className="material-symbols-outlined text-[40px] opacity-20">edit_document</span>
               </div>
-              <h3 className="text-section font-bold uppercase tracking-widest opacity-40">Ready to Grade</h3>
-              <p className="text-label opacity-40 mt-1">Configure assessment filters above to load the student list.</p>
+              <h3 className="text-section font-bold uppercase tracking-widest opacity-40">{t('readyToGrade')}</h3>
+              <p className="text-label opacity-40 mt-1">{t('gradingInstructions')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-label">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-slate-800/30 text-slate-400 uppercase text-[10px] font-black tracking-widest border-b border-slate-100 dark:border-slate-800">
-                    <th className="px-8 py-5">Student Information</th>
-                    <th className="px-8 py-5 text-center w-40">Academic Mark</th>
-                    <th className="px-8 py-5">Performance Remarks</th>
+                    <th className="px-8 py-5">{t('studentInformation')}</th>
+                    <th className="px-8 py-5 text-center w-40">{t('academicMark')}</th>
+                    <th className="px-8 py-5">{t('performanceRemarks')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
@@ -289,7 +297,7 @@ const TeacherExamsPage = () => {
                           />
                           {!isLocked && (
                             <div className="absolute -top-2 left-1/2 -translate-x-1/2 opacity-0 group-hover/input:opacity-100 transition-all pointer-events-none">
-                              <span className="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-bold rounded uppercase">0-{getExamMaxScore(selectedExamType, selectedClass?.academicYear || '2025-2026')} Range</span>
+                              <span className="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-bold rounded uppercase">0-{getExamMaxScore(selectedExamType, selectedClass?.academicYear || '2025-2026')} {t('range')}</span>
                             </div>
                           )}
                         </div>
@@ -301,7 +309,7 @@ const TeacherExamsPage = () => {
                           onChange={(e) => handleRemarkChange(student.id, e.target.value)}
                           disabled={isLocked}
                           className={`w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border-2 rounded-xl text-label text-slate-600 dark:text-slate-300 focus:ring-4 focus:ring-primary/10 transition-all disabled:opacity-50 ${isLocked ? 'border-transparent' : 'border-slate-100 dark:border-slate-700 hover:border-primary/30'}`}
-                          placeholder="Provide qualitative feedback..."
+                          placeholder={t('feedbackPlaceholder')}
                         />
                       </td>
                     </tr>

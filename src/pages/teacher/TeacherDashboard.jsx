@@ -84,34 +84,34 @@ const TeacherDashboard = () => {
       {/* Welcome Section (Synced with Admin) */}
       <div className="mb-8 p-6 bg-gradient-to-r from-primary to-indigo-600 rounded-2xl text-white shadow-lg shadow-primary/20">
         <h1 className="text-display mb-1 text-on-primary">{t(greetingKey)}, {currentUser?.name || 'Teacher'}!</h1>
-        <p className="text-on-primary/80 text-label font-bold uppercase tracking-wider">Here is your professional summary and schedule for today.</p>
+        <p className="text-on-primary/80 text-label font-bold uppercase tracking-wider">{t('teacherWelcomeSubtitle')}</p>
       </div>
 
       {/* KPI Cards (Synced with Admin Colors/Icons) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard 
-          title="My Classes" 
+          title={t('myClasses')} 
           value={myClasses.length} 
           icon="class" 
           cardColorClass="bg-sky-50 dark:bg-sky-900/10 border-sky-100 dark:border-sky-800/50"
           iconColorClass="text-sky-600 bg-sky-100 dark:bg-sky-900/30" 
         />
         <StatCard 
-          title="My Students" 
+          title={t('myStudents')} 
           value={myStudents.length} 
           icon="person" 
           cardColorClass="bg-indigo-50 dark:bg-indigo-900/10 border-indigo-100 dark:border-indigo-800/50"
           iconColorClass="text-indigo-600 bg-indigo-100 dark:bg-indigo-900/30" 
         />
         <StatCard 
-          title="Attendance Rate" 
+          title={t('attendanceRate')} 
           value={myAttendanceRate} 
           icon="event_available" 
           cardColorClass="bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-800/50"
           iconColorClass="text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30" 
         />
         <StatCard 
-          title="Subjects Count" 
+          title={t('subjectsCount')} 
           value={mySubjectsCount} 
           icon="auto_stories" 
           cardColorClass="bg-amber-50 dark:bg-amber-900/10 border-amber-100 dark:border-amber-800/50"
@@ -124,17 +124,17 @@ const TeacherDashboard = () => {
         <div className="lg:col-span-8 flex flex-col gap-8">
           {/* Today's Schedule */}
           <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
-            <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">Today's Schedule</h2>
+            <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">{t('todaysSchedule')}</h2>
             
             {todayClasses.length === 0 ? (
-              <EmptyState icon="event_busy" message="No Classes Today" description="You have no sessions scheduled for this day." />
+              <EmptyState icon="event_busy" message={t('noClassesToday')} description={t('noSessionsScheduled')} />
             ) : (
               <div className="space-y-4">
                 {todayClasses.map((session, idx) => (
                   <div key={idx} className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border border-slate-100 dark:border-slate-800">
                     <div className="w-12 h-12 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-primary flex flex-col items-center justify-center shrink-0">
                       <span className="text-[10px] font-black leading-none">{session.startTime.split(':')[0]}</span>
-                      <span className="text-[10px] font-bold opacity-50 uppercase tracking-tighter">Hrs</span>
+                      <span className="text-[10px] font-bold opacity-50 uppercase tracking-tighter">{t('hrs')}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
@@ -144,7 +144,7 @@ const TeacherDashboard = () => {
                         </span>
                       </div>
                       <p className="text-label text-on-surface-variant mt-1">
-                        Session: {session.startTime} - {session.endTime}
+                        {t('session')}: {session.startTime} - {session.endTime}
                       </p>
                     </div>
                   </div>
@@ -155,10 +155,10 @@ const TeacherDashboard = () => {
 
           {/* Recent Notices */}
           <section className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 p-6 shadow-sm transition-colors">
-            <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">Recent Notices</h2>
+            <h2 className="text-section text-slate-900 dark:text-slate-100 mb-6">{t('schoolNotices')}</h2>
             <div className="space-y-4">
               {announcements.filter(a => a.audience === 'all' || a.audience === 'teachers').length === 0 ? (
-                <EmptyState icon="campaign" message="No Announcements" description="No active announcements at this time." />
+                <EmptyState icon="campaign" message={t('noAnnouncementsFound')} description={t('noAnnouncementsDescription')} />
               ) : (
                 announcements.filter(a => a.audience === 'all' || a.audience === 'teachers').slice(0, 3).map((ann, idx) => (
                   <div key={idx} className={`relative pl-4 border-l-2 ${ann.priority === 'urgent' ? 'border-rose-500' : 'border-primary/30'}`}>
@@ -173,7 +173,7 @@ const TeacherDashboard = () => {
           {/* Upcoming Exams */}
           {upcomingExams.length > 0 && (
             <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
-              <h2 className="text-label font-bold text-slate-400 uppercase tracking-widest mb-6">Upcoming Assessment Sessions</h2>
+              <h2 className="text-label font-bold text-slate-400 uppercase tracking-widest mb-6">{t('upcomingAssessmentSessions')}</h2>
               <div className="space-y-3">
                 {upcomingExams.slice(0, 3).map((exam, idx) => (
                   <div key={idx} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
@@ -184,12 +184,12 @@ const TeacherDashboard = () => {
                       <div>
                         <h4 className="text-label font-bold text-slate-900 dark:text-white">{exam.subjectName} - {exam.examType}</h4>
                         <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
-                          Class: {classes.find(c => c.id === exam.classId)?.name} | {exam.date}
+                          {t('class')}: {classes.find(c => c.id === exam.classId)?.name} | {exam.date}
                         </p>
                       </div>
                     </div>
                     <span className="px-3 py-1 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-lg text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                      In {Math.ceil((new Date(exam.date) - new Date()) / (1000 * 60 * 60 * 24))} Days
+                      {t('inDays').replace('{days}', Math.ceil((new Date(exam.date) - new Date()) / (1000 * 60 * 60 * 24)))}
                     </span>
                   </div>
                 ))}
@@ -203,7 +203,7 @@ const TeacherDashboard = () => {
           {/* CALENDAR (Synced with Admin) */}
           <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-sm transition-all h-[420px] flex flex-col">
             <div className="flex justify-between items-center mb-6 shrink-0">
-              <h2 className="text-headline text-on-surface">Calendar</h2>
+              <h2 className="text-headline text-on-surface">{t('calendar')}</h2>
               <div className="bg-primary/5 dark:bg-primary/10 text-primary px-3 py-1.5 rounded-xl text-label font-bold border border-primary/10">
                 {monthName} {currentYear}
               </div>
@@ -245,8 +245,8 @@ const TeacherDashboard = () => {
             
             <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 shrink-0">
               <div className="flex items-center justify-between text-label">
-                <span className="text-on-surface-variant">Academic Events</span>
-                <button className="text-primary font-bold hover:underline">View All</button>
+                <span className="text-on-surface-variant">{t('upcomingEvents')}</span>
+                <button className="text-primary font-bold hover:underline">{t('viewAll')}</button>
               </div>
             </div>
           </section>

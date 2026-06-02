@@ -31,10 +31,18 @@ const getGradePercentage = (score, examType, academicYear) => {
   return numScore;
 };
 
+const getExamTypeTranslation = (type, t) => {
+  if (type === 'Before Midterm') return t('beforeMidterm');
+  if (type === 'Midterm') return t('midterm');
+  if (type === 'After Midterm') return t('afterMidterm');
+  if (type === 'Final') return t('final');
+  return type;
+};
+
 const ClassExamReportPrint = () => {
  const { classId, examType } = useParams();
  const { students, classes, exams } = useData();
- const { schoolSettings, pdfSettings } = useSettings();
+ const { schoolSettings, pdfSettings, t, language } = useSettings();
 
  const currentClass = classes.find(c => String(c.id) === String(classId));
  const classStudents = students.filter(s => String(s.classId) === String(classId));
@@ -47,7 +55,7 @@ const ClassExamReportPrint = () => {
  }, []);
 
  if (!currentClass || classStudents.length === 0) {
- return <div className="p-10 text-center font-serif text-rose-500">No data found for this class.</div>;
+ return <div className="p-10 text-center font-serif text-rose-500">{t('noDataFound')}</div>;
  }
 
  // Get all unique subjects for this class and exam type (allow approved or published results for printing)
@@ -60,7 +68,7 @@ const ClassExamReportPrint = () => {
  const uniqueSubjects = [...new Set(classExams.map(e => e.subjectName))].sort();
 
  return (
- <div className="bg-white min-h-screen font-serif text-slate-900">
+ <div className="bg-white min-h-screen font-serif text-slate-900" dir={language === 'ar' ? 'rtl' : 'ltr'}>
  <style>
  {`
  @media print {
@@ -81,7 +89,7 @@ const ClassExamReportPrint = () => {
  className="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl text-label hover:-translate-y-1 transition-transform flex items-center gap-2"
  >
  <span className="material-symbols-outlined text-section">print</span>
- Print Class Report
+ {t('printClassResults')}
  </button>
  </div>
 
@@ -89,7 +97,7 @@ const ClassExamReportPrint = () => {
  
  {/* WATERMARK */}
  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none -rotate-12 whitespace-nowrap z-0">
- <h1 className="text-display">{schoolSettings.name} Official Document</h1>
+ <h1 className="text-display">{schoolSettings.name} {t('officialDocument')}</h1>
  </div>
 
  {/* HEADER */}
@@ -109,16 +117,16 @@ const ClassExamReportPrint = () => {
  <p className="text-label text-slate-500/80 mt-1">{schoolSettings.address}</p>
  </div>
  </div>
- <div className="text-right">
- <h3 className="text-section">{examType} Summary</h3>
- <p className="text-label text-slate-500/80 mt-1">Class: {currentClass.name}</p>
- <p className="text-label text-slate-500/80">Date: {new Date().toLocaleDateString()}</p>
+ <div className="text-end">
+ <h3 className="text-section">{getExamTypeTranslation(examType, t)} {t('summary')}</h3>
+ <p className="text-label text-slate-500/80 mt-1">{t('class')}: {currentClass.name}</p>
+ <p className="text-label text-slate-500/80">{t('date')}: {new Date().toLocaleDateString(language)}</p>
  </div>
  </div>
 
  <div className="mb-10 text-center relative z-10">
  <h1 className="text-display text-slate-900 border-y-2 border-slate-900 py-4">
- Master Grade Sheet — {currentClass.name}
+ {t('masterGradeSheet')} — {currentClass.name}
  </h1>
  </div>
 
@@ -127,13 +135,13 @@ const ClassExamReportPrint = () => {
  <table className="w-full border-collapse border-2 border-slate-900">
  <thead>
  <tr className="bg-slate-900 text-white">
- <th className="border border-slate-700 px-4 py-4 text-label text-left sticky left-0 bg-slate-900 z-20">Student Name</th>
+ <th className="border border-slate-700 px-4 py-4 text-label text-start sticky left-0 bg-slate-900 z-20">{t('studentName')}</th>
  {uniqueSubjects.map(sub => (
  <th key={sub} className="border border-slate-700 px-2 py-4 text-label text-center min-w-[80px]">
  {sub}
  </th>
  ))}
- <th className="border border-slate-700 px-4 py-4 text-label text-center bg-slate-800">Total / Avg.</th>
+ <th className="border border-slate-700 px-4 py-4 text-label text-center bg-slate-800">{t('totalAvg')}</th>
  </tr>
  </thead>
  <tbody>
@@ -152,9 +160,7 @@ const ClassExamReportPrint = () => {
  const exam = studentExams.find(e => e.subjectName === sub);
  const score = exam ? exam.grade : null;
  if (score !== null) {
- rawSum += score;
- totalPercentage += getGradePercentage(score, examType, currentClass.academicYear);
- count++;
+ sumGradedScore(score);
  }
  return (
  <td key={sub} className="border border-slate-300 px-2 py-4 text-center text-label">
@@ -167,6 +173,12 @@ const ClassExamReportPrint = () => {
  </td>
  </tr>
  );
+
+ function sumGradedScore(score) {
+   rawSum += score;
+   totalPercentage += getGradePercentage(score, examType, currentClass.academicYear);
+   count++;
+ }
  })}
  </tbody>
  </table>
@@ -175,9 +187,9 @@ const ClassExamReportPrint = () => {
   {/* FOOTER / SIGNATURES */}
   <div className="mt-auto pt-4 text-center relative z-10">
     <div className="signature-area w-64 mx-auto border-t-2 border-slate-900 pt-2 mb-2">
-      <p className="text-[10px] font-black uppercase tracking-widest">Manager's Signature</p>
+      <p className="text-[10px] font-black uppercase tracking-widest">{t('managerSignature')}</p>
     </div>
-    <p className="text-[9px] text-slate-400 italic">Official School Seal Required. This document remains valid for administrative purposes in the absence of a physical seal.</p>
+    <p className="text-[9px] text-slate-400 italic">{t('officialSealNotice')}</p>
   </div>
 
  <div className="absolute bottom-4 left-0 right-0 text-center">
@@ -189,3 +201,4 @@ const ClassExamReportPrint = () => {
 };
 
 export default ClassExamReportPrint;
+

@@ -36,7 +36,7 @@ const AdminExamsPage = () => {
   const fileInputRef = useRef(null);
 
   const downloadTemplate = () => {
-    if (!importClassId) return alert("Please select a class first.");
+    if (!importClassId) return alert(t('selectClassFirst'));
     const selectedClass = classes.find(c => String(c.id) === String(importClassId));
     if (!selectedClass) return;
 
@@ -44,24 +44,24 @@ const AdminExamsPage = () => {
     const subjectsList = selectedClass.subjects || [];
 
     const templateData = classStudents.map(student => {
-      const row = { "Student Name": student.name };
+      const row = { [t('studentName')]: student.name };
       subjectsList.forEach(sub => {
         row[sub.name] = "";
       });
-      row["Total"] = "";
-      row["Average"] = "";
-      row["Status"] = "";
+      row[t('total')] = "";
+      row[t('average')] = "";
+      row[t('status')] = "";
       return row;
     });
 
     if (templateData.length === 0) {
-      const row = { "Student Name": "Ahmed Ali Hassan" };
+      const row = { [t('studentName')]: "Ahmed Ali Hassan" };
       subjectsList.forEach(sub => {
         row[sub.name] = "";
       });
-      row["Total"] = "";
-      row["Average"] = "";
-      row["Status"] = "";
+      row[t('total')] = "";
+      row[t('average')] = "";
+      row[t('status')] = "";
       templateData.push(row);
     }
 
@@ -106,9 +106,13 @@ const AdminExamsPage = () => {
           });
         }
 
-        const studentNameVal = (normalized["studentname"] || normalized["name"])?.toString().trim();
+        const studentNameVal = (
+          normalized["studentname"] || 
+          normalized["name"] || 
+          normalized[t('studentName').toLowerCase().replace(/[\s_-]+/g, '')]
+        )?.toString().trim();
         if (!studentNameVal) {
-          errors.push({ rowNumber, error: "Missing Student Name column or student name is empty." });
+          errors.push({ rowNumber, error: t('studentName') + " column is missing or empty." });
           return;
         }
 
@@ -156,7 +160,7 @@ const AdminExamsPage = () => {
         }
 
         if (!student) {
-          errors.push({ rowNumber, error: `Student "${studentNameVal}" not found in class "${selectedClass?.name}".` });
+          errors.push({ rowNumber, error: `${t('student')} "${studentNameVal}" not found in class "${selectedClass?.name}".` });
           return;
         }
 
@@ -208,11 +212,11 @@ const AdminExamsPage = () => {
 
         // Compare with sheet columns
         // 1. Compare Total
-        const sheetTotalVal = normalized["total"];
+        const sheetTotalVal = normalized["total"] || normalized[t('total').toLowerCase().replace(/[\s_-]+/g, '')];
         if (sheetTotalVal !== undefined && sheetTotalVal !== null && sheetTotalVal.toString().trim() !== '') {
           const sheetTotal = parseFloat(sheetTotalVal);
           if (!isNaN(sheetTotal) && Math.abs(sheetTotal - sumCalculated) > 0.1) {
-            const excelKeys = Object.keys(row).filter(k => !["student name", "total", "average", "status"].includes(k.toLowerCase().trim()));
+            const excelKeys = Object.keys(row).filter(k => ![t('studentName').toLowerCase(), t('total').toLowerCase(), t('average').toLowerCase(), t('status').toLowerCase(), "student name", "total", "average", "status"].includes(k.toLowerCase().trim()));
             const expectedKeys = subjectsList.map(s => s.name);
             warnings.push({
               rowNumber,
@@ -223,7 +227,7 @@ const AdminExamsPage = () => {
         }
 
         // 2. Compare Average
-        const sheetAverageVal = normalized["average"];
+        const sheetAverageVal = normalized["average"] || normalized[t('average').toLowerCase().replace(/[\s_-]+/g, '')];
         if (sheetAverageVal !== undefined && sheetAverageVal !== null && sheetAverageVal.toString().trim() !== '') {
           const sheetAverageStr = sheetAverageVal.toString().replace('%', '').trim();
           const sheetAverage = parseFloat(sheetAverageStr);
@@ -244,7 +248,11 @@ const AdminExamsPage = () => {
         }
 
         // 3. Compare Status
-        const sheetStatusVal = (normalized["status"] || normalized["outcome"])?.toString().trim().toLowerCase();
+        const sheetStatusVal = (
+          normalized["status"] || 
+          normalized["outcome"] || 
+          normalized[t('status').toLowerCase().replace(/[\s_-]+/g, '')]
+        )?.toString().trim().toLowerCase();
         if (sheetStatusVal) {
           const isSheetSuccess = ["success", "pass", "promoted", "passed", "succeed"].includes(sheetStatusVal);
           const isCalculatedSuccess = statusCalculated === "Success";
@@ -309,7 +317,7 @@ const AdminExamsPage = () => {
       setImportFile(null);
     } catch (err) {
       console.error("Error saving imported grades:", err);
-      alert("Failed to save imported results. Please try again.");
+      alert(t('failedToSaveResults'));
     } finally {
       setIsImporting(false);
     }
@@ -413,7 +421,7 @@ const AdminExamsPage = () => {
 
   const handleScheduleRelease = (examType) => {
     const settings = examReleaseSettings[examType];
-    if (!settings.date || !settings.time) return alert("Please set date and time for " + examType);
+    if (!settings.date || !settings.time) return alert(t('pleaseSetDateTime') + examType);
     saveExamReleaseSchedule(examType, settings.date, settings.time, true);
   };
 
@@ -427,42 +435,47 @@ const AdminExamsPage = () => {
  </div>
 
  {/* TABS */}
- <div className="flex gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
- {['Review', 'Release', 'Settings', 'Import Results'].map(tab => (
- <button
- key={tab}
- onClick={() => setActiveTab(tab.toLowerCase())}
- className={`px-8 py-3 rounded-lg text-label   transition-all ${
- activeTab === tab.toLowerCase() 
- ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
- : 'text-slate-500/80 hover:text-slate-700 dark:text-slate-400/80 dark:hover:text-slate-200'
- }`}
- >
- {tab}
- </button>
- ))}
- </div>
+  <div className="flex gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
+    {[
+      { id: 'review', label: t('review') },
+      { id: 'release', label: t('release') },
+      { id: 'settings', label: t('settings') },
+      { id: 'import results', label: t('importResults') }
+    ].map(tab => (
+      <button
+        key={tab.id}
+        onClick={() => setActiveTab(tab.id)}
+        className={`px-8 py-3 rounded-lg text-label   transition-all ${
+          activeTab === tab.id 
+            ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
+            : 'text-slate-500/80 hover:text-slate-700 dark:text-slate-400/80 dark:hover:text-slate-200'
+        }`}
+      >
+        {tab.label}
+      </button>
+    ))}
+  </div>
 
  {/* REVIEW TAB */}
  {activeTab === 'review' && (
  <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm transition-colors min-h-[400px]">
  <div className="p-8 border-b border-slate-100 dark:border-slate-800">
- <h3 className="text-section text-slate-800 dark:text-slate-200">Pending Approvals</h3>
+ <h3 className="text-section text-slate-800 dark:text-slate-200">{t('pendingApprovals')}</h3>
  </div>
  {pendingSubmissions.length === 0 ? (
  <div className="flex flex-col items-center justify-center h-[400px] text-slate-400/80">
  <span className="material-symbols-outlined text-display mb-4 opacity-20">fact_check</span>
- <p className="text-label">No pending exam submissions</p>
+ <p className="text-label">{t('noPendingSubmissions')}</p>
  </div>
  ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-left text-label">
  <thead className="bg-slate-100/50 dark:bg-slate-800/50 text-slate-400/80 text-label border-b border-slate-100 dark:border-slate-800">
  <tr>
- <th className="px-8 py-5">Class & Subject</th>
- <th className="px-8 py-5">Exam Type</th>
- <th className="px-8 py-5">Submitted By</th>
- <th className="px-8 py-5 text-right">Actions</th>
+ <th className="px-8 py-5">{t('classSubject')}</th>
+ <th className="px-8 py-5">{t('examType')}</th>
+ <th className="px-8 py-5">{t('submittedBy')}</th>
+ <th className="px-8 py-5 text-right">{t('actions')}</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -481,16 +494,16 @@ const AdminExamsPage = () => {
  className="px-4 py-2 bg-slate-100 text-slate-600 text-label rounded-lg border border-slate-200 hover:bg-slate-200 transition-all flex items-center gap-1"
  >
  <span className="material-symbols-outlined text-body">visibility</span>
- View
+ {t('view')}
  </button>
  <button 
  onClick={() => handleReject(sub)}
  className="px-4 py-2 bg-rose-50 text-rose-600 text-label rounded-lg border border-rose-100 hover:bg-rose-100 transition-all"
- >Reject</button>
+ >{t('reject')}</button>
  <button 
  onClick={() => handleApprove(sub)}
  className="px-4 py-2 bg-emerald-50 text-emerald-600 text-label rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-all"
- >Approve</button>
+ >{t('approve')}</button>
  </div>
  </td>
  </tr>
@@ -522,9 +535,9 @@ const AdminExamsPage = () => {
  <table className="w-full text-left text-label">
  <thead className="bg-slate-100 dark:bg-slate-800/50 text-slate-400/80 text-label">
  <tr>
- <th className="px-6 py-4 rounded-l-xl">Student</th>
- <th className="px-6 py-4">Grade</th>
- <th className="px-6 py-4 rounded-r-xl">Remarks</th>
+ <th className="px-6 py-4 rounded-l-xl">{t('student')}</th>
+ <th className="px-6 py-4">{t('grade')}</th>
+ <th className="px-6 py-4 rounded-r-xl">{t('remarks')}</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
@@ -554,14 +567,14 @@ const AdminExamsPage = () => {
   onClick={() => setViewingSubmission(null)}
   className="btn-secondary"
   >
-  Close
+  {t('close')}
   </button>
   <button 
   onClick={() => { handleApprove(viewingSubmission); setViewingSubmission(null); }}
   className="btn-success"
   >
   <span className="btn-icon">check_circle</span>
-  Approve Submission
+  {t('approveSubmission')}
   </button>
  </div>
  </div>
@@ -574,13 +587,13 @@ const AdminExamsPage = () => {
  <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm h-fit">
  <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
  <div>
- <h3 className="text-label text-slate-800 dark:text-slate-200">Approved for Release</h3>
- <p className="text-label text-slate-400/80 mt-1">Midterm and Final exams only. Other terms are released by teachers.</p>
+ <h3 className="text-label text-slate-800 dark:text-slate-200">{t('approvedForRelease')}</h3>
+ <p className="text-label text-slate-400/80 mt-1">{t('approvedReleaseDesc')}</p>
  </div>
  </div>
  {releasableExams.length === 0 ? (
  <div className="flex flex-col items-center justify-center h-[300px] text-slate-400/80">
- <p className="text-label">No approved exams pending release</p>
+ <p className="text-label">{t('noApprovedExamsPending')}</p>
  </div>
  ) : (
  <div className="overflow-x-auto">
@@ -590,7 +603,7 @@ const AdminExamsPage = () => {
  <tr key={i} className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
  <td className="px-8 py-5">
  <div className="text-slate-800 dark:text-slate-200">{exam.className}</div>
- <div className="text-label text-slate-400/80">{exam.examType} Results</div>
+ <div className="text-label text-slate-400/80">{t(exam.examType.toLowerCase())} {t('results')}</div>
  <div className="flex flex-wrap gap-1 mt-2">
  {exam.subjects.map(s => (
  <span key={s} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-label text-slate-500/80">{s}</span>
@@ -602,7 +615,7 @@ const AdminExamsPage = () => {
  <button 
  onClick={() => handleRelease(exam)}
  className="px-6 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/10 hover:bg-blue-700 transition-all"
- >Publish Now</button>
+ >{t('publishNow')}</button>
  </div>
  </td>
  </tr>
@@ -616,10 +629,10 @@ const AdminExamsPage = () => {
  <div className="space-y-6">
  {['Midterm', 'Final'].map(type => (
  <div key={type} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm p-8">
- <h3 className="text-label text-slate-800 dark:text-slate-200 mb-6">Schedule {type}</h3>
+ <h3 className="text-label text-slate-800 dark:text-slate-200 mb-6">{t('scheduleExam').replace('{type}', t(type.toLowerCase()))}</h3>
  <div className="space-y-6">
  <div>
- <label className="text-label text-slate-400/80 mb-2 block">Release Date</label>
+ <label className="text-label text-slate-400/80 mb-2 block">{t('releaseDate')}</label>
  <input 
  type="date" 
  value={examReleaseSettings[type].date}
@@ -631,7 +644,7 @@ const AdminExamsPage = () => {
  />
  </div>
  <div>
- <label className="text-label text-slate-400/80 mb-2 block">Release Time</label>
+ <label className="text-label text-slate-400/80 mb-2 block">{t('releaseTime')}</label>
  <input 
  type="time" 
  value={examReleaseSettings[type].time}
@@ -646,13 +659,13 @@ const AdminExamsPage = () => {
  {examReleaseSettings[type].isApproved ? (
  <div className="p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-900/20">
  <p className="text-label text-emerald-600 dark:text-emerald-400 leading-relaxed">
- ✓ Schedule approved. Exam will release automatically on {examReleaseSettings[type].date} at {examReleaseSettings[type].time}.
+ {t('scheduleApproved').replace('{date}', examReleaseSettings[type].date).replace('{time}', examReleaseSettings[type].time)}
  </p>
  </div>
  ) : (
  <div className="p-4 bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-100 dark:border-amber-900/20">
  <p className="text-label text-amber-600 dark:text-amber-400 leading-relaxed">
- Set date/time above and click approve to schedule automated release.
+ {t('schedulePendingNotice')}
  </p>
  </div>
  )}
@@ -662,7 +675,7 @@ const AdminExamsPage = () => {
  disabled={examReleaseSettings[type].isApproved || !examReleaseSettings[type].date || !examReleaseSettings[type].time}
  className="w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-label rounded-xl hover:opacity-90 transition-all disabled:opacity-30"
  >
- {examReleaseSettings[type].isApproved ? 'Schedule Approved' : 'Approve Schedule'}
+ {examReleaseSettings[type].isApproved ? t('scheduleApprovedBtn') : t('approveSchedule')}
  </button>
  
  {examReleaseSettings[type].isApproved && (
@@ -670,7 +683,7 @@ const AdminExamsPage = () => {
  onClick={() => saveExamReleaseSchedule(type, examReleaseSettings[type].date, examReleaseSettings[type].time, false)}
  className="w-full py-2 text-rose-500 text-label hover:underline"
  >
- Cancel or Edit Schedule
+ {t('cancelOrEditSchedule')}
  </button>
  )}
  </div>
@@ -685,10 +698,10 @@ const AdminExamsPage = () => {
  {/* SETTINGS TAB */}
  {activeTab === 'settings' && (
  <div className="max-w-2xl bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm p-10 transition-colors">
- <h3 className="text-label text-slate-800 dark:text-slate-200 mb-8">Promotion Rules</h3>
+ <h3 className="text-label text-slate-800 dark:text-slate-200 mb-8">{t('promotionRules')}</h3>
  <div className="space-y-8">
  <div>
- <label className="text-label text-slate-400/80 mb-3 block">Minimum Passing Grade (%)</label>
+ <label className="text-label text-slate-400/80 mb-3 block">{t('minPassingGrade')}</label>
  <div className="flex items-center gap-4">
  <input 
  type="range" 
@@ -704,24 +717,24 @@ const AdminExamsPage = () => {
  </div>
  </div>
  <div>
- <label className="text-label text-slate-400/80 mb-3 block">Subjects Required to Pass</label>
+ <label className="text-label text-slate-400/80 mb-3 block">{t('subjectsRequiredToPass')}</label>
  <input 
  type="number" 
  value={promotionSettings.minSubjects}
  onChange={e => setPromotionSettings({...promotionSettings, minSubjects: parseInt(e.target.value)})}
  className="form-input-custom w-32"
  />
- <p className="text-label text-slate-400/80 mt-2">Maximum subjects a student can fail before total failure.</p>
+ <p className="text-label text-slate-400/80 mt-2">{t('maxFailedSubjectsDesc')}</p>
  </div>
  <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
  <div className="bg-slate-100 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800">
- <h4 className="text-label text-slate-800 dark:text-slate-200 mb-4">Weightage Breakdown</h4>
+ <h4 className="text-label text-slate-800 dark:text-slate-200 mb-4">{t('weightageBreakdown')}</h4>
  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
  {[
- { label: 'Before Mid', val: '10%' },
- { label: 'Midterm', val: '30%' },
- { label: 'After Mid', val: '10%' },
- { label: 'Final', val: '50%' }
+ { label: t('beforeMidTen'), val: '10%' },
+ { label: t('midtermThirty'), val: '30%' },
+ { label: t('afterMidTen'), val: '10%' },
+ { label: t('finalFifty'), val: '50%' }
  ].map(w => (
  <div key={w.label} className="text-center p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm">
  <p className="text-label text-slate-400/80 mb-1">{w.label}</p>
@@ -741,17 +754,17 @@ const AdminExamsPage = () => {
       {/* Selection Filters & Upload Form */}
       <div className="lg:col-span-2 space-y-6">
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-8">
-          <h3 className="text-section text-slate-800 dark:text-slate-200 mb-6">Import Student Results</h3>
+          <h3 className="text-section text-slate-800 dark:text-slate-200 mb-6">{t('importStudentResults')}</h3>
           <div className="p-4 bg-primary/5 rounded-xl border border-primary/20 mb-6 text-label text-primary flex items-start gap-2">
             <span className="material-symbols-outlined text-body">info</span>
             <p className="text-xs">
-              This import utility supports uploading midterm (max 40) and final (max 60) results for the <strong>2025-2026</strong> academic year.
+              {t('importUtilityDesc')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div>
-              <label className="text-label text-slate-400/80 mb-2 block">Class</label>
+              <label className="text-label text-slate-400/80 mb-2 block">{t('class')}</label>
               <select
                 value={importClassId}
                 onChange={e => {
@@ -764,7 +777,7 @@ const AdminExamsPage = () => {
                 }}
                 className="form-input-custom w-full bg-transparent dark:bg-slate-800"
               >
-                <option value="">Select Class</option>
+                <option value="">{t('selectClass')}</option>
                 {classes.filter(c => c.academicYear === '2025-2026').map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
@@ -772,7 +785,7 @@ const AdminExamsPage = () => {
             </div>
 
             <div>
-              <label className="text-label text-slate-400/80 mb-2 block">Exam Type</label>
+              <label className="text-label text-slate-400/80 mb-2 block">{t('examType')}</label>
               <select
                 value={importExamType}
                 onChange={e => {
@@ -783,22 +796,22 @@ const AdminExamsPage = () => {
                   setParsedRows([]);
                   setImportFinished(false);
                 }}
-                className="form-input-custom w-full bg-transparent dark:bg-slate-800"
+                className="form-input-custom w-full bg-transparent dark:bg-slate-850"
               >
-                <option value="Midterm">Midterm (Max 40)</option>
-                <option value="Final">Final (Max 60)</option>
+                <option value="Midterm">{t('midtermMaxForty')}</option>
+                <option value="Final">{t('finalMaxSixty')}</option>
               </select>
             </div>
 
             <div>
-              <label className="text-label text-slate-400/80 mb-2 block">Import Status</label>
+              <label className="text-label text-slate-400/80 mb-2 block">{t('importStatus')}</label>
               <select
                 value={importStatus}
                 onChange={e => setImportStatus(e.target.value)}
-                className="form-input-custom w-full bg-transparent dark:bg-slate-800"
+                className="form-input-custom w-full bg-transparent dark:bg-slate-850"
               >
-                <option value="APPROVED">Approved (Pending Release)</option>
-                <option value="PUBLISHED">Published (Immediately Visible)</option>
+                <option value="APPROVED">{t('approvedPendingRelease')}</option>
+                <option value="PUBLISHED">{t('publishedImmediatelyVisible')}</option>
               </select>
             </div>
           </div>
@@ -808,8 +821,8 @@ const AdminExamsPage = () => {
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary text-2xl">description</span>
                 <div>
-                  <p className="text-xs font-semibold text-slate-900 dark:text-white">Need a template?</p>
-                  <p className="text-[10px] text-slate-500">Download formatted sheet with student names</p>
+                  <p className="text-xs font-semibold text-slate-900 dark:text-white">{t('needTemplate')}</p>
+                  <p className="text-[10px] text-slate-500">{t('downloadTemplateDesc')}</p>
                 </div>
               </div>
               <button
@@ -817,14 +830,14 @@ const AdminExamsPage = () => {
                 className="text-primary hover:underline text-xs font-bold flex items-center gap-1"
               >
                 <span className="material-symbols-outlined text-sm">download</span>
-                Download Template
+                {t('downloadTemplate')}
               </button>
             </div>
           )}
 
           {importClassId && (
             <div className="space-y-4">
-              <label className="text-label text-slate-400/80 block">Upload completed sheet</label>
+              <label className="text-label text-slate-400/80 block">{t('uploadCompletedSheet')}</label>
               <div
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                 onDragLeave={() => setIsDragging(false)}
@@ -862,9 +875,9 @@ const AdminExamsPage = () => {
                 </div>
                 <div className="text-center">
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                    {importFile ? importFile.name : 'Click or drag and drop spreadsheet'}
+                    {importFile ? importFile.name : t('clickDragDropSpreadsheet')}
                   </p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">Supports .xlsx, .csv formats</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">{t('supportsFormats')}</p>
                 </div>
               </div>
             </div>
@@ -882,7 +895,7 @@ const AdminExamsPage = () => {
                 ) : (
                   <>
                     <span className="material-symbols-outlined text-body">save_alt</span>
-                    Import {importSuccessCount} Student Records
+                    {t('importStudentRecordsBtn').replace('{count}', importSuccessCount)}
                   </>
                 )}
               </button>
@@ -898,12 +911,12 @@ const AdminExamsPage = () => {
           <div className="bg-rose-50/50 dark:bg-rose-950/10 rounded-xl border border-rose-100 dark:border-rose-900/20 p-6">
             <h3 className="text-sm font-bold text-rose-800 dark:text-rose-400 flex items-center gap-2 mb-4">
               <span className="material-symbols-outlined text-body">error</span>
-              Validation Errors ({importErrors.length})
+              {t('validationErrors').replace('{count}', importErrors.length)}
             </h3>
             <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2">
               {importErrors.map((err, idx) => (
                 <div key={idx} className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-rose-100 dark:border-rose-900/30 text-xs">
-                  <span className="font-bold text-rose-600 dark:text-rose-400">Row {err.rowNumber}:</span> {err.error}
+                  <span className="font-bold text-rose-600 dark:text-rose-400">{t('row')} {err.rowNumber}:</span> {err.error}
                 </div>
               ))}
             </div>
@@ -915,14 +928,14 @@ const AdminExamsPage = () => {
           <div className="bg-amber-50/50 dark:bg-amber-950/10 rounded-xl border border-amber-100 dark:border-amber-900/20 p-6">
             <h3 className="text-sm font-bold text-amber-800 dark:text-amber-400 flex items-center gap-2 mb-4">
               <span className="material-symbols-outlined text-body">warning</span>
-              Excel Mismatch Warnings ({importWarnings.length})
+              {t('excelMismatchWarnings').replace('{count}', importWarnings.length)}
             </h3>
             <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2">
               {importWarnings.map((warn, idx) => (
                 <div key={idx} className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-amber-100 dark:border-amber-900/30 text-xs">
                   <div className="font-semibold text-amber-700 dark:text-amber-400 flex items-center justify-between mb-1">
                     <span>{warn.type}</span>
-                    <span className="text-[10px] bg-amber-100 dark:bg-amber-900/50 px-1.5 py-0.5 rounded text-amber-800 dark:text-amber-300">Row {warn.rowNumber}</span>
+                    <span className="text-[10px] bg-amber-100 dark:bg-amber-900/50 px-1.5 py-0.5 rounded text-amber-800 dark:text-amber-300">{t('row')} {warn.rowNumber}</span>
                   </div>
                   <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{warn.message}</p>
                 </div>
@@ -935,9 +948,9 @@ const AdminExamsPage = () => {
         {importFinished && (
           <div className="bg-emerald-50 dark:bg-emerald-950/10 rounded-xl border border-emerald-100 dark:border-emerald-900/20 p-6 text-center">
             <span className="material-symbols-outlined text-emerald-500 text-display mb-3">check_circle</span>
-            <h3 className="text-sm font-bold text-emerald-800 dark:text-emerald-400 mb-1">Import Completed Successfully</h3>
+            <h3 className="text-sm font-bold text-emerald-800 dark:text-emerald-400 mb-1">{t('importCompletedSuccess')}</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
-              Successfully imported grades for {importSuccessCount} students in {importExamType}.
+              {t('importCompletedDesc').replace('{count}', importSuccessCount).replace('{examType}', t(importExamType.toLowerCase()))}
             </p>
             <button
               onClick={() => {
@@ -947,30 +960,30 @@ const AdminExamsPage = () => {
               }}
               className="px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-lg hover:bg-emerald-600 transition-colors"
             >
-              Start New Import
+              {t('startNewImport')}
             </button>
           </div>
         )}
 
         {parsedRows.length > 0 && importErrors.length === 0 && (
           <div className="bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-205 dark:border-slate-800 p-6">
-            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-3">Import Summary</h3>
+            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-3">{t('importSummary')}</h3>
             <div className="space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-500">Students to update:</span>
+                <span className="text-slate-500">{t('studentsToUpdate')}</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">{parsedRows.length}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Exam Type:</span>
-                <span className="font-bold text-primary">{importExamType}</span>
+                <span className="text-slate-500">{t('examType')}:</span>
+                <span className="font-bold text-primary">{t(importExamType.toLowerCase())}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Upload Status:</span>
+                <span className="text-slate-500">{t('uploadStatusLabel')}</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">{importStatus}</span>
               </div>
               {importWarnings.length > 0 && (
                 <div className="p-3 bg-amber-500/10 text-amber-700 dark:text-amber-400 rounded-lg mt-3 text-[11px] leading-relaxed">
-                  ⚠️ Note: There are {importWarnings.length} mismatch warnings. You can still proceed with importing, and the system will recalculate and save the correct grades to the database.
+                  {t('importWarningsNotice').replace('{count}', importWarnings.length)}
                 </div>
               )}
             </div>

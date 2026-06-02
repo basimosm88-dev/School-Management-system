@@ -5,12 +5,13 @@ import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
 
 const StudentSettings = () => {
- const { currentUser } = useAppContext();
- const { changeStudentPassword, addNotification } = useData();
+  const { currentUser } = useAppContext();
+  const { changeStudentPassword, addNotification, classes } = useData();
  const { 
  language, setLanguage, 
  theme, setTheme, 
- notificationSettings, setNotificationSettings
+ notificationSettings, setNotificationSettings,
+ t
  } = useSettings();
 
  const [activeTab, setActiveTab] = useState('profile');
@@ -20,11 +21,11 @@ const StudentSettings = () => {
  const handlePasswordChange = (e) => {
  e.preventDefault();
  setError('');
- if (passwords.current !== currentUser.password) { setError('Current password is incorrect.'); return; }
- if (!/^\d{6}$/.test(passwords.new)) { setError('New password must be exactly 6 numerical digits.'); return; }
- if (passwords.new !== passwords.confirm) { setError('Passwords do not match.'); return; }
+ if (passwords.current !== currentUser.password) { setError(t('currentPasswordIncorrect')); return; }
+ if (!/^\d{6}$/.test(passwords.new)) { setError(t('passwordSixDigitsError')); return; }
+ if (passwords.new !== passwords.confirm) { setError(t('passwordsDoNotMatch')); return; }
  changeStudentPassword(currentUser.id, passwords.new);
- addNotification('Password updated successfully!', 'success');
+ addNotification(t('passwordUpdatedSuccess'), 'success');
  setPasswords({ current: '', new: '', confirm: '' });
  };
 
@@ -36,14 +37,14 @@ const StudentSettings = () => {
  };
 
  const tabs = [
- { id: 'profile', label: 'My Profile', icon: 'person' },
- { id: 'security', label: 'Security', icon: 'lock' },
- { id: 'appearance', label: 'Appearance', icon: 'palette' },
- { id: 'notifications', label: 'Notifications', icon: 'notifications' }
+ { id: 'profile', label: t('myProfile'), icon: 'person' },
+ { id: 'security', label: t('security'), icon: 'lock' },
+ { id: 'appearance', label: t('appearance'), icon: 'palette' },
+ { id: 'notifications', label: t('notifications'), icon: 'notifications' }
  ];
 
  return (
- <PageLayout role="student" title="Settings">
+ <PageLayout role="student" title={t('settings')}>
   <div className="max-w-4xl mx-auto flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
   {/* Sidebar - Top on Mobile */}
   <div className="w-full lg:w-64 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 shrink-0 scrollbar-hide">
@@ -76,56 +77,56 @@ const StudentSettings = () => {
  </div>
  <div>
  <h2 className="text-section text-slate-900 dark:text-white">{currentUser?.name}</h2>
- <p className="text-label text-slate-500/80">Student ID: {currentUser?.systemId || currentUser?.id}</p>
+ <p className="text-label text-slate-500/80">{t('studentIdLabel')} {currentUser?.systemId || currentUser?.id}</p>
  </div>
  </div>
 
  <div className="grid grid-cols-2 gap-6">
  <div className="p-4 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
- <p className="text-label text-slate-400/80 mb-1">Current Class</p>
- <p className="text-label text-slate-700 dark:text-slate-200">Grade 10-A</p>
+ <p className="text-label text-slate-400/80 mb-1">{t('currentClass')}</p>
+ <p className="text-label text-slate-700 dark:text-slate-200">{classes.find(c => c.id === currentUser?.classId)?.name || t('unassigned')}</p>
  </div>
  <div className="p-4 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
- <p className="text-label text-slate-400/80 mb-1">Enrollment Date</p>
- <p className="text-label text-slate-700 dark:text-slate-200">Sept 12, 2023</p>
+ <p className="text-label text-slate-400/80 mb-1">{t('enrollmentDate')}</p>
+ <p className="text-label text-slate-700 dark:text-slate-200">{currentUser?.registrationDate || t('none')}</p>
  </div>
  <div className="p-4 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
- <p className="text-label text-slate-400/80 mb-1">Personal Email</p>
- <p className="text-label text-slate-700 dark:text-slate-200">{currentUser?.email || 'Not Provided'}</p>
+ <p className="text-label text-slate-400/80 mb-1">{t('personalEmail')}</p>
+ <p className="text-label text-slate-700 dark:text-slate-200">{currentUser?.email || t('notProvided')}</p>
  </div>
  <div className="p-4 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
- <p className="text-label text-slate-400/80 mb-1">Emergency Contact</p>
- <p className="text-label text-slate-700 dark:text-slate-200">+252 61 XXX XXXX</p>
+ <p className="text-label text-slate-400/80 mb-1">{t('emergencyContact')}</p>
+ <p className="text-label text-slate-700 dark:text-slate-200">{currentUser?.responsiblePerson?.phone1 || t('notProvided')}</p>
  </div>
  </div>
  
- <p className="text-label text-slate-400/80 italic">Note: To change your profile information, please contact the school administration office.</p>
+ <p className="text-label text-slate-400/80 italic">{t('profileContactAdminNote')}</p>
  </div>
  )}
 
  {/* SECURITY */}
  {activeTab === 'security' && (
  <form onSubmit={handlePasswordChange} className="space-y-6">
- <h3 className="text-slate-800 dark:text-white">Update Security Password</h3>
+ <h3 className="text-slate-800 dark:text-white">{t('updateSecurityPassword')}</h3>
  {error && <div className="p-4 bg-rose-50 text-rose-600 text-label rounded-xl border border-rose-100">{error}</div>}
  
  <div className="space-y-4">
  <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Current Password</label>
+ <label className="text-label text-slate-500/80">{t('currentPassword')}</label>
  <input type="password" value={passwords.current} onChange={(e) => setPasswords({...passwords, current: e.target.value})} className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-label outline-none dark:text-white" />
  </div>
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">New Password (6 numerical digits)</label>
+ <label className="text-label text-slate-500/80">{t('passwordSixDigits')}</label>
  <input type="password" value={passwords.new} onChange={(e) => setPasswords({...passwords, new: e.target.value})} className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-label outline-none dark:text-white" />
  </div>
  <div className="space-y-1.5">
- <label className="text-label text-slate-500/80">Confirm New</label>
+ <label className="text-label text-slate-500/80">{t('confirmNewPassword')}</label>
  <input type="password" value={passwords.confirm} onChange={(e) => setPasswords({...passwords, confirm: e.target.value})} className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-label outline-none dark:text-white" />
  </div>
  </div>
  </div>
- <button type="submit" className="bg-primary text-white px-8 py-3 rounded-xl text-label shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all">Change Password</button>
+ <button type="submit" className="bg-primary text-white px-8 py-3 rounded-xl text-label shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all">{t('changePassword')}</button>
  </form>
  )}
 
@@ -133,21 +134,21 @@ const StudentSettings = () => {
  {activeTab === 'appearance' && (
  <div className="space-y-8">
  <div className="space-y-4">
- <h3 className="text-slate-800 dark:text-white text-label">Dashboard Theme</h3>
+ <h3 className="text-slate-800 dark:text-white text-label">{t('dashboardTheme')}</h3>
  <div className="flex gap-4">
  <button onClick={() => setTheme('light')} className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl border-2 transition-all ${theme === 'light' ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>
  <span className="material-symbols-outlined">light_mode</span>
- <span className="text-label">Light</span>
+ <span className="text-label">{t('lightMode')}</span>
  </button>
  <button onClick={() => setTheme('dark')} className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl border-2 transition-all ${theme === 'dark' ? 'border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>
  <span className="material-symbols-outlined">dark_mode</span>
- <span className="text-label">Dark</span>
+ <span className="text-label">{t('darkMode')}</span>
  </button>
  </div>
  </div>
  
  <div className="space-y-4">
- <h3 className="text-slate-800 dark:text-white text-label">Preferred Language</h3>
+ <h3 className="text-slate-800 dark:text-white text-label">{t('preferredLanguage')}</h3>
  <div className="grid grid-cols-3 gap-3">
  {['en', 'ar', 'so'].map(lang => (
  <button key={lang} onClick={() => setLanguage(lang)} className={`py-3 rounded-xl border-2  text-label transition-all ${language === lang ? 'border-primary bg-primary/5 text-primary' : 'border-slate-100 dark:border-slate-800 text-slate-400/80'}`}>
@@ -162,7 +163,7 @@ const StudentSettings = () => {
  {/* NOTIFICATIONS */}
  {activeTab === 'notifications' && (
  <div className="space-y-6">
- <h3 className="text-slate-800 dark:text-white mb-4">Notification Toggles</h3>
+ <h3 className="text-slate-800 dark:text-white mb-4">{t('notificationToggles')}</h3>
  <div className="space-y-3">
  {Object.entries(notificationSettings.types).map(([key, value]) => (
  <label key={key} className="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl cursor-pointer hover:ring-2 hover:ring-primary/10 transition-all">
@@ -170,7 +171,7 @@ const StudentSettings = () => {
  <span className="material-symbols-outlined text-slate-400/80">
  {key === 'grades' ? 'grade' : key === 'announcements' ? 'campaign' : key === 'messages' ? 'mail' : 'event'}
  </span>
- <p className="text-label text-slate-700 dark:text-slate-200 capitalize">{key}</p>
+ <p className="text-label text-slate-700 dark:text-slate-200 capitalize">{t(key)}</p>
  </div>
  <div className={`w-11 h-6 rounded-full flex items-center p-1 transition-colors ${value ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-700'}`} onClick={() => toggleNotif(key)}>
  <div className={`w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform ${value ? 'translate-x-5' : 'translate-x-0'}`}></div>

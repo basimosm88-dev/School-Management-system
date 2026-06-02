@@ -90,7 +90,7 @@ const Header = () => {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{res.text}</p>
-                    <p className="text-[10px] text-slate-500 font-bold">{res.type}</p>
+                    <p className="text-[10px] text-slate-500 font-bold">{t(res.type.toLowerCase())}</p>
                   </div>
                 </button>
               ))}
@@ -128,10 +128,10 @@ const Header = () => {
           {notifOpen && (
             <div className="absolute top-12 right-0 w-72 md:w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl z-50 flex flex-col max-h-[400px] md:max-h-[500px] animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-100/50 dark:bg-slate-800/50 rounded-t-2xl">
-                <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">Notifications</h3>
+                <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">{t('notifications')}</h3>
                 {unreadCount > 0 && (
                   <span className="text-[10px] bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-full font-bold">
-                    {unreadCount} new
+                    {unreadCount} {t('new')}
                   </span>
                 )}
               </div>
@@ -139,7 +139,7 @@ const Header = () => {
                 {notifications.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 text-slate-400">
                     <span className="material-symbols-outlined text-4xl mb-2 opacity-20">notifications_off</span>
-                    <p className="text-xs italic">No notifications yet.</p>
+                    <p className="text-xs italic">{t('noNotificationsYet')}</p>
                   </div>
                 ) : (
                   notifications.slice().reverse().slice(0, 8).map(n => (
@@ -148,15 +148,15 @@ const Header = () => {
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${n.type === 'success' ? 'bg-emerald-50 text-emerald-600' :
                             n.type === 'warning' ? 'bg-amber-50 text-amber-600' :
                               'bg-blue-50 text-primary'
-                          }`}>
+                           }`}>
                           <span className="material-symbols-outlined text-[18px]">
                             {n.type === 'success' ? 'check_circle' : n.type === 'warning' ? 'warning' : 'info'}
                           </span>
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{n.title || 'System Update'}</p>
+                          <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{n.title || t('systemUpdate')}</p>
                           <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">{n.message}</p>
-                          <p className="text-[9px] text-slate-400 mt-1 font-medium">{new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                          <p className="text-[9px] text-slate-400 mt-1 font-medium">{new Date(n.timestamp).toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' })}</p>
                         </div>
                       </div>
                     </div>
@@ -192,8 +192,8 @@ const Header = () => {
           {profileDropdownOpen && (
             <div className="absolute top-12 right-0 w-56 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-2xl rounded-2xl p-2 z-50 flex flex-col gap-1 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
-                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{currentUser?.name || 'User'}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">{role}</p>
+                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{currentUser?.name || t('user')}</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">{t(role)}</p>
               </div>
               
               <Link 
@@ -228,8 +228,8 @@ const Header = () => {
             <div className="w-20 h-20 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
               <span className="material-symbols-outlined text-[40px]">logout</span>
             </div>
-            <h3 className="text-2xl font-black text-on-surface dark:text-on-surface mb-2 tracking-tight">Sign out</h3>
-            <p className="text-sm font-bold text-on-surface-variant dark:text-on-surface-variant mb-8 leading-relaxed">Are you sure you want to logout? You will need to login again to access your account.</p>
+            <h3 className="text-2xl font-black text-on-surface dark:text-on-surface mb-2 tracking-tight">{t('signOut')}</h3>
+            <p className="text-sm font-bold text-on-surface-variant dark:text-on-surface-variant mb-8 leading-relaxed">{t('logoutConfirm')}</p>
 
             <div className="flex gap-3 w-full">
               <button
