@@ -625,18 +625,33 @@
 
 /* Print Login Cards Styles */
 @media print {
+  /* Prevent background wrapper page bloating */
+  #root, 
+  #root > div,
+  .min-h-screen {
+    min-height: auto !important;
+    height: auto !important;
+    background: #ffffff !important;
+  }
+
+  .login-cards-print-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: auto !important;
+    height: auto !important;
+    background: #ffffff !important;
+  }
+
   .login-cards-page {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     grid-template-rows: repeat(3, 1fr) !important;
     gap: 15px !important;
     width: 100% !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
+    height: 96vh !important;
+    max-height: 96vh !important;
     box-sizing: border-box !important;
-    padding: 10mm 10mm !important;
-    page-break-after: always !important;
-    break-after: page !important;
+    padding: 10mm !important;
     background: #ffffff !important;
   }
 
@@ -693,7 +708,8 @@
 
   .login-card-info-row {
     display: flex !important;
-    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 8px !important;
     font-size: 11px !important;
     border-bottom: 1px dashed #cccccc !important;
     padding-bottom: 2px !important;
@@ -702,11 +718,12 @@
 
   .login-card-info-label {
     color: #000000 !important;
-    font-weight: 500 !important;
+    font-weight: 700 !important;
+    min-width: 90px !important;
   }
 
   .login-card-info-value {
-    font-weight: 600 !important;
+    font-weight: 500 !important;
     color: #000000 !important;
   }
 
@@ -723,18 +740,21 @@
 
   .login-card-cred-row {
     display: flex !important;
-    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 8px !important;
     font-size: 12px !important;
     color: #000000 !important;
   }
 
   .login-card-cred-label {
-    font-weight: 600 !important;
+    font-weight: 700 !important;
+    min-width: 90px !important;
   }
 
   .login-card-cred-value {
     font-family: monospace !important;
     font-weight: 700 !important;
+    font-size: 13px !important;
   }
 
   .login-card-footer {

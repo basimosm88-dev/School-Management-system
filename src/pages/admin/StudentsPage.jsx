@@ -469,7 +469,7 @@ const StudentsPage = () => {
       )}
 
       {/* 5. HIDDEN PRINTABLE COMPONENT */}
-      {selectedStudent && !printingClassId && (
+      {selectedStudent && isProfileOpen && !printingClassId && !printingLoginCardsClassId && (
         <PrintableStudentProfile
           student={selectedStudent}
           classes={classes}
@@ -1327,9 +1327,9 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
   }
 
   return (
-    <div className="print-only font-sans text-slate-900 bg-white min-h-screen">
+    <div className="print-only login-cards-print-container font-sans text-slate-900 bg-white">
       {chunks.map((chunk, chunkIdx) => (
-        <div key={chunkIdx} className="login-cards-page">
+        <div key={chunkIdx} className="login-cards-page" style={{ pageBreakAfter: chunkIdx < chunks.length - 1 ? 'always' : 'avoid' }}>
           {chunk.map(student => {
             const studentId = student.systemId || student.id.split('-')[0];
             const studentPassword = student.password || '123456';
@@ -1352,17 +1352,17 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
                   <h4 className="login-card-student-name">{student.name}</h4>
                   
                   <div className="login-card-info-row">
-                    <span className="login-card-info-label">{t('class')}</span>
+                    <span className="login-card-info-label">{t('class')}:</span>
                     <span className="login-card-info-value">{currentClass ? currentClass.name : ''}</span>
                   </div>
 
                   <div className="login-card-credentials-box">
                     <div className="login-card-cred-row">
-                      <span className="login-card-cred-label">{t('studentId')}</span>
+                      <span className="login-card-cred-label">{t('studentId')}:</span>
                       <span className="login-card-cred-value">{studentId}</span>
                     </div>
                     <div className="login-card-cred-row">
-                      <span className="login-card-cred-label">{t('password')}</span>
+                      <span className="login-card-cred-label">{t('password')}:</span>
                       <span className="login-card-cred-value">{studentPassword}</span>
                     </div>
                   </div>
