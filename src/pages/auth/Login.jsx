@@ -13,7 +13,7 @@ const Login = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { login, currentSchool, schoolLoading } = useAppContext();
-  const { schoolSettings, t } = useSettings();
+  const { schoolSettings, t, setLanguage } = useSettings();
 
   if (schoolLoading) {
     return (
@@ -68,8 +68,13 @@ const Login = () => {
       }
 
       // Let's route based on their confirmed role
-      if (selectedRole === 'teacher') navigate('/teacher/dashboard');
-      else navigate('/student/dashboard');
+      if (selectedRole === 'teacher') {
+        navigate('/teacher/dashboard');
+      } else {
+        // Default student language to Somali upon login
+        setLanguage('so');
+        navigate('/student/dashboard');
+      }
       
     } catch (err) {
       console.error("Login error:", err);
