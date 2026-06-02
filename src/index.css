@@ -629,7 +629,7 @@
   #root, 
   #root > div,
   .min-h-screen {
-    min-height: auto !important;
+    min-height: 0 !important;
     height: auto !important;
     background: #ffffff !important;
   }
@@ -637,7 +637,7 @@
   .login-cards-print-container {
     padding: 0 !important;
     margin: 0 !important;
-    min-height: auto !important;
+    min-height: 0 !important;
     height: auto !important;
     background: #ffffff !important;
   }
