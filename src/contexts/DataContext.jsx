@@ -40,35 +40,63 @@ export const DataProvider = ({ children }) => {
   const [promotionSettings, setPromotionSettings] = useState({ passingGrade: 50, minSubjects: 5 });
 
   const fetchFullTable = async (tableName, schoolId = null) => {
-    let allData = [];
-    let from = 0;
     const limit = 1000;
-    let hasMore = true;
 
-    while (hasMore) {
+    // 1. Fetch first page
+    let firstPageQuery = supabase
+      .from(tableName)
+      .select('*')
+      .range(0, limit - 1);
+
+    if (schoolId) {
+      firstPageQuery = firstPageQuery.eq('school_id', schoolId);
+    }
+
+    const { data: firstPageData, error: firstPageError } = await firstPageQuery;
+    if (firstPageError) throw firstPageError;
+
+    if (!firstPageData || firstPageData.length < limit) {
+      return firstPageData || [];
+    }
+
+    // 2. If first page has exactly 'limit' records, there may be more.
+    // Query total count to fetch remaining pages in parallel.
+    let countQuery = supabase
+      .from(tableName)
+      .select('*', { count: 'exact', head: true });
+
+    if (schoolId) {
+      countQuery = countQuery.eq('school_id', schoolId);
+    }
+
+    const { count, error: countError } = await countQuery;
+    if (countError) throw countError;
+
+    const totalCount = count || limit;
+    const remainingPages = Math.ceil((totalCount - limit) / limit);
+
+    const promises = [];
+    for (let i = 0; i < remainingPages; i++) {
+      const from = (i + 1) * limit;
+      const to = from + limit - 1;
+
       let query = supabase
         .from(tableName)
         .select('*')
-        .range(from, from + limit - 1);
+        .range(from, to);
 
       if (schoolId) {
         query = query.eq('school_id', schoolId);
       }
 
-      const { data, error } = await query;
-
-      if (error) throw error;
-      if (data && data.length > 0) {
-        allData = [...allData, ...data];
-        from += limit;
-        if (data.length < limit) {
-          hasMore = false;
-        }
-      } else {
-        hasMore = false;
-      }
+      promises.push(query.then(res => {
+        if (res.error) throw res.error;
+        return res.data || [];
+      }));
     }
-    return allData;
+
+    const remainingResults = await Promise.all(promises);
+    return [...firstPageData, ...remainingResults.flat()];
   };
 
   // Fetch all data from Supabase on mount
