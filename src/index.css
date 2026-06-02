@@ -728,7 +728,8 @@
   }
 
   .login-card-credentials-box {
-    margin-top: 8px !important;
+    flex: 1 !important;
+    margin-top: 0 !important;
     border: 1px solid #000000 !important;
     border-radius: 6px !important;
     padding: 8px 12px !important;
@@ -769,32 +770,13 @@
     background: transparent !important;
   }
 
-  .login-card-body-wrapper {
+  .login-card-bottom-row {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
     gap: 15px !important;
-    flex-grow: 1 !important;
+    margin-top: 8px !important;
     background: transparent !important;
-  }
-
-  .login-card-left-col {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 6px !important;
-    background: transparent !important;
-  }
-
-  .login-card-right-col {
-    width: 80px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 4px !important;
-    background: transparent !important;
-    flex-shrink: 0 !important;
   }
 
   .login-card-qr-container {
@@ -809,11 +791,12 @@
     width: 74px !important;
     height: 74px !important;
     box-sizing: border-box !important;
+    flex-shrink: 0 !important;
   }
 
   .login-card-qr-img {
-    width: 48px !important;
-    height: 48px !important;
+    width: 44px !important;
+    height: 44px !important;
     object-fit: contain !important;
     display: block !important;
   }
