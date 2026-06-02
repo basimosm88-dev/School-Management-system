@@ -1903,7 +1903,7 @@ export const translations = {
     signInAsStudent: "U gal sidii Arday",
     welcomeEducator: "Ku soo dhawaada, Baraha",
     welcomeScholar: "Ku soo dhawaada, Ardayga",
-    enterUsername: "Geli magacaaga isticmaalaha",
+    enterUsername: "Geli Aqoonsigaga ardayga",
     notificationsCenter: "Xarunta Ogeysiisyada",
     activityNotifications: "Ogeysiisyada Dhaqdhaqaaqa",
     notificationsSubtitle: "La soco hawlaha muhiimka ah ee dugsiga iyo digniinta shakhsiga ah.",
