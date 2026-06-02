@@ -50,6 +50,7 @@ const StudentsPage = () => {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [printingClassId, setPrintingClassId] = useState(null);
+  const [printingLoginCardsClassId, setPrintingLoginCardsClassId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { currentUser } = useAppContext();
   const userRole = currentUser?.role || 'admin';
@@ -152,6 +153,14 @@ const StudentsPage = () => {
     setTimeout(() => {
       window.print();
       setPrintingClassId(null);
+    }, 300);
+  };
+
+  const handlePrintLoginCards = () => {
+    setPrintingLoginCardsClassId(selectedClassId);
+    setTimeout(() => {
+      window.print();
+      setPrintingLoginCardsClassId(null);
     }, 300);
   };
 
@@ -277,13 +286,22 @@ const StudentsPage = () => {
               </div>
 
               {selectedClassId && !searchTerm && (
-                <button
-                  onClick={handlePrintClassList}
-                  className="btn-secondary py-2 px-6 flex items-center justify-center gap-2 border-primary/20 text-primary shrink-0"
-                >
-                  <span className="material-symbols-outlined text-section">print</span>
-                  {t('printStudentList')}
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    onClick={handlePrintClassList}
+                    className="btn-secondary py-2 px-6 flex items-center justify-center gap-2 border-primary/20 text-primary shrink-0"
+                  >
+                    <span className="material-symbols-outlined text-section">print</span>
+                    {t('printStudentList')}
+                  </button>
+                  <button
+                    onClick={handlePrintLoginCards}
+                    className="btn-secondary py-2 px-6 flex items-center justify-center gap-2 border-primary/20 text-primary shrink-0"
+                  >
+                    <span className="material-symbols-outlined text-section">badge</span>
+                    {t('printLoginCards')}
+                  </button>
+                </div>
               )}
             </div>
 
@@ -462,6 +480,15 @@ const StudentsPage = () => {
       {printingClassId && (
         <PrintableClassStudents
           classId={printingClassId}
+          students={students}
+          classes={classes}
+          schoolSettings={schoolSettings}
+        />
+      )}
+
+      {printingLoginCardsClassId && (
+        <PrintableStudentLoginCards
+          classId={printingLoginCardsClassId}
           students={students}
           classes={classes}
           schoolSettings={schoolSettings}
@@ -1281,6 +1308,75 @@ const PrintableClassStudents = ({ classId, students, classes, schoolSettings }) 
       </div>
 
       <PrintableFooter />
+    </div>
+  );
+};
+
+const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings }) => {
+  const { name: schoolName, logo } = schoolSettings || {};
+  const { t } = useSettings();
+  const currentClass = classes.find(c => String(c.id) === String(classId));
+  const classStudents = students
+    .filter(s => String(s.classId) === String(classId))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  // Chunk students into groups of 6
+  const chunks = [];
+  for (let i = 0; i < classStudents.length; i += 6) {
+    chunks.push(classStudents.slice(i, i + 6));
+  }
+
+  return (
+    <div className="print-only font-sans text-slate-900 bg-white min-h-screen">
+      {chunks.map((chunk, chunkIdx) => (
+        <div key={chunkIdx} className="login-cards-page">
+          {chunk.map(student => {
+            const studentId = student.systemId || student.id.split('-')[0];
+            const studentPassword = student.password || '123456';
+            return (
+              <div key={student.id} className="login-card">
+                {/* Header */}
+                <div className="login-card-header">
+                  {logo ? (
+                    <img src={logo} alt="Logo" className="login-card-logo" />
+                  ) : (
+                    <div className="w-8 h-8 bg-black rounded flex items-center justify-center text-white shrink-0">
+                      <span className="material-symbols-outlined text-[18px]">school</span>
+                    </div>
+                  )}
+                  <span className="login-card-school-name">{schoolName || 'School Management System'}</span>
+                </div>
+
+                {/* Body */}
+                <div className="login-card-body">
+                  <h4 className="login-card-student-name">{student.name}</h4>
+                  
+                  <div className="login-card-info-row">
+                    <span className="login-card-info-label">{t('class')}</span>
+                    <span className="login-card-info-value">{currentClass ? currentClass.name : ''}</span>
+                  </div>
+
+                  <div className="login-card-credentials-box">
+                    <div className="login-card-cred-row">
+                      <span className="login-card-cred-label">{t('studentId')}</span>
+                      <span className="login-card-cred-value">{studentId}</span>
+                    </div>
+                    <div className="login-card-cred-row">
+                      <span className="login-card-cred-label">{t('password')}</span>
+                      <span className="login-card-cred-value">{studentPassword}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Warning Footer */}
+                <div className="login-card-footer">
+                  {t('passwordWarning')}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 };

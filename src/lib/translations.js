@@ -848,7 +848,9 @@ export const translations = {
     totAvgShort: "Tot/Avg",
     midFortyShort: "Mid (40)",
     finalSixtyShort: "Final (60)",
-    failedToUpdatePublishing: "Failed to update publishing options. Please try again."
+    failedToUpdatePublishing: "Failed to update publishing options. Please try again.",
+    printLoginCards: "Print Login Cards",
+    passwordWarning: "Warning: Keep this card secure. Never share your password with anyone."
   },
   ar: {
     dashboard: "لوحة القيادة",
@@ -1699,7 +1701,9 @@ export const translations = {
     totAvgShort: "المجموع/المعدل",
     midFortyShort: "منتصف (40)",
     finalSixtyShort: "نهائي (60)",
-    failedToUpdatePublishing: "فشل تحديث خيارات النشر. يرجى المحاولة مرة أخرى."
+    failedToUpdatePublishing: "فشل تحديث خيارات النشر. يرجى المحاولة مرة أخرى.",
+    printLoginCards: "طباعة بطاقات الدخول",
+    passwordWarning: "تنبيه: حافظ على سرية هذه البطاقة. لا تشارك كلمة المرور الخاصة بك مع أي شخص."
   },
   so: {
     dashboard: "Bogga Hore",
@@ -2549,6 +2553,8 @@ export const translations = {
     totAvgShort: "Tot/Avg",
     midFortyShort: "Mid (40)",
     finalSixtyShort: "Final (60)",
-    failedToUpdatePublishing: "Waa uu ku fashilmay cusbooneysiinta xaaladda daabacaadda. Fadlan isku day markale."
+    failedToUpdatePublishing: "Waa uu ku fashilmay cusbooneysiinta xaaladda daabacaadda. Fadlan isku day markale.",
+    printLoginCards: "Daabac Kaararka Soo Gelitaanka",
+    passwordWarning: "Digniin: Kaarkan si fiican u ilaali. Waligaa ha la wadaagin sirtaada qof kale."
   }
 };
