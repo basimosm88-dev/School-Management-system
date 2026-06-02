@@ -1326,6 +1326,10 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
     chunks.push(classStudents.slice(i, i + 6));
   }
 
+  // Real login page URL for QR Code
+  const loginUrl = `${window.location.origin}/login`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(loginUrl)}`;
+
   return (
     <div className="print-only login-cards-print-container font-sans text-slate-900 bg-white">
       {chunks.map((chunk, chunkIdx) => (
@@ -1374,9 +1378,11 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
                     {/* Right Column: Portal QR Code Graphic */}
                     <div className="login-card-right-col">
                       <div className="login-card-qr-container">
-                        <div className="login-card-qr-placeholder">
-                          <span className="material-symbols-outlined text-[48px]">qr_code_2</span>
-                        </div>
+                        <img 
+                          src={qrCodeUrl} 
+                          alt="Login QR Code" 
+                          className="login-card-qr-img" 
+                        />
                         <div className="login-card-qr-hint">Scan to Login</div>
                       </div>
                     </div>

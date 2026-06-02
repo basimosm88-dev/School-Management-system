@@ -811,11 +811,11 @@
     box-sizing: border-box !important;
   }
 
-  .login-card-qr-placeholder {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #000000 !important;
+  .login-card-qr-img {
+    width: 48px !important;
+    height: 48px !important;
+    object-fit: contain !important;
+    display: block !important;
   }
 
   .login-card-qr-hint {
