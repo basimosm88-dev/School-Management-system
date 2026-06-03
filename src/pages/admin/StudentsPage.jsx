@@ -1153,7 +1153,7 @@ const StudentProfile = ({ student, onClose, classes, schoolSettings }) => {
 const PrintableFooter = () => {
   const { t } = useSettings();
   return (
-    <div className="mt-4 text-center">
+    <div className="mt-auto pt-4 text-center">
       <p className="text-[9px] text-slate-400 italic">{t('officialSealNotice')}</p>
     </div>
   );
