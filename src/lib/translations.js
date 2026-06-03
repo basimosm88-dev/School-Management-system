@@ -850,7 +850,10 @@ export const translations = {
     finalSixtyShort: "Final (60)",
     failedToUpdatePublishing: "Failed to update publishing options. Please try again.",
     printLoginCards: "Print Login Cards",
-    passwordWarning: "Warning: Keep this card secure. Never share your password with anyone."
+    passwordWarning: "Warning: Keep this card secure. Never share your password with anyone.",
+    printExamCards: "Print Exam Cards",
+    examCard: "Exam Card",
+    examCardWarning: "Warning: Please bring this card to every exam session. Students without an exam card or arriving more than 15 minutes late will not be admitted to the exam hall."
   },
   ar: {
     dashboard: "لوحة القيادة",
@@ -1703,7 +1706,10 @@ export const translations = {
     finalSixtyShort: "نهائي (60)",
     failedToUpdatePublishing: "فشل تحديث خيارات النشر. يرجى المحاولة مرة أخرى.",
     printLoginCards: "طباعة بطاقات الدخول",
-    passwordWarning: "تنبيه: حافظ على سرية هذه البطاقة. لا تشارك كلمة المرور الخاصة بك مع أي شخص."
+    passwordWarning: "تنبيه: حافظ على سرية هذه البطاقة. لا تشارك كلمة المرور الخاصة بك مع أي شخص.",
+    printExamCards: "طباعة بطاقات الامتحانات",
+    examCard: "بطاقة الامتحانات",
+    examCardWarning: "تنبيه: يرجى إحضار هذه البطاقة إلى كل جلسة امتحان. لن يُسمح للطلاب الذين ليس لديهم بطاقة امتحان أو الذين يصلون متأخرين لأكثر من 15 دقيقة بدخول قاعة الامتحان."
   },
   so: {
     dashboard: "Bogga Hore",
@@ -2555,6 +2561,9 @@ export const translations = {
     finalSixtyShort: "Final (60)",
     failedToUpdatePublishing: "Waa uu ku fashilmay cusbooneysiinta xaaladda daabacaadda. Fadlan isku day markale.",
     printLoginCards: "Daabac Kaararka Soo Gelitaanka",
-    passwordWarning: "Digniin: Kaarkan si fiican u ilaali. Waligaa ha la wadaagin sirtaada qof kale."
+    passwordWarning: "Digniin: Kaarkan si fiican u ilaali. Waligaa ha la wadaagin sirtaada qof kale.",
+    printExamCards: "Daabac Kaararka Imtixaanka",
+    examCard: "Kaarka Imtixaanka",
+    examCardWarning: "Digniin: Fadlan kaarkan la kaalay dhammaan fadhiyada imtixaanka. Ardayga aan wadan kaarka imtixaanka ama daaha in ka badan 15 daqiiqo looma ogolaan doono qolka imtixaanka."
   }
 };

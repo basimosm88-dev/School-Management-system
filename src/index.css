@@ -719,7 +719,7 @@
   .login-card-info-label {
     color: #000000 !important;
     font-weight: 700 !important;
-    min-width: 90px !important;
+    min-width: 110px !important;
   }
 
   .login-card-info-value {
@@ -749,7 +749,7 @@
 
   .login-card-cred-label {
     font-weight: 700 !important;
-    min-width: 90px !important;
+    min-width: 110px !important;
   }
 
   .login-card-cred-value {

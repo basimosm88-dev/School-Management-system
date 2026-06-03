@@ -51,6 +51,7 @@ const StudentsPage = () => {
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [printingClassId, setPrintingClassId] = useState(null);
   const [printingLoginCardsClassId, setPrintingLoginCardsClassId] = useState(null);
+  const [selectedExamOption, setSelectedExamOption] = useState('Midterm');
   const [isLoading, setIsLoading] = useState(false);
   const { currentUser } = useAppContext();
   const userRole = currentUser?.role || 'admin';
@@ -294,12 +295,23 @@ const StudentsPage = () => {
                     <span className="material-symbols-outlined text-section">print</span>
                     {t('printStudentList')}
                   </button>
+                  <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-xl px-3 py-1.5 border border-slate-200/50 dark:border-slate-800 shrink-0">
+                    <span className="text-label text-slate-500/80 px-1 font-medium">{t('examOption')}:</span>
+                    <select
+                      value={selectedExamOption}
+                      onChange={(e) => setSelectedExamOption(e.target.value)}
+                      className="bg-transparent border-none rounded-lg text-label px-2 outline-none focus:ring-0 text-slate-700 dark:text-slate-200 cursor-pointer h-7"
+                    >
+                      <option value="Midterm">{t('midterm')}</option>
+                      <option value="Final">{t('final')}</option>
+                    </select>
+                  </div>
                   <button
                     onClick={handlePrintLoginCards}
                     className="btn-secondary py-2 px-6 flex items-center justify-center gap-2 border-primary/20 text-primary shrink-0"
                   >
                     <span className="material-symbols-outlined text-section">badge</span>
-                    {t('printLoginCards')}
+                    {t('printExamCards')}
                   </button>
                 </div>
               )}
@@ -492,6 +504,7 @@ const StudentsPage = () => {
           students={students}
           classes={classes}
           schoolSettings={schoolSettings}
+          examOption={selectedExamOption}
         />
       )}
     </PageLayout>
@@ -1312,7 +1325,7 @@ const PrintableClassStudents = ({ classId, students, classes, schoolSettings }) 
   );
 };
 
-const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings }) => {
+const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings, examOption }) => {
   const { name: schoolName, logo } = schoolSettings || {};
   const { t } = useSettings();
   const currentClass = classes.find(c => String(c.id) === String(classId));
@@ -1336,7 +1349,6 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
         <div key={chunkIdx} className="login-cards-page" style={{ pageBreakAfter: chunkIdx < chunks.length - 1 ? 'always' : 'avoid' }}>
           {chunk.map(student => {
             const studentId = student.systemId || student.id.split('-')[0];
-            const studentPassword = student.password || '123456';
             return (
               <div key={student.id} className="login-card">
                 {/* Header */}
@@ -1349,6 +1361,21 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
                     </div>
                   )}
                   <span className="login-card-school-name">{schoolName || 'School Management System'}</span>
+                  <span 
+                    className="login-card-title-badge" 
+                    style={{ 
+                      marginLeft: 'auto', 
+                      fontSize: '10px', 
+                      fontWeight: 'bold', 
+                      border: '1px solid #000000', 
+                      padding: '2px 6px', 
+                      borderRadius: '4px', 
+                      textTransform: 'uppercase', 
+                      letterSpacing: '0.05em' 
+                    }}
+                  >
+                    {t('examCard')}
+                  </span>
                 </div>
 
                 {/* Body */}
@@ -1356,20 +1383,24 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
                   <h4 className="login-card-student-name">{student.name}</h4>
                   
                   <div className="login-card-info-row">
-                    <span className="login-card-info-label">{t('class')}:</span>
-                    <span className="login-card-info-value">{currentClass ? currentClass.name : ''}</span>
+                    <span className="login-card-info-label">{t('studentId')}:</span>
+                    <span className="login-card-info-value">{studentId}</span>
                   </div>
 
                   {/* Bottom row containing credentials on the left, QR code on the right */}
                   <div className="login-card-bottom-row">
                     <div className="login-card-credentials-box">
                       <div className="login-card-cred-row">
-                        <span className="login-card-cred-label">{t('studentId')}:</span>
-                        <span className="login-card-cred-value">{studentId}</span>
+                        <span className="login-card-cred-label">{t('class')}:</span>
+                        <span className="login-card-cred-value">{currentClass ? currentClass.name : ''}</span>
                       </div>
                       <div className="login-card-cred-row">
-                        <span className="login-card-cred-label">{t('password')}:</span>
-                        <span className="login-card-cred-value">{studentPassword}</span>
+                        <span className="login-card-cred-label">{t('academicYear')}:</span>
+                        <span className="login-card-cred-value">{currentClass?.academicYear || '2025-2026'}</span>
+                      </div>
+                      <div className="login-card-cred-row">
+                        <span className="login-card-cred-label">{t('examType')}:</span>
+                        <span className="login-card-cred-value">{examOption === 'Midterm' ? t('midterm') : t('final')}</span>
                       </div>
                     </div>
 
@@ -1386,7 +1417,7 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
 
                 {/* Warning Footer */}
                 <div className="login-card-footer">
-                  {t('passwordWarning')}
+                  {t('examCardWarning')}
                 </div>
               </div>
             );
