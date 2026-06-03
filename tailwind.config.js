@@ -68,16 +68,16 @@ export default {
         gutter: "20px"
       },
       fontFamily: {
-        "headline-sm": ["Inter", "sans-serif"],
-        "label-bold": ["Inter", "sans-serif"],
-        "stat-value": ["Inter", "sans-serif"],
-        "body-sm": ["Inter", "sans-serif"],
-        "body-md": ["Inter", "sans-serif"],
-        "display-bold": ["Inter", "sans-serif"],
-        headline: ["Inter", "sans-serif"],
-        display: ["Inter", "sans-serif"],
-        body: ["Inter", "sans-serif"],
-        label: ["Inter", "sans-serif"]
+        "headline-sm": ["Source Sans 3", "Source Sans Pro", "sans-serif"],
+        "label-bold": ["Source Sans 3", "Source Sans Pro", "sans-serif"],
+        "stat-value": ["Source Sans 3", "Source Sans Pro", "sans-serif"],
+        "body-sm": ["Source Sans 3", "Source Sans Pro", "sans-serif"],
+        "body-md": ["Source Sans 3", "Source Sans Pro", "sans-serif"],
+        "display-bold": ["Source Sans 3", "Source Sans Pro", "sans-serif"],
+        headline: ["Source Sans 3", "Source Sans Pro", "sans-serif"],
+        display: ["Source Sans 3", "Source Sans Pro", "sans-serif"],
+        body: ["Source Sans 3", "Source Sans Pro", "sans-serif"],
+        label: ["Source Sans 3", "Source Sans Pro", "sans-serif"]
       },
       fontSize: {
         "headline-sm": ["18px", { lineHeight: "24px", fontWeight: "600" }],
