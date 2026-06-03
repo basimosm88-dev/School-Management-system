@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 // System Version: 1.4.0 - Bulk Student Import Implementation
 import PageLayout from '../../components/layout/PageLayout';
 import { useData } from '../../contexts/DataContext';
@@ -152,10 +152,6 @@ const StudentsPage = () => {
 
   const handlePrintClassList = () => {
     setPrintingClassId(selectedClassId);
-    setTimeout(() => {
-      window.print();
-      setPrintingClassId(null);
-    }, 300);
   };
 
   const handlePrintLoginCards = (examType) => {
@@ -163,11 +159,27 @@ const StudentsPage = () => {
       setSelectedExamOption(examType);
     }
     setPrintingLoginCardsClassId(selectedClassId);
-    setTimeout(() => {
-      window.print();
-      setPrintingLoginCardsClassId(null);
-    }, 300);
   };
+
+  useEffect(() => {
+    if (printingClassId) {
+      const timer = setTimeout(() => {
+        window.print();
+        setPrintingClassId(null);
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [printingClassId]);
+
+  useEffect(() => {
+    if (printingLoginCardsClassId) {
+      const timer = setTimeout(() => {
+        window.print();
+        setPrintingLoginCardsClassId(null);
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [printingLoginCardsClassId]);
 
   const goBack = () => {
     setSelectedClassId(null);

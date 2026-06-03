@@ -508,9 +508,7 @@
     margin: 0 !important;
     padding: 0 !important;
     display: block !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+    position: static !important;
     width: 100% !important;
   }
 
@@ -625,12 +623,17 @@
 
 /* Print Login Cards Styles */
 @media print {
-  /* Prevent background wrapper page bloating */
+  /* Prevent background wrapper page bloating and clipping */
+  html,
+  body,
   #root, 
   #root > div,
   .min-h-screen {
     min-height: 0 !important;
     height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+    display: block !important;
     background: #ffffff !important;
   }
 
