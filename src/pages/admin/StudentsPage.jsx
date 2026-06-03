@@ -1153,7 +1153,15 @@ const StudentProfile = ({ student, onClose, classes, schoolSettings }) => {
 const PrintableFooter = () => {
   const { t } = useSettings();
   return (
-    <div className="mt-auto pt-4 text-center">
+    <div className="mt-8 pt-4 text-center">
+      <div className="grid grid-cols-2 gap-12 pt-4 mb-4">
+        <div className="signature-area text-center border-t-2 border-slate-900 pt-2">
+          <p className="text-[10px] font-black uppercase tracking-widest">{t('managerSignature')}</p>
+        </div>
+        <div className="signature-area text-center border-t-2 border-slate-900 pt-2">
+          <p className="text-[10px] font-black uppercase tracking-widest">{t('responsiblePersonSignature')}</p>
+        </div>
+      </div>
       <p className="text-[9px] text-slate-400 italic">{t('officialSealNotice')}</p>
     </div>
   );
@@ -1285,16 +1293,6 @@ const PrintableStudentProfile = ({ student, classes, schoolSettings }) => {
               <PrintItem label={t('phone2')} value={student.responsiblePerson?.phone2 || t('none')} />
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* PDF FOOTER (Signatures) */}
-      <div className="mt-auto grid grid-cols-2 gap-12 pt-8">
-        <div className="signature-area text-center border-t-2 border-slate-900 pt-2">
-          <p className="text-[10px] font-black uppercase tracking-widest">{t('managerSignature')}</p>
-        </div>
-        <div className="signature-area text-center border-t-2 border-slate-900 pt-2">
-          <p className="text-[10px] font-black uppercase tracking-widest">{t('responsiblePersonSignature')}</p>
         </div>
       </div>
       <PrintableFooter />
