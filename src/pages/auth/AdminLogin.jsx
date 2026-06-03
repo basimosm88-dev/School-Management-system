@@ -88,7 +88,7 @@ const AdminLogin = () => {
           </div>
           <div className="text-left">
             <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
-              {schoolSettings.name || currentSchool?.name || 'EduCore Pro'}
+              {schoolSettings.name || currentSchool?.name || 'Coresa'}
             </h1>
             <p className="text-xs text-slate-500 mt-1 font-medium">{t('administratorLogin')}</p>
           </div>

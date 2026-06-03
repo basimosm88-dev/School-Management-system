@@ -290,7 +290,7 @@ export const AppProvider = ({ children }) => {
       {loading ? (
         <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-          <h2 className="text-xl font-black text-slate-950 dark:text-white tracking-tight animate-pulse">EduCore Pro</h2>
+          <h2 className="text-xl font-black text-slate-950 dark:text-white tracking-tight animate-pulse">Coresa</h2>
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 uppercase font-bold tracking-widest animate-pulse">Verifying Session...</p>
         </div>
       ) : children}

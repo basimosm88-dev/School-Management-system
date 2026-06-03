@@ -31,7 +31,7 @@ const Login = () => {
 
     try {
       // All roles log in via Supabase using email and password
-      const emailToUse = identifier.includes('@') ? identifier : `${identifier}@educore.local`.toLowerCase();
+      const emailToUse = identifier.includes('@') ? identifier : `${identifier}@coresa.local`.toLowerCase();
       
       const { user } = await login(emailToUse, password);
 
@@ -107,7 +107,7 @@ const Login = () => {
           </div>
           <div className="text-left">
             <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
-              {schoolSettings.name || currentSchool?.name || 'EduCore Pro'}
+              {schoolSettings.name || currentSchool?.name || 'Coresa'}
             </h1>
             <p className="text-xs text-slate-500 mt-1 font-medium">{roleConfigs[selectedRole].welcome}</p>
           </div>
