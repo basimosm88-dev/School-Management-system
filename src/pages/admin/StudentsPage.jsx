@@ -295,24 +295,26 @@ const StudentsPage = () => {
                     <span className="material-symbols-outlined text-section">print</span>
                     {t('printStudentList')}
                   </button>
-                  <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-xl px-3 py-1.5 border border-slate-200/50 dark:border-slate-800 shrink-0">
-                    <span className="text-label text-slate-500/80 px-1 font-medium">{t('examOption')}:</span>
-                    <select
-                      value={selectedExamOption}
-                      onChange={(e) => setSelectedExamOption(e.target.value)}
-                      className="bg-transparent border-none rounded-lg text-label px-2 outline-none focus:ring-0 text-slate-700 dark:text-slate-200 cursor-pointer h-7"
+                  <div className="flex flex-col items-stretch gap-1 bg-slate-50 dark:bg-slate-850 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shrink-0">
+                    <button
+                      onClick={handlePrintLoginCards}
+                      className="btn-secondary py-1.5 px-6 flex items-center justify-center gap-2 border-primary/20 text-primary shrink-0 w-full"
                     >
-                      <option value="Midterm">{t('midterm')}</option>
-                      <option value="Final">{t('final')}</option>
-                    </select>
+                      <span className="material-symbols-outlined text-section">badge</span>
+                      {t('printExamCards')}
+                    </button>
+                    <div className="flex items-center justify-between gap-2 px-2 text-slate-500/80">
+                      <span className="text-[11px] font-medium">{t('examOption')}:</span>
+                      <select
+                        value={selectedExamOption}
+                        onChange={(e) => setSelectedExamOption(e.target.value)}
+                        className="bg-transparent border-none rounded-lg text-[11px] py-0 px-1 outline-none focus:ring-0 text-slate-700 dark:text-slate-200 cursor-pointer h-6 font-semibold"
+                      >
+                        <option value="Midterm">{t('midterm')}</option>
+                        <option value="Final">{t('final')}</option>
+                      </select>
+                    </div>
                   </div>
-                  <button
-                    onClick={handlePrintLoginCards}
-                    className="btn-secondary py-2 px-6 flex items-center justify-center gap-2 border-primary/20 text-primary shrink-0"
-                  >
-                    <span className="material-symbols-outlined text-section">badge</span>
-                    {t('printExamCards')}
-                  </button>
                 </div>
               )}
             </div>
@@ -1410,7 +1412,6 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
                         alt="Login QR Code" 
                         className="login-card-qr-img" 
                       />
-                      <div className="login-card-qr-hint">Scan to Login</div>
                     </div>
                   </div>
                 </div>

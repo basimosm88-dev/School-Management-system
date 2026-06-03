@@ -782,9 +782,8 @@
   .login-card-qr-container {
     border: 1px solid #000000 !important;
     border-radius: 6px !important;
-    padding: 6px !important;
+    padding: 4px !important;
     display: flex !important;
-    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     background: #ffffff !important;
@@ -795,8 +794,8 @@
   }
 
   .login-card-qr-img {
-    width: 44px !important;
-    height: 44px !important;
+    width: 100% !important;
+    height: 100% !important;
     object-fit: contain !important;
     display: block !important;
   }
