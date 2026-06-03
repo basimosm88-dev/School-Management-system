@@ -52,6 +52,7 @@ const StudentsPage = () => {
   const [printingClassId, setPrintingClassId] = useState(null);
   const [printingLoginCardsClassId, setPrintingLoginCardsClassId] = useState(null);
   const [selectedExamOption, setSelectedExamOption] = useState('Midterm');
+  const [isExamPrintModalOpen, setIsExamPrintModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { currentUser } = useAppContext();
   const userRole = currentUser?.role || 'admin';
@@ -157,7 +158,10 @@ const StudentsPage = () => {
     }, 300);
   };
 
-  const handlePrintLoginCards = () => {
+  const handlePrintLoginCards = (examType) => {
+    if (examType) {
+      setSelectedExamOption(examType);
+    }
     setPrintingLoginCardsClassId(selectedClassId);
     setTimeout(() => {
       window.print();
@@ -295,26 +299,13 @@ const StudentsPage = () => {
                     <span className="material-symbols-outlined text-section">print</span>
                     {t('printStudentList')}
                   </button>
-                  <div className="flex flex-col items-stretch gap-1 bg-slate-50 dark:bg-slate-850 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shrink-0">
-                    <button
-                      onClick={handlePrintLoginCards}
-                      className="btn-secondary py-1.5 px-6 flex items-center justify-center gap-2 border-primary/20 text-primary shrink-0 w-full"
-                    >
-                      <span className="material-symbols-outlined text-section">badge</span>
-                      {t('printExamCards')}
-                    </button>
-                    <div className="flex items-center justify-between gap-2 px-2 text-slate-500/80">
-                      <span className="text-[11px] font-medium">{t('examOption')}:</span>
-                      <select
-                        value={selectedExamOption}
-                        onChange={(e) => setSelectedExamOption(e.target.value)}
-                        className="bg-transparent border-none rounded-lg text-[11px] py-0 px-1 outline-none focus:ring-0 text-slate-700 dark:text-slate-200 cursor-pointer h-6 font-semibold"
-                      >
-                        <option value="Midterm">{t('midterm')}</option>
-                        <option value="Final">{t('final')}</option>
-                      </select>
-                    </div>
-                  </div>
+                  <button
+                    onClick={() => setIsExamPrintModalOpen(true)}
+                    className="btn-secondary py-2 px-6 flex items-center justify-center gap-2 border-primary/20 text-primary shrink-0"
+                  >
+                    <span className="material-symbols-outlined text-section">badge</span>
+                    {t('printExamCards')}
+                  </button>
                 </div>
               )}
             </div>
@@ -508,6 +499,53 @@ const StudentsPage = () => {
           schoolSettings={schoolSettings}
           examOption={selectedExamOption}
         />
+      )}
+
+      {isExamPrintModalOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md p-6 shadow-xl border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200 flex flex-col gap-6">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-section text-slate-900 dark:text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">badge</span>
+                {t('selectExamCycle')}
+              </h3>
+              <button 
+                onClick={() => setIsExamPrintModalOpen(false)}
+                className="p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <p className="text-label text-slate-500/80 leading-relaxed">
+              {t('selectExamCycleDesc')}
+            </p>
+            
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  setIsExamPrintModalOpen(false);
+                  handlePrintLoginCards('Midterm');
+                }}
+                className="w-full btn-primary py-3 flex items-center justify-center gap-2 text-label"
+              >
+                <span className="material-symbols-outlined text-section">badge</span>
+                {t('midterm')}
+              </button>
+              
+              <button
+                onClick={() => {
+                  setIsExamPrintModalOpen(false);
+                  handlePrintLoginCards('Final');
+                }}
+                className="w-full btn-secondary py-3 flex items-center justify-center gap-2 border-primary/20 text-primary text-label"
+              >
+                <span className="material-symbols-outlined text-section">badge</span>
+                {t('final')}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </PageLayout>
   );

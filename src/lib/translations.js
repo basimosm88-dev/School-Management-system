@@ -853,7 +853,9 @@ export const translations = {
     passwordWarning: "Warning: Keep this card secure. Never share your password with anyone.",
     printExamCards: "Print Exam Cards",
     examCard: "Exam Card",
-    examCardWarning: "Warning: Please bring this card to every exam session. Students without an exam card or arriving more than 15 minutes late will not be admitted to the exam hall."
+    examCardWarning: "Warning: Please bring this card to every exam session. Students without an exam card or arriving more than 15 minutes late will not be admitted to the exam hall.",
+    selectExamCycle: "Select Exam Cycle",
+    selectExamCycleDesc: "Choose which exam option (Midterm or Final) to display on the printed exam cards for this class:"
   },
   ar: {
     dashboard: "لوحة القيادة",
@@ -1709,7 +1711,9 @@ export const translations = {
     passwordWarning: "تنبيه: حافظ على سرية هذه البطاقة. لا تشارك كلمة المرور الخاصة بك مع أي شخص.",
     printExamCards: "طباعة بطاقات الامتحانات",
     examCard: "بطاقة الامتحانات",
-    examCardWarning: "تنبيه: يرجى إحضار هذه البطاقة إلى كل جلسة امتحان. لن يُسمح للطلاب الذين ليس لديهم بطاقة امتحان أو الذين يصلون متأخرين لأكثر من 15 دقيقة بدخول قاعة الامتحان."
+    examCardWarning: "تنبيه: يرجى إحضار هذه البطاقة إلى كل جلسة امتحان. لن يُسمح للطلاب الذين ليس لديهم بطاقة امتحان أو الذين يصلون متأخرين لأكثر من 15 دقيقة بدخول قاعة الامتحان.",
+    selectExamCycle: "اختر دورة الامتحان",
+    selectExamCycleDesc: "اختر أي خيار امتحان (منتصف الفصل أو النهائي) لعرضه على بطاقات الامتحانات المطبوعة لهذا الفصل الدراسي:"
   },
   so: {
     dashboard: "Bogga Hore",
@@ -2564,6 +2568,8 @@ export const translations = {
     passwordWarning: "Digniin: Kaarkan si fiican u ilaali. Waligaa ha la wadaagin sirtaada qof kale.",
     printExamCards: "Daabac Kaararka Imtixaanka",
     examCard: "Kaarka Imtixaanka",
-    examCardWarning: "Digniin: Fadlan kaarkan la kaalay dhammaan fadhiyada imtixaanka. Ardayga aan wadan kaarka imtixaanka ama daaha in ka badan 15 daqiiqo looma ogolaan doono qolka imtixaanka."
+    examCardWarning: "Digniin: Fadlan kaarkan la kaalay dhammaan fadhiyada imtixaanka. Ardayga aan wadan kaarka imtixaanka ama daaha in ka badan 15 daqiiqo looma ogolaan doono qolka imtixaanka.",
+    selectExamCycle: "Dooro Wareegga Imtixaanka",
+    selectExamCycleDesc: "Dooro nooca imtixaanka (Midterm ama Final) ee lagu muujinayo kaararka imtixaanka ee loo daabacayo fasalkan:"
   }
 };
