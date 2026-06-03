@@ -623,12 +623,16 @@
 
 /* Print Login Cards Styles */
 @media print {
+  /* Hide the entire screen layout wrapper completely to prevent clipping / nesting issues */
+  .screen-layout {
+    display: none !important;
+  }
+
   /* Prevent background wrapper page bloating and clipping */
   html,
   body,
   #root, 
-  #root > div,
-  .min-h-screen {
+  #root > div {
     min-height: 0 !important;
     height: auto !important;
     overflow: visible !important;

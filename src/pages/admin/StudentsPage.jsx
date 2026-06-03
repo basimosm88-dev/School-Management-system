@@ -198,7 +198,8 @@ const StudentsPage = () => {
   }
 
   return (
-    <PageLayout role={userRole} title={t('students')}>
+    <>
+      <PageLayout role={userRole} title={t('students')}>
       <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
         {/* 1. HEADER & GLOBAL CONTROLS */}
@@ -485,34 +486,6 @@ const StudentsPage = () => {
         />
       )}
 
-      {/* 5. HIDDEN PRINTABLE COMPONENT */}
-      {selectedStudent && isProfileOpen && !printingClassId && !printingLoginCardsClassId && (
-        <PrintableStudentProfile
-          student={selectedStudent}
-          classes={classes}
-          schoolSettings={schoolSettings}
-        />
-      )}
-
-      {printingClassId && (
-        <PrintableClassStudents
-          classId={printingClassId}
-          students={students}
-          classes={classes}
-          schoolSettings={schoolSettings}
-        />
-      )}
-
-      {printingLoginCardsClassId && (
-        <PrintableStudentLoginCards
-          classId={printingLoginCardsClassId}
-          students={students}
-          classes={classes}
-          schoolSettings={schoolSettings}
-          examOption={selectedExamOption}
-        />
-      )}
-
       {isExamPrintModalOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md p-6 shadow-xl border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200 flex flex-col gap-6">
@@ -560,6 +533,35 @@ const StudentsPage = () => {
         </div>
       )}
     </PageLayout>
+
+    {/* 5. HIDDEN PRINTABLE COMPONENT */}
+    {selectedStudent && isProfileOpen && !printingClassId && !printingLoginCardsClassId && (
+      <PrintableStudentProfile
+        student={selectedStudent}
+        classes={classes}
+        schoolSettings={schoolSettings}
+      />
+    )}
+
+    {printingClassId && (
+      <PrintableClassStudents
+        classId={printingClassId}
+        students={students}
+        classes={classes}
+        schoolSettings={schoolSettings}
+      />
+    )}
+
+    {printingLoginCardsClassId && (
+      <PrintableStudentLoginCards
+        classId={printingLoginCardsClassId}
+        students={students}
+        classes={classes}
+        schoolSettings={schoolSettings}
+        examOption={selectedExamOption}
+      />
+    )}
+  </>
   );
 };
 

@@ -30,7 +30,7 @@ const PageLayout = ({ role, title, primaryActionText, onPrimaryAction, children 
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 relative selection:bg-primary/20 transition-colors duration-200">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 relative selection:bg-primary/20 transition-colors duration-200 screen-layout">
       <Sidebar role={role} />
       <Header />
       <main 
