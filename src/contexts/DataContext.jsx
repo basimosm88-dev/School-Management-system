@@ -478,8 +478,9 @@ export const DataProvider = ({ children }) => {
     }
   };
   const updateClass = async (id, updates) => {
-    setClasses(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
-    await supabase.from('classes').update({ details: updates }).eq('id', id);
+    const name = `${updates.gradeName} - ${updates.section}`;
+    setClasses(prev => prev.map(c => c.id === id ? { ...c, ...updates, name, section: updates.section } : c));
+    await supabase.from('classes').update({ name, section: updates.section, details: updates }).eq('id', id);
   };
   const deleteClass = async (id) => {
     setClasses(prev => prev.filter(c => c.id !== id));
