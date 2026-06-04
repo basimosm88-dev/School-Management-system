@@ -1385,10 +1385,10 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
     .filter(s => String(s.classId) === String(classId))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  // Chunk students into groups of 10 to fit A4 paper layout (2 columns x 5 rows)
+  // Chunk students into groups of 6 to fit A4 paper layout (2 columns x 3 rows)
   const chunks = [];
-  for (let i = 0; i < classStudents.length; i += 10) {
-    chunks.push(classStudents.slice(i, i + 10));
+  for (let i = 0; i < classStudents.length; i += 6) {
+    chunks.push(classStudents.slice(i, i + 6));
   }
 
   // Real login page URL for QR Code
@@ -1420,40 +1420,42 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
 
                 {/* Body */}
                 <div className="login-card-body">
-                  {/* Left Column: Details */}
-                  <div className="login-card-details-column">
-                    <h4 className="login-card-student-name">{student.name}</h4>
-                    
-                    <div className="login-card-divider"></div>
+                  <h4 className="login-card-student-name">{student.name}</h4>
+                  
+                  <div className="login-card-divider"></div>
 
-                    <div className="login-card-grid-row">
-                      <span className="login-card-grid-label">{t('studentId')}:</span>
-                      <span className="login-card-grid-value">{studentId}</span>
+                  <div className="login-card-content-row">
+                    {/* Left Column: Details */}
+                    <div className="login-card-details-column">
+                      <div className="login-card-grid-row">
+                        <span className="login-card-grid-label">{t('studentId')}:</span>
+                        <span className="login-card-grid-value">{studentId}</span>
+                      </div>
+                      <div className="login-card-grid-row">
+                        <span className="login-card-grid-label">{t('class')}:</span>
+                        <span className="login-card-grid-value">{currentClass ? currentClass.name : ''}</span>
+                      </div>
+                      <div className="login-card-grid-row">
+                        <span className="login-card-grid-label">{t('academicYear')}:</span>
+                        <span className="login-card-grid-value">{currentClass?.academicYear || '2025-2026'}</span>
+                      </div>
+                      <div className="login-card-grid-row">
+                        <span className="login-card-grid-label">{t('examType')}:</span>
+                        <span className="login-card-grid-value">{examOption === 'Midterm' ? t('midterm') : t('final')}</span>
+                      </div>
                     </div>
-                    <div className="login-card-grid-row">
-                      <span className="login-card-grid-label">{t('class')}:</span>
-                      <span className="login-card-grid-value">{currentClass ? currentClass.name : ''}</span>
-                    </div>
-                    <div className="login-card-grid-row">
-                      <span className="login-card-grid-label">{t('academicYear')}:</span>
-                      <span className="login-card-grid-value">{currentClass?.academicYear || '2025-2026'}</span>
-                    </div>
-                    <div className="login-card-grid-row">
-                      <span className="login-card-grid-label">{t('examType')}:</span>
-                      <span className="login-card-grid-value">{examOption === 'Midterm' ? t('midterm') : t('final')}</span>
-                    </div>
-                  </div>
 
-                  {/* Right Column: QR Code */}
-                  <div className="login-card-qr-column">
-                    <div className="login-card-qr-container">
-                      <img 
-                        src={qrCodeUrl} 
-                        alt="Login QR Code" 
-                        className="login-card-qr-img" 
-                      />
+                    {/* Right Column: QR Code */}
+                    <div className="login-card-qr-column">
+                      <div className="login-card-qr-container">
+                        <img 
+                          src={qrCodeUrl} 
+                          alt="Login QR Code" 
+                          className="login-card-qr-img" 
+                        />
+                      </div>
+                      <span className="login-card-qr-hint">SCAN TO LOGIN</span>
                     </div>
-                    <span className="login-card-qr-hint">SCAN TO LOGIN</span>
                   </div>
                 </div>
 

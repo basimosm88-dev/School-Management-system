@@ -652,7 +652,7 @@
   .login-cards-page {
     display: grid !important;
     grid-template-columns: repeat(2, 85.60mm) !important;
-    grid-template-rows: repeat(5, 54.00mm) !important;
+    grid-template-rows: repeat(3, 54.00mm) !important;
     gap: 3mm 14.8mm !important;
     width: 210mm !important; /* Fixed A4 width */
     height: 297mm !important; /* Fixed A4 height */
@@ -727,12 +727,20 @@
   .login-card-body {
     flex-grow: 1 !important;
     display: flex !important;
-    flex-direction: row !important; /* Side-by-side details and QR code */
-    gap: 12px !important; /* Increased column gap */
-    padding: 8px 12px 6px 12px !important; /* Generous card body margins */
+    flex-direction: column !important; /* Stack name, divider, and content row vertically */
+    padding: 6px 12px 6px 12px !important; /* Generous card body margins */
     background: transparent !important;
     overflow: hidden !important;
-    align-items: center !important; /* Balanced vertical centering for body columns */
+    justify-content: flex-start !important;
+  }
+
+  .login-card-content-row {
+    display: flex !important;
+    flex-direction: row !important; /* Side-by-side details and QR code */
+    gap: 12px !important; /* Increased column gap */
+    align-items: center !important; /* Vertically center details and QR code */
+    flex-grow: 1 !important;
+    width: 100% !important;
   }
 
   .login-card-details-column {
