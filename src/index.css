@@ -838,4 +838,6 @@
     background: transparent !important;
     flex-shrink: 0 !important;
   }
-}
+}
+
+/* Trigger GitHub webhook deployment to Vercel */
