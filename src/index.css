@@ -481,7 +481,7 @@
 
 @media print {
   @page {
-    margin: 0;
+    margin: 1.5cm;
     size: auto;
   }
 
@@ -525,7 +525,7 @@
     position: relative !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 6mm 10mm !important;
+    padding: 0 !important; /* Managed by @page margins */
     box-sizing: border-box !important;
   }
 

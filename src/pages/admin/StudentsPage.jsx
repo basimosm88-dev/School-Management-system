@@ -1397,6 +1397,15 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
 
   return (
     <div className="print-only login-cards-print-container font-sans text-slate-900 bg-white">
+      <style>
+        {`
+          @media print {
+            @page {
+              margin: 0 !important;
+            }
+          }
+        `}
+      </style>
       {chunks.map((chunk, chunkIdx) => (
         <div key={chunkIdx} className="login-cards-page" style={{ pageBreakAfter: chunkIdx < chunks.length - 1 ? 'always' : 'avoid' }}>
           {chunk.map(student => {
