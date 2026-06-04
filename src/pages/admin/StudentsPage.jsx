@@ -1413,50 +1413,39 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
                     </div>
                   )}
                   <span className="login-card-school-name">{schoolName || 'School Management System'}</span>
-                  <span 
-                    className="login-card-title-badge" 
-                    style={{ 
-                      marginLeft: 'auto', 
-                      fontSize: '7.5px', 
-                      fontWeight: 'bold', 
-                      border: '1.2px solid #000000', 
-                      padding: '1.5px 4.5px', 
-                      borderRadius: '3px', 
-                      textTransform: 'uppercase', 
-                      letterSpacing: '0.05em',
-                      lineHeight: '1'
-                    }}
-                  >
+                  <span className="login-card-title-badge">
                     {t('examCard')}
                   </span>
                 </div>
 
                 {/* Body */}
                 <div className="login-card-body">
-                  <h4 className="login-card-student-name">{student.name}</h4>
-                  
-                  <div className="login-card-info-row">
-                    <span className="login-card-info-label">{t('studentId')}:</span>
-                    <span className="login-card-info-value">{studentId}</span>
+                  {/* Left Column: Details */}
+                  <div className="login-card-details-column">
+                    <h4 className="login-card-student-name">{student.name}</h4>
+                    
+                    <div className="login-card-divider"></div>
+
+                    <div className="login-card-grid-row">
+                      <span className="login-card-grid-label">{t('studentId')}:</span>
+                      <span className="login-card-grid-value">{studentId}</span>
+                    </div>
+                    <div className="login-card-grid-row">
+                      <span className="login-card-grid-label">{t('class')}:</span>
+                      <span className="login-card-grid-value">{currentClass ? currentClass.name : ''}</span>
+                    </div>
+                    <div className="login-card-grid-row">
+                      <span className="login-card-grid-label">{t('academicYear')}:</span>
+                      <span className="login-card-grid-value">{currentClass?.academicYear || '2025-2026'}</span>
+                    </div>
+                    <div className="login-card-grid-row">
+                      <span className="login-card-grid-label">{t('examType')}:</span>
+                      <span className="login-card-grid-value">{examOption === 'Midterm' ? t('midterm') : t('final')}</span>
+                    </div>
                   </div>
 
-                  {/* Bottom row containing credentials on the left, QR code on the right */}
-                  <div className="login-card-bottom-row">
-                    <div className="login-card-credentials-box">
-                      <div className="login-card-cred-row">
-                        <span className="login-card-cred-label">{t('class')}:</span>
-                        <span className="login-card-cred-value">{currentClass ? currentClass.name : ''}</span>
-                      </div>
-                      <div className="login-card-cred-row">
-                        <span className="login-card-cred-label">{t('academicYear')}:</span>
-                        <span className="login-card-cred-value">{currentClass?.academicYear || '2025-2026'}</span>
-                      </div>
-                      <div className="login-card-cred-row">
-                        <span className="login-card-cred-label">{t('examType')}:</span>
-                        <span className="login-card-cred-value">{examOption === 'Midterm' ? t('midterm') : t('final')}</span>
-                      </div>
-                    </div>
-
+                  {/* Right Column: QR Code */}
+                  <div className="login-card-qr-column">
                     <div className="login-card-qr-container">
                       <img 
                         src={qrCodeUrl} 
@@ -1464,6 +1453,7 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
                         className="login-card-qr-img" 
                       />
                     </div>
+                    <span className="login-card-qr-hint">SCAN TO LOGIN</span>
                   </div>
                 </div>
 
