@@ -141,7 +141,7 @@ const Login = () => {
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">
-              {selectedRole === 'student' ? t('user') : t('emailAddress')}
+              {selectedRole === 'student' ? t('studentId') : t('emailAddress')}
             </label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">

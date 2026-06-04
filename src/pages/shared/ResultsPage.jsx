@@ -7,6 +7,7 @@ import StatCard from '../../components/ui/StatCard';
 import EmptyState from '../../components/ui/EmptyState';
 import EditStudentResultsModal from '../../components/modals/EditStudentResultsModal';
 import ManagePublishStatusModal from '../../components/modals/ManagePublishStatusModal';
+import * as XLSX from 'xlsx';
 
 const getGradePercentage = (score, examType, academicYear) => {
   const numScore = parseFloat(score);
@@ -86,6 +87,102 @@ const ResultsPage = ({ role }) => {
       // Reset after print dialog
       setPrintConfig({ type: 'report-card', examType: null });
     }, 300);
+  };
+
+  // Helper for exporting class results to Excel
+  const handleExportExcel = (examType) => {
+    if (!selectedClassId) return;
+    const currentClass = classes.find(c => String(c.id) === String(selectedClassId));
+    if (!currentClass) return;
+    const className = currentClass.name;
+    const academicYear = currentClass.academicYear || '2025-2026';
+
+    // 1. Get students of this class
+    const classStudents = students.filter(s => String(s.classId) === String(selectedClassId));
+
+    // 2. Get subjects for this class
+    const currentClassSubjects = currentClass?.subjects || [];
+    
+    // Filter exams by class and status (only restrict if student is viewing, otherwise include all drafts/approvals)
+    const classExams = exams.filter(e => 
+      String(e.classId) === String(selectedClassId) && 
+      (currentUser?.role === 'student' ? e.status === 'PUBLISHED' : true)
+    );
+
+    const classSubjects = currentClassSubjects.length > 0
+      ? currentClassSubjects.map(s => s.name).sort()
+      : [...new Set(classExams.map(e => e.subjectName))].sort();
+
+    // 3. For each student, calculate their grades for each subject in this examType
+    const studentGradesList = classStudents.map(student => {
+      const subjectScores = {};
+      let rawSum = 0;
+      let totalPercentage = 0;
+      let count = 0;
+
+      classSubjects.forEach(subName => {
+        const record = classExams.find(e => 
+          String(e.studentId) === String(student.id) && 
+          e.subjectName.toLowerCase() === subName.toLowerCase() && 
+          e.examType === examType
+        );
+        
+        if (record && record.grade !== undefined && record.grade !== null && record.grade !== '') {
+          const score = parseFloat(record.grade);
+          subjectScores[subName] = score;
+          rawSum += score;
+          totalPercentage += getGradePercentage(score, examType, academicYear);
+          count++;
+        } else {
+          subjectScores[subName] = '-';
+        }
+      });
+
+      const averagePercentage = count > 0 ? totalPercentage / count : 0;
+
+      return {
+        id: student.id,
+        name: student.name,
+        subjectScores,
+        total: rawSum,
+        average: averagePercentage,
+        outcome: count > 0 ? (averagePercentage >= 50 ? 'Pass' : 'Fail') : 'Pending'
+      };
+    });
+
+    // 4. Sort students by average percentage in descending order to assign rank
+    const sortedStudents = [...studentGradesList]
+      .sort((a, b) => b.average - a.average)
+      .map((s, idx) => ({ ...s, rank: idx + 1 }));
+
+    // 5. Format data for Excel
+    const excelData = sortedStudents.map(student => {
+      const row = {
+        [t('rank')]: `#${student.rank}`,
+        [t('studentName')]: student.name,
+      };
+
+      // Add each subject column
+      classSubjects.forEach(sub => {
+        row[sub] = student.subjectScores[sub];
+      });
+
+      // Add Total, Average, Outcome
+      row[t('total')] = student.total.toFixed(1);
+      row[t('average')] = `${student.average.toFixed(2)}%`;
+      row[t('outcome')] = student.outcome === 'Pass' ? t('pass') : student.outcome === 'Fail' ? t('fail') : student.outcome;
+
+      return row;
+    });
+
+    // 6. Generate Workbook
+    const ws = XLSX.utils.json_to_sheet(excelData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `${examType} Results`);
+    
+    // 7. Write and trigger download
+    const filename = `${className.replace(/[^a-zA-Z0-9]/g, '_')}_${examType}_Results.xlsx`;
+    XLSX.writeFile(wb, filename);
   };
 
   // --- DERIVED DATA ---
@@ -933,44 +1030,76 @@ const ResultsPage = ({ role }) => {
               {t('printClassResultsDesc')}
             </p>
             
-            <div className="flex flex-col gap-4">
-              <button
-                onClick={() => {
-                  setShowPrintOptionModal(false);
-                  handlePrint(null, { type: 'class-list', examType: 'Midterm' });
-                }}
-                className="w-full py-4 px-6 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-2xl text-left font-bold text-slate-850 dark:text-white transition-all flex items-center justify-between group"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <div className="flex flex-col gap-6">
+              {/* Midterm Assessment */}
+              <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                     <span className="material-symbols-outlined">analytics</span>
                   </span>
                   <div>
-                    <p className="text-sm">{t('midtermAssessment')}</p>
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t('midtermAssessment')}</h4>
                     <p className="text-[10px] text-slate-400 font-normal">{t('midtermAssessmentDesc')}</p>
                   </div>
                 </div>
-                <span className="material-symbols-outlined text-slate-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
-              </button>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => {
+                      setShowPrintOptionModal(false);
+                      handlePrint(null, { type: 'class-list', examType: 'Midterm' });
+                    }}
+                    className="flex items-center justify-center gap-2 py-2.5 px-4 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all shadow-md shadow-primary/15"
+                  >
+                    <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
+                    PDF
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowPrintOptionModal(false);
+                      handleExportExcel('Midterm');
+                    }}
+                    className="flex items-center justify-center gap-2 py-2.5 px-4 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/15"
+                  >
+                    <span className="material-symbols-outlined text-sm">table_view</span>
+                    Excel
+                  </button>
+                </div>
+              </div>
 
-              <button
-                onClick={() => {
-                  setShowPrintOptionModal(false);
-                  handlePrint(null, { type: 'class-list', examType: 'Final' });
-                }}
-                className="w-full py-4 px-6 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-2xl text-left font-bold text-slate-850 dark:text-white transition-all flex items-center justify-between group"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+              {/* Final Assessment */}
+              <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
                     <span className="material-symbols-outlined">grade</span>
                   </span>
                   <div>
-                    <p className="text-sm">{t('finalAssessment')}</p>
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t('finalAssessment')}</h4>
                     <p className="text-[10px] text-slate-400 font-normal">{t('finalAssessmentDesc')}</p>
                   </div>
                 </div>
-                <span className="material-symbols-outlined text-slate-400 group-hover:translate-x-1 transition-transform">chevron_right</span>
-              </button>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => {
+                      setShowPrintOptionModal(false);
+                      handlePrint(null, { type: 'class-list', examType: 'Final' });
+                    }}
+                    className="flex items-center justify-center gap-2 py-2.5 px-4 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/95 transition-all shadow-md shadow-primary/15"
+                  >
+                    <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
+                    PDF
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowPrintOptionModal(false);
+                      handleExportExcel('Final');
+                    }}
+                    className="flex items-center justify-center gap-2 py-2.5 px-4 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/15"
+                  >
+                    <span className="material-symbols-outlined text-sm">table_view</span>
+                    Excel
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
