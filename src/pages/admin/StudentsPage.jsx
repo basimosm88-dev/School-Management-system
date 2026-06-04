@@ -1385,15 +1385,15 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
     .filter(s => String(s.classId) === String(classId))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  // Chunk students into groups of 6
+  // Chunk students into groups of 10 to fit A4 paper layout (2 columns x 5 rows)
   const chunks = [];
-  for (let i = 0; i < classStudents.length; i += 6) {
-    chunks.push(classStudents.slice(i, i + 6));
+  for (let i = 0; i < classStudents.length; i += 10) {
+    chunks.push(classStudents.slice(i, i + 10));
   }
 
   // Real login page URL for QR Code
   const loginUrl = `${window.location.origin}/login`;
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(loginUrl)}`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(loginUrl)}`;
 
   return (
     <div className="print-only login-cards-print-container font-sans text-slate-900 bg-white">
@@ -1408,8 +1408,8 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
                   {logo ? (
                     <img src={logo} alt="Logo" className="login-card-logo" />
                   ) : (
-                    <div className="w-8 h-8 bg-black rounded flex items-center justify-center text-white shrink-0">
-                      <span className="material-symbols-outlined text-[18px]">school</span>
+                    <div className="w-5 h-5 bg-black rounded flex items-center justify-center text-white shrink-0">
+                      <span className="material-symbols-outlined text-[12px]">school</span>
                     </div>
                   )}
                   <span className="login-card-school-name">{schoolName || 'School Management System'}</span>
@@ -1417,13 +1417,14 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
                     className="login-card-title-badge" 
                     style={{ 
                       marginLeft: 'auto', 
-                      fontSize: '10px', 
+                      fontSize: '7.5px', 
                       fontWeight: 'bold', 
-                      border: '1px solid #000000', 
-                      padding: '2px 6px', 
-                      borderRadius: '4px', 
+                      border: '1.2px solid #000000', 
+                      padding: '1.5px 4.5px', 
+                      borderRadius: '3px', 
                       textTransform: 'uppercase', 
-                      letterSpacing: '0.05em' 
+                      letterSpacing: '0.05em',
+                      lineHeight: '1'
                     }}
                   >
                     {t('examCard')}
