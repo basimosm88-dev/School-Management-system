@@ -651,18 +651,18 @@
 
   .login-cards-page {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    grid-template-rows: repeat(5, 1fr) !important;
+    grid-template-columns: repeat(2, 85.60mm) !important;
+    grid-template-rows: repeat(5, 54.00mm) !important;
     gap: 3mm 14.8mm !important;
     width: 210mm !important; /* Fixed A4 width */
     height: 297mm !important; /* Fixed A4 height */
     max-height: 297mm !important;
     box-sizing: border-box !important;
-    padding: 10mm 12mm !important; /* Centers the cards nicely */
+    padding: 10mm 12mm 5mm 12mm !important; /* Mathematically sums up to 297mm height */
     background: #ffffff !important;
-    place-items: center !important;
-    justify-content: center !important;
-    align-content: center !important;
+    align-content: start !important; /* Prevents centering empty rows vertically */
+    justify-content: start !important; /* Aligns columns to the top-left */
+    place-items: stretch !important;
     overflow: hidden !important;
     page-break-after: always !important;
   }
@@ -686,35 +686,35 @@
     display: flex !important;
     align-items: center !important;
     gap: 6px !important;
-    border-bottom: 1px solid #000000 !important;
-    padding: 4px 8px !important;
+    border-bottom: 1.2px solid #000000 !important;
+    padding: 5px 8px !important; /* Balanced header padding */
     background: transparent !important;
     flex-shrink: 0 !important;
   }
 
   .login-card-logo {
-    width: 18px !important;
-    height: 18px !important;
+    width: 26px !important; /* Enlarged for visibility */
+    height: 26px !important;
     object-fit: contain !important;
   }
 
   .login-card-school-name {
-    font-size: 8.5px !important;
-    font-weight: 750 !important;
+    font-size: 10px !important; /* Enlarged font-size */
+    font-weight: 800 !important;
     text-transform: uppercase !important;
     color: #000000 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    max-width: 130px !important;
+    max-width: 140px !important;
   }
 
   .login-card-title-badge {
     margin-left: auto !important; 
-    font-size: 7px !important; 
-    font-weight: 700 !important; 
-    border: 1px solid #000000 !important; 
-    padding: 1px 4px !important; 
+    font-size: 8px !important; /* Enlarged badge */
+    font-weight: 750 !important; 
+    border: 1.2px solid #000000 !important; 
+    padding: 1.5px 5px !important; 
     border-radius: 3px !important; 
     text-transform: uppercase !important; 
     letter-spacing: 0.05em !important;
@@ -729,55 +729,55 @@
     display: flex !important;
     flex-direction: row !important; /* Side-by-side details and QR code */
     gap: 8px !important;
-    padding: 4px 8px !important;
+    padding: 6px 8px 4px 8px !important; /* Adjusted top padding to prevent empty gap */
     background: transparent !important;
     overflow: hidden !important;
-    align-items: center !important;
+    align-items: start !important; /* Aligns columns to top to eliminate gaps */
   }
 
   .login-card-details-column {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 1.5px !important;
+    gap: 2.5px !important; /* Cohesive text line spacing */
     overflow: hidden !important;
-    justify-content: center !important;
+    justify-content: start !important; /* Pulls details to the top */
   }
 
   .login-card-student-name {
-    font-size: 10px !important;
-    font-weight: 750 !important;
+    font-size: 11.5px !important; /* Enlarged for readability */
+    font-weight: 800 !important;
     color: #000000 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    line-height: 1.1 !important;
+    line-height: 1.15 !important;
     margin: 0 !important;
   }
 
   .login-card-divider {
-    border-bottom: 0.5px solid #000000 !important;
-    margin: 2px 0 3px 0 !important;
+    border-bottom: 0.8px solid #000000 !important;
+    margin: 2px 0 4px 0 !important;
     width: 100% !important;
-    opacity: 0.2 !important;
+    opacity: 0.25 !important;
   }
 
   .login-card-grid-row {
     display: flex !important;
     align-items: center !important;
-    font-size: 7.5px !important;
-    line-height: 1.2 !important;
+    font-size: 8.5px !important; /* Enlarged label and value fonts */
+    line-height: 1.3 !important;
   }
 
   .login-card-grid-label {
     font-weight: 700 !important;
     color: #000000 !important;
-    width: 52px !important;
+    width: 58px !important; /* Adjusted label width */
     flex-shrink: 0 !important;
   }
 
   .login-card-grid-value {
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     color: #000000 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -788,10 +788,11 @@
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: center !important;
-    width: 44px !important;
+    justify-content: start !important; /* Align QR to top to match details */
+    width: 46px !important;
     flex-shrink: 0 !important;
-    gap: 2px !important;
+    gap: 3px !important;
+    padding-top: 4px !important; /* Aligns QR code vertically with details */
   }
 
   .login-card-qr-container {
@@ -802,8 +803,8 @@
     align-items: center !important;
     justify-content: center !important;
     background: #ffffff !important;
-    width: 42px !important;
-    height: 42px !important;
+    width: 44px !important; /* Slightly enlarged QR box */
+    height: 44px !important;
     box-sizing: border-box !important;
     flex-shrink: 0 !important;
   }
@@ -816,8 +817,8 @@
   }
 
   .login-card-qr-hint {
-    font-size: 5.5px !important;
-    font-weight: 700 !important;
+    font-size: 6px !important; /* Enlarged hint font */
+    font-weight: 800 !important;
     text-transform: uppercase !important;
     color: #000000 !important;
     text-align: center !important;
@@ -827,10 +828,10 @@
   }
 
   .login-card-footer {
-    border-top: 1px solid #000000 !important;
-    padding: 2.5px 8px !important;
-    font-size: 5px !important;
-    line-height: 1.15 !important;
+    border-top: 1.2px solid #000000 !important; /* Clear header-like rule */
+    padding: 3px 8px !important;
+    font-size: 6.5px !important; /* Enlarged warning note for legibility */
+    line-height: 1.25 !important;
     color: #000000 !important;
     font-style: italic !important;
     text-align: center !important;
