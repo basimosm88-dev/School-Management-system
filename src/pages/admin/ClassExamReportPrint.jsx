@@ -72,10 +72,12 @@ const ClassExamReportPrint = () => {
  <style>
  {`
  @media print {
- @page { margin: 1cm; size: A4 landscape; }
+ @page { margin: 1.5cm; size: A4 landscape; }
  body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white; }
  .no-print { display: none !important; }
- .print-container { width: 100% !important; margin: 0 !important; border: none !important; }
+ .print-container { width: 100% !important; margin: 0 !important; padding: 0 !important; border: none !important; }
+ .sticky { position: static !important; }
+ table { width: 100% !important; table-layout: auto !important; }
  }
  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap');
  .font-serif { font-family: 'Playfair Display', serif; }
