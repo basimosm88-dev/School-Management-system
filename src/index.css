@@ -652,7 +652,7 @@
   .login-cards-page {
     display: grid !important;
     grid-template-columns: repeat(2, 85.60mm) !important;
-    grid-template-rows: repeat(3, 54.00mm) !important;
+    grid-template-rows: repeat(4, 54.00mm) !important;
     gap: 3mm 14.8mm !important;
     width: 210mm !important; /* Fixed A4 width */
     height: 297mm !important; /* Fixed A4 height */
@@ -664,7 +664,6 @@
     justify-content: start !important; /* Aligns columns to the top-left */
     place-items: stretch !important;
     overflow: hidden !important;
-    page-break-after: always !important;
   }
 
   .login-card {

@@ -1385,10 +1385,10 @@ const PrintableStudentLoginCards = ({ classId, students, classes, schoolSettings
     .filter(s => String(s.classId) === String(classId))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  // Chunk students into groups of 6 to fit A4 paper layout (2 columns x 3 rows)
+  // Chunk students into groups of 8 to fit A4 paper layout (2 columns x 4 rows)
   const chunks = [];
-  for (let i = 0; i < classStudents.length; i += 6) {
-    chunks.push(classStudents.slice(i, i + 6));
+  for (let i = 0; i < classStudents.length; i += 8) {
+    chunks.push(classStudents.slice(i, i + 8));
   }
 
   // Real login page URL for QR Code
