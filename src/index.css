@@ -655,10 +655,10 @@
     grid-template-rows: repeat(4, 54.00mm) !important;
     gap: 3mm 14.8mm !important;
     width: 210mm !important; /* Fixed A4 width */
-    height: 297mm !important; /* Fixed A4 height */
-    max-height: 297mm !important;
+    height: auto !important; /* Auto height to prevent overflow and trailing blank pages */
+    max-height: none !important;
     box-sizing: border-box !important;
-    padding: 10mm 12mm 5mm 12mm !important; /* Mathematically sums up to 297mm height */
+    padding: 10mm 12mm 5mm 12mm !important;
     background: #ffffff !important;
     align-content: start !important; /* Prevents centering empty rows vertically */
     justify-content: start !important; /* Aligns columns to the top-left */
