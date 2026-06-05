@@ -17,7 +17,7 @@ const SettingsPage = () => {
   
   const { darkMode, toggleDarkMode } = useAppContext();
   const { 
-    resetData, students, teachers, classes, subjects, 
+    students, teachers, classes, subjects, 
     attendance, exams, announcements, events, systemLogs 
   } = useData();
 
@@ -93,13 +93,6 @@ const SettingsPage = () => {
               {section.label}
             </button>
           ))}
-          <button 
-            onClick={resetData}
-            className="flex items-center gap-2 px-6 py-3 rounded-lg text-label text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all ml-4"
-          >
-            <span className="material-symbols-outlined text-section">factory</span>
-            {t('factoryReset')}
-          </button>
         </div>
 
         <div className="w-full space-y-6">
@@ -369,7 +362,7 @@ const SettingsPage = () => {
                   <span className="material-symbols-outlined text-primary">database</span>
                   {t('dataManagementMigration')}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="max-w-md">
                   <div className="p-6 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
                     <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
                       <span className="material-symbols-outlined text-display">cloud_upload</span>
@@ -382,20 +375,6 @@ const SettingsPage = () => {
                     </div>
                     <button onClick={handleExportData} className="w-full btn-primary py-3">
                       {t('exportSystemState')}
-                    </button>
-                  </div>
-                  <div className="p-6 bg-rose-50/30 dark:bg-rose-900/10 rounded-2xl border border-rose-100 dark:border-rose-900/30 space-y-4">
-                    <div className="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center">
-                      <span className="material-symbols-outlined text-display">dangerous</span>
-                    </div>
-                    <div>
-                      <h3 className="text-label font-black text-rose-600 uppercase">{t('systemReset')}</h3>
-                      <p className="text-[10px] text-rose-600/70 mt-1 leading-relaxed">
-                        {t('systemResetDesc')}
-                      </p>
-                    </div>
-                    <button onClick={resetData} className="w-full px-6 py-3 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-600/20">
-                      {t('factoryReset')}
                     </button>
                   </div>
                 </div>
