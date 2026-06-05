@@ -31,7 +31,7 @@ const Login = () => {
 
     try {
       // All roles log in via Supabase using email and password
-      const emailToUse = identifier.includes('@') ? identifier : `${identifier}@coresa.local`.toLowerCase();
+      const emailToUse = identifier.includes('@') ? identifier : `${identifier}@educore.local`.toLowerCase();
       
       const { user } = await login(emailToUse, password);
 
