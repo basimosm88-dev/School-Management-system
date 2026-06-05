@@ -435,7 +435,7 @@ const AdminExamsPage = () => {
  </div>
 
  {/* TABS */}
-  <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl w-full md:w-auto">
+  <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl w-full md:w-auto self-start">
     {[
       { id: 'review', label: t('review') },
       { id: 'release', label: t('release') },
@@ -445,10 +445,10 @@ const AdminExamsPage = () => {
       <button
         key={tab.id}
         onClick={() => setActiveTab(tab.id)}
-        className={`flex-1 py-3 rounded-lg text-label transition-all ${
+        className={`flex-1 md:w-48 py-3 rounded-lg text-label transition-all ${
           activeTab === tab.id 
             ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' 
-            : 'text-slate-400/80 hover:text-slate-700 dark:text-slate-400/80 dark:hover:text-slate-200'
+            : 'text-slate-400/80'
         }`}
       >
         {tab.label}
