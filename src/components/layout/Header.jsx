@@ -17,8 +17,14 @@ const Header = () => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
   const role = currentUser?.role || 'admin';
+  const filteredNotifications = notifications.filter(n => {
+    return n.recipientId === 'all' || 
+           n.recipientId === currentUser?.id || 
+           n.recipientId === role || 
+           (currentUser?.classId && n.recipientId === `class_${currentUser.classId}`);
+  });
+  const unreadCount = filteredNotifications.filter(n => !n.read).length;
 
   const confirmLogout = () => {
     setShowLogoutModal(false);
@@ -136,14 +142,14 @@ const Header = () => {
                 )}
               </div>
               <div className="overflow-y-auto p-2 flex-1 scrollbar-thin">
-                {notifications.length === 0 ? (
+                {filteredNotifications.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 text-slate-400">
                     <span className="material-symbols-outlined text-4xl mb-2 opacity-20">notifications_off</span>
                     <p className="text-xs italic">{t('noNotificationsYet')}</p>
                   </div>
                 ) : (
-                  notifications.slice().reverse().slice(0, 8).map(n => (
-                    <div key={n.id} onClick={() => { markNotificationRead(n.id); setNotifOpen(false); }} className={`p-3 mb-1 rounded-xl cursor-pointer transition-all border ${n.read ? 'border-transparent opacity-60 hover:bg-slate-100 dark:hover:bg-slate-800/50' : 'bg-blue-50/40 dark:bg-blue-900/10 border-blue-100/50 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-slate-800'}`}>
+                  filteredNotifications.slice().reverse().slice(0, 8).map(n => (
+                    <div key={n.id} onClick={() => { markNotificationRead(n.id); setNotifOpen(false); navigate(n.actionLink || `/${role}/notifications`); }} className={`p-3 mb-1 rounded-xl cursor-pointer transition-all border ${n.read ? 'border-transparent opacity-60 hover:bg-slate-100 dark:hover:bg-slate-800/50' : 'bg-blue-50/40 dark:bg-blue-900/10 border-blue-100/50 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-slate-800'}`}>
                       <div className="flex gap-3">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${n.type === 'success' ? 'bg-emerald-50 text-emerald-600' :
                             n.type === 'warning' ? 'bg-amber-50 text-amber-600' :
@@ -162,6 +168,16 @@ const Header = () => {
                     </div>
                   ))
                 )}
+              </div>
+              <div className="p-3 border-t border-slate-100 dark:border-slate-800 text-center bg-slate-50/50 dark:bg-slate-800/20 rounded-b-2xl shrink-0">
+                <Link 
+                  to={`/${role}/notifications`} 
+                  onClick={() => setNotifOpen(false)}
+                  className="text-xs text-primary font-bold hover:underline inline-flex items-center gap-1"
+                >
+                  {t('viewAllNotifications')}
+                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </Link>
               </div>
             </div>
           )}

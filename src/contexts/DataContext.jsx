@@ -29,7 +29,15 @@ export const DataProvider = ({ children }) => {
   const [classes, setClasses] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [grades, setGrades] = useState([]);
-  const [notifications, setNotifications] = useState([]);
+  const [sessionNotifications, setSessionNotifications] = useState([]);
+  const [readNotifIds, setReadNotifIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('read_notification_ids');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [attendance, setAttendance] = useState([]);
   const [timetables, setTimetables] = useState([]);
   const [exams, setExams] = useState([]);
@@ -210,8 +218,8 @@ export const DataProvider = ({ children }) => {
         }
 
         if (ttData) setTimetables(ttData.map(t => ({ ...t.details, id: t.id, classId: t.class_id, subjectId: t.subject_id, teacherId: t.teacher_id })));
-        if (eventData) setEvents(eventData.map(e => ({ ...e.details, id: e.id, title: e.title })));
-        if (annData) setAnnouncements(annData.map(a => ({ ...a.details, id: a.id, title: a.title, content: a.content })));
+        if (eventData) setEvents(eventData.map(e => ({ ...e.details, id: e.id, title: e.title, created_at: e.created_at })));
+        if (annData) setAnnouncements(annData.map(a => ({ ...a.details, id: a.id, title: a.title, content: a.content, created_at: a.created_at })));
 
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -222,11 +230,89 @@ export const DataProvider = ({ children }) => {
 
   // --- NOTIFICATIONS ---
   const addNotification = (message, type = 'info', title = 'System Update', recipientId = 'all') => {
-    setNotifications(prev => [...prev, { id: Date.now(), title, message, type, timestamp: new Date().toISOString(), read: false, recipientId }]);
+    setSessionNotifications(prev => [...prev, {
+      id: `session-${Date.now()}-${Math.random()}`,
+      title,
+      message,
+      type,
+      timestamp: new Date().toISOString(),
+      read: false,
+      recipientId
+    }]);
   };
   const triggerSmartNotification = ({ title, message, type = 'info', recipientId = 'all' }) => addNotification(message, type, title, recipientId);
-  const markNotificationRead = (id) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-  const markAllNotificationsRead = (recipientId) => setNotifications(prev => prev.map(n => (n.recipientId === recipientId || n.recipientId === 'all') ? { ...n, read: true } : n));
+
+  const notifications = useMemo(() => {
+    const list = sessionNotifications.map(n => ({
+      ...n,
+      read: n.read || readNotifIds.includes(String(n.id))
+    }));
+
+    // Map announcements to notifications
+    announcements.forEach(ann => {
+      let recipientId = 'all';
+      if (ann.audience === 'teachers') recipientId = 'teacher';
+      else if (ann.audience === 'students') recipientId = 'student';
+      else if (ann.audience?.startsWith('class_')) recipientId = ann.audience;
+
+      list.push({
+        id: `ann-${ann.id}`,
+        title: ann.title || 'New Announcement',
+        message: ann.content,
+        type: ann.priority === 'urgent' ? 'error' : ann.priority === 'important' ? 'warning' : 'info',
+        timestamp: ann.created_at || new Date().toISOString(),
+        read: readNotifIds.includes(`ann-${ann.id}`),
+        recipientId,
+        actionLink: `/${currentUser?.role || 'student'}/announcements`
+      });
+    });
+
+    // Map events to notifications
+    events.forEach(ev => {
+      let recipientId = 'all';
+      if (ev.audience === 'teachers') recipientId = 'teacher';
+      else if (ev.audience === 'students') recipientId = 'student';
+      else if (ev.audience?.startsWith('class_')) recipientId = ev.audience;
+
+      list.push({
+        id: `ev-${ev.id}`,
+        title: ev.title || 'New Event',
+        message: `${ev.description || ''} - Date: ${ev.date} at ${ev.location || 'campus'}`,
+        type: 'success',
+        timestamp: ev.created_at || new Date().toISOString(),
+        read: readNotifIds.includes(`ev-${ev.id}`),
+        recipientId,
+        actionLink: `/${currentUser?.role || 'student'}/events`
+      });
+    });
+
+    // Sort by timestamp ascending
+    return list.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+  }, [sessionNotifications, announcements, events, readNotifIds, currentUser]);
+
+  const markNotificationRead = (id) => {
+    setReadNotifIds(prev => {
+      const next = [...new Set([...prev, String(id)])];
+      localStorage.setItem('read_notification_ids', JSON.stringify(next));
+      return next;
+    });
+    setSessionNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+
+  const markAllNotificationsRead = (recipientId) => {
+    const idsToMark = notifications
+      .filter(n => n.recipientId === recipientId || n.recipientId === 'all')
+      .map(n => String(n.id));
+
+    setReadNotifIds(prev => {
+      const next = [...new Set([...prev, ...idsToMark])];
+      localStorage.setItem('read_notification_ids', JSON.stringify(next));
+      return next;
+    });
+    setSessionNotifications(prev => prev.map(n => 
+      (n.recipientId === recipientId || n.recipientId === 'all') ? { ...n, read: true } : n
+    ));
+  };
 
   const addStudent = async (studentData) => {
     try {
@@ -1528,7 +1614,7 @@ export const DataProvider = ({ children }) => {
 
       if (error) throw error;
       if (data) {
-        setEvents(prev => [...prev, { ...eventData, id: data.id }]);
+        setEvents(prev => [...prev, { ...eventData, id: data.id, created_at: data.created_at }]);
         triggerSmartNotification({ title: 'Success', message: 'Event added successfully.', type: 'success' });
       }
     } catch (err) {
@@ -1591,7 +1677,7 @@ export const DataProvider = ({ children }) => {
 
       if (error) throw error;
       if (data) {
-        setAnnouncements(prev => [...prev, { ...dataObj, id: data.id }]);
+        setAnnouncements(prev => [...prev, { ...dataObj, id: data.id, created_at: data.created_at }]);
         triggerSmartNotification({ title: 'Success', message: 'Announcement added successfully.', type: 'success' });
       }
     } catch (err) {

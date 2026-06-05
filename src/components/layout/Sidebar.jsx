@@ -16,6 +16,7 @@ const navItems = {
     { name: 'results', icon: 'bar_chart', path: '/admin/results' },
     { name: 'events', icon: 'event', path: '/admin/events' },
     { name: 'announcements', icon: 'campaign', path: '/admin/announcements' },
+    { name: 'notifications', icon: 'notifications', path: '/admin/notifications' },
   ],
   teacher: [
     { name: 'dashboard', icon: 'dashboard', path: '/teacher' },
@@ -27,6 +28,7 @@ const navItems = {
     { name: 'events', icon: 'event', path: '/teacher/events' },
     { name: 'announcements', icon: 'campaign', path: '/teacher/announcements' },
     { name: 'timetable', icon: 'calendar_view_day', path: '/teacher/timetable' },
+    { name: 'notifications', icon: 'notifications', path: '/teacher/notifications' },
   ],
   student: [
     { name: 'dashboard', icon: 'dashboard', path: '/student' },
@@ -36,6 +38,7 @@ const navItems = {
     { name: 'results', icon: 'bar_chart', path: '/student/results' },
     { name: 'events', icon: 'event', path: '/student/events' },
     { name: 'announcements', icon: 'campaign', path: '/student/announcements' },
+    { name: 'notifications', icon: 'notifications', path: '/student/notifications' },
   ]
 };
 

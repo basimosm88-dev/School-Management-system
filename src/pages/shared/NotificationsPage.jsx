@@ -12,7 +12,10 @@ const NotificationsPage = ({ role }) => {
 
   const filteredNotifications = notifications.filter(n => {
     // Basic recipient filtering
-    const isRecipient = n.recipientId === 'all' || n.recipientId === currentUser?.id || n.recipientId === role;
+    const isRecipient = n.recipientId === 'all' || 
+                        n.recipientId === currentUser?.id || 
+                        n.recipientId === role ||
+                        (currentUser?.classId && n.recipientId === `class_${currentUser.classId}`);
     if (!isRecipient) return false;
 
     if (filter === 'unread') return !n.read;
