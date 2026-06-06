@@ -740,6 +740,7 @@
     align-items: center !important; /* Vertically center details and QR code */
     flex-grow: 1 !important;
     width: 100% !important;
+    flex-shrink: 0 !important; /* Prevent content row from shrinking */
   }
 
   .login-card-details-column {
@@ -760,6 +761,7 @@
     text-overflow: ellipsis !important;
     line-height: 1.2 !important;
     margin: 0 !important;
+    flex-shrink: 0 !important; /* Prevent name from shrinking to 0 height */
   }
 
   .login-card-divider {
@@ -767,19 +769,20 @@
     margin: 2px 0 5px 0 !important;
     width: 100% !important;
     opacity: 1 !important;
+    flex-shrink: 0 !important; /* Prevent divider from shrinking */
   }
 
   .login-card-grid-row {
     display: flex !important;
     align-items: center !important;
-    font-size: 9.5px !important; /* Clear key-value details */
+    font-size: 9px !important; /* Slightly smaller to prevent overflow on long text */
     line-height: 1.35 !important;
   }
 
   .login-card-grid-label {
     font-weight: 700 !important;
     color: #000000 !important;
-    width: 75px !important; /* Keeps labels aligned */
+    width: 100px !important; /* Increased from 75px to fit Somali translations without wrapping */
     flex-shrink: 0 !important;
   }
 
