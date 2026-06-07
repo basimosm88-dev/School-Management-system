@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useData } from '../../contexts/DataContext';
 import { useAppContext } from '../../contexts/AppContext';
+import { supabase } from '../../lib/supabase';
 
 const SettingsPage = () => {
   const { 
@@ -15,13 +16,88 @@ const SettingsPage = () => {
     t 
   } = useSettings();
   
-  const { darkMode, toggleDarkMode } = useAppContext();
+  const { darkMode, toggleDarkMode, currentUser, fetchProfile } = useAppContext();
   const { 
     students, teachers, classes, subjects, 
-    attendance, exams, announcements, events, systemLogs 
+    attendance, exams, announcements, events, systemLogs,
+    addNotification 
   } = useData();
 
-  const [activeSection, setActiveSection] = useState('branding');
+  const [activeSection, setActiveSection] = useState('profile');
+
+  const [profileData, setProfileData] = useState({
+    firstName: currentUser?.first_name || '',
+    lastName: currentUser?.last_name || '',
+    email: currentUser?.email || '',
+    phone: currentUser?.phone || currentUser?.details?.phone || '',
+    avatarUrl: currentUser?.avatar_url || currentUser?.photo || currentUser?.details?.photo || ''
+  });
+  const [profileError, setProfileError] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState('');
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      setProfileData({
+        firstName: currentUser.first_name || '',
+        lastName: currentUser.last_name || '',
+        email: currentUser.email || '',
+        phone: currentUser.phone || currentUser.details?.phone || '',
+        avatarUrl: currentUser.avatar_url || currentUser.photo || currentUser.details?.photo || ''
+      });
+    }
+  }, [currentUser]);
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        setProfileError('File is too large. Max size is 2MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileData(prev => ({ ...prev, avatarUrl: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleProfileSave = async (e) => {
+    e.preventDefault();
+    setProfileError('');
+    setProfileSuccess('');
+    setSavingProfile(true);
+
+    try {
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          first_name: profileData.firstName,
+          last_name: profileData.lastName,
+          avatar_url: profileData.avatarUrl,
+          details: {
+            ...currentUser.details,
+            phone: profileData.phone
+          }
+        })
+        .eq('id', currentUser.id);
+
+      if (updateError) throw updateError;
+
+      await fetchProfile(currentUser);
+
+      setProfileSuccess(t('profileUpdatedSuccess') || 'Profile updated successfully!');
+      if (typeof addNotification === 'function') {
+        addNotification(t('profileUpdatedSuccess') || 'Profile updated successfully!', 'success');
+      }
+    } catch (err) {
+      console.error("Error saving profile:", err);
+      setProfileError('Failed to save profile changes. Please try again.');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
 
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
@@ -61,6 +137,7 @@ const SettingsPage = () => {
   };
 
   const sections = [
+    { id: 'profile', label: t('myProfile') || 'My Profile', icon: 'person' },
     { id: 'branding', label: t('school_branding'), icon: 'school' },
     { id: 'academic', label: t('academic_rules'), icon: 'menu_book' },
     { id: 'permissions', label: t('permissions'), icon: 'lock_person' },
@@ -98,6 +175,117 @@ const SettingsPage = () => {
         <div className="w-full space-y-6">
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 md:p-8 shadow-sm transition-colors">
             
+            {activeSection === 'profile' && (
+              <form onSubmit={handleProfileSave} className="space-y-6">
+                <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">
+                  <span className="material-symbols-outlined text-primary">person</span>
+                  {t('myProfile') || 'My Profile'}
+                </h2>
+
+                {profileError && (
+                  <div className="p-4 bg-rose-50 text-rose-600 text-label rounded-xl border border-rose-100 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-900/30">
+                    {profileError}
+                  </div>
+                )}
+                {profileSuccess && (
+                  <div className="p-4 bg-emerald-50 text-emerald-600 text-label rounded-xl border border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30">
+                    {profileSuccess}
+                  </div>
+                )}
+
+                <div className="flex flex-col md:flex-row items-start gap-8 pb-6 border-b border-slate-100 dark:border-slate-800">
+                  <div className="relative group shrink-0">
+                    <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center overflow-hidden">
+                      {profileData.avatarUrl ? (
+                        <img src={profileData.avatarUrl} alt="Profile Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="material-symbols-outlined text-display text-slate-300">add_a_photo</span>
+                      )}
+                    </div>
+                    <label className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 rounded-3xl cursor-pointer transition-opacity">
+                      <span className="text-white text-[12px] font-bold">{t('change') || 'Change'}</span>
+                      <input type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} />
+                    </label>
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-slate-800 dark:text-white font-bold">{t('avatar') || 'Profile Picture'}</h3>
+                    <p className="text-label text-slate-500/80 dark:text-slate-400/80">
+                      {t('photoSizeNotice') || 'Max size 2MB. Auto-compressed for performance.'}
+                    </p>
+                    {profileData.avatarUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setProfileData(prev => ({ ...prev, avatarUrl: '' }))}
+                        className="text-xs text-rose-500 font-semibold hover:underline flex items-center gap-1 mt-1"
+                      >
+                        <span className="material-symbols-outlined text-sm">delete</span>
+                        {t('remove') || 'Remove Photo'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1.5">
+                    <label className="text-label text-slate-500/80 dark:text-slate-400/80 font-medium">{t('firstName') || 'First Name'}</label>
+                    <input 
+                      type="text" 
+                      value={profileData.firstName}
+                      onChange={(e) => setProfileData({ ...profileData, firstName: e.target.value })}
+                      required
+                      className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-label text-slate-500/80 dark:text-slate-400/80 font-medium">{t('lastName') || 'Last Name'}</label>
+                    <input 
+                      type="text" 
+                      value={profileData.lastName}
+                      onChange={(e) => setProfileData({ ...profileData, lastName: e.target.value })}
+                      required
+                      className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-label text-slate-500/80 dark:text-slate-400/80 font-medium">{t('emailAddress') || 'Email Address'}</label>
+                    <input 
+                      type="email" 
+                      value={profileData.email}
+                      disabled
+                      className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-label opacity-60 outline-none dark:text-slate-400 cursor-not-allowed"
+                      title="Email managed by system"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-label text-slate-500/80 dark:text-slate-400/80 font-medium">{t('phoneNumber') || 'Phone Number'}</label>
+                    <input 
+                      type="text" 
+                      value={profileData.phone}
+                      onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-label focus:ring-2 focus:ring-primary/20 outline-none dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                  <button 
+                    type="submit" 
+                    disabled={savingProfile}
+                    className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl text-label shadow-lg shadow-primary/20 transition-all flex items-center gap-2 font-bold disabled:opacity-50"
+                  >
+                    {savingProfile ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        {t('saving') || 'Saving...'}
+                      </>
+                    ) : (
+                      t('saveProfileChanges') || 'Save Changes'
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+
             {activeSection === 'branding' && (
               <div className="space-y-6">
                 <h2 className="text-section text-slate-900 dark:text-white flex items-center gap-3">

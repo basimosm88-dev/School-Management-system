@@ -198,7 +198,7 @@ const Header = () => {
             <img
               alt="User profile avatar"
               className="w-7 h-7 lg:w-8 lg:h-8 rounded-full border border-slate-100 dark:border-slate-700 object-cover transition-transform group-hover:scale-105"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8tWnO0wzkfevdY1uHYDDDPCCW21qH9FnRZwOp2n8PRTPfPvC79VVAMzq9YQc60jssVlpoWljbQQIm7AYDnpShdOfOOAeR3wmSiCXTk_VkV5swLXnBICJa54A2ZMnTWyHrPyxVwD5hHwo9AQx0YGwRVodtqoIdMyF4zRlHlV7XyyO87uEr4t1b5lVRoHi7VWnoMHbNHD25KcCFKQMqkAN4ey9Ih_tlhHncX1jiplCZT7NQNuqxuKyZ4vvdV0keDCQYasLdTICPuRw"
+              src={currentUser?.avatar_url || currentUser?.photo || currentUser?.details?.photo || "https://lh3.googleusercontent.com/aida-public/AB6AXuD8tWnO0wzkfevdY1uHYDDDPCCW21qH9FnRZwOp2n8PRTPfPvC79VVAMzq9YQc60jssVlpoWljbQQIm7AYDnpShdOfOOAeR3wmSiCXTk_VkV5swLXnBICJa54A2ZMnTWyHrPyxVwD5hHwo9AQx0YGwRVodtqoIdMyF4zRlHlV7XyyO87uEr4t1b5lVRoHi7VWnoMHbNHD25KcCFKQMqkAN4ey9Ih_tlhHncX1jiplCZT7NQNuqxuKyZ4vvdV0keDCQYasLdTICPuRw"}
             />
             <span className="material-symbols-outlined text-[16px] text-slate-400 group-hover:text-slate-600 transition-colors">
               keyboard_arrow_down
