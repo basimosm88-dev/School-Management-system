@@ -6,6 +6,7 @@ import ProfilePage from './pages/student/ProfilePage';
 import StudentSettings from './pages/student/StudentSettings';
 import Login from './pages/auth/Login';
 import AdminLogin from './pages/auth/AdminLogin';
+import AdminResetPassword from './pages/auth/AdminResetPassword';
 import GenericModulePage from './pages/GenericModulePage';
 import SettingsPage from './pages/admin/SettingsPage';
 import { AppProvider } from './contexts/AppContext';
@@ -45,6 +46,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/reset-password" element={<AdminResetPassword />} />
             
             {/* Redirects to unify dashboard paths */}
             <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />

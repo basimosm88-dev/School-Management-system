@@ -231,7 +231,7 @@ export const AppProvider = ({ children }) => {
       if (!authInitialized.current) {
         return; // Ignore premature events during initial load
       }
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'PASSWORD_RECOVERY') {
         await handleSession(session);
       } else if (event === 'SIGNED_OUT') {
         if (active) {

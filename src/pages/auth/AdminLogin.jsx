@@ -10,6 +10,8 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const navigate = useNavigate();
   const { login, currentSchool, schoolLoading } = useAppContext();
   const { schoolSettings, t } = useSettings();
@@ -70,6 +72,30 @@ const AdminLogin = () => {
     }
   };
 
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setResetSent(false);
+
+    try {
+      // Initiate reset password email
+      const { error: resetErr } = await supabase.auth.resetPasswordForEmail(
+        identifier.trim().toLowerCase(),
+        { redirectTo: `${window.location.origin}/admin/reset-password` }
+      );
+
+      if (resetErr) throw resetErr;
+
+      setResetSent(true);
+    } catch (err) {
+      console.error("Reset password error:", err);
+      setError(err.message || t('error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div 
       className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat p-4 transition-colors duration-200"
@@ -90,7 +116,9 @@ const AdminLogin = () => {
             <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
               {schoolSettings.name || currentSchool?.name || 'Coresa'}
             </h1>
-            <p className="text-xs text-slate-500 mt-1 font-medium">{t('administratorLogin')}</p>
+            <p className="text-xs text-slate-500 mt-1 font-medium">
+              {isForgotPassword ? t('resetPassword') : t('administratorLogin')}
+            </p>
           </div>
         </div>
 
@@ -101,49 +129,119 @@ const AdminLogin = () => {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">
-              {t('emailAddress')}
-            </label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">
-                mail
-              </span>
-              <input
-                type="text"
-                required
-                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 placeholder:text-slate-400"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                placeholder={t('enterEmail')}
-              />
+        {isForgotPassword ? (
+          <form onSubmit={handleResetPassword} className="space-y-6">
+            <p className="text-xs text-slate-500 ml-1 leading-relaxed">
+              {t('resetPasswordDescription')}
+            </p>
+            
+            {resetSent ? (
+              <div className="p-4 bg-emerald-50 text-emerald-600 text-sm rounded-2xl border border-emerald-100 flex items-center gap-3">
+                <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                {t('resetPasswordEmailSent')}
+              </div>
+            ) : (
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">
+                  {t('emailAddress')}
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">
+                    mail
+                  </span>
+                  <input
+                    type="email"
+                    required
+                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 placeholder:text-slate-400"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    placeholder={t('enterEmail')}
+                  />
+                </div>
+              </div>
+            )}
+
+            {!resetSent && (
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/95 hover:to-indigo-500 text-white font-bold py-4 rounded-2xl hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mt-4"
+              >
+                {loading ? t('sendingLink') : t('sendResetLink')}
+                {!loading && <span className="material-symbols-outlined text-[20px]">send</span>}
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsForgotPassword(false);
+                setResetSent(false);
+                setError(null);
+              }}
+              className="w-full text-slate-500 hover:text-slate-800 font-bold py-2 text-sm flex items-center justify-center gap-2 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+              {t('backToLogin')}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">
+                {t('emailAddress')}
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">
+                  mail
+                </span>
+                <input
+                  type="text"
+                  required
+                  className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 placeholder:text-slate-400"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder={t('enterEmail')}
+                />
+              </div>
             </div>
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">{t('password')}</label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">lock</span>
-              <input
-                type="password"
-                required
-                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 placeholder:text-slate-400"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-              />
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">{t('password')}</label>
+              <div className="relative mb-2">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px]">lock</span>
+                <input
+                  type="password"
+                  required
+                  className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-slate-900 placeholder:text-slate-400"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                />
+              </div>
+              <div className="flex justify-end px-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsForgotPassword(true);
+                    setError(null);
+                  }}
+                  className="text-xs font-bold text-primary hover:text-indigo-600 transition-colors"
+                >
+                  {t('forgotPassword')}
+                </button>
+              </div>
             </div>
-          </div>
-          
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/95 hover:to-indigo-500 text-white font-bold py-4 rounded-2xl hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mt-4"
-          >
-            {loading ? t('authenticating') : t('signInAsAdmin')}
-            {!loading && <span className="material-symbols-outlined text-[20px]">login</span>}
-          </button>
-        </form>
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/95 hover:to-indigo-500 text-white font-bold py-4 rounded-2xl hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mt-4"
+            >
+              {loading ? t('authenticating') : t('signInAsAdmin')}
+              {!loading && <span className="material-symbols-outlined text-[20px]">login</span>}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
