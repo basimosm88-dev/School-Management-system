@@ -192,9 +192,13 @@ const Header = () => {
         <div className="relative ml-1 lg:ml-2">
           <button 
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)} 
-            className="flex items-center gap-1.5 focus:outline-none group p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
+            className="flex items-center gap-2 lg:gap-3 focus:outline-none group p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
             id="profile-dropdown-button"
           >
+            <div className="hidden md:flex flex-col text-right">
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate leading-tight max-w-[120px]">{currentUser?.name || t('user')}</p>
+              <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5 leading-none">{t(role)}</p>
+            </div>
             <img
               alt="User profile avatar"
               className="w-7 h-7 lg:w-8 lg:h-8 rounded-full border border-slate-100 dark:border-slate-700 object-cover transition-transform group-hover:scale-105"
@@ -207,10 +211,7 @@ const Header = () => {
 
           {profileDropdownOpen && (
             <div className="absolute top-12 right-0 w-56 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-2xl rounded-2xl p-2 z-50 flex flex-col gap-1 animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
-                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{currentUser?.name || t('user')}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">{t(role)}</p>
-              </div>
+
               
               <Link 
                 to={`/${role}/settings`}
