@@ -79,16 +79,16 @@ const TeachersPage = () => {
     setIsProfileOpen(true);
   };
 
-  const handleSave = (teacherData) => {
+  const handleSave = async (teacherData) => {
     if (!editingTeacher && !teacherData.password) {
       addNotification(t('passwordRequired'), 'error');
       return;
     }
     if (editingTeacher) {
-      updateTeacher(editingTeacher.id, teacherData);
+      await updateTeacher(editingTeacher.id, teacherData);
       addNotification(t('teacherUpdated'), 'success');
     } else {
-      addTeacher(teacherData);
+      await addTeacher(teacherData);
       addNotification(t('teacherAdded'), 'success');
     }
     setIsFormOpen(false);
@@ -318,6 +318,8 @@ const TeachersPage = () => {
  */
 const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
   const { t } = useSettings();
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     maritalStatus: 'Single',
@@ -381,7 +383,18 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-4 bg-slate-900/80 dark:bg-black/80 backdrop-blur-md overflow-y-auto animate-in fade-in duration-300">
       <form
-        onSubmit={(e) => { e.preventDefault(); onSave(formData); }}
+        onSubmit={async (e) => {
+          e.preventDefault();
+          setIsSaving(true);
+          setError(null);
+          try {
+            await onSave(formData);
+          } catch (err) {
+            setError(err.message || 'An error occurred while saving.');
+          } finally {
+            setIsSaving(false);
+          }
+        }}
         className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-200 dark:border-slate-700/50 my-auto animate-in zoom-in-95 duration-300 flex flex-col max-h-[95vh]"
       >
         <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10 rounded-t-3xl shrink-0">
@@ -389,10 +402,17 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
             <span className="material-symbols-outlined text-primary">person_add</span>
             {teacher ? t('editTeacherDetails') : t('registerNewTeacher')}
           </h3>
-          <button onClick={onClose} className="p-2 text-slate-400/80 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all text-slate-400 dark:text-slate-500">
+          <button type="button" disabled={isSaving} onClick={onClose} className="p-2 text-slate-400/80 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all text-slate-400 dark:text-slate-500 disabled:opacity-50">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
+
+        {error && (
+          <div className="mx-6 md:mx-8 mt-4 p-4 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 text-sm rounded-2xl border border-rose-100 dark:border-rose-900/50 flex items-center gap-3 animate-in fade-in duration-300">
+            <span className="material-symbols-outlined text-[18px]">error</span>
+            {error}
+          </div>
+        )}
 
         <div className="p-4 md:p-8 max-h-[75vh] overflow-y-auto space-y-8 md:space-y-12">
 
@@ -624,8 +644,17 @@ const TeacherForm = ({ teacher, onClose, onSave, classes, subjects }) => {
         </div>
 
         <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl shrink-0">
-          <button type="button" onClick={onClose} className="px-6 py-2.5 text-label text-slate-500/80 dark:text-slate-400/80 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all">{t('cancel')}</button>
-          <button type="submit" className="px-8 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95">{t('saveTeacherRecord')}</button>
+          <button type="button" disabled={isSaving} onClick={onClose} className="px-6 py-2.5 text-label text-slate-500/80 dark:text-slate-400/80 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all disabled:opacity-50">{t('cancel')}</button>
+          <button type="submit" disabled={isSaving} className="px-8 py-2.5 bg-primary text-white text-label rounded-xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all transform active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2">
+            {isSaving ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {t('saving') || 'Saving...'}
+              </>
+            ) : (
+              t('saveTeacherRecord')
+            )}
+          </button>
         </div>
       </form>
     </div>

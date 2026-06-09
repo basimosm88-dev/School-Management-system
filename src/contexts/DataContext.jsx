@@ -515,14 +515,28 @@ export const DataProvider = ({ children }) => {
           role: 'teacher'
         }
       });
-      if (res.error) throw res.error;
+      if (res.error) {
+        let errMsg = 'Edge Function error';
+        try {
+          const bodyText = await res.error.context.text();
+          const parsed = JSON.parse(bodyText);
+          if (parsed && parsed.error) errMsg = parsed.error;
+        } catch (e) {
+          errMsg = res.error.message || String(res.error);
+        }
+        throw new Error(errMsg);
+      }
       const newId = res.data.user.id;
       
-      await supabase.from('profiles').update({ details: teacherData }).eq('id', newId);
+      const { error: updateError } = await supabase.from('profiles').update({ details: teacherData }).eq('id', newId);
+      if (updateError) throw updateError;
+
       setTeachers(prev => [...prev, { ...teacherData, id: newId }]);
       triggerSmartNotification({ title: 'New Teacher', message: `${teacherData.name} added.`, type: 'success', recipientId: 'admin' });
     } catch (err) {
-      console.error(err);
+      console.error("Error adding teacher:", err);
+      triggerSmartNotification({ title: 'Error', message: `Failed to add teacher: ${err.message || err}`, type: 'error' });
+      throw err;
     }
   };
   const updateTeacher = async (id, updates) => {
@@ -537,14 +551,46 @@ export const DataProvider = ({ children }) => {
             action: 'update'
           }
         });
-        if (res.error) throw res.error;
+        if (res.error) {
+          let errMsg = 'Edge Function error';
+          try {
+            const bodyText = await res.error.context.text();
+            const parsed = JSON.parse(bodyText);
+            if (parsed && parsed.error) errMsg = parsed.error;
+          } catch (e) {
+            errMsg = res.error.message || String(res.error);
+          }
+          throw new Error(errMsg);
+        }
+      }
+
+      if (updates.email && teacherObj && updates.email !== teacherObj.email) {
+        const res = await supabase.functions.invoke('create-tenant-user', {
+          body: {
+            id,
+            email: updates.email,
+            action: 'update'
+          }
+        });
+        if (res.error) {
+          let errMsg = 'Edge Function error';
+          try {
+            const bodyText = await res.error.context.text();
+            const parsed = JSON.parse(bodyText);
+            if (parsed && parsed.error) errMsg = parsed.error;
+          } catch (e) {
+            errMsg = res.error.message || String(res.error);
+          }
+          throw new Error(errMsg);
+        }
       }
 
       setTeachers(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
-      await supabase.from('profiles').update({ details: updates }).eq('id', id);
+      const { error: dbError } = await supabase.from('profiles').update({ details: updates }).eq('id', id);
+      if (dbError) throw dbError;
     } catch (err) {
       console.error("Error updating teacher:", err);
-      triggerSmartNotification({ title: 'Error', message: 'Failed to sync password update to Auth. Make sure Edge Function is deployed.', type: 'error' });
+      triggerSmartNotification({ title: 'Error', message: `Failed to update teacher: ${err.message || err}`, type: 'error' });
       throw err;
     }
   };

@@ -65,22 +65,24 @@ serve(async (req) => {
     const { id, email, password, first_name, last_name, role, action } = await req.json()
 
     if (action === 'update' || id) {
-      if (!id || !password) {
-        throw new Error('Missing id or password for update.')
+      if (!id) {
+        throw new Error('Missing id for update.')
       }
 
-      const { data: updatedUser, error: updateError } = await adminClient.auth.admin.updateUserById(id, {
-        password: password
-      })
+      const updateData: any = {};
+      if (password) updateData.password = password;
+      if (email) updateData.email = email;
+
+      const { data: updatedUser, error: updateError } = await adminClient.auth.admin.updateUserById(id, updateData)
 
       if (updateError) {
-        throw new Error(`Failed to update user password: ${updateError.message}`)
+        throw new Error(`Failed to update user: ${updateError.message}`)
       }
 
       return new Response(
         JSON.stringify({ 
           success: true, 
-          message: 'User password updated successfully.' 
+          message: 'User updated successfully.' 
         }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -88,6 +90,7 @@ serve(async (req) => {
         }
       )
     }
+
 
     if (!email || !password || !first_name || !last_name || !role) {
       throw new Error('Missing required fields.')
