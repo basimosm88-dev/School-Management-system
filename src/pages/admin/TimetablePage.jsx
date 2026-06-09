@@ -4,7 +4,7 @@ import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
 
 const AdminTimetablePage = () => {
- const { classes, subjects, teachers, timetables, addTimetableSlot, deleteTimetableSlot } = useData();
+ const { classes, subjects, teachers, timetables, addTimetableSlot, deleteTimetableSlot, confirmDelete } = useData();
  const { t } = useSettings();
 
  const [selectedClassId, setSelectedClassId] = useState(classes.length > 0 ? classes[0].id.toString() : '');
@@ -163,7 +163,12 @@ const AdminTimetablePage = () => {
  return (
  <div key={slot.id} className={`w-full rounded-xl p-4 relative group transition-all border shadow-sm ${colorClass}`}>
  <button 
- onClick={() => deleteTimetableSlot(slot.id)}
+ onClick={async () => {
+    const confirmed = await confirmDelete('deleteTimetableSlotConfirm');
+    if (confirmed) {
+      deleteTimetableSlot(slot.id);
+    }
+  }}
  className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-lg z-10"
  >
  <span className="material-symbols-outlined text-body">close</span>

@@ -17,7 +17,8 @@ const ClassesPage = () => {
  assignSubjectToClass,
  removeSubjectFromClass,
  updateClassSubject,
- addNotification 
+ addNotification,
+ confirmDelete 
  } = useData();
  const { t } = useSettings();
 
@@ -63,13 +64,14 @@ const ClassesPage = () => {
  setIsFormOpen(true);
  };
 
- const handleDelete = (id, e) => {
- e.stopPropagation();
- if (window.confirm(t('deleteClassConfirm'))) {
- deleteClass(id);
- addNotification(t('classDeleted'), 'success');
- }
- };
+ const handleDelete = async (id, e) => {
+  e.stopPropagation();
+  const confirmed = await confirmDelete('deleteClassConfirm');
+  if (confirmed) {
+  await deleteClass(id);
+  addNotification(t('classDeleted'), 'success');
+  }
+  };
 
  const handleViewProfile = (cls) => {
  setSelectedClass(cls);
@@ -274,6 +276,7 @@ const ClassesPage = () => {
  onRemoveSubject={removeSubjectFromClass}
  onUpdateSubject={updateClassSubject}
  addNotification={addNotification}
+ confirmDelete={confirmDelete}
  />
  )}
  </PageLayout>
@@ -461,7 +464,8 @@ const ClassProfile = ({
   onAssignSubject,
   onRemoveSubject,
   onUpdateSubject,
-  addNotification
+  addNotification,
+  confirmDelete
 }) => {
   const { t } = useSettings();
   const [activeTab, setActiveTab] = useState('overview');
@@ -650,8 +654,9 @@ const ClassProfile = ({
                       </div>
                     </div>
                     <button 
-                      onClick={() => {
-                        if (confirm(t('removeStudentConfirm').replace('{name}', student.name))) {
+                      onClick={async () => {
+                        const confirmed = await confirmDelete(t('removeStudentConfirm').replace('{name}', student.name));
+                        if (confirmed) {
                           onRemoveStudent(student.id, cls.id);
                           addNotification(t('studentRemovedSuccess'), 'info');
                         }
@@ -820,8 +825,9 @@ const ClassProfile = ({
                             <span className="material-symbols-outlined text-body">edit</span>
                           </button>
                           <button 
-                            onClick={() => {
-                              if (confirm(t('removeSubjectConfirm'))) {
+                            onClick={async () => {
+                              const confirmed = await confirmDelete('removeSubjectConfirm');
+                              if (confirmed) {
                                 onRemoveSubject(cls.id, sub.name);
                                 addNotification(t('subjectRemovedSuccess'), 'success');
                               }

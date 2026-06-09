@@ -8,7 +8,7 @@ import DynamicForm from '../../components/ui/DynamicForm';
 import EmptyState from '../../components/ui/EmptyState';
 
 const EventsPage = ({ role }) => {
-  const { events, addEvent, deleteEvent, classes } = useData();
+  const { events, addEvent, deleteEvent, classes, confirmDelete } = useData();
   const { currentUser } = useAppContext();
   const { t, permissions, language } = useSettings();
   const [modalOpen, setModalOpen] = useState(false);
@@ -176,7 +176,12 @@ const EventsPage = ({ role }) => {
                           {event.audience === 'all' || !event.audience ? t('all') : event.audience === 'teachers' ? t('teachers') : event.audience === 'students' ? t('students') : event.audience.replace('class_', `${t('class')} `)}
                         </span>
                         {role === 'admin' && (
-                          <button onClick={() => deleteEvent(event.id)} className="p-2 text-slate-400/80 hover:text-rose-500 transition-colors">
+                          <button onClick={async () => {
+                            const confirmed = await confirmDelete('deleteEventConfirm');
+                            if (confirmed) {
+                              deleteEvent(event.id);
+                            }
+                          }} className="p-2 text-slate-400/80 hover:text-rose-500 transition-colors">
                             <span className="material-symbols-outlined text-section">delete</span>
                           </button>
                         )}

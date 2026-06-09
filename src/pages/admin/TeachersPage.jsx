@@ -11,7 +11,8 @@ const TeachersPage = () => {
     addTeacher,
     updateTeacher,
     deleteTeacher,
-    addNotification
+    addNotification,
+    confirmDelete
   } = useData();
   const { schoolSettings, t } = useSettings();
 
@@ -66,10 +67,11 @@ const TeachersPage = () => {
     setIsFormOpen(true);
   };
 
-  const handleDelete = (id, e) => {
+  const handleDelete = async (id, e) => {
     e.stopPropagation();
-    if (window.confirm(t('deleteTeacherConfirm'))) {
-      deleteTeacher(id);
+    const confirmed = await confirmDelete('deleteTeacherConfirm');
+    if (confirmed) {
+      await deleteTeacher(id);
       addNotification(t('teacherDeleted'), 'success');
     }
   };

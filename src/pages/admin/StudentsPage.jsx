@@ -26,7 +26,8 @@ const StudentsPage = () => {
   const { 
     students, classes, addStudent, bulkAddStudents, 
     updateStudent, deleteStudent, addNotification,
-    getReportCardData, getStudentAttendanceSummary 
+    getReportCardData, getStudentAttendanceSummary,
+    confirmDelete
   } = useData();
   const { schoolSettings, t } = useSettings();
 
@@ -109,10 +110,11 @@ const StudentsPage = () => {
     setIsFormOpen(true);
   };
 
-  const handleDelete = (id, e) => {
+  const handleDelete = async (id, e) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this student?')) {
-      deleteStudent(id);
+    const confirmed = await confirmDelete('deleteStudentConfirm');
+    if (confirmed) {
+      await deleteStudent(id);
       addNotification('Student deleted successfully', 'success');
     }
   };

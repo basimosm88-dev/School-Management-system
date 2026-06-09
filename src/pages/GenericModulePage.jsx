@@ -133,11 +133,12 @@ const GenericModulePage = ({ role, title, primaryActionText }) => {
  }
  };
 
- const handleDelete = (id) => {
- if (confirm("Are you sure you want to delete this record?")) {
- dataContext[config.deleteMethod](id);
- }
- };
+ const handleDelete = async (id) => {
+  const confirmed = await dataContext.confirmDelete("Are you sure you want to delete this record?");
+  if (confirmed) {
+  dataContext[config.deleteMethod](id);
+  }
+  };
 
  return (
  <>

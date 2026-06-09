@@ -850,4 +850,62 @@
   }
 }
 
-/* Trigger GitHub webhook deployment to Vercel */
+/* Trigger GitHub webhook deployment to Vercel */
+
+/* Custom Toast & Modal Animations */
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-progress-bar {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes modal-fade-in-anim {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-zoom-in-anim {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-toast-in {
+  animation: toast-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-toast-progress {
+  animation: toast-progress-bar linear forwards;
+}
+
+.animate-modal-fade {
+  animation: modal-fade-in-anim 0.2s ease-out forwards;
+}
+
+.animate-modal-zoom {
+  animation: modal-zoom-in-anim 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

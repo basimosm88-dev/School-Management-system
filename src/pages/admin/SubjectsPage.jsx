@@ -4,7 +4,7 @@ import { useData } from '../../contexts/DataContext';
 import { useSettings } from '../../contexts/SettingsContext';
 
 const SubjectsPage = () => {
- const { subjects, addSubject, updateSubject, deleteSubject, addNotification } = useData();
+ const { subjects, addSubject, updateSubject, deleteSubject, addNotification, confirmDelete } = useData();
  const { t } = useSettings();
 
  // Search & Filter State
@@ -40,8 +40,9 @@ const SubjectsPage = () => {
  setIsFormOpen(true);
  };
 
- const handleDelete = (id) => {
- if (window.confirm(t('deleteSubjectConfirm'))) {
+ const handleDelete = async (id) => {
+ const confirmed = await confirmDelete('deleteSubjectConfirm');
+ if (confirmed) {
  deleteSubject(id);
  addNotification(t('subjectDeleted'), 'success');
  }

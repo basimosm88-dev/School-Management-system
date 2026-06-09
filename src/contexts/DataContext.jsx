@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useMemo, useCall
 import { supabase } from '../lib/supabase';
 import { useAppContext } from './AppContext';
 import { useSettings } from './SettingsContext';
+import { ToastContainer } from '../components/ui/Toast';
+import { ConfirmationModal } from '../components/ui/ConfirmationModal';
 
 const DataContext = createContext();
 
@@ -30,6 +32,28 @@ export const DataProvider = ({ children }) => {
   const [subjects, setSubjects] = useState([]);
   const [grades, setGrades] = useState([]);
   const [sessionNotifications, setSessionNotifications] = useState([]);
+  const [toasts, setToasts] = useState([]);
+  const [confirmDialog, setConfirmDialog] = useState(null);
+
+  const removeToast = useCallback((id) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
+
+  const triggerToast = useCallback((message, type = 'success') => {
+    const id = `toast-${Date.now()}-${Math.random()}`;
+    setToasts(prev => [...prev, { id, message, type }]);
+  }, []);
+
+  const confirmDelete = useCallback((message, title = 'Confirm Deletion') => {
+    return new Promise((resolve) => {
+      setConfirmDialog({
+        isOpen: true,
+        title,
+        message,
+        resolve
+      });
+    });
+  }, []);
   const [readNotifIds, setReadNotifIds] = useState(() => {
     try {
       const saved = localStorage.getItem('read_notification_ids');
@@ -239,6 +263,7 @@ export const DataProvider = ({ children }) => {
       read: false,
       recipientId
     }]);
+    triggerToast(message, type);
   };
   const triggerSmartNotification = ({ title, message, type = 'info', recipientId = 'all' }) => addNotification(message, type, title, recipientId);
 
@@ -1783,10 +1808,28 @@ export const DataProvider = ({ children }) => {
     events, addEvent, deleteEvent, updateEvent,
     announcements, addAnnouncement, deleteAnnouncement, updateAnnouncement,
     notifications, addNotification, markNotificationRead, triggerSmartNotification, markAllNotificationsRead,
-    systemLogs, resetData
-  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser, removeSubjectFromClass, updateClassSubject, updateStudentSubjectScores, updateStudentAllScores, calculateRankings, getReportCardData]);
+    systemLogs, resetData, confirmDelete
+  }), [students, teachers, classes, subjects, exams, promotionSettings, promotions, grades, attendance, timetables, events, announcements, notifications, systemLogs, currentUser, removeSubjectFromClass, updateClassSubject, updateStudentSubjectScores, updateStudentAllScores, calculateRankings, getReportCardData, confirmDelete]);
 
-  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
+  return (
+    <DataContext.Provider value={value}>
+      {children}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      <ConfirmationModal
+        isOpen={confirmDialog?.isOpen || false}
+        title={confirmDialog?.title}
+        message={confirmDialog?.message}
+        onConfirm={() => {
+          confirmDialog?.resolve(true);
+          setConfirmDialog(null);
+        }}
+        onCancel={() => {
+          confirmDialog?.resolve(false);
+          setConfirmDialog(null);
+        }}
+      />
+    </DataContext.Provider>
+  );
 };
 
 export const useData = () => useContext(DataContext);

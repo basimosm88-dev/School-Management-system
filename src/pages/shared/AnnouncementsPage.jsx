@@ -7,7 +7,7 @@ import Modal from '../../components/ui/Modal';
 import DynamicForm from '../../components/ui/DynamicForm';
 
 const AnnouncementsPage = ({ role }) => {
-  const { announcements, addAnnouncement, deleteAnnouncement, classes } = useData();
+  const { announcements, addAnnouncement, deleteAnnouncement, classes, confirmDelete } = useData();
   const { currentUser } = useAppContext();
   const { permissions, t } = useSettings();
   const [modalOpen, setModalOpen] = useState(false);
@@ -102,7 +102,12 @@ const AnnouncementsPage = ({ role }) => {
                     {t('to')} {ann.audience === 'all' || !ann.audience ? t('all') : ann.audience === 'teachers' ? t('teachers') : ann.audience === 'students' ? t('students') : ann.audience.replace('class_', `${t('class')} `)}
                   </span>
                   {role === 'admin' && (
-                    <button onClick={() => deleteAnnouncement(ann.id)} className="p-2 text-slate-400/80 hover:text-rose-500 transition-colors">
+                    <button onClick={async () => {
+                      const confirmed = await confirmDelete('deleteAnnouncementConfirm');
+                      if (confirmed) {
+                        deleteAnnouncement(ann.id);
+                      }
+                    }} className="p-2 text-slate-400/80 hover:text-rose-500 transition-colors">
                       <span className="material-symbols-outlined text-section">delete</span>
                     </button>
                   )}
