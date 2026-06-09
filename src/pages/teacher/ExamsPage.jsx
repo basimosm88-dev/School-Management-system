@@ -18,7 +18,7 @@ const getExamMaxScore = (examType, academicYear) => {
 };
 
 const TeacherExamsPage = () => {
-  const { classes, students, exams, saveExamResults, updateExamStatus } = useData();
+  const { classes, students, exams, saveExamResults, updateExamStatus, confirmDelete } = useData();
   const { currentUser } = useAppContext();
   const { t } = useSettings();
 
@@ -109,7 +109,20 @@ const TeacherExamsPage = () => {
     setRemarks(prev => ({ ...prev, [studentId]: remark }));
   };
 
-  const handleSubmit = (status) => {
+  const handleSubmit = async (status) => {
+    if (status === 'SUBMITTED') {
+      const confirmed = await confirmDelete(
+        'submitConfirmMessage',
+        'submitTitle',
+        {
+          confirmText: 'submitButtonText',
+          cancelText: 'cancel',
+          type: 'primary'
+        }
+      );
+      if (!confirmed) return;
+    }
+
     const results = classStudents.map(s => ({
       studentId: s.id,
       grade: examGrades[s.id] || 0,

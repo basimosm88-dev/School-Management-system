@@ -44,13 +44,14 @@ export const DataProvider = ({ children }) => {
     setToasts(prev => [...prev, { id, message, type }]);
   }, []);
 
-  const confirmDelete = useCallback((message, title = 'Confirm Deletion') => {
+  const confirmDelete = useCallback((message, title = 'Confirm Deletion', options = {}) => {
     return new Promise((resolve) => {
       setConfirmDialog({
         isOpen: true,
         title,
         message,
-        resolve
+        resolve,
+        ...options
       });
     });
   }, []);
@@ -1819,6 +1820,9 @@ export const DataProvider = ({ children }) => {
         isOpen={confirmDialog?.isOpen || false}
         title={confirmDialog?.title}
         message={confirmDialog?.message}
+        confirmText={confirmDialog?.confirmText}
+        cancelText={confirmDialog?.cancelText}
+        type={confirmDialog?.type}
         onConfirm={() => {
           confirmDialog?.resolve(true);
           setConfirmDialog(null);
