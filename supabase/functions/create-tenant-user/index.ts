@@ -92,7 +92,7 @@ serve(async (req) => {
     }
 
 
-    if (!email || !password || !first_name || !last_name || !role) {
+    if (!email || !password || !first_name || !role) {
       throw new Error('Missing required fields.')
     }
 
